@@ -833,6 +833,7 @@ h2 {
 .benefits,
 .operating-model,
 .platform,
+.business-case,
 .adoption-trust {
   padding-block: clamp(96px, 10vw, 152px);
 }
