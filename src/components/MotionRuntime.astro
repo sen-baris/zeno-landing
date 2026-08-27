@@ -1,0 +1,62 @@
+---
+// Motion is an enhancement layered on top of a page that is already complete without it.
+//
+// The head script decides before first paint whether motion may run at all, so revealed content
+// never flashes in and out. It also arms a failsafe: if the module below does not confirm that it
+// is observing, the flag is dropped and every element returns to its finished state. With reduced
+// motion, without IntersectionObserver, or with JavaScript switched off entirely, no rule in
+// global.css hides or animates anything.
+---
+
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    if (
+      !window.matchMedia ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !('IntersectionObserver' in window)
+    ) {
+      return;
+    }
+    root.setAttribute('data-motion', 'on');
+    window.setTimeout(function () {
+      if (root.getAttribute('data-motion-ready') !== 'on') root.removeAttribute('data-motion');
+    }, 2000);
+  })();
+</script>
+
+<script>
+  const root = document.documentElement;
+  const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+
+  function finish(): void {
+    for (const target of targets) target.setAttribute('data-revealed', '');
+  }
+
+  if (root.getAttribute('data-motion') !== 'on') {
+    finish();
+  } else {
+    root.setAttribute('data-motion-ready', 'on');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.setAttribute('data-revealed', '');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+    );
+
+    for (const target of targets) observer.observe(target);
+
+    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+      if (!event.matches) return;
+      observer.disconnect();
+      root.removeAttribute('data-motion');
+      root.removeAttribute('data-motion-ready');
+      finish();
+    });
+  }
+</script>

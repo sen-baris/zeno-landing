@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Feature Audit"
+  short_description: "Audit feature quality before completion"
+  default_prompt: "Use $enterprise-ai-feature-audit to audit this completed feature and verify its fixes."

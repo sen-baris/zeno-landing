@@ -1,0 +1,61 @@
+---
+import type { CertificationAsset } from '../lib/claims/certification-assets';
+import type { ClaimRecord } from '../lib/claims/types';
+
+interface Props {
+  certifications: readonly ClaimRecord[];
+  assets: readonly CertificationAsset[];
+  trustCenterUrl: string;
+}
+
+const { certifications, assets, trustCenterUrl } = Astro.props;
+const labelByClaimId = new Map(assets.map((asset) => [asset.claimId, asset.label]));
+
+const cards = certifications.map((claim) => {
+  const label = labelByClaimId.get(claim.id);
+  if (!label) throw new Error(`Approved certification "${claim.id}" has no public label.`);
+  return { claim, label };
+});
+
+// Every record carries the attribution its evidence requires. Identical attributions are shown
+// once so the strip states the source without repeating the same sentence under each card.
+const attributions = [...new Set(certifications.map((claim) => claim.attribution))];
+---
+
+<section class="trust-certifications" data-reveal aria-labelledby="certifications-title">
+  <div class="trust-certifications-head">
+    <p class="product-label" id="certifications-title">Independently audited security</p>
+    <a
+      class="text-link trust-center-link"
+      href={trustCenterUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Open the trust center<span class="visually-hidden"> (opens in a new tab)</span><span
+        aria-hidden="true"
+      >
+        ↗</span
+      >
+    </a>
+  </div>
+
+  <ul class="certification-list">
+    {
+      cards.map(({ claim, label }) => (
+        <li data-certification={claim.id}>
+          <svg class="certification-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <path d="M16 2.6 27.4 7v9.2c0 6.4-4.5 11.6-11.4 13.8C9.1 27.8 4.6 22.6 4.6 16.2V7Z" />
+            <path class="certification-check" d="m11 16.2 3.6 3.6 6.8-7.2" />
+          </svg>
+          <h3>{label}</h3>
+          <p>{claim.statement}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="certification-attribution">
+    {attributions.join(' ')} Certificates, reports, monitored controls, and subprocessors are published
+    in the trust center.
+  </p>
+</section>

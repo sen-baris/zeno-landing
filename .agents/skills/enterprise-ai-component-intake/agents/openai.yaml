@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Component Intake"
+  short_description: "Vet third-party UI code before adoption"
+  default_prompt: "Use $enterprise-ai-component-intake to evaluate this external component before adding it."

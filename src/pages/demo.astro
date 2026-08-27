@@ -1,0 +1,42 @@
+---
+import DemoForm from '../components/islands/DemoForm';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Book a demo — Zeno"
+  description="Tell Zeno about the enterprise workflow you want to make more useful, governed, and measurable."
+  canonicalPath="/demo"
+  pageClass="demo-page"
+>
+  <section class="page-intro demo-intro section-rule">
+    <div class="shell demo-shell">
+      <div>
+        <p class="eyebrow">Book a demo</p>
+        <h1>Start with the work, not the pitch.</h1>
+      </div>
+      <p>
+        Tell us which workflow matters and what a useful next step looks like. Qualification context
+        helps us prepare; it never prevents you from requesting a conversation.
+      </p>
+    </div>
+  </section>
+  <section class="interactive-section">
+    <div class="shell demo-shell">
+      <aside class="demo-expectation" aria-labelledby="expectation-title">
+        <p class="eyebrow">What happens next</p>
+        <h2 id="expectation-title">A prepared workflow conversation.</h2>
+        <ol>
+          <li><span>01</span>We review the workflow and your starting context.</li>
+          <li><span>02</span>We identify the key execution and governance questions.</li>
+          <li><span>03</span>We follow up with a relevant next step.</li>
+        </ol>
+      </aside>
+      <DemoForm client:only="react">
+        <div class="island-fallback" slot="fallback" role="status">
+          Loading the demo request. If it does not start, enable JavaScript and reload.
+        </div>
+      </DemoForm>
+    </div>
+  </section>
+</BaseLayout>

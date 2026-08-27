@@ -1,0 +1,47 @@
+---
+import type { CustomerLogoAsset } from '../lib/claims/customer-logo-assets';
+import type { ClaimRecord } from '../lib/claims/types';
+
+interface Props {
+  logos: readonly CustomerLogoAsset[];
+  audiences: readonly string[];
+  proof: readonly ClaimRecord[];
+}
+
+const { logos, audiences, proof } = Astro.props;
+---
+
+<section class="customer-proof section-rule" id="audience" aria-labelledby="customer-proof-title">
+  <div class="shell">
+    <div class="customer-proof-heading">
+      <p class="eyebrow" id="customer-proof-title">Selected customers</p>
+      <p>
+        Built for AI, innovation, IT, data, operations, and security leaders bringing AI into
+        everyday work.
+      </p>
+    </div>
+    <ul class="customer-logo-list" data-reveal aria-label="Selected customer logos">
+      {
+        logos.map((logo) => (
+          <li data-logo={logo.claimId}>
+            <img src={logo.src} alt={logo.name} loading="eager" decoding="async" />
+          </li>
+        ))
+      }
+    </ul>
+    {
+      proof.length > 0 && (
+        <div class="approved-proof" aria-label="Approved Zeno evidence">
+          {proof.map((claim) => (
+            <p>
+              <span>{claim.category}</span>
+              {claim.statement}
+              {claim.attribution && <small>{claim.attribution}</small>}
+            </p>
+          ))}
+        </div>
+      )
+    }
+    <span class="visually-hidden">Audience: {audiences.join(', ')}</span>
+  </div>
+</section>

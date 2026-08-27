@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Web Development"
+  short_description: "Build reliable enterprise AI marketing sites"
+  default_prompt: "Use $enterprise-ai-web-development to implement this website change with production-grade engineering."

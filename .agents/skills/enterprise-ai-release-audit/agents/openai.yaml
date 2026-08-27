@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Release Audit"
+  short_description: "Audit release readiness across every surface"
+  default_prompt: "Use $enterprise-ai-release-audit to perform the final release-readiness audit."

@@ -1,0 +1,47 @@
+name: Agent governance
+
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - '.agents/**'
+      - 'tools/check_agent_skills.py'
+      - 'tests/test_agent_skills.py'
+      - '.github/workflows/agent-governance.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'AGENTS.md'
+      - '.agents/**'
+      - 'tools/check_agent_skills.py'
+      - 'tests/test_agent_skills.py'
+      - '.github/workflows/agent-governance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-governance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository governance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Validate skills and AGENTS.md
+        run: python tools/check_agent_skills.py
+
+      - name: Run governance unit tests
+        run: python -m unittest discover -s tests -p "test_agent_skills.py" -v

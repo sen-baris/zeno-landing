@@ -1,0 +1,224 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BenefitScene from '../components/BenefitScene.astro';
+import CustomerLogoRail from '../components/CustomerLogoRail.astro';
+import GovernanceConsole from '../components/GovernanceConsole.astro';
+import PlatformOverview from '../components/PlatformOverview.astro';
+import ProductWorkspace from '../components/ProductWorkspace.astro';
+import TrustCertifications from '../components/TrustCertifications.astro';
+import WorkflowRun from '../components/WorkflowRun.astro';
+import { certificationAssets } from '../lib/claims/certification-assets';
+import { customerLogoAssets } from '../lib/claims/customer-logo-assets';
+import {
+  claimRegistry,
+  homepageCertificationClaimIds,
+  homepageCustomerLogoClaimIds,
+  homepageProofClaimIds,
+  trustCenterUrl,
+} from '../lib/claims/registry';
+import { resolveApprovedClaims } from '../lib/claims/public-claims';
+import {
+  audiences,
+  benefits,
+  draftHomeCopy,
+  operatingModel,
+  platformPillars,
+  workflowExamples,
+} from '../lib/content/site-content';
+
+const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
+const approvedCertifications = resolveApprovedClaims(
+  claimRegistry,
+  homepageCertificationClaimIds,
+  'home.trust',
+);
+const approvedCustomerLogoClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageCustomerLogoClaimIds,
+  'home.customer-logos',
+);
+const customerLogoByClaimId = new Map(customerLogoAssets.map((logo) => [logo.claimId, logo]));
+const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
+  const logo = customerLogoByClaimId.get(claim.id);
+  if (!logo) throw new Error(`Approved customer logo asset "${claim.id}" is missing.`);
+  return logo;
+});
+---
+
+<BaseLayout
+  title="Zeno — Make AI part of everyday work"
+  description="Bring AI into everyday work with connected knowledge, specialized agents, repeatable workflows, and visible enterprise governance."
+  canonicalPath="/"
+>
+  <section class="hero section-rule">
+    <div class="shell hero-layout">
+      <div class="hero-intro">
+        <div>
+          <h1>{draftHomeCopy.headline}</h1>
+        </div>
+        <div class="hero-message">
+          <p class="hero-subhead">{draftHomeCopy.subhead}</p>
+          <div class="hero-action" role="group" aria-label="Hero call to action">
+            <a class="button button-primary" href="/demo">Book a demo</a>
+          </div>
+        </div>
+      </div>
+      <PlatformOverview />
+    </div>
+  </section>
+
+  <CustomerLogoRail logos={approvedCustomerLogos} audiences={audiences} proof={approvedProof} />
+
+  <section class="benefits section-rule" id="why" aria-labelledby="benefits-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Why Zeno</p>
+          <h2 id="benefits-title">Move beyond disconnected AI experiments.</h2>
+        </div>
+        <p>
+          AI earns a lasting place when it helps with recognizable work, can be reused across teams,
+          and remains understandable as adoption grows.
+        </p>
+      </header>
+      <div class="benefit-grid">
+        {
+          benefits.map((benefit) => (
+            <article class="benefit-item" data-reveal>
+              <span class="item-number">{benefit.number}</span>
+              <h3>{benefit.title}</h3>
+              <p>{benefit.body}</p>
+              <BenefitScene variant={benefit.scene} />
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="operating-model section-rule" id="operating-model" aria-labelledby="model-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">How it works</p>
+          <h2 id="model-title">Connect. Equip. Run. Govern.</h2>
+        </div>
+        <p>
+          A clear path from the systems teams already use to work that can be repeated, reviewed,
+          and improved.
+        </p>
+      </header>
+      <WorkflowRun />
+      <ol class="model-list">
+        {
+          operatingModel.map((step) => (
+            <li data-reveal>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="workflow-examples" aria-label="Example workflows">
+        <p class="product-label">Where teams begin</p>
+        <ul>
+          {workflowExamples.map((workflow) => <li>{workflow}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="platform section-rule" id="platform" aria-labelledby="platform-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">What Zeno brings together</p>
+          <h2 id="platform-title">From on-brand presentations to company-wide execution.</h2>
+        </div>
+        <p>
+          Start with one useful agent, extend it into repeatable workflows, and keep adoption
+          manageable.
+        </p>
+      </header>
+      <ProductWorkspace />
+      <div class="platform-pillars">
+        {
+          platformPillars.map((pillar) => (
+            <article data-reveal>
+              <span class="pillar-label">{pillar.label}</span>
+              <h3>{pillar.title}</h3>
+              <p>{pillar.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="adoption-trust section-rule" id="trust" aria-labelledby="trust-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Adoption and trust</p>
+          <h2 id="trust-title">Scale adoption without giving up control.</h2>
+        </div>
+        <p>
+          Follow how useful work spreads while access, model choice, review, and regional operating
+          needs stay visible.
+        </p>
+      </header>
+      <ol class="adoption-timeline" aria-label="90-day adoption observation framework">
+        <li data-reveal>
+          <span>30</span>
+          <div>
+            <small>days</small>
+            <h3>Find repeat use</h3>
+            <p>See which teams return after their first interaction.</p>
+          </div>
+        </li>
+        <li data-reveal>
+          <span>60</span>
+          <div>
+            <small>days</small>
+            <h3>Spread what works</h3>
+            <p>Follow reuse of shared agents and connected knowledge.</p>
+          </div>
+        </li>
+        <li data-reveal>
+          <span>90</span>
+          <div>
+            <small>days</small>
+            <h3>Scale with control</h3>
+            <p>See which recurring work is ready for governed execution.</p>
+          </div>
+        </li>
+      </ol>
+      <GovernanceConsole />
+      <TrustCertifications
+        certifications={approvedCertifications}
+        assets={certificationAssets}
+        trustCenterUrl={trustCenterUrl}
+      />
+    </div>
+  </section>
+
+  <section class="conversion" aria-labelledby="conversion-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">AI Readiness Assessment</p>
+        <h2 id="conversion-title">Find where AI can become useful first.</h2>
+      </div>
+      <div>
+        <p>
+          Answer nine questions about one workflow and get an impact score, readiness score, and
+          practical next actions before sharing contact details.
+        </p>
+        <div class="button-row">
+          <a class="button button-paper" href="/ai-readiness">Assess AI readiness</a>
+          <a class="button button-inverse" href="/demo">Book a demo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

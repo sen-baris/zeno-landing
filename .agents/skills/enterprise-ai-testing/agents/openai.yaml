@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Testing"
+  short_description: "Design meaningful tests for every behavior"
+  default_prompt: "Use $enterprise-ai-testing to create proportionate automated tests for this change."

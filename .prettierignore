@@ -1,0 +1,10 @@
+.astro
+.agents
+.github
+AGENTS.md
+coverage
+dist
+node_modules
+playwright-report
+test-results
+pnpm-lock.yaml

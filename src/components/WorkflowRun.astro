@@ -1,0 +1,83 @@
+---
+// A recurring workflow mid-run. The step states are written as text, never colour alone, so the
+// scene reads the same to assistive technology, with motion disabled, and with no JavaScript.
+const steps = [
+  { number: '01', title: 'Collect source data', state: 'done', stateLabel: 'Complete' },
+  { number: '02', title: 'Prepare and check', state: 'done', stateLabel: 'Complete' },
+  { number: '03', title: 'Consolidate findings', state: 'running', stateLabel: 'Running' },
+  { number: '04', title: 'Human review', state: 'waiting', stateLabel: 'Waiting for owner' },
+  { number: '05', title: 'Publish to the workspace', state: 'queued', stateLabel: 'Queued' },
+] as const;
+---
+
+<figure class="workflow-run" data-reveal aria-labelledby="workflow-run-caption">
+  <div class="product-frame">
+    <div class="product-frame-bar">
+      <div>
+        <span class="product-mark" aria-hidden="true">Z</span>
+        <span>Reporting workflow</span>
+      </div>
+      <span class="product-frame-status run-status">In progress</span>
+    </div>
+
+    <div class="workflow-run-body">
+      <section class="workflow-run-meta" aria-labelledby="run-meta-title">
+        <p class="product-label" id="run-meta-title">Run</p>
+        <dl>
+          <div>
+            <dt>Trigger</dt>
+            <dd>Every Monday, 07:00</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>Operations team</dd>
+          </div>
+          <div>
+            <dt>Connected sources</dt>
+            <dd>Company knowledge, reporting data</dd>
+          </div>
+          <div>
+            <dt>Model</dt>
+            <dd>Approved provider</dd>
+          </div>
+          <div>
+            <dt>Previous run</dt>
+            <dd>Reviewed and published</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="workflow-run-steps" aria-labelledby="run-steps-title">
+        <div class="workflow-run-steps-head">
+          <p class="product-label" id="run-steps-title">Steps</p>
+          <span>5 steps, 1 checkpoint</span>
+        </div>
+        <ol>
+          {
+            steps.map((step) => (
+              <li data-state={step.state}>
+                <span class="run-step-number">{step.number}</span>
+                <span class="run-step-title">{step.title}</span>
+                <span class="run-step-state">{step.stateLabel}</span>
+                {step.state === 'running' && (
+                  <span class="run-progress" aria-hidden="true">
+                    <i />
+                  </span>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+    </div>
+
+    <div class="workflow-run-footer">
+      <p>Human review is attached before anything is published.</p>
+      <span class="review-action">Open run history</span>
+    </div>
+  </div>
+  <figcaption id="workflow-run-caption">
+    Repeatable work runs on a schedule, keeps its sources and owner attached, and pauses where a
+    person needs to decide.
+  </figcaption>
+</figure>

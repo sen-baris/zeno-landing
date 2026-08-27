@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Claims and Content"
+  short_description: "Govern enterprise claims and customer proof"
+  default_prompt: "Use $enterprise-ai-claims-and-content to verify and draft this public-facing claim."
