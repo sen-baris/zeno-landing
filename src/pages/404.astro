@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/routing/base-path';
 ---
 
 <BaseLayout
@@ -13,8 +14,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h1>This path is not in the ledger.</h1>
       <p>Return to the homepage or assess a workflow.</p>
       <div class="button-row">
-        <a class="button button-ink" href="/">Go home</a>
-        <a class="button button-ghost" href="/ai-readiness">Assess readiness</a>
+        <a class="button button-ink" href={withBase('/')}>Go home</a>
+        <a class="button button-ghost" href={withBase('/ai-readiness')}>Assess readiness</a>
       </div>
     </div>
   </section>

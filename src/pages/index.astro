@@ -17,6 +17,7 @@ import {
   trustCenterUrl,
 } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
+import { withBase } from '../lib/routing/base-path';
 import {
   audiences,
   benefits,
@@ -59,7 +60,7 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
         <div class="hero-message">
           <p class="hero-subhead">{draftHomeCopy.subhead}</p>
           <div class="hero-action" role="group" aria-label="Hero call to action">
-            <a class="button button-primary" href="/demo">Book a demo</a>
+            <a class="button button-primary" href={withBase('/demo')}>Book a demo</a>
           </div>
         </div>
       </div>
@@ -215,8 +216,8 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           practical next actions before sharing contact details.
         </p>
         <div class="button-row">
-          <a class="button button-paper" href="/ai-readiness">Assess AI readiness</a>
-          <a class="button button-inverse" href="/demo">Book a demo</a>
+          <a class="button button-paper" href={withBase('/ai-readiness')}>Assess AI readiness</a>
+          <a class="button button-inverse" href={withBase('/demo')}>Book a demo</a>
         </div>
       </div>
     </div>

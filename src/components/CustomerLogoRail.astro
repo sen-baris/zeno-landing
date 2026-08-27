@@ -1,6 +1,7 @@
 ---
 import type { CustomerLogoAsset } from '../lib/claims/customer-logo-assets';
 import type { ClaimRecord } from '../lib/claims/types';
+import { withBase } from '../lib/routing/base-path';
 
 interface Props {
   logos: readonly CustomerLogoAsset[];
@@ -24,7 +25,7 @@ const { logos, audiences, proof } = Astro.props;
       {
         logos.map((logo) => (
           <li data-logo={logo.claimId}>
-            <img src={logo.src} alt={logo.name} loading="eager" decoding="async" />
+            <img src={withBase(logo.src)} alt={logo.name} loading="eager" decoding="async" />
           </li>
         ))
       }

@@ -1,0 +1,67 @@
+name: Deploy preview to GitHub Pages
+
+# Publishes the built site to the repository's GitHub Pages project site so the team can review it.
+# This is a shared preview, not a launch: the build stays in preview content mode and is marked
+# noindex, so the fail-closed production release gate is untouched.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deployment finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Resolves the origin and subpath this repository's Pages site is served from, so the build
+      # never has to hard-code them.
+      - uses: actions/configure-pages@v5
+        id: pages
+        with:
+          enablement: true
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Verify before publishing
+        run: pnpm format:check && pnpm lint && pnpm typecheck && pnpm test
+
+      - name: Build for the Pages project site
+        env:
+          CONTENT_MODE: preview
+          PUBLIC_SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
+          PUBLIC_SITE_BASE: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_PREVIEW_DEPLOY: 'true'
+        run: pnpm build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

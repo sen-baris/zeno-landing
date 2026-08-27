@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/routing/base-path';
 ---
 
 <BaseLayout
@@ -12,7 +13,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="eyebrow">Error / 500</p>
       <h1>The workflow stopped unexpectedly.</h1>
       <p>Nothing was submitted. Return home and try again.</p>
-      <a class="button button-ink" href="/">Go home</a>
+      <a class="button button-ink" href={withBase('/')}>Go home</a>
     </div>
   </section>
 </BaseLayout>

@@ -6,6 +6,7 @@ import { loadAssessmentContext } from '../../lib/assessment/storage';
 import type { StoredAssessmentContext } from '../../lib/assessment/storage';
 import type { WorkflowCategory } from '../../lib/assessment/types';
 import { createLeadSubmissionAdapter, LeadSubmissionError } from '../../lib/leads/adapter';
+import { withBase } from '../../lib/routing/base-path';
 import type { LeadSubmissionAdapter } from '../../lib/leads/types';
 import {
   validateDemoStep,
@@ -163,7 +164,7 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
         <span className="evidence-badge">Submission confirmed</span>
         <h2>Thank you. The workflow is in the ledger.</h2>
         <p>{message}</p>
-        <a className="button button-ink" href="/">
+        <a className="button button-ink" href={withBase('/')}>
           Return home
         </a>
       </div>

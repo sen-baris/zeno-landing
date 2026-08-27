@@ -1,23 +1,24 @@
 ---
 import { trustCenterUrl } from '../lib/claims/registry';
+import { withBase } from '../lib/routing/base-path';
 ---
 
 <footer class="site-footer">
   <div class="shell footer-grid">
     <div>
-      <a class="wordmark wordmark-light" href="/" aria-label="Zeno home">Zeno</a>
+      <a class="wordmark wordmark-light" href={withBase('/')} aria-label="Zeno home">Zeno</a>
       <p>Enterprise AI for everyday work, from useful assistance to governed execution.</p>
     </div>
     <nav aria-label="Footer navigation">
-      <a href="/#why">Why Zeno</a>
-      <a href="/#operating-model">How it works</a>
-      <a href="/#platform">Platform</a>
-      <a href="/#trust">Trust</a>
+      <a href={withBase('/#why')}>Why Zeno</a>
+      <a href={withBase('/#operating-model')}>How it works</a>
+      <a href={withBase('/#platform')}>Platform</a>
+      <a href={withBase('/#trust')}>Trust</a>
       <a href={trustCenterUrl} target="_blank" rel="noopener noreferrer"
         >Trust center<span class="visually-hidden"> (opens in a new tab)</span></a
       >
-      <a href="/ai-readiness">AI Readiness Assessment</a>
-      <a href="/demo">Book a demo</a>
+      <a href={withBase('/ai-readiness')}>AI Readiness Assessment</a>
+      <a href={withBase('/demo')}>Book a demo</a>
     </nav>
     <div class="footer-meta">
       <span>© {new Date().getFullYear()} Zeno</span>

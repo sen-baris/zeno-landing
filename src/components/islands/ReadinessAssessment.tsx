@@ -6,6 +6,7 @@ import { calculateAssessment } from '../../lib/assessment/scoring';
 import { saveAssessmentContext } from '../../lib/assessment/storage';
 import type { AssessmentResult, WorkflowCategory } from '../../lib/assessment/types';
 import { createLeadSubmissionAdapter, LeadSubmissionError } from '../../lib/leads/adapter';
+import { withBase } from '../../lib/routing/base-path';
 import type { LeadSubmissionAdapter } from '../../lib/leads/types';
 import { isValidEmail } from '../../lib/leads/validation';
 
@@ -336,7 +337,7 @@ export default function ReadinessAssessment({ adapter: suppliedAdapter }: Props)
         </button>
         <a
           className="button button-ghost"
-          href="/demo"
+          href={withBase('/demo')}
           onClick={() =>
             trackConsentedEvent({ name: 'result_cta_selected', action: 'discuss-workflow' })
           }

@@ -6,6 +6,7 @@ import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import MotionRuntime from '../components/MotionRuntime.astro';
+import { withBase } from '../lib/routing/base-path';
 
 interface Props {
   title: string;
@@ -15,7 +16,11 @@ interface Props {
 }
 
 const { title, description, canonicalPath, pageClass = '' } = Astro.props;
-const canonical = new URL(canonicalPath, Astro.site);
+const canonical = new URL(withBase(canonicalPath), Astro.site);
+
+// A shared preview is not a launch. Keep unlaunched brand, draft copy, and customer logos out of
+// search indexes until the production release gate has been satisfied.
+const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
 ---
 
 <!doctype html>
@@ -25,8 +30,9 @@ const canonical = new URL(canonicalPath, Astro.site);
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#F7F3EE" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <meta name="description" content={description} />
+    {isPreviewDeploy && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Zeno" />
