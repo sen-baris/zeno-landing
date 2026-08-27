@@ -1,0 +1,38 @@
+---
+import type { BusinessCaseAsset } from '../lib/claims/business-case-assets';
+import type { ClaimRecord } from '../lib/claims/types';
+
+interface Props {
+  results: readonly ClaimRecord[];
+  assets: readonly BusinessCaseAsset[];
+}
+
+const { results, assets } = Astro.props;
+const assetByClaimId = new Map(assets.map((asset) => [asset.claimId, asset]));
+
+// The figure and its label come from the display asset; the qualifier is the claim record's own
+// attribution, so a figure can never be published without the population and method it depends on.
+const figures = results.map((claim) => {
+  const asset = assetByClaimId.get(claim.id);
+  if (!asset) throw new Error(`Approved business-case claim "${claim.id}" has no display figure.`);
+  if (!claim.statement.includes(asset.value) || !claim.statement.includes(asset.label)) {
+    throw new Error(
+      `Business-case figure "${claim.id}" does not match its approved statement. The rendered ` +
+        `value and label must appear verbatim in the claim record.`,
+    );
+  }
+  return { claim, asset };
+});
+---
+
+<ul class="business-case-figures" data-reveal>
+  {
+    figures.map(({ claim, asset }) => (
+      <li data-metric={claim.id}>
+        <p class="business-case-value">{asset.value}</p>
+        <p class="business-case-label">{asset.label}</p>
+        <p class="business-case-qualifier">{claim.attribution}</p>
+      </li>
+    ))
+  }
+</ul>

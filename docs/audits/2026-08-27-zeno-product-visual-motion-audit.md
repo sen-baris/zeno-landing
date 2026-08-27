@@ -196,6 +196,41 @@ tests PASS across Chromium, Firefox, and WebKit against an isolated preview buil
 WCAG A/AA scan, reduced motion, and the no-JavaScript case; visual references regenerated and
 re-verified at 390px, 768px, and 1440px.
 
+## Revision 4 — business case figures (same day)
+
+Requested: publish four enterprise impact figures supplied by the workspace owner as real customer
+results, using the exact values shown in the supplied reference.
+
+- New `#business-case` section between the platform story and the trust story: heading, then a
+  four-figure panel. It is deliberately a plain bordered panel rather than a `.product-frame`, so
+  evidence never reads as a product screenshot.
+- Four `metric` claim records were added, approved for the `home.business-case` surface only. Each
+  record carries the population or method as its `attribution`, and the component renders that
+  attribution directly beneath the figure. A figure therefore cannot be published without the
+  qualifier it depends on.
+- `BusinessCase.astro` fails the build if a rendered value or label does not appear verbatim in its
+  approved claim statement, so the display cannot drift from the approved wording.
+- The exact supplied values are preserved, including the en dashes and approximation markers:
+  `3–10%`, `~200`, `+65%`, `~€7–8M`.
+
+Evidence recorded honestly: the figures were supplied in a working session. The account lists,
+measurement methods, observation windows, baselines, and the savings model's inputs are all held
+outside this repository. Each record's `notes` names what must be attached before the production
+release.
+
+The €7–8M figure is the output of an internal savings model for approximately 2,200 users, not a
+realised or audited customer result. The words "projected", "internal enterprise savings model", and
+the user population are recorded as material qualifiers and are asserted by a unit test.
+
+These claims were scoped to `home.business-case` and deliberately not to `home.proof`, so the
+`check_release_readiness.ts` proof gate is left as it was. That gate still reports no approved
+homepage proof claim, which is correct while the underlying evidence is incomplete.
+
+Rerun after revision 4: `pnpm check` PASS (81 unit tests, 96.95% statements, homepage still 0.7KB
+gzip); `pnpm check:governance` PASS; 42 funnel E2E tests PASS across Chromium, Firefox, and WebKit
+against an isolated preview build; visual references regenerated at 390px, 768px, and 1440px; no
+horizontal overflow at 390px, 768px, or 1440px.
+
 ## Claims and provenance review
 
 - Three certification records were added: `certification-iso-27001`, `certification-soc-2-type-1`,

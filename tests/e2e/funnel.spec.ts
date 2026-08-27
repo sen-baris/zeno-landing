@@ -219,6 +219,34 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await context.close();
 });
 
+test('the business case publishes each figure with the qualifier it depends on', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const businessCase = page.locator('#business-case');
+  await expect(businessCase.getByRole('heading', { level: 2 })).toHaveText(
+    'Impact reported by enterprise rollouts.',
+  );
+
+  const expected = [
+    ['3–10%', 'efficiency / time savings after a year', 'across enterprise consultancy accounts'],
+    ['~200', 'monthly interactions per user', 'on full enterprise rollouts'],
+    ['+65%', 'weekly active usage', 'usage growing after launch, not fading'],
+    ['~€7–8M', 'projected annual savings', 'internal enterprise savings model, ~2,200 users'],
+  ];
+
+  const figures = businessCase.locator('.business-case-figures > li');
+  await expect(figures).toHaveCount(expected.length);
+
+  for (const [index, [value, label, qualifier]] of expected.entries()) {
+    const figure = figures.nth(index);
+    await expect(figure).toContainText(value ?? '');
+    await expect(figure).toContainText(label ?? '');
+    // A figure must never appear without the population or method that makes it meaningful.
+    await expect(figure).toContainText(qualifier ?? '');
+  }
+});
+
 test('the trust section publishes approved certifications and a verifiable trust centre link', async ({
   page,
 }) => {

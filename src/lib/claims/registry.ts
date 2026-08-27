@@ -167,9 +167,80 @@ export const claimRegistry: readonly ClaimRecord[] = [
     notes:
       'Report access is granted through the trust center, not this page. Counsel must confirm the operating-entity attribution before the production release.',
   },
+  {
+    id: 'metric-efficiency-time-savings',
+    statement: '3–10% efficiency / time savings after a year.',
+    category: 'metric',
+    evidence:
+      'Figures supplied by the workspace owner on 2026-08-27 as measured results from enterprise consultancy accounts. The account list, measurement method, observation window, and sample are held outside this repository.',
+    verified_on: '2026-08-27',
+    approval_status: 'approved',
+    approved_by: 'Baris — working-session direction',
+    approved_on: '2026-08-27',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'across enterprise consultancy accounts',
+    reverify_on: '2027-02-27',
+    notes:
+      'The range and the "after a year" period are material qualifiers and must not be narrowed to a single figure or a shorter period. Per-account source data, measurement method, and customer permission to publish must be attached before the production release.',
+  },
+  {
+    id: 'metric-monthly-interactions',
+    statement: '~200 monthly interactions per user.',
+    category: 'metric',
+    evidence:
+      'Figure supplied by the workspace owner on 2026-08-27 as an observed average across full enterprise rollouts. The underlying usage export and the population it covers are held outside this repository.',
+    verified_on: '2026-08-27',
+    approval_status: 'approved',
+    approved_by: 'Baris — working-session direction',
+    approved_on: '2026-08-27',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'on full enterprise rollouts',
+    reverify_on: '2027-02-27',
+    notes:
+      'The approximation marker and the "full enterprise rollouts" population are material qualifiers. Do not present as an exact figure or extend to pilots or partial rollouts. The usage export and its date range must be attached before the production release.',
+  },
+  {
+    id: 'metric-weekly-active-usage',
+    statement: '+65% weekly active usage.',
+    category: 'metric',
+    evidence:
+      'Figure supplied by the workspace owner on 2026-08-27 as observed growth in weekly active usage after launch. The baseline, comparison period, and population are held outside this repository.',
+    verified_on: '2026-08-27',
+    approval_status: 'approved',
+    approved_by: 'Baris — working-session direction',
+    approved_on: '2026-08-27',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'usage growing after launch, not fading',
+    reverify_on: '2027-02-27',
+    notes:
+      'This is a relative change and requires its baseline and comparison period before the production release. Do not restate as an absolute activation or adoption rate.',
+  },
+  {
+    id: 'metric-projected-annual-savings',
+    statement: '~€7–8M projected annual savings.',
+    category: 'metric',
+    evidence:
+      'Output of an internal enterprise savings model for approximately 2,200 users, supplied by the workspace owner on 2026-08-27. The model inputs and assumptions are held outside this repository.',
+    verified_on: '2026-08-27',
+    approval_status: 'approved',
+    approved_by: 'Baris — working-session direction',
+    approved_on: '2026-08-27',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'internal enterprise savings model, ~2,200 users',
+    reverify_on: '2027-02-27',
+    notes:
+      'This is a projection from an internal model, not a realised or audited customer result. The words "projected", "internal enterprise savings model", the ~2,200-user population, and the range are all material qualifiers and must stay attached wherever the figure appears. The model and its assumptions must be reviewed before the production release.',
+  },
 ];
 
 export const homepageProofClaimIds: readonly string[] = [];
+
+export const homepageBusinessCaseClaimIds: readonly string[] = [
+  'metric-efficiency-time-savings',
+  'metric-monthly-interactions',
+  'metric-weekly-active-usage',
+  'metric-projected-annual-savings',
+];
 
 export const homepageCertificationClaimIds: readonly string[] = [
   'certification-iso-27001',

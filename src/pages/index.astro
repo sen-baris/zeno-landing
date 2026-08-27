@@ -1,16 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BenefitScene from '../components/BenefitScene.astro';
+import BusinessCase from '../components/BusinessCase.astro';
 import CustomerLogoRail from '../components/CustomerLogoRail.astro';
 import GovernanceConsole from '../components/GovernanceConsole.astro';
 import PlatformOverview from '../components/PlatformOverview.astro';
 import ProductWorkspace from '../components/ProductWorkspace.astro';
 import TrustCertifications from '../components/TrustCertifications.astro';
 import WorkflowRun from '../components/WorkflowRun.astro';
+import { businessCaseAssets } from '../lib/claims/business-case-assets';
 import { certificationAssets } from '../lib/claims/certification-assets';
 import { customerLogoAssets } from '../lib/claims/customer-logo-assets';
 import {
   claimRegistry,
+  homepageBusinessCaseClaimIds,
   homepageCertificationClaimIds,
   homepageCustomerLogoClaimIds,
   homepageProofClaimIds,
@@ -32,6 +35,11 @@ const approvedCertifications = resolveApprovedClaims(
   claimRegistry,
   homepageCertificationClaimIds,
   'home.trust',
+);
+const approvedBusinessCase = resolveApprovedClaims(
+  claimRegistry,
+  homepageBusinessCaseClaimIds,
+  'home.business-case',
 );
 const approvedCustomerLogoClaims = resolveApprovedClaims(
   claimRegistry,
@@ -154,6 +162,20 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           ))
         }
       </div>
+    </div>
+  </section>
+
+  <section
+    class="business-case section-rule"
+    id="business-case"
+    aria-labelledby="business-case-title"
+  >
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow">Business case</p>
+        <h2 id="business-case-title">Impact reported by enterprise rollouts.</h2>
+      </header>
+      <BusinessCase results={approvedBusinessCase} assets={businessCaseAssets} />
     </div>
   </section>
 
