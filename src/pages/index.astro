@@ -105,6 +105,20 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
     </div>
   </section>
 
+  <section
+    class="business-case section-rule"
+    id="business-case"
+    aria-labelledby="business-case-title"
+  >
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow">Business case</p>
+        <h2 id="business-case-title">Impact reported by enterprise rollouts.</h2>
+      </header>
+      <BusinessCase results={approvedBusinessCase} assets={businessCaseAssets} />
+    </div>
+  </section>
+
   <section class="operating-model section-rule" id="operating-model" aria-labelledby="model-title">
     <div class="shell">
       <header class="section-heading split-heading">
@@ -162,20 +176,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           ))
         }
       </div>
-    </div>
-  </section>
-
-  <section
-    class="business-case section-rule"
-    id="business-case"
-    aria-labelledby="business-case-title"
-  >
-    <div class="shell">
-      <header class="section-heading">
-        <p class="eyebrow">Business case</p>
-        <h2 id="business-case-title">Impact reported by enterprise rollouts.</h2>
-      </header>
-      <BusinessCase results={approvedBusinessCase} assets={businessCaseAssets} />
     </div>
   </section>
 

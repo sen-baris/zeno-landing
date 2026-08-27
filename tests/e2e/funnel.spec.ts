@@ -135,13 +135,17 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   await page.goto('/');
   const sectionHeadings = await page.locator('h2').allTextContents();
   const whyIndex = sectionHeadings.indexOf('Move beyond disconnected AI experiments.');
+  const proofIndex = sectionHeadings.indexOf('Impact reported by enterprise rollouts.');
   const howIndex = sectionHeadings.indexOf('Connect. Equip. Run. Govern.');
   const whatIndex = sectionHeadings.indexOf(
     'From on-brand presentations to company-wide execution.',
   );
 
+  // Proof lands between the problem and the mechanism: a reader reaches "how" already convinced
+  // that it works.
   expect(whyIndex).toBeGreaterThanOrEqual(0);
-  expect(howIndex).toBeGreaterThan(whyIndex);
+  expect(proofIndex).toBeGreaterThan(whyIndex);
+  expect(howIndex).toBeGreaterThan(proofIndex);
   expect(whatIndex).toBeGreaterThan(howIndex);
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);

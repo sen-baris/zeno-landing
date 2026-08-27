@@ -201,8 +201,9 @@ re-verified at 390px, 768px, and 1440px.
 Requested: publish four enterprise impact figures supplied by the workspace owner as real customer
 results, using the exact values shown in the supplied reference.
 
-- New `#business-case` section between the platform story and the trust story: heading, then a
-  four-figure panel. It is deliberately a plain bordered panel rather than a `.product-frame`, so
+- New `#business-case` section between the problem statement and the mechanism — after `#why`,
+  before `#operating-model` — so a reader reaches "how it works" already holding the proof.
+  Heading, then a four-figure panel. It is deliberately a plain bordered panel rather than a `.product-frame`, so
   evidence never reads as a product screenshot.
 - Four `metric` claim records were added, approved for the `home.business-case` surface only. Each
   record carries the population or method as its `attribution`, and the component renders that
