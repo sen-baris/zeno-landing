@@ -22,10 +22,12 @@ import {
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { withBase } from '../lib/routing/base-path';
 import {
+  adoptionCosts,
   audiences,
   benefits,
   draftHomeCopy,
   operatingModel,
+  operatingShift,
   platformPillars,
   workflowExamples,
 } from '../lib/content/site-content';
@@ -83,11 +85,13 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
       <header class="section-heading split-heading">
         <div>
           <p class="eyebrow">Why Zeno</p>
-          <h2 id="benefits-title">Move beyond disconnected AI experiments.</h2>
+          <h2 id="benefits-title">
+            Most enterprises don't have an access problem. They have an adoption problem.
+          </h2>
         </div>
         <p>
-          AI earns a lasting place when it helps with recognizable work, can be reused across teams,
-          and remains understandable as adoption grows.
+          Access is straightforward to buy. Adoption is what makes it worth the budget: work people
+          recognise, reuse across teams, and a rollout that stays understandable as it grows.
         </p>
       </header>
       <div class="benefit-grid">
@@ -102,6 +106,32 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           ))
         }
       </div>
+    </div>
+  </section>
+
+  <section class="adoption-cost section-rule" id="cost" aria-labelledby="cost-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">What it costs</p>
+          <h2 id="cost-title">Access without adoption is not neutral.</h2>
+        </div>
+        <p>
+          The bill arrives quietly: in budgets nobody can direct, in work that never left the
+          spreadsheet, and in the next provider evaluation.
+        </p>
+      </header>
+      <ol class="cost-list">
+        {
+          adoptionCosts.map((cost) => (
+            <li data-reveal>
+              <span>{cost.number}</span>
+              <h3>{cost.title}</h3>
+              <p>{cost.body}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
@@ -179,6 +209,35 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
     </div>
   </section>
 
+  <section class="operating-shift section-rule" id="shift" aria-labelledby="shift-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">What changes</p>
+          <h2 id="shift-title">The same quarter, once adoption is visible.</h2>
+        </div>
+        <p>
+          Nothing here needs a new team or a new process. It needs the work to happen somewhere it
+          can be seen.
+        </p>
+      </header>
+      <div class="shift-compare" data-reveal>
+        <section class="shift-column shift-today" aria-labelledby="shift-today-title">
+          <h3 id="shift-today-title" class="product-label">Today</h3>
+          <ul>
+            {operatingShift.today.map((line) => <li>{line}</li>)}
+          </ul>
+        </section>
+        <section class="shift-column shift-zeno" aria-labelledby="shift-zeno-title">
+          <h3 id="shift-zeno-title" class="product-label">With Zeno</h3>
+          <ul>
+            {operatingShift.withZeno.map((line) => <li>{line}</li>)}
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
   <section class="adoption-trust section-rule" id="trust" aria-labelledby="trust-title">
     <div class="shell">
       <header class="section-heading split-heading">
@@ -241,6 +300,7 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           <a class="button button-paper" href={withBase('/ai-readiness')}>Assess AI readiness</a>
           <a class="button button-inverse" href={withBase('/demo')}>Book a demo</a>
         </div>
+        <p class="conversion-micro">9 questions · one workflow · no contact details</p>
       </div>
     </div>
   </section>

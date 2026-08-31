@@ -64,6 +64,44 @@ export const workflowExamples = [
   'Visualization and decision support',
 ] as const;
 
+/**
+ * The cost of stopping at access. Market observation framing, not a claim about Zeno, a customer,
+ * or a measured outcome, so it carries no registry record.
+ */
+export const adoptionCosts = [
+  {
+    number: '01',
+    title: 'Budgets stay flat and undirected',
+    body: 'Without usage anyone can point to, AI spend gets spread evenly instead of moved toward what is working.',
+  },
+  {
+    number: '02',
+    title: 'Manual work keeps winning',
+    body: 'Reporting, research, and document review stay manual, or drift to unapproved tools, because the sanctioned one never became a habit.',
+  },
+  {
+    number: '03',
+    title: 'Providers get replaced, not proven',
+    body: 'Another provider gets evaluated and none of them stick, because value was never demonstrated with the last one.',
+  },
+] as const;
+
+/** Two columns of the same operating picture, before and after adoption becomes visible. */
+export const operatingShift = {
+  today: [
+    'Two or three tools piloted, with no clear adoption story',
+    'Reporting and document work done by hand, or in unapproved tools',
+    'No way to show a budget owner what AI actually delivered',
+    'Model choice decided by whichever provider was bought first',
+  ],
+  withZeno: [
+    'One workspace, with reuse visible across teams',
+    'Agents carry the repeatable work; people keep the judgment',
+    'A case per workflow, tied to the time or cost it takes back',
+    'Model choice across approved providers, changeable later',
+  ],
+} as const;
+
 export const platformPillars = [
   {
     label: 'Specialized agents',

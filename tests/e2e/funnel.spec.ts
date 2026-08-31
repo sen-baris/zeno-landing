@@ -134,19 +134,25 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 }) => {
   await page.goto('/');
   const sectionHeadings = await page.locator('h2').allTextContents();
-  const whyIndex = sectionHeadings.indexOf('Move beyond disconnected AI experiments.');
+  const whyIndex = sectionHeadings.indexOf(
+    "Most enterprises don't have an access problem. They have an adoption problem.",
+  );
+  const costIndex = sectionHeadings.indexOf('Access without adoption is not neutral.');
   const proofIndex = sectionHeadings.indexOf('Impact reported by enterprise rollouts.');
   const howIndex = sectionHeadings.indexOf('Connect. Equip. Run. Govern.');
   const whatIndex = sectionHeadings.indexOf(
     'From on-brand presentations to company-wide execution.',
   );
+  const shiftIndex = sectionHeadings.indexOf('The same quarter, once adoption is visible.');
 
-  // Proof lands between the problem and the mechanism: a reader reaches "how" already convinced
-  // that it works.
+  // Problem, then its cost, then proof, then the mechanism, then the product, then the before and
+  // after. A reader reaches "how it works" already holding the reason to care and the evidence.
   expect(whyIndex).toBeGreaterThanOrEqual(0);
-  expect(proofIndex).toBeGreaterThan(whyIndex);
+  expect(costIndex).toBeGreaterThan(whyIndex);
+  expect(proofIndex).toBeGreaterThan(costIndex);
   expect(howIndex).toBeGreaterThan(proofIndex);
   expect(whatIndex).toBeGreaterThan(howIndex);
+  expect(shiftIndex).toBeGreaterThan(whatIndex);
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
@@ -221,6 +227,33 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
   await context.close();
+});
+
+test('the argument sections carry the cost, the contrast, and a low-friction entry point', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const cost = page.locator('#cost');
+  await expect(
+    cost.getByRole('heading', { name: 'Budgets stay flat and undirected' }),
+  ).toBeVisible();
+  await expect(cost.getByRole('heading', { name: 'Manual work keeps winning' })).toBeVisible();
+  await expect(
+    cost.getByRole('heading', { name: 'Providers get replaced, not proven' }),
+  ).toBeVisible();
+
+  // Both columns of the contrast must survive; a one-sided version makes no argument.
+  const shift = page.locator('#shift');
+  await expect(shift.getByText('Today', { exact: true })).toBeVisible();
+  await expect(shift.getByText('With Zeno', { exact: true })).toBeVisible();
+  await expect(shift.locator('.shift-today li')).toHaveCount(4);
+  await expect(shift.locator('.shift-zeno li')).toHaveCount(4);
+
+  // The assessment is the self-serve entry point, so its cost to the visitor is stated up front.
+  await expect(page.locator('.conversion-micro')).toHaveText(
+    '9 questions · one workflow · no contact details',
+  );
 });
 
 test('the business case publishes each figure with the qualifier it depends on', async ({
