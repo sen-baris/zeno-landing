@@ -1,8 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GovernanceConsole from '../components/GovernanceConsole.astro';
 import PlatformOverview from '../components/PlatformOverview.astro';
-import WorkflowRun from '../components/WorkflowRun.astro';
+import ProductWorkspace from '../components/ProductWorkspace.astro';
 import { withBase } from '../lib/routing/base-path';
 import { operatingModel, platformPillars, workflowExamples } from '../lib/content/site-content';
 ---
@@ -17,8 +16,8 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
       <p class="eyebrow">Product</p>
       <h1>Connect. Equip. Run. Govern.</h1>
       <p>
-        A clear path from the systems teams already use to work that can be repeated, reviewed, and
-        improved.
+        Four steps from the systems your teams already use to work that runs on its own and still
+        gets checked by a person.
       </p>
     </div>
   </section>
@@ -28,11 +27,11 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
       <header class="section-heading split-heading">
         <div>
           <p class="eyebrow">The workspace</p>
-          <h2 id="overview-title">One place the work actually happens.</h2>
+          <h2 id="overview-title">One place the work happens.</h2>
         </div>
         <p>
-          Company context, the agents built on top of it, and the run history that follows, in a
-          single governed workspace.
+          Your knowledge and tools on one side, the agents built on them in the middle, and the work
+          they produce on the right.
         </p>
       </header>
       <PlatformOverview />
@@ -54,15 +53,15 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
     <div class="shell">
       <header class="section-heading split-heading">
         <div>
-          <p class="eyebrow">Repeatable workflows</p>
-          <h2 id="runs-title">Work that runs beyond the first prompt.</h2>
+          <p class="eyebrow">Agents</p>
+          <h2 id="runs-title">An agent built for one job.</h2>
         </div>
         <p>
-          Multi-step work on a schedule, with its sources, its owner, and its review step attached
-          to every run.
+          Give it the brief, the sources it may use, and the template it has to follow. It hands the
+          result back for review.
         </p>
       </header>
-      <WorkflowRun />
+      <ProductWorkspace />
       <div class="workflow-examples" aria-label="Example workflows">
         <p class="product-label">Where teams begin</p>
         <ul>
@@ -77,12 +76,9 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
       <header class="section-heading split-heading">
         <div>
           <p class="eyebrow">What Zeno brings together</p>
-          <h2 id="pillars-title">From on-brand presentations to company-wide execution.</h2>
+          <h2 id="pillars-title">Start with one agent. Add the next when it has earned it.</h2>
         </div>
-        <p>
-          Start with one useful agent, extend it into repeatable workflows, and keep adoption
-          manageable.
-        </p>
+        <p>The same three parts hold whether one team uses it or the whole company does.</p>
       </header>
       <div class="platform-pillars">
         {
@@ -106,8 +102,8 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
           <h2 id="adoption-title">What the first ninety days look like.</h2>
         </div>
         <p>
-          Follow how useful work spreads while access, model choice, review, and regional operating
-          needs stay visible.
+          What to watch for at each stage, so you know whether it is taking hold before you widen
+          it.
         </p>
       </header>
       <ol class="adoption-timeline" aria-label="90-day adoption observation framework">
@@ -136,7 +132,6 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
           </div>
         </li>
       </ol>
-      <GovernanceConsole />
     </div>
   </section>
 
@@ -148,8 +143,8 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
       </div>
       <div>
         <p>
-          Bring a workflow your team runs every week. We will walk through how it would be
-          connected, equipped, run, and governed.
+          Bring a workflow your team runs every week and we will walk through how it would be set
+          up, what it would run on, and who would sign it off.
         </p>
         <div class="button-row">
           <a class="button button-paper" href={withBase('/demo')}>Book a demo</a>

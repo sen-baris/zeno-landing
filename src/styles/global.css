@@ -1027,6 +1027,12 @@ h2 {
   margin-top: clamp(74px, 8vw, 118px);
 }
 
+/* When a block leads its section it sits directly under the heading's own bottom margin. */
+.section-heading + .platform-pillars,
+.operating-model .product-workspace {
+  margin-top: 0;
+}
+
 .adoption-timeline {
   display: grid;
   margin: 0;

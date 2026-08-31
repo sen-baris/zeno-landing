@@ -1,8 +1,7 @@
 export const draftHomeCopy = {
   status: 'draft',
   headline: 'Make AI part of everyday work.',
-  subhead:
-    'Help teams adopt AI across real workflows while keeping rollout visible, governed, and manageable.',
+  subhead: 'Put AI into the work your teams already do, and see for yourself who is using it.',
 } as const;
 
 export const releaseContentStatus = {
@@ -17,20 +16,20 @@ export const benefits = [
   {
     number: '01',
     scene: 'ask',
-    title: 'Useful in the work people already do',
-    body: 'Give every team a familiar place to ask, create, analyze, and move work forward with company context close at hand.',
+    title: 'It fits the work people already do',
+    body: 'One place to ask a question, draft a document, or check a number, using your own company information.',
   },
   {
     number: '02',
     scene: 'reuse',
-    title: 'Repeatable across teams and departments',
-    body: 'Turn shared expertise into specialized agents and workflows that can be used on demand or run on a schedule.',
+    title: 'What one team sets up, the next can use',
+    body: 'Turn what a team worked out into an agent other teams can pick up, or a workflow that runs on a schedule.',
   },
   {
     number: '03',
     scene: 'oversight',
-    title: 'Visible and manageable as adoption grows',
-    body: 'Bring access, model choice, human review, and usage signals into the same operating view as the work itself.',
+    title: 'You can see who is actually using it',
+    body: 'Who has access, which model they are on, and where a person still has to sign off. All on one screen.',
   },
 ] as const;
 
@@ -38,22 +37,22 @@ export const operatingModel = [
   {
     number: '01',
     title: 'Connect knowledge and tools',
-    body: 'Bring approved company context and the systems teams already use into one workspace.',
+    body: 'Point Zeno at the documents, drives, and systems your teams already work in.',
   },
   {
     number: '02',
     title: 'Equip teams with agents',
-    body: 'Give departments specialized assistants with the skills, context, and boundaries their work requires.',
+    body: 'Set up an agent for one job, with the knowledge it needs and limits on what it can reach.',
   },
   {
     number: '03',
     title: 'Run repeatable workflows',
-    body: 'Move from one-off assistance to multi-step work that runs on demand or on a schedule.',
+    body: 'Chain the steps together so the whole thing runs on a schedule instead of on request.',
   },
   {
     number: '04',
     title: 'Govern and improve',
-    body: 'Keep human checkpoints explicit and make adoption visible as usage expands.',
+    body: 'Decide where a person signs off, and watch which teams come back to it.',
   },
 ] as const;
 
@@ -65,57 +64,57 @@ export const workflowExamples = [
 ] as const;
 
 /**
- * The cost of stopping at access. Market observation framing, not a claim about Zeno, a customer,
- * or a measured outcome, so it carries no registry record.
+ * What it costs to stop at access. Market observation, not a claim about Zeno, a customer, or a
+ * measured outcome, so these carry no registry record.
  */
 export const adoptionCosts = [
   {
     number: '01',
-    title: 'Budgets stay flat and undirected',
-    body: 'Without usage anyone can point to, AI spend gets spread evenly instead of moved toward what is working.',
+    title: 'You cannot tell what is worth paying for',
+    body: 'With no usage numbers, every team gets the same licence, whether they work in it daily or logged in once.',
   },
   {
     number: '02',
-    title: 'Manual work keeps winning by default',
-    body: 'Reporting, research, and document review stay manual, or drift to unapproved tools, because the sanctioned one never became a habit.',
+    title: 'People go back to doing it by hand',
+    body: 'The monthly report still gets built in a spreadsheet, or in a tool IT never approved, because the official one never stuck.',
   },
   {
     number: '03',
-    title: 'Providers get replaced, not proven',
-    body: 'Another provider gets evaluated and none of them stick, because value was never demonstrated with the last one.',
+    title: 'You end up shopping for another tool',
+    body: 'A year later someone opens a new vendor review, because nobody could show what the last one was worth.',
   },
 ] as const;
 
-/** Two columns of the same operating picture, before and after adoption becomes visible. */
+/** The same operating picture before and after the work happens somewhere you can see it. */
 export const operatingShift = {
   today: [
-    'Two or three tools piloted, with no clear adoption story',
-    'Reporting and document work done by hand, or in unapproved tools',
-    'No way to show a budget owner what AI actually delivered',
-    'Model choice decided by whichever provider was bought first',
+    'Two or three AI tools in pilot, none of them finished',
+    'The monthly report is still built by hand',
+    'Nobody can answer what the AI spend bought',
+    'You are stuck with whichever provider was bought first',
   ],
   withZeno: [
-    'One workspace, with reuse visible across teams',
-    'Agents carry the repeatable work; people keep the judgment',
-    'A case per workflow, tied to the time or cost it takes back',
-    'Model choice across approved providers, changeable later',
+    'One place to work, and you can see who is in it',
+    'Agents do the repetitive part, people make the calls',
+    'Every workflow has a number attached to it',
+    'You can switch model provider later',
   ],
 } as const;
 
 export const platformPillars = [
   {
     label: 'Specialized agents',
-    title: 'Create with company context',
-    body: 'Agents that bring approved knowledge, tools, and brand standards into everyday work.',
+    title: 'Agents that know your company',
+    body: 'They work from your documents, your data, and your templates.',
   },
   {
     label: 'Recurring workflows',
-    title: 'Run work beyond the first prompt',
-    body: 'Connected steps, scheduled runs, clear owners, and review where judgment is needed.',
+    title: 'Work that continues after the prompt',
+    body: 'Steps that run in order, on a schedule, with an owner and a review point.',
   },
   {
     label: 'Adoption governance',
-    title: 'See how use grows',
-    body: 'One place to manage access and model choice, and follow where teams adopt AI.',
+    title: 'One screen for administrators',
+    body: 'Access, model choice, and usage figures in the same place.',
   },
 ] as const;

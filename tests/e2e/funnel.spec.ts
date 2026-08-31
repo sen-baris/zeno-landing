@@ -137,12 +137,10 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const whyIndex = sectionHeadings.indexOf(
     "Most enterprises don't have an access problem. They have an adoption problem.",
   );
-  const costIndex = sectionHeadings.indexOf('Unused AI is not free.');
-  const proofIndex = sectionHeadings.indexOf('Impact reported by enterprise rollouts.');
-  const whatIndex = sectionHeadings.indexOf(
-    'From on-brand presentations to company-wide execution.',
-  );
-  const shiftIndex = sectionHeadings.indexOf('The same quarter, run differently.');
+  const costIndex = sectionHeadings.indexOf('What happens when nobody uses it.');
+  const proofIndex = sectionHeadings.indexOf('What enterprise customers report.');
+  const whatIndex = sectionHeadings.indexOf('The report builds itself. You still sign it off.');
+  const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
   // Problem, then its cost, then proof, then one product moment, then the before and after. The
   // mechanism itself lives on /product so the homepage does not explain it twice.
@@ -157,10 +155,8 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText('Reporting workflow', { exact: true })).toBeVisible();
+  await expect(page.getByText('Consolidate findings')).toBeVisible();
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -176,18 +172,20 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 test('reduced motion preserves the complete static product story', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
+  await expect(page.getByText('Consolidate findings')).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
+    page.getByText('Nothing gets published until a person has looked at it.'),
   ).toBeVisible();
-  await expect(page.getByText('Company sources and brand template applied')).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.locator('.trust-certifications')).toBeVisible();
+  for (const visual of ['.workflow-run', '.governance-console', '.trust-certifications']) {
+    await expect(page.locator(visual)).toBeVisible();
+  }
   await expect(page.locator('.shift-compare')).toBeVisible();
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
 
   // The mechanism visuals live on /product and must degrade the same way.
   await page.goto('/product');
-  for (const visual of ['.platform-overview', '.workflow-run', '.governance-console']) {
+  for (const visual of ['.platform-overview', '.product-workspace']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
@@ -205,9 +203,10 @@ test('every revealable product visual becomes visible once motion runs', async (
   );
   expect(faded, 'motion must leave every revealed element fully opaque').toEqual([]);
 
+  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
+
   await page.goto('/product');
   await settleRevealMotion(page);
-  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
   const fadedOnProduct = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
       .filter((element) => Number(getComputedStyle(element).opacity) < 1)
@@ -221,15 +220,15 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(
-    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
   await page.goto('/product');
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
+  ).toBeVisible();
   await context.close();
 });
 
@@ -248,8 +247,8 @@ test('the product page carries the mechanism the homepage now links to', async (
     page.getByRole('heading', { name: 'Everyday work and repeatable workflows' }),
   ).toBeVisible();
   await expect(page.getByText('Govern across the organization', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Create with company context' })).toBeVisible();
-  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
+  await expect(page.getByRole('heading', { name: 'Agents that know your company' })).toBeVisible();
+  await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
 
   const adoptionFramework = page.getByRole('list', {
     name: '90-day adoption observation framework',
@@ -266,13 +265,13 @@ test('the argument sections carry the cost, the contrast, and a low-friction ent
 
   const cost = page.locator('#cost');
   await expect(
-    cost.getByRole('heading', { name: 'Budgets stay flat and undirected' }),
+    cost.getByRole('heading', { name: 'You cannot tell what is worth paying for' }),
   ).toBeVisible();
   await expect(
-    cost.getByRole('heading', { name: 'Manual work keeps winning by default' }),
+    cost.getByRole('heading', { name: 'People go back to doing it by hand' }),
   ).toBeVisible();
   await expect(
-    cost.getByRole('heading', { name: 'Providers get replaced, not proven' }),
+    cost.getByRole('heading', { name: 'You end up shopping for another tool' }),
   ).toBeVisible();
 
   // Both columns of the contrast must survive; a one-sided version makes no argument.
@@ -294,7 +293,7 @@ test('the business case publishes each figure with the qualifier it depends on',
   await page.goto('/');
   const businessCase = page.locator('#business-case');
   await expect(businessCase.getByRole('heading', { level: 2 })).toHaveText(
-    'Impact reported by enterprise rollouts.',
+    'What enterprise customers report.',
   );
 
   const expected = [
