@@ -1,0 +1,80 @@
+---
+// A stalled rollout as it appears in an adoption view. Every figure here is a scenario, not a
+// measured Zeno result, which is why the frame is labelled as one and the caption says so plainly.
+// It carries no claim record for the same reason the "Today" column of the contrast does not.
+//
+// One series, so one colour for every column and no legend: the panel heading names what is
+// plotted. Column fill is --action and the deltas are --evidence; that pair was checked for
+// colour-vision separation (ΔE 19.0 deutan, 19.5 normal) and contrast against the panel surface.
+// The deltas carry an arrow and words, so the state never depends on colour alone.
+const stats = [
+  {
+    label: 'Weekly active',
+    value: '12%',
+    direction: 'down',
+    delta: 'from a 38% peak in month two',
+  },
+  { label: 'Messages per active user', value: '4', direction: 'down', delta: 'from 26 at launch' },
+  { label: 'Teams using it twice', value: '2 of 14', direction: 'down', delta: 'down from 9' },
+  { label: 'Seats idle 30 days', value: '71%', direction: 'up', delta: 'up from 34%' },
+] as const;
+
+// Weekly active users, week 1 to 12: a ramp, a peak, then six months of fade.
+const weeks = [18, 29, 38, 35, 30, 26, 23, 20, 17, 15, 13, 12];
+const peak = Math.max(...weeks);
+// Label the peak and the endpoint only. A number on every column goes unread.
+const labelled = new Set([weeks.indexOf(peak), weeks.length - 1]);
+---
+
+<figure class="adoption-gap" data-reveal aria-labelledby="adoption-gap-caption">
+  <div class="product-frame">
+    <div class="product-frame-bar">
+      <div>
+        <span class="product-mark" aria-hidden="true">Z</span>
+        <span>Adoption</span>
+      </div>
+      <span class="product-frame-status gap-status">A rollout that stalled</span>
+    </div>
+
+    <ul class="gap-stats">
+      {
+        stats.map((stat) => (
+          <li>
+            <p class="product-label">{stat.label}</p>
+            <p class="gap-value">{stat.value}</p>
+            <p class="gap-delta" data-direction={stat.direction}>
+              <span aria-hidden="true">{stat.direction === 'down' ? '↓' : '↑'}</span>
+              {stat.delta}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="gap-chart">
+      <div class="gap-chart-head">
+        <p class="product-label">Weekly active users</p>
+        <span>Week 1 to week 12</span>
+      </div>
+      {/* The figures are already stated in the tiles above, so the plot itself is decorative. */}
+      <div class="gap-plot" aria-hidden="true">
+        {
+          weeks.map((week, index) => (
+            <div class="gap-col" style={`--column-height: ${Math.round((week / peak) * 100)}%`}>
+              {labelled.has(index) && <span class="gap-col-label">{week}%</span>}
+              <i />
+            </div>
+          ))
+        }
+      </div>
+      <div class="gap-axis" aria-hidden="true">
+        <span>Week 1</span>
+        <span>Week 12</span>
+      </div>
+    </div>
+  </div>
+  <figcaption id="adoption-gap-caption">
+    This is the view most companies never get. Without it a rollout can fade for half a year before
+    anyone notices it has.
+  </figcaption>
+</figure>

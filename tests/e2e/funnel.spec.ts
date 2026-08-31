@@ -177,7 +177,12 @@ test('reduced motion preserves the complete static product story', async ({ page
     page.getByText('Nothing gets published until a person has looked at it.'),
   ).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.workflow-run', '.governance-console', '.trust-certifications']) {
+  for (const visual of [
+    '.adoption-gap',
+    '.workflow-run',
+    '.governance-console',
+    '.trust-certifications',
+  ]) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -273,6 +278,16 @@ test('the argument sections carry the cost, the contrast, and a low-friction ent
   await expect(
     cost.getByRole('heading', { name: 'You end up shopping for another tool' }),
   ).toBeVisible();
+
+  // The adoption panel shows the failure state, so it must be labelled as a scenario and never
+  // read as a measured Zeno result.
+  const gap = cost.locator('.adoption-gap');
+  await expect(gap.getByText('A rollout that stalled')).toBeVisible();
+  await expect(gap.locator('.gap-stats > li')).toHaveCount(4);
+  await expect(gap.locator('.gap-col')).toHaveCount(12);
+  // Every figure in the plot is also written out in a tile, so the chart is never the only source.
+  await expect(gap.getByText('12%', { exact: true }).first()).toBeVisible();
+  await expect(gap.getByText('from a 38% peak in month two')).toBeVisible();
 
   // Both columns of the contrast must survive; a one-sided version makes no argument.
   const shift = page.locator('#shift');
