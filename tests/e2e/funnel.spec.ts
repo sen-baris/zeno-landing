@@ -57,7 +57,7 @@ async function completeDemoForm(page: Page) {
 test('homepage to assessment result to prefilled demo', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    "Access is easy. Adoption isn't.",
+    'Make AI part of everyday work.',
   );
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
   await expect(page).toHaveURL(/\/ai-readiness$/);
@@ -137,12 +137,12 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const whyIndex = sectionHeadings.indexOf(
     "Most enterprises don't have an access problem. They have an adoption problem.",
   );
-  const costIndex = sectionHeadings.indexOf('Access without adoption is not neutral.');
+  const costIndex = sectionHeadings.indexOf('Unused AI is not free.');
   const proofIndex = sectionHeadings.indexOf('Impact reported by enterprise rollouts.');
   const whatIndex = sectionHeadings.indexOf(
     'From on-brand presentations to company-wide execution.',
   );
-  const shiftIndex = sectionHeadings.indexOf('The same quarter, once adoption is visible.');
+  const shiftIndex = sectionHeadings.indexOf('The same quarter, run differently.');
 
   // Problem, then its cost, then proof, then one product moment, then the before and after. The
   // mechanism itself lives on /product so the homepage does not explain it twice.
