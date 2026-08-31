@@ -3,6 +3,7 @@ import { gzipSync } from 'node:zlib';
 
 const routes = [
   { route: '/', html: 'dist/index.html', budget: 75 * 1024 },
+  { route: '/product', html: 'dist/product/index.html', budget: 75 * 1024 },
   { route: '/ai-readiness', html: 'dist/ai-readiness/index.html', budget: 150 * 1024 },
   { route: '/demo', html: 'dist/demo/index.html', budget: 150 * 1024 },
 ];

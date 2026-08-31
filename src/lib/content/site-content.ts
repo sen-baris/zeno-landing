@@ -1,6 +1,6 @@
 export const draftHomeCopy = {
   status: 'draft',
-  headline: 'Make AI part of everyday work.',
+  headline: "Access is easy. Adoption isn't.",
   subhead:
     'Help teams adopt AI across real workflows while keeping rollout visible, governed, and manageable.',
 } as const;

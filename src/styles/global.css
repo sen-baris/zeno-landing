@@ -2685,6 +2685,15 @@ html[data-motion='on'] .business-case-figures > li:nth-child(4) {
   content: '\2713';
 }
 
+.section-more {
+  margin-top: clamp(34px, 4vw, 52px);
+}
+
+.section-more a {
+  font-size: 0.9rem;
+  font-weight: 560;
+}
+
 .conversion-micro {
   margin-top: 20px;
   color: color-mix(in srgb, var(--paper) 66%, transparent);

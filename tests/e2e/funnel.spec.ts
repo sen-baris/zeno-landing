@@ -57,7 +57,7 @@ async function completeDemoForm(page: Page) {
 test('homepage to assessment result to prefilled demo', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Make AI part of everyday work.',
+    "Access is easy. Adoption isn't.",
   );
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
   await expect(page).toHaveURL(/\/ai-readiness$/);
@@ -117,7 +117,7 @@ test('demo server failure is understandable and retry succeeds', async ({ page }
 test('homepage and interactive routes have no automatically detectable WCAG A/AA violations', async ({
   page,
 }) => {
-  for (const path of ['/', '/ai-readiness', '/demo']) {
+  for (const path of ['/', '/product', '/ai-readiness', '/demo']) {
     await page.goto(path);
     // Entrance motion fades content in from transparent, so audit the settled page rather than a
     // frame mid-transition.
@@ -139,44 +139,28 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   );
   const costIndex = sectionHeadings.indexOf('Access without adoption is not neutral.');
   const proofIndex = sectionHeadings.indexOf('Impact reported by enterprise rollouts.');
-  const howIndex = sectionHeadings.indexOf('Connect. Equip. Run. Govern.');
   const whatIndex = sectionHeadings.indexOf(
     'From on-brand presentations to company-wide execution.',
   );
   const shiftIndex = sectionHeadings.indexOf('The same quarter, once adoption is visible.');
 
-  // Problem, then its cost, then proof, then the mechanism, then the product, then the before and
-  // after. A reader reaches "how it works" already holding the reason to care and the evidence.
+  // Problem, then its cost, then proof, then one product moment, then the before and after. The
+  // mechanism itself lives on /product so the homepage does not explain it twice.
   expect(whyIndex).toBeGreaterThanOrEqual(0);
   expect(costIndex).toBeGreaterThan(whyIndex);
   expect(proofIndex).toBeGreaterThan(costIndex);
-  expect(howIndex).toBeGreaterThan(proofIndex);
-  expect(whatIndex).toBeGreaterThan(howIndex);
+  expect(whatIndex).toBeGreaterThan(proofIndex);
   expect(shiftIndex).toBeGreaterThan(whatIndex);
+  expect(sectionHeadings, 'the mechanism belongs on /product').not.toContain(
+    'Connect. Equip. Run. Govern.',
+  );
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Company knowledge and tools' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Specialized agents for teams' })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Everyday work and repeatable workflows' }),
-  ).toBeVisible();
-  await expect(page.getByText('Govern across the organization', { exact: true })).toBeVisible();
-  await expect(
-    page.getByRole('heading', {
-      name: 'Create with company context',
-    }),
-  ).toBeVisible();
   await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
   ).toBeVisible();
-  const adoptionFramework = page.getByRole('list', {
-    name: '90-day adoption observation framework',
-  });
-  await expect(adoptionFramework.getByText('30', { exact: true })).toBeVisible();
-  await expect(adoptionFramework.getByText('60', { exact: true })).toBeVisible();
-  await expect(adoptionFramework.getByText('90', { exact: true })).toBeVisible();
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -197,7 +181,13 @@ test('reduced motion preserves the complete static product story', async ({ page
   ).toBeVisible();
   await expect(page.getByText('Company sources and brand template applied')).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.workflow-run', '.governance-console', '.trust-certifications']) {
+  await expect(page.locator('.trust-certifications')).toBeVisible();
+  await expect(page.locator('.shift-compare')).toBeVisible();
+  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+
+  // The mechanism visuals live on /product and must degrade the same way.
+  await page.goto('/product');
+  for (const visual of ['.platform-overview', '.workflow-run', '.governance-console']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
@@ -208,13 +198,22 @@ test('every revealable product visual becomes visible once motion runs', async (
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'on');
   await settleRevealMotion(page);
 
-  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
   const faded = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
       .filter((element) => Number(getComputedStyle(element).opacity) < 1)
       .map((element) => element.className || element.tagName),
   );
   expect(faded, 'motion must leave every revealed element fully opaque').toEqual([]);
+
+  await page.goto('/product');
+  await settleRevealMotion(page);
+  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
+  const fadedOnProduct = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
+      .filter((element) => Number(getComputedStyle(element).opacity) < 1)
+      .map((element) => element.className || element.tagName),
+  );
+  expect(fadedOnProduct, 'motion must settle on the product page too').toEqual([]);
 });
 
 test('the product visuals survive a page with no JavaScript', async ({ browser }) => {
@@ -222,11 +221,42 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
+
+  await page.goto('/product');
+  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
   await context.close();
+});
+
+test('the product page carries the mechanism the homepage now links to', async ({ page }) => {
+  await page.goto('/');
+  await page
+    .getByRole('navigation', { name: 'Primary navigation' })
+    .getByRole('link', { name: 'Product' })
+    .click();
+  await expect(page).toHaveURL(/\/product$/);
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Connect. Equip. Run. Govern.');
+  await expect(page.getByRole('heading', { name: 'Company knowledge and tools' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Specialized agents for teams' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Everyday work and repeatable workflows' }),
+  ).toBeVisible();
+  await expect(page.getByText('Govern across the organization', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Create with company context' })).toBeVisible();
+  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
+
+  const adoptionFramework = page.getByRole('list', {
+    name: '90-day adoption observation framework',
+  });
+  await expect(adoptionFramework.getByText('30', { exact: true })).toBeVisible();
+  await expect(adoptionFramework.getByText('60', { exact: true })).toBeVisible();
+  await expect(adoptionFramework.getByText('90', { exact: true })).toBeVisible();
 });
 
 test('the argument sections carry the cost, the contrast, and a low-friction entry point', async ({

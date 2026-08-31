@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GovernanceConsole from '../components/GovernanceConsole.astro';
+import PlatformOverview from '../components/PlatformOverview.astro';
+import WorkflowRun from '../components/WorkflowRun.astro';
+import { withBase } from '../lib/routing/base-path';
+import { operatingModel, platformPillars, workflowExamples } from '../lib/content/site-content';
+---
+
+<BaseLayout
+  title="Product — Zeno"
+  description="How Zeno works: connected company knowledge, specialized agents, repeatable workflows that run on a schedule, and governance that stays visible as adoption grows."
+  canonicalPath="/product"
+>
+  <section class="page-intro section-rule">
+    <div class="shell narrow-shell">
+      <p class="eyebrow">Product</p>
+      <h1>Connect. Equip. Run. Govern.</h1>
+      <p>
+        A clear path from the systems teams already use to work that can be repeated, reviewed, and
+        improved.
+      </p>
+    </div>
+  </section>
+
+  <section class="platform section-rule" aria-labelledby="overview-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">The workspace</p>
+          <h2 id="overview-title">One place the work actually happens.</h2>
+        </div>
+        <p>
+          Company context, the agents built on top of it, and the run history that follows, in a
+          single governed workspace.
+        </p>
+      </header>
+      <PlatformOverview />
+      <ol class="model-list">
+        {
+          operatingModel.map((step) => (
+            <li data-reveal>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="operating-model section-rule" aria-labelledby="runs-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Repeatable workflows</p>
+          <h2 id="runs-title">Work that runs beyond the first prompt.</h2>
+        </div>
+        <p>
+          Multi-step work on a schedule, with its sources, its owner, and its review step attached
+          to every run.
+        </p>
+      </header>
+      <WorkflowRun />
+      <div class="workflow-examples" aria-label="Example workflows">
+        <p class="product-label">Where teams begin</p>
+        <ul>
+          {workflowExamples.map((workflow) => <li>{workflow}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="platform section-rule" aria-labelledby="pillars-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">What Zeno brings together</p>
+          <h2 id="pillars-title">From on-brand presentations to company-wide execution.</h2>
+        </div>
+        <p>
+          Start with one useful agent, extend it into repeatable workflows, and keep adoption
+          manageable.
+        </p>
+      </header>
+      <div class="platform-pillars">
+        {
+          platformPillars.map((pillar) => (
+            <article data-reveal>
+              <span class="pillar-label">{pillar.label}</span>
+              <h3>{pillar.title}</h3>
+              <p>{pillar.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="adoption-trust section-rule" aria-labelledby="adoption-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Adoption</p>
+          <h2 id="adoption-title">What the first ninety days look like.</h2>
+        </div>
+        <p>
+          Follow how useful work spreads while access, model choice, review, and regional operating
+          needs stay visible.
+        </p>
+      </header>
+      <ol class="adoption-timeline" aria-label="90-day adoption observation framework">
+        <li data-reveal>
+          <span>30</span>
+          <div>
+            <small>days</small>
+            <h3>Find repeat use</h3>
+            <p>See which teams return after their first interaction.</p>
+          </div>
+        </li>
+        <li data-reveal>
+          <span>60</span>
+          <div>
+            <small>days</small>
+            <h3>Spread what works</h3>
+            <p>Follow reuse of shared agents and connected knowledge.</p>
+          </div>
+        </li>
+        <li data-reveal>
+          <span>90</span>
+          <div>
+            <small>days</small>
+            <h3>Scale with control</h3>
+            <p>See which recurring work is ready for governed execution.</p>
+          </div>
+        </li>
+      </ol>
+      <GovernanceConsole />
+    </div>
+  </section>
+
+  <section class="conversion" aria-labelledby="product-cta-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">Start with one workflow</p>
+        <h2 id="product-cta-title">See it against your own work.</h2>
+      </div>
+      <div>
+        <p>
+          Bring a workflow your team runs every week. We will walk through how it would be
+          connected, equipped, run, and governed.
+        </p>
+        <div class="button-row">
+          <a class="button button-paper" href={withBase('/demo')}>Book a demo</a>
+          <a class="button button-inverse" href={withBase('/ai-readiness')}>Assess AI readiness</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
