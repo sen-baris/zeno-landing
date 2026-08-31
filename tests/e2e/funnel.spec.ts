@@ -268,7 +268,9 @@ test('the argument sections carry the cost, the contrast, and a low-friction ent
   await expect(
     cost.getByRole('heading', { name: 'Budgets stay flat and undirected' }),
   ).toBeVisible();
-  await expect(cost.getByRole('heading', { name: 'Manual work keeps winning' })).toBeVisible();
+  await expect(
+    cost.getByRole('heading', { name: 'Manual work keeps winning by default' }),
+  ).toBeVisible();
   await expect(
     cost.getByRole('heading', { name: 'Providers get replaced, not proven' }),
   ).toBeVisible();

@@ -76,7 +76,7 @@ export const adoptionCosts = [
   },
   {
     number: '02',
-    title: 'Manual work keeps winning',
+    title: 'Manual work keeps winning by default',
     body: 'Reporting, research, and document review stay manual, or drift to unapproved tools, because the sanctioned one never became a habit.',
   },
   {
