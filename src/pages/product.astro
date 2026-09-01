@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AdoptionGap from '../components/AdoptionGap.astro';
 import PlatformOverview from '../components/PlatformOverview.astro';
 import ProductWorkspace from '../components/ProductWorkspace.astro';
+import WorkflowRun from '../components/WorkflowRun.astro';
 import { withBase } from '../lib/routing/base-path';
 import { operatingModel, platformPillars, workflowExamples } from '../lib/content/site-content';
 ---
@@ -71,6 +73,22 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
     </div>
   </section>
 
+  <section class="platform section-rule" aria-labelledby="runs-schedule-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Workflows</p>
+          <h2 id="runs-schedule-title">The report builds itself. You still sign it off.</h2>
+        </div>
+        <p>
+          Every Monday it collects the data, prepares it, and drafts the summary. Then it stops and
+          waits for a person.
+        </p>
+      </header>
+      <WorkflowRun />
+    </div>
+  </section>
+
   <section class="platform section-rule" aria-labelledby="pillars-title">
     <div class="shell">
       <header class="section-heading split-heading">
@@ -99,11 +117,10 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
       <header class="section-heading split-heading">
         <div>
           <p class="eyebrow">Adoption</p>
-          <h2 id="adoption-title">What the first ninety days look like.</h2>
+          <h2 id="adoption-title">Adoption you can actually measure.</h2>
         </div>
         <p>
-          What to watch for at each stage, so you know whether it is taking hold before you widen
-          it.
+          What to watch at each stage, so you know whether it is taking hold before you widen it.
         </p>
       </header>
       <ol class="adoption-timeline" aria-label="90-day adoption observation framework">
@@ -132,6 +149,7 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
           </div>
         </li>
       </ol>
+      <AdoptionGap />
     </div>
   </section>
 

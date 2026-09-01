@@ -1,5 +1,5 @@
 ---
-// A stalled rollout as it appears in an adoption view. Every figure here is a scenario, not a
+// The adoption view, showing a rollout that took hold. Every figure here is a scenario, not a
 // measured Zeno result, which is why the frame is labelled as one and the caption says so plainly.
 // It carries no claim record for the same reason the "Today" column of the contrast does not.
 //
@@ -8,22 +8,17 @@
 // colour-vision separation (ΔE 19.0 deutan, 19.5 normal) and contrast against the panel surface.
 // The deltas carry an arrow and words, so the state never depends on colour alone.
 const stats = [
-  {
-    label: 'Weekly active',
-    value: '12%',
-    direction: 'down',
-    delta: 'from a 38% peak in month two',
-  },
-  { label: 'Messages per active user', value: '4', direction: 'down', delta: 'from 26 at launch' },
-  { label: 'Teams using it twice', value: '2 of 14', direction: 'down', delta: 'down from 9' },
-  { label: 'Seats idle 30 days', value: '71%', direction: 'up', delta: 'up from 34%' },
+  { label: 'Weekly active', value: '64%', direction: 'up', delta: 'from 21% in month one' },
+  { label: 'Messages per active user', value: '31', direction: 'up', delta: 'from 9 at launch' },
+  { label: 'Teams using it twice', value: '11 of 14', direction: 'up', delta: 'up from 3' },
+  { label: 'Seats idle 30 days', value: '9%', direction: 'down', delta: 'down from 46%' },
 ] as const;
 
-// Weekly active users, week 1 to 12: a ramp, a peak, then six months of fade.
-const weeks = [18, 29, 38, 35, 30, 26, 23, 20, 17, 15, 13, 12];
+// Weekly active users, week 1 to 12: a slow start, then it holds and keeps climbing.
+const weeks = [21, 27, 33, 36, 40, 45, 48, 52, 55, 58, 61, 64];
 const peak = Math.max(...weeks);
-// Label the peak and the endpoint only. A number on every column goes unread.
-const labelled = new Set([weeks.indexOf(peak), weeks.length - 1]);
+// Label the first and last column only. A number on every column goes unread.
+const labelled = new Set([0, weeks.length - 1]);
 ---
 
 <figure class="adoption-gap" data-reveal aria-labelledby="adoption-gap-caption">
@@ -33,7 +28,7 @@ const labelled = new Set([weeks.indexOf(peak), weeks.length - 1]);
         <span class="product-mark" aria-hidden="true">Z</span>
         <span>Adoption</span>
       </div>
-      <span class="product-frame-status gap-status">A rollout that stalled</span>
+      <span class="product-frame-status gap-status">A rollout that took hold</span>
     </div>
 
     <ul class="gap-stats">
@@ -74,7 +69,7 @@ const labelled = new Set([weeks.indexOf(peak), weeks.length - 1]);
     </div>
   </div>
   <figcaption id="adoption-gap-caption">
-    This is the view most companies never get. Without it a rollout can fade for half a year before
-    anyone notices it has.
+    The figures administrators can watch week to week: who is active, who came back, and how many
+    seats are sitting idle.
   </figcaption>
 </figure>

@@ -2558,6 +2558,31 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   opacity: 1;
 }
 
+html[data-motion='on'] .layer-agents > ul > li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 480ms ease,
+    transform 480ms ease;
+}
+
+html[data-motion='on'] .agent-layer[data-revealed] .layer-agents > ul > li {
+  opacity: 1;
+  transform: none;
+}
+
+html[data-motion='on'] .layer-agents > ul > li:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+html[data-motion='on'] .layer-agents > ul > li:nth-child(3) {
+  transition-delay: 180ms;
+}
+
+html[data-motion='on'] .layer-agents > ul > li:nth-child(4) {
+  transition-delay: 270ms;
+}
+
 @keyframes zeno-fade-in {
   to {
     opacity: 1;
@@ -2889,6 +2914,152 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 }
 
 .adoption-gap figcaption {
+  max-width: 720px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Enterprise AI layer
+   A stack, read bottom-up: approved models, the governed layer, and the agents teams deploy on it.
+   Deliberately vertical so it does not repeat the horizontal flow in the hero. */
+.agent-layer {
+  margin-top: 0;
+}
+
+.layer-agents {
+  padding: clamp(24px, 2.6vw, 42px);
+}
+
+.layer-agents ul {
+  display: grid;
+  margin: 26px 0 0;
+  padding: 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  list-style: none;
+}
+
+.layer-agents > ul > li {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 15px 16px;
+  background: var(--paper);
+  gap: 12px;
+}
+
+.layer-agent-mark {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--wash);
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.layer-agent-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.layer-agent-copy strong {
+  font-size: 0.86rem;
+  font-weight: 560;
+}
+
+.layer-agent-copy small {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.layer-agent-state {
+  margin-left: auto;
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.layer-agent-state[data-state='In review'] {
+  color: var(--evidence);
+}
+
+.layer-agents .layer-agent-add {
+  justify-content: center;
+  border-style: dashed;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.layer-agent-add > span {
+  color: var(--action);
+  font-family: var(--mono);
+}
+
+.layer-governed {
+  display: grid;
+  align-items: center;
+  border-block: 1px solid var(--rule);
+  padding: clamp(22px, 2.4vw, 34px) clamp(24px, 2.6vw, 42px);
+  background: var(--wash);
+  grid-template-columns: minmax(200px, 0.7fr) 1.3fr;
+  gap: clamp(24px, 4vw, 60px);
+}
+
+.layer-governed ul {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+
+.layer-governed li {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
+  border-radius: 999px;
+  padding: 8px 14px 8px 11px;
+  background: var(--paper);
+  color: var(--action);
+  font-size: 0.76rem;
+  font-weight: 560;
+  gap: 8px;
+}
+
+.layer-governed li::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--action);
+  content: '';
+}
+
+.layer-models {
+  display: grid;
+  align-items: center;
+  padding: clamp(20px, 2.2vw, 30px) clamp(24px, 2.6vw, 42px);
+  grid-template-columns: minmax(200px, 0.7fr) 1.3fr;
+  gap: clamp(24px, 4vw, 60px);
+}
+
+.layer-models > p:last-child {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.agent-layer figcaption {
   max-width: 720px;
   margin-top: 18px;
   color: var(--muted);
@@ -3381,6 +3552,26 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 
   .gap-plot {
     height: 150px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .layer-agents ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .layer-governed,
+  .layer-models {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .layer-agents ul {
+    grid-template-columns: 1fr;
   }
 }
 

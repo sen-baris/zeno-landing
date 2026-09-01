@@ -139,7 +139,7 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   );
   const costIndex = sectionHeadings.indexOf('What happens when nobody uses it.');
   const proofIndex = sectionHeadings.indexOf('What enterprise customers report.');
-  const whatIndex = sectionHeadings.indexOf('The report builds itself. You still sign it off.');
+  const whatIndex = sectionHeadings.indexOf('One layer over the models you already buy.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
   // Problem, then its cost, then proof, then one product moment, then the before and after. The
@@ -155,8 +155,8 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  await expect(page.getByText('Reporting workflow', { exact: true })).toBeVisible();
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
+  await expect(page.locator('.layer-agents > ul > li')).toHaveCount(4);
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -172,17 +172,12 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 test('reduced motion preserves the complete static product story', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('Nothing gets published until a person has looked at it.'),
+    page.getByText('Set by IT, and switchable without touching anything above.'),
   ).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of [
-    '.adoption-gap',
-    '.workflow-run',
-    '.governance-console',
-    '.trust-certifications',
-  ]) {
+  for (const visual of ['.agent-layer', '.governance-console', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -190,7 +185,12 @@ test('reduced motion preserves the complete static product story', async ({ page
 
   // The mechanism visuals live on /product and must degrade the same way.
   await page.goto('/product');
-  for (const visual of ['.platform-overview', '.product-workspace']) {
+  for (const visual of [
+    '.platform-overview',
+    '.product-workspace',
+    '.workflow-run',
+    '.adoption-gap',
+  ]) {
     await expect(page.locator(visual)).toBeVisible();
   }
   expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
@@ -208,10 +208,9 @@ test('every revealable product visual becomes visible once motion runs', async (
   );
   expect(faded, 'motion must leave every revealed element fully opaque').toEqual([]);
 
-  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
-
   await page.goto('/product');
   await settleRevealMotion(page);
+  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
   const fadedOnProduct = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
       .filter((element) => Number(getComputedStyle(element).opacity) < 1)
@@ -225,7 +224,7 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
@@ -234,6 +233,7 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await expect(
     page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
   ).toBeVisible();
+  await expect(page.getByText('Consolidate findings')).toBeVisible();
   await context.close();
 });
 
@@ -254,6 +254,12 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(page.getByText('Govern across the organization', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Agents that know your company' })).toBeVisible();
   await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
+
+  const gap = page.locator('.adoption-gap');
+  await expect(gap.getByText('A rollout that took hold')).toBeVisible();
+  await expect(gap.locator('.gap-stats > li')).toHaveCount(4);
+  await expect(gap.locator('.gap-col')).toHaveCount(12);
+  await expect(gap.getByText('from 21% in month one')).toBeVisible();
 
   const adoptionFramework = page.getByRole('list', {
     name: '90-day adoption observation framework',
@@ -278,16 +284,6 @@ test('the argument sections carry the cost, the contrast, and a low-friction ent
   await expect(
     cost.getByRole('heading', { name: 'You end up shopping for another tool' }),
   ).toBeVisible();
-
-  // The adoption panel shows the failure state, so it must be labelled as a scenario and never
-  // read as a measured Zeno result.
-  const gap = cost.locator('.adoption-gap');
-  await expect(gap.getByText('A rollout that stalled')).toBeVisible();
-  await expect(gap.locator('.gap-stats > li')).toHaveCount(4);
-  await expect(gap.locator('.gap-col')).toHaveCount(12);
-  // Every figure in the plot is also written out in a tile, so the chart is never the only source.
-  await expect(gap.getByText('12%', { exact: true }).first()).toBeVisible();
-  await expect(gap.getByText('from a 38% peak in month two')).toBeVisible();
 
   // Both columns of the contrast must survive; a one-sided version makes no argument.
   const shift = page.locator('#shift');
