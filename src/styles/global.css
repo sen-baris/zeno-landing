@@ -944,6 +944,10 @@ h2 {
 
 .benefit-item h3,
 .platform-pillars h3 {
+  /* Constrain the measure so every heading in the row wraps, and reserve the second line so the
+     bodies below start together even if one of them ever fits on a single line. */
+  min-height: 2.24em;
+  max-width: 330px;
   margin-block: clamp(42px, 5vw, 72px) 18px;
 }
 
