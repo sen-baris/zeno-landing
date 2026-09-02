@@ -161,14 +161,27 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  // The hero stack: one plate per layer, and every name readable beside it rather than on the
-  // isometric plane, where type would be sheared apart.
-  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
-  await expect(page.locator('.platform-stack .layer-legend > li')).toHaveCount(6);
-  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
-  await expect(page.locator('.platform-stack .layer-legend')).toContainText(
-    'Security and governance',
+  // The hero stack: one plate per layer, each naming itself, and a key beside it that opens every
+  // row with what that layer is.
+  const heroStack = page.locator('.platform-stack');
+  await expect(heroStack.locator('.layer-plate')).toHaveCount(6);
+  await expect(heroStack.locator('.layer-plate-label')).toHaveCount(6);
+  await expect(heroStack.locator('.layer-legend > li')).toHaveCount(6);
+  await expect(heroStack.locator('.layer-legend')).toContainText('Model hub');
+  await expect(heroStack.locator('.layer-legend')).toContainText('Security and governance');
+  await expect(heroStack.locator('.layer-legend small')).toHaveCount(6);
+  await expect(heroStack.locator('.layer-legend')).toContainText(
+    'More than one provider, chosen by IT, switchable later.',
   );
+
+  // The plates are separated only by translateZ under the scene's preserve-3d. Anything that
+  // flattens that context — most easily a wrapper introduced between scene and plates — collapses
+  // all six onto one line while computed transformStyle still reports preserve-3d, so measuring the
+  // geometry is the only way to catch it.
+  const plateTops = await heroStack
+    .locator('.layer-plate')
+    .evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
+  expect(new Set(plateTops).size, 'the stack must render as six separated plates').toBe(6);
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -196,7 +209,7 @@ test('reduced motion preserves the complete static product story', async ({ page
   // The mechanism visuals live on /product and must degrade the same way.
   await page.goto('/product');
   for (const visual of [
-    '.layer-stack',
+    '.agent-layer',
     '.product-workspace',
     '.workflow-run',
     '.adoption-gap',
@@ -257,10 +270,14 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(page).toHaveURL(/\/product$/);
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Connect. Equip. Run. Govern.');
+  // The Enterprise AI layer is the page's opening visual: agents on top, one governed layer, the
+  // approved models underneath.
+  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
+  await expect(page.locator('.layer-agents > ul > li')).toHaveCount(4);
+  await expect(page.locator('.layer-governed li')).toHaveCount(4);
   await expect(
-    page.getByRole('heading', { name: 'Six layers, from the models up.' }),
+    page.getByText('Set by IT, and switchable without touching anything above.'),
   ).toBeVisible();
-  await expect(page.locator('.layer-step')).toHaveCount(6);
   await expect(page.getByRole('heading', { name: 'Agents that know your company' })).toBeVisible();
   await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
 
@@ -358,83 +375,6 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
   await context.close();
-});
-
-test('the layer sequence pins and steps, and reads plainly without it', async ({
-  page,
-  browser,
-}) => {
-  await page.goto('/product');
-  const steps = page.locator('.layer-step');
-  await expect(steps).toHaveCount(6);
-
-  // The stack is a visual mirror of the list, so it must not be read out a second time.
-  await expect(page.locator('.layer-stack')).toHaveAttribute('aria-hidden', 'true');
-  // Nothing focusable inside it either, or it would add phantom stops to the tab order.
-  expect(await page.locator('.layer-stack a, .layer-stack button').count()).toBe(0);
-
-  await expect(page.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'on');
-  await expect(page.locator('.layer-stack')).toHaveCSS('position', 'sticky');
-
-  const plates = page.locator('.layer-stack .layer-plate');
-  await expect(plates).toHaveCount(6);
-
-  // The plates are separated only by translateZ under the scene's preserve-3d. Anything that
-  // flattens that context — most easily a wrapper element introduced between scene and plates —
-  // collapses all six onto one line while computed transformStyle still reports preserve-3d, so
-  // measuring the geometry is the only way to catch it.
-  const plateTops = await plates.evaluateAll((nodes) =>
-    nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
-  );
-  expect(new Set(plateTops).size, 'the stack must render as six separated plates').toBe(6);
-
-  // Walking the section marks every layer in turn, and walking back unmarks them again.
-  const box = await page.locator('.layer-sequence').boundingBox();
-  if (!box) throw new Error('the sequence should be laid out');
-  await page.evaluate(
-    (top) => window.scrollTo({ top, behavior: 'instant' }),
-    box.y + box.height - 400,
-  );
-  await expect.poll(() => page.locator('.layer-step[data-state="future"]').count()).toBe(0);
-  // The stack mirrors the list, so the last layer is the marked one and none are left ahead.
-  await expect.poll(() => plates.locator('[data-state="future"]').count()).toBe(0);
-  await expect(page.locator('.layer-stack .layer-plate[data-state="current"]')).toHaveCount(1);
-
-  await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), box.y - 200);
-  await expect
-    .poll(() => page.locator('.layer-step[data-state="future"]').count())
-    .toBeGreaterThan(0);
-  await expect
-    .poll(() => page.locator('.layer-stack .layer-plate[data-state="future"]').count())
-    .toBeGreaterThan(0);
-
-  // With no JavaScript it is a diagram and a list, with every layer visible and nothing pinned.
-  const context = await browser.newContext({ javaScriptEnabled: false });
-  const plain = await context.newPage();
-  await plain.goto('/product');
-  await expect(plain.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'off');
-  await expect(plain.locator('.layer-stack')).toHaveCSS('position', 'static');
-  await expect(plain.locator('.layer-stack .layer-plate')).toHaveCount(6);
-  for (const name of [
-    'Model hub',
-    'Connectors and data',
-    'Context and knowledge',
-    'Specialized agents',
-    'Products and interfaces',
-    'Security and governance',
-  ]) {
-    await expect(plain.getByRole('heading', { name, exact: true })).toBeVisible();
-  }
-  await context.close();
-});
-
-test('the layer sequence does not pin under reduced motion', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/product');
-  await expect(page.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'off');
-  await expect(page.locator('.layer-stack')).toHaveCSS('position', 'static');
-  await expect(page.locator('.layer-step')).toHaveCount(6);
-  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

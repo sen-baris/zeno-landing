@@ -25,16 +25,23 @@ function stateOf(index: number): string | undefined {
   and `getComputedStyle` still reports `preserve-3d`, so the failure is invisible to CSSOM and to a
   test. Ancestors of the scene are harmless, including the reveal layer's `opacity: 0`.
 
-  The plates carry no text. Type set on an isometric plane is sheared into illegibility, so every
-  name is read from the list beside the stack — which is also the whole of it on a narrow screen,
-  where the scene is not drawn at all. That leaves the figure purely decorative and out of the
-  accessibility tree.
+  Each plate names itself. The label counter-rotates out of the plate's plane so it faces the reader
+  upright rather than being sheared along with it, and sits off the plate's left corner, which the
+  projection puts at the leftmost point of the rhombus with clear space beside it.
+
+  Decorative throughout: the same names are listed beside the stack, in order, which is the whole of
+  it on a narrow screen. So the figure stays out of the accessibility tree.
 */
 }
 <div class="layer-scene" style={`--count: ${layers.length}`} aria-hidden="true">
   {
-    layers.map((_layer, index) => (
-      <div class="layer-plate" style={`--depth: ${index}`} data-state={stateOf(index)} />
+    layers.map((layer, index) => (
+      <div class="layer-plate" style={`--depth: ${index}`} data-state={stateOf(index)}>
+        <span class="layer-plate-label">
+          <b>{String(index + 1).padStart(2, '0')}</b>
+          {layer.name}
+        </span>
+      </div>
     ))
   }
 </div>

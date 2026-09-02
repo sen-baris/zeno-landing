@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AdoptionGap from '../components/AdoptionGap.astro';
+import AgentLayer from '../components/AgentLayer.astro';
 import GovernanceConsole from '../components/GovernanceConsole.astro';
-import PlatformSequence from '../components/PlatformSequence.astro';
 import ProductWorkspace from '../components/ProductWorkspace.astro';
 import WorkflowRun from '../components/WorkflowRun.astro';
 import { withBase } from '../lib/routing/base-path';
-import { platformLayers, platformPillars, workflowExamples } from '../lib/content/site-content';
+import { platformPillars, workflowExamples } from '../lib/content/site-content';
 ---
 
 <BaseLayout
@@ -22,21 +22,8 @@ import { platformLayers, platformPillars, workflowExamples } from '../lib/conten
         gets checked by a person.
       </p>
     </div>
-  </section>
-
-  <section class="platform section-rule" aria-labelledby="overview-title">
     <div class="shell">
-      <header class="section-heading split-heading">
-        <div>
-          <p class="eyebrow">The stack</p>
-          <h2 id="overview-title">Six layers, from the models up.</h2>
-        </div>
-        <p>
-          Each one sits on the one below it, and the top two cover everything underneath. Scroll
-          through them one at a time.
-        </p>
-      </header>
-      <PlatformSequence layers={platformLayers} />
+      <AgentLayer />
     </div>
   </section>
 

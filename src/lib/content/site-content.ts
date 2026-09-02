@@ -32,32 +32,33 @@ export const benefits = [
 
 /**
  * The stack, read from the bottom up: the models underneath, everything built on them, and the
- * governance that covers all of it. Each one is a step in the pinned sequence on /product.
+ * governance that covers all of it. Each line is one row of the hero's key, so it has to stay short
+ * enough to read at a glance beside the diagram.
  */
 export const platformLayers = [
   {
     name: 'Model hub',
-    body: 'Approved models from more than one provider, chosen by IT and switchable later without touching anything above.',
+    body: 'More than one provider, chosen by IT, switchable later.',
   },
   {
     name: 'Connectors and data',
-    body: 'The drives, document stores and business systems your teams already work in, connected once.',
+    body: 'The drives, document stores and systems teams already work in.',
   },
   {
     name: 'Context and knowledge',
-    body: 'Your own documents and figures, with permissions carried through, so an agent only ever sees what the person using it may see.',
+    body: 'Your own documents and figures, with permissions carried through.',
   },
   {
     name: 'Specialized agents',
-    body: 'An agent per job, with the knowledge it needs, the template it has to follow, and limits on what it can reach.',
+    body: 'One agent per job, with limits on what it can reach.',
   },
   {
     name: 'Products and interfaces',
-    body: 'Where the work actually happens: ask a question, draft a document, run a workflow, review what came back.',
+    body: 'Ask, draft, run a workflow, review what came back.',
   },
   {
     name: 'Security and governance',
-    body: 'Who has access, which models are allowed, where a person has to sign off, and which teams are using any of it.',
+    body: 'Access, allowed models, sign-off points, and who is using it.',
   },
 ] as const;
 

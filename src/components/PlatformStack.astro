@@ -3,7 +3,7 @@ import LayerStack from './LayerStack.astro';
 import { withBase } from '../lib/routing/base-path';
 
 interface Props {
-  layers: readonly { name: string }[];
+  layers: readonly { name: string; body: string }[];
 }
 
 const { layers } = Astro.props;
@@ -15,8 +15,9 @@ const { layers } = Astro.props;
   with nothing marked, so the homepage shows the shape of the thing and the product page explains it
   a layer at a time.
 
-  The scene is decorative; the ordered list beside it is the content, and below 900px it is all of
-  it — which is also what a reader with images or transforms unavailable gets.
+  The scene is decorative; the ordered list beside it is the content — each layer named and said in
+  one line — and below 900px it is all of it, which is also what a reader with images or transforms
+  unavailable gets.
 */
 }
 <figure class="platform-stack" data-reveal>
@@ -28,7 +29,10 @@ const { layers } = Astro.props;
         layers.map((layer, index) => (
           <li>
             <span>{String(index + 1).padStart(2, '0')}</span>
-            {layer.name}
+            <span>
+              <b>{layer.name}</b>
+              <small>{layer.body}</small>
+            </span>
           </li>
         ))
       }
