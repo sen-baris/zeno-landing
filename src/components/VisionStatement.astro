@@ -3,6 +3,8 @@ import { Image } from 'astro:assets';
 import founders from '../assets/team/founders.jpg';
 import teamEvening from '../assets/team/team-evening.jpg';
 import teamDesk from '../assets/team/team-desk.jpg';
+import teamSummit from '../assets/team/team-summit.jpg';
+import teamOffsite from '../assets/team/team-offsite.jpg';
 
 // The statement is split into sentences at authoring time, not into words. Word spans bloat the DOM
 // and fight the global text-wrap: balance and overflow-wrap: anywhere, for an effect nobody reads
@@ -22,7 +24,10 @@ const lines = [
         <Image src={founders} alt="The two co-founders in the office." />
       </figure>
       <figure data-reveal>
-        <Image src={teamDesk} alt="Two of the team working late at a shared desk." />
+        <Image src={teamDesk} alt="Three of the team working late around a shared desk." />
+      </figure>
+      <figure data-reveal>
+        <Image src={teamOffsite} alt="Two colleagues holding caricatures drawn at a conference." />
       </figure>
     </div>
 
@@ -37,6 +42,9 @@ const lines = [
     <div class="vision-media vision-media-trail">
       <figure data-reveal>
         <Image src={teamEvening} alt="Part of the team together at the end of a working day." />
+      </figure>
+      <figure data-reveal>
+        <Image src={teamSummit} alt="A colleague at the company stand during an AI summit." />
       </figure>
     </div>
   </div>

@@ -1876,169 +1876,6 @@ h2 {
   font-size: 0.8rem;
 }
 
-/* Benefit micro-scenes */
-.benefit-scene {
-  min-height: 258px;
-  margin-top: auto;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 20px;
-  background: var(--paper);
-}
-
-/* Keeps a gap when the card text is long enough to remove the auto margin. */
-.benefit-item > p {
-  margin-bottom: 30px;
-}
-
-.benefit-scene .product-label {
-  color: var(--action);
-}
-
-.scene-input {
-  display: flex;
-  min-height: 62px;
-  align-items: center;
-  margin-top: 16px;
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  padding: 12px 14px;
-  background: var(--canvas);
-  gap: 3px;
-  line-height: 1.35;
-}
-
-.scene-input span {
-  color: var(--ink);
-  font-size: 0.8rem;
-}
-
-.scene-caret {
-  width: 2px;
-  height: 15px;
-  flex: 0 0 auto;
-  background: var(--action);
-}
-
-.scene-chips {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 14px;
-  gap: 8px;
-}
-
-.scene-chips span {
-  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
-  border-radius: 999px;
-  padding: 5px 11px;
-  background: var(--wash);
-  color: var(--action);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-}
-
-.scene-answer {
-  margin-top: 22px;
-  border-top: 1px solid var(--rule);
-  padding-top: 18px;
-}
-
-.scene-answer i {
-  display: block;
-  height: 7px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--action) 20%, transparent);
-  transform-origin: left center;
-}
-
-.scene-answer i + i {
-  margin-top: 9px;
-}
-
-.scene-answer i:nth-child(2) {
-  width: 84%;
-}
-
-.scene-answer i:nth-child(3) {
-  width: 58%;
-}
-
-.scene-agent {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  padding: 12px 14px;
-  background: var(--canvas);
-  font-size: 0.84rem;
-  font-weight: 540;
-  gap: 11px;
-}
-
-.scene-avatar {
-  display: inline-flex;
-  width: 25px;
-  height: 25px;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--wash);
-  color: var(--action);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-}
-
-.scene-branches {
-  margin: 0;
-  padding: 0 0 0 24px;
-  list-style: none;
-}
-
-.scene-branches li {
-  position: relative;
-  padding: 11px 0 0 18px;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.scene-branches li::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 13px;
-  height: 20px;
-  border-bottom: 1px solid var(--rule);
-  border-left: 1px solid var(--rule);
-  content: '';
-}
-
-.scene-rows {
-  margin: 16px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.scene-rows li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--rule);
-  padding-block: 12px;
-  gap: 12px;
-  font-size: 0.8rem;
-}
-
-.scene-rows li span {
-  border-radius: 999px;
-  padding: 4px 10px;
-  background: var(--wash);
-  color: var(--action);
-  font-family: var(--mono);
-  font-size: 0.6rem;
-}
-
 /* Governance console */
 .governance-console {
   margin-top: clamp(60px, 7vw, 100px);
@@ -2407,56 +2244,6 @@ html[data-motion='on'] .workflow-run[data-revealed] .run-progress i {
 
 html[data-motion='on'] .workflow-run[data-revealed] .run-status::before {
   animation: zeno-pulse 2400ms ease-in-out infinite;
-}
-
-/* Benefit scenes fill in after the card that explains them has settled. */
-html[data-motion='on'] .scene-chips span,
-html[data-motion='on'] .scene-branches li,
-html[data-motion='on'] .scene-rows li span {
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 420ms ease 300ms,
-    transform 420ms ease 300ms;
-}
-
-html[data-motion='on'] .benefit-item[data-revealed] .scene-chips span,
-html[data-motion='on'] .benefit-item[data-revealed] .scene-branches li,
-html[data-motion='on'] .benefit-item[data-revealed] .scene-rows li span {
-  opacity: 1;
-  transform: none;
-}
-
-html[data-motion='on'] .scene-chips span:nth-child(2),
-html[data-motion='on'] .scene-branches li:nth-child(2),
-html[data-motion='on'] .scene-rows li:nth-child(2) span {
-  transition-delay: 420ms;
-}
-
-html[data-motion='on'] .scene-branches li:nth-child(3),
-html[data-motion='on'] .scene-rows li:nth-child(3) span {
-  transition-delay: 540ms;
-}
-
-html[data-motion='on'] .scene-answer i {
-  transform: scaleX(0);
-  transition: transform 520ms cubic-bezier(0.25, 0.75, 0.3, 1) 420ms;
-}
-
-html[data-motion='on'] .benefit-item[data-revealed] .scene-answer i {
-  transform: none;
-}
-
-html[data-motion='on'] .scene-answer i:nth-child(2) {
-  transition-delay: 560ms;
-}
-
-html[data-motion='on'] .scene-answer i:nth-child(3) {
-  transition-delay: 700ms;
-}
-
-html[data-motion='on'] .benefit-item[data-revealed] .scene-caret {
-  animation: zeno-caret 900ms step-end 3 forwards;
 }
 
 /* Governance panels and certification cards */
@@ -3174,8 +2961,7 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   }
 
   .layer-governed li:hover,
-  .platform-governance li:hover,
-  .scene-chips span:hover {
+  .platform-governance li:hover {
     border-color: var(--action);
   }
 }
@@ -3195,8 +2981,7 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 .layer-agents > ul > li,
 .gap-stats > li,
 .layer-governed li,
-.platform-governance li,
-.scene-chips span {
+.platform-governance li {
   transition:
     background-color var(--dur-ui) var(--ease-ui),
     border-color var(--dur-ui) var(--ease-ui);
@@ -3240,7 +3025,7 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 .vision-grid {
   display: grid;
   align-items: center;
-  grid-template-columns: minmax(180px, 0.75fr) minmax(320px, 1.5fr) minmax(160px, 0.65fr);
+  grid-template-columns: minmax(200px, 0.85fr) minmax(300px, 1.35fr) minmax(180px, 0.7fr);
   gap: clamp(28px, 5vw, 80px);
 }
 
@@ -3261,17 +3046,29 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 }
 
 /* A slight tilt so the cluster reads as pinned-up photographs rather than a gallery grid. */
-.vision-media-lead figure:first-child {
-  transform: rotate(-1.6deg);
+.vision-media-lead figure:nth-child(1) {
+  transform: rotate(-1.8deg);
 }
 
-.vision-media-lead figure:last-child {
-  margin-left: clamp(18px, 3vw, 44px);
-  transform: rotate(1.2deg);
+.vision-media-lead figure:nth-child(2) {
+  width: 84%;
+  margin-left: auto;
+  transform: rotate(1.4deg);
 }
 
-.vision-media-trail figure {
-  transform: rotate(1.8deg);
+.vision-media-lead figure:nth-child(3) {
+  width: 66%;
+  transform: rotate(-2.4deg);
+}
+
+.vision-media-trail figure:nth-child(1) {
+  transform: rotate(2deg);
+}
+
+.vision-media-trail figure:nth-child(2) {
+  width: 78%;
+  margin-left: auto;
+  transform: rotate(-1.4deg);
 }
 
 .vision-copy h2 {
@@ -3671,10 +3468,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 
   .certification-list {
     grid-template-columns: 1fr;
-  }
-
-  .benefit-scene {
-    max-width: 460px;
   }
 }
 

@@ -142,12 +142,13 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const whatIndex = sectionHeadings.indexOf('One layer over the models you already buy.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
-  // Problem, then its cost, then proof, then one product moment, then the before and after. The
-  // mechanism itself lives on /product so the homepage does not explain it twice.
-  expect(whyIndex).toBeGreaterThanOrEqual(0);
+  // Proof sits with the logos at the top, so the problem and its cost stay adjacent rather than
+  // being interrupted by it. Then one product moment, then the before and after. The mechanism
+  // itself lives on /product so the homepage does not explain it twice.
+  expect(proofIndex).toBeGreaterThanOrEqual(0);
+  expect(whyIndex).toBeGreaterThan(proofIndex);
   expect(costIndex).toBeGreaterThan(whyIndex);
-  expect(proofIndex).toBeGreaterThan(costIndex);
-  expect(whatIndex).toBeGreaterThan(proofIndex);
+  expect(whatIndex).toBeGreaterThan(costIndex);
   expect(shiftIndex).toBeGreaterThan(whatIndex);
   expect(sectionHeadings, 'the mechanism belongs on /product').not.toContain(
     'Connect. Equip. Run. Govern.',
@@ -177,7 +178,7 @@ test('reduced motion preserves the complete static product story', async ({ page
     page.getByText('Set by IT, and switchable without touching anything above.'),
   ).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.agent-layer', '.governance-console', '.trust-certifications']) {
+  for (const visual of ['.agent-layer', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -190,6 +191,7 @@ test('reduced motion preserves the complete static product story', async ({ page
     '.product-workspace',
     '.workflow-run',
     '.adoption-gap',
+    '.governance-console',
   ]) {
     await expect(page.locator(visual)).toBeVisible();
   }
@@ -225,7 +227,6 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
   await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Human checkpoints' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -337,7 +338,7 @@ test('the vision statement stays readable however it is reached', async ({ page,
 
   // Every photograph carries a description; none is decorative.
   const photos = page.locator('#vision img');
-  await expect(photos).toHaveCount(3);
+  await expect(photos).toHaveCount(5);
   for (const photo of await photos.all()) {
     expect((await photo.getAttribute('alt'))?.trim().length ?? 0).toBeGreaterThan(0);
   }

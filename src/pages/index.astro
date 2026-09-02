@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AgentLayer from '../components/AgentLayer.astro';
-import BenefitScene from '../components/BenefitScene.astro';
 import BusinessCase from '../components/BusinessCase.astro';
 import CustomerLogoRail from '../components/CustomerLogoRail.astro';
-import GovernanceConsole from '../components/GovernanceConsole.astro';
 import PlatformOverview from '../components/PlatformOverview.astro';
 import TrustCertifications from '../components/TrustCertifications.astro';
 import VisionStatement from '../components/VisionStatement.astro';
@@ -88,6 +86,20 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
     quote={approvedQuotes[0]}
   />
 
+  <section
+    class="business-case section-rule"
+    id="business-case"
+    aria-labelledby="business-case-title"
+  >
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow">Business case</p>
+        <h2 id="business-case-title">What enterprises are seeing.</h2>
+      </header>
+      <BusinessCase results={approvedBusinessCase} assets={businessCaseAssets} />
+    </div>
+  </section>
+
   <section class="benefits section-rule" id="why" aria-labelledby="benefits-title">
     <div class="shell">
       <header class="section-heading split-heading">
@@ -109,7 +121,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
               <span class="item-number">{benefit.number}</span>
               <h3>{benefit.title}</h3>
               <p>{benefit.body}</p>
-              <BenefitScene variant={benefit.scene} />
             </article>
           ))
         }
@@ -140,20 +151,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           ))
         }
       </ol>
-    </div>
-  </section>
-
-  <section
-    class="business-case section-rule"
-    id="business-case"
-    aria-labelledby="business-case-title"
-  >
-    <div class="shell">
-      <header class="section-heading">
-        <p class="eyebrow">Business case</p>
-        <h2 id="business-case-title">What enterprises are seeing.</h2>
-      </header>
-      <BusinessCase results={approvedBusinessCase} assets={businessCaseAssets} />
     </div>
   </section>
 
@@ -218,7 +215,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           visible to IT.
         </p>
       </header>
-      <GovernanceConsole />
       <TrustCertifications
         certifications={approvedCertifications}
         assets={certificationAssets}
