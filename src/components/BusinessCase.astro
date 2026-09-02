@@ -29,10 +29,84 @@ const figures = results.map((claim) => {
   {
     figures.map(({ claim, asset }) => (
       <li data-metric={claim.id}>
-        <p class="business-case-value">{asset.value}</p>
+        <p class="business-case-value">
+          {/*
+            The approved string is what the server renders and what the counter restores when it
+            finishes, so an intermediate number can never be the published value. The animating copy
+            is hidden from assistive technology and the twin beside it carries the real figure, so a
+            screen reader never encounters a number mid-count.
+          */}
+          <span class="business-case-count" data-figure={asset.value} aria-hidden="true">
+            {asset.value}
+          </span>
+          <span class="visually-hidden">{asset.value}</span>
+        </p>
         <p class="business-case-label">{asset.label}</p>
         <p class="business-case-qualifier">{claim.attribution}</p>
       </li>
     ))
   }
 </ul>
+
+<script>
+  // Figures count up when they arrive, and again on every later arrival, so scrolling back to the
+  // section replays it. That means never unobserving.
+  const root = document.documentElement;
+  const counters = Array.from(document.querySelectorAll<HTMLElement>('.business-case-count'));
+
+  if (root.getAttribute('data-motion') === 'on' && counters.length > 0) {
+    const DURATION = 900;
+    const running = new WeakMap<HTMLElement, number>();
+
+    // Split on digit runs so everything that is not a number — the tilde, the euro sign, the en
+    // dash, the percent, the M — survives untouched and only the quantities move.
+    const countTo = (element: HTMLElement, target: string) => {
+      const parts = target.split(/(\d+)/);
+      if (!parts.some((part) => /^\d+$/.test(part))) return;
+
+      const previous = running.get(element);
+      if (previous !== undefined) cancelAnimationFrame(previous);
+
+      const started = performance.now();
+      const frame = (now: number) => {
+        const progress = Math.min((now - started) / DURATION, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        if (progress < 1) {
+          element.textContent = parts
+            .map((part) => (/^\d+$/.test(part) ? String(Math.round(Number(part) * eased)) : part))
+            .join('');
+          running.set(element, requestAnimationFrame(frame));
+        } else {
+          // Restore the approved string verbatim rather than reassembling it from the parts.
+          element.textContent = target;
+          running.delete(element);
+        }
+      };
+      running.set(element, requestAnimationFrame(frame));
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const element = entry.target as HTMLElement;
+          const target = element.dataset.figure;
+          if (target) countTo(element, target);
+        }
+      },
+      { threshold: 0.6 },
+    );
+
+    for (const counter of counters) observer.observe(counter);
+
+    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+      if (!event.matches) return;
+      observer.disconnect();
+      for (const counter of counters) {
+        const pending = running.get(counter);
+        if (pending !== undefined) cancelAnimationFrame(pending);
+        if (counter.dataset.figure) counter.textContent = counter.dataset.figure;
+      }
+    });
+  }
+</script>

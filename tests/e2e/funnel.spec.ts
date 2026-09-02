@@ -326,6 +326,69 @@ test('the business case publishes each figure with the qualifier it depends on',
   }
 });
 
+const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
+
+test('the business case figures count up, settle exactly, and replay on return', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const counts = page.locator('.business-case-count');
+  await expect(counts).toHaveCount(APPROVED_FIGURES.length);
+
+  // The animating copy is hidden from assistive technology and a twin carries the real value, so a
+  // screen reader can never encounter a number mid-count.
+  for (const count of await counts.all()) {
+    await expect(count).toHaveAttribute('aria-hidden', 'true');
+  }
+  await expect(page.locator('#business-case .visually-hidden')).toHaveText(APPROVED_FIGURES);
+
+  // Watch the first figure mutate as it arrives, rather than trying to catch a frame by timing.
+  const mutations = await page.evaluate(async () => {
+    const figure = document.querySelector('.business-case-count');
+    const section = document.querySelector('#business-case');
+    if (!figure || !section) return 0;
+    let changes = 0;
+    const observer = new MutationObserver(() => {
+      changes += 1;
+    });
+    observer.observe(figure, { characterData: true, childList: true, subtree: true });
+    section.scrollIntoView({ behavior: 'instant' });
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    observer.disconnect();
+    return changes;
+  });
+  expect(mutations, 'the figures should animate on arrival').toBeGreaterThan(0);
+
+  // However it animates, it must land on the approved strings verbatim.
+  await expect.poll(() => counts.allTextContents()).toEqual(APPROVED_FIGURES);
+
+  // Leaving and returning replays it, and it lands on the same strings again.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.locator('#business-case').scrollIntoViewIfNeeded();
+  await expect.poll(() => counts.allTextContents()).toEqual(APPROVED_FIGURES);
+});
+
+test('the business case figures never move under reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const settled = await page.evaluate(async () => {
+    const figure = document.querySelector('.business-case-count');
+    const section = document.querySelector('#business-case');
+    if (!figure || !section) return -1;
+    let changes = 0;
+    const observer = new MutationObserver(() => {
+      changes += 1;
+    });
+    observer.observe(figure, { characterData: true, childList: true, subtree: true });
+    section.scrollIntoView({ behavior: 'instant' });
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    observer.disconnect();
+    return changes;
+  });
+  expect(settled, 'no counting when the reader asked for reduced motion').toBe(0);
+  await expect(page.locator('.business-case-count')).toHaveText(APPROVED_FIGURES);
+});
+
 test('the trust section publishes approved certifications and a verifiable trust centre link', async ({
   page,
 }) => {
