@@ -166,27 +166,6 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  // The hero stack: one plate per layer, each naming itself, and a key beside it that opens every
-  // row with what that layer is.
-  const heroStack = page.locator('.platform-stack');
-  await expect(heroStack.locator('.layer-plate')).toHaveCount(6);
-  await expect(heroStack.locator('.layer-plate-label')).toHaveCount(6);
-  await expect(heroStack.locator('.layer-legend > li')).toHaveCount(6);
-  await expect(heroStack.locator('.layer-legend')).toContainText('Model hub');
-  await expect(heroStack.locator('.layer-legend')).toContainText('Security and governance');
-  await expect(heroStack.locator('.layer-legend small')).toHaveCount(6);
-  await expect(heroStack.locator('.layer-legend')).toContainText(
-    'More than one provider, chosen by IT, switchable later.',
-  );
-
-  // The plates are separated only by translateZ under the scene's preserve-3d. Anything that
-  // flattens that context — most easily a wrapper introduced between scene and plates — collapses
-  // all six onto one line while computed transformStyle still reports preserve-3d, so measuring the
-  // geometry is the only way to catch it.
-  const plateTops = await heroStack
-    .locator('.layer-plate')
-    .evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
-  expect(new Set(plateTops).size, 'the stack must render as six separated plates').toBe(6);
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -202,11 +181,8 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 test('reduced motion preserves the complete static product story', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.locator('.platform-stack')).toHaveAttribute('data-sequence', 'off');
-  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
-  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.platform-stack', '.vision-media-lead', '.trust-certifications']) {
+  for (const visual of ['.customer-logo-list', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -254,10 +230,6 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.locator('.platform-stack')).toHaveAttribute('data-sequence', 'off');
-  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
-  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
-  await expect(page.locator('.layer-legend-row[role="button"]')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -385,70 +357,6 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
   await context.close();
-});
-
-test('the hero platform assembles as the reader scrolls, and any row jumps to its layer', async ({
-  page,
-}) => {
-  await page.goto('/');
-  const stack = page.locator('.platform-stack');
-  await expect(stack).toHaveAttribute('data-sequence', 'on');
-
-  const plates = stack.locator('.layer-plate');
-  const rows = stack.locator('.layer-legend-row');
-  await expect(plates).toHaveCount(6);
-  await expect(rows).toHaveCount(6);
-
-  // The plates are separated only by translateZ under the scene's preserve-3d, and the pin adds a
-  // sticky ancestor over that subtree. Anything that flattens the context collapses all six onto
-  // one line while computed transformStyle still reports preserve-3d, so geometry is the only
-  // detector.
-  const tops = await plates.evaluateAll((nodes) =>
-    nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
-  );
-  expect(new Set(tops).size, 'the stack must render as six separated plates').toBe(6);
-
-  // Nothing is built at the top of the track beyond the first layer.
-  await expect(stack.locator('.layer-plate[data-state="current"]')).toHaveCount(1);
-  await expect(stack.locator('.layer-plate[data-state="pending"]')).toHaveCount(5);
-
-  // Every row is reachable and says which step it is.
-  await expect(rows.first()).toHaveAttribute('role', 'button');
-  await expect(rows.first()).toHaveAttribute('aria-current', 'step');
-
-  // Clicking a row jumps to that layer, in both directions.
-  await rows.nth(3).click();
-  await expect.poll(() => stack.locator('.layer-plate[data-state="placed"]').count()).toBe(3);
-  await expect(rows.nth(3)).toHaveAttribute('aria-current', 'step');
-  await expect(stack.locator('.layer-plate[data-state="pending"]')).toHaveCount(2);
-
-  await rows.nth(1).click();
-  await expect.poll(() => stack.locator('.layer-plate[data-state="placed"]').count()).toBe(1);
-  await expect(rows.nth(1)).toHaveAttribute('aria-current', 'step');
-
-  // A keyboard reaches the same control.
-  await rows.nth(5).focus();
-  await page.keyboard.press('Enter');
-  await expect.poll(() => stack.locator('.layer-plate[data-state="placed"]').count()).toBe(5);
-
-  // Scrolling past the end leaves the platform whole rather than unbuilding it.
-  await page.evaluate(() => {
-    const element = document.querySelector<HTMLElement>('.platform-stack');
-    if (!element) throw new Error('the stack should be laid out');
-    window.scrollTo({ top: window.scrollY + element.getBoundingClientRect().bottom + 400 });
-  });
-  await expect.poll(() => stack.locator('.layer-plate[data-state="pending"]').count()).toBe(0);
-});
-
-test('the hero platform does not pin on a narrow screen', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const stack = page.locator('.platform-stack');
-  await expect(stack).toHaveAttribute('data-sequence', 'off');
-  await expect(stack.locator('.layer-plate')).toHaveCount(6);
-  await expect(stack.locator('.layer-legend small')).toHaveCount(6);
-  await expect(page.locator('.layer-legend-row[role="button"]')).toHaveCount(0);
-  await expect(stack.locator('.platform-stack-pin')).toHaveCSS('position', 'static');
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

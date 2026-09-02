@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BusinessCase from '../components/BusinessCase.astro';
 import CustomerLogoRail from '../components/CustomerLogoRail.astro';
-import PlatformStack from '../components/PlatformStack.astro';
 import TrustCertifications from '../components/TrustCertifications.astro';
 import VisionStatement from '../components/VisionStatement.astro';
 import { businessCaseAssets } from '../lib/claims/business-case-assets';
@@ -19,13 +18,7 @@ import {
 } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { withBase } from '../lib/routing/base-path';
-import {
-  audiences,
-  benefits,
-  draftHomeCopy,
-  operatingShift,
-  platformLayers,
-} from '../lib/content/site-content';
+import { audiences, benefits, draftHomeCopy, operatingShift } from '../lib/content/site-content';
 
 const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
 const approvedCertifications = resolveApprovedClaims(
@@ -74,7 +67,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           </div>
         </div>
       </div>
-      <PlatformStack layers={platformLayers} />
     </div>
   </section>
 

@@ -30,38 +30,6 @@ export const benefits = [
   },
 ] as const;
 
-/**
- * The stack, read from the bottom up: the models underneath, everything built on them, and the
- * governance that covers all of it. Each line is one row of the hero's key, so it has to stay short
- * enough to read at a glance beside the diagram.
- */
-export const platformLayers = [
-  {
-    name: 'Model hub',
-    body: 'More than one provider, chosen by IT, switchable later.',
-  },
-  {
-    name: 'Connectors and data',
-    body: 'The drives, document stores and systems teams already work in.',
-  },
-  {
-    name: 'Context and knowledge',
-    body: 'Your own documents and figures, with permissions carried through.',
-  },
-  {
-    name: 'Specialized agents',
-    body: 'One agent per job, with limits on what it can reach.',
-  },
-  {
-    name: 'Products and interfaces',
-    body: 'Ask, draft, run a workflow, review what came back.',
-  },
-  {
-    name: 'Security and governance',
-    body: 'Access, allowed models, sign-off points, and who is using it.',
-  },
-] as const;
-
 export const workflowExamples = [
   'Research and synthesis',
   'Data collection and preparation',
