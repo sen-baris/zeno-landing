@@ -68,28 +68,6 @@ export const workflowExamples = [
   'Visualization and decision support',
 ] as const;
 
-/**
- * What it costs to stop at access. Market observation, not a claim about Zeno, a customer, or a
- * measured outcome, so these carry no registry record.
- */
-export const adoptionCosts = [
-  {
-    number: '01',
-    title: 'You cannot tell what is worth paying for',
-    body: 'With no usage numbers, every team gets the same licence, whether they work in it daily or logged in once.',
-  },
-  {
-    number: '02',
-    title: 'People go back to doing it by hand',
-    body: 'The monthly report still gets built in a spreadsheet, or in a tool IT never approved, because the official one never stuck.',
-  },
-  {
-    number: '03',
-    title: 'You end up shopping for another tool',
-    body: 'A year later someone opens a new vendor review, because nobody could show what the last one was worth.',
-  },
-] as const;
-
 /** The same operating picture before and after the work happens somewhere you can see it. */
 export const operatingShift = {
   today: [

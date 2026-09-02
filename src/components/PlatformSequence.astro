@@ -1,4 +1,6 @@
 ---
+import LayerStack from './LayerStack.astro';
+
 interface Layer {
   name: string;
   body: string;
@@ -27,14 +29,7 @@ const { layers } = Astro.props;
 <section class="layer-sequence" data-sequence="off">
   <div class="layer-sequence-grid">
     <figure class="layer-stack" aria-hidden="true">
-      {
-        layers.map((layer, index) => (
-          <div class="layer-bar" data-state={index === 0 ? 'current' : 'future'}>
-            <span class="layer-bar-index">{String(index + 1).padStart(2, '0')}</span>
-            <span>{layer.name}</span>
-          </div>
-        ))
-      }
+      <LayerStack layers={layers} activeIndex={0} />
     </figure>
 
     <ol class="layer-steps">
@@ -64,7 +59,7 @@ const { layers } = Astro.props;
     window.matchMedia('(min-width: 900px)').matches
   ) {
     const steps = Array.from(section.querySelectorAll<HTMLElement>('.layer-step'));
-    const bars = Array.from(section.querySelectorAll<HTMLElement>('.layer-bar'));
+    const bars = Array.from(section.querySelectorAll<HTMLElement>('.layer-plate'));
 
     if (steps.length > 0) {
       section.dataset.sequence = 'on';

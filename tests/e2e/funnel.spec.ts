@@ -137,27 +137,38 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const whyIndex = sectionHeadings.indexOf(
     "Most enterprises don't have an access problem. They have an adoption problem.",
   );
-  const costIndex = sectionHeadings.indexOf('What happens when nobody uses it.');
   const proofIndex = sectionHeadings.indexOf('What enterprises are seeing.');
-  const whatIndex = sectionHeadings.indexOf('One layer over the models you already buy.');
+  const visionIndex = sectionHeadings.indexOf('Software is the easy half.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
-  // Proof sits with the logos at the top, so the problem and its cost stay adjacent rather than
-  // being interrupted by it. Then one product moment, then the before and after. The mechanism
-  // itself lives on /product so the homepage does not explain it twice.
+  // One line through the page: proof, then the problem, then the people who work on it, then the
+  // before and after. The mechanism lives on /product, and the hero's stack is the only place the
+  // homepage draws it, so nothing here explains it twice.
   expect(proofIndex).toBeGreaterThanOrEqual(0);
   expect(whyIndex).toBeGreaterThan(proofIndex);
-  expect(costIndex).toBeGreaterThan(whyIndex);
-  expect(whatIndex).toBeGreaterThan(costIndex);
-  expect(shiftIndex).toBeGreaterThan(whatIndex);
+  expect(visionIndex).toBeGreaterThan(whyIndex);
+  expect(shiftIndex).toBeGreaterThan(visionIndex);
   expect(sectionHeadings, 'the mechanism belongs on /product').not.toContain(
     'Connect. Equip. Run. Govern.',
+  );
+  expect(
+    sectionHeadings,
+    'the cost of low adoption is the "Today" column of the contrast',
+  ).not.toContain('What happens when nobody uses it.');
+  expect(sectionHeadings, 'the hero stack already shows how it fits').not.toContain(
+    'One layer over the models you already buy.',
   );
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
-  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
-  await expect(page.locator('.layer-agents > ul > li')).toHaveCount(4);
+  // The hero stack: one plate per layer, and every name readable beside it rather than on the
+  // isometric plane, where type would be sheared apart.
+  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
+  await expect(page.locator('.platform-stack .layer-legend > li')).toHaveCount(6);
+  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
+  await expect(page.locator('.platform-stack .layer-legend')).toContainText(
+    'Security and governance',
+  );
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
   await expect(
@@ -173,12 +184,10 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 test('reduced motion preserves the complete static product story', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
-  await expect(
-    page.getByText('Set by IT, and switchable without touching anything above.'),
-  ).toBeVisible();
+  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
+  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.agent-layer', '.vision-media-lead', '.trust-certifications']) {
+  for (const visual of ['.platform-stack', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -226,7 +235,8 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.getByText('Enterprise AI layer', { exact: true })).toBeVisible();
+  await expect(page.locator('.platform-stack .layer-plate')).toHaveCount(6);
+  await expect(page.locator('.platform-stack .layer-legend')).toContainText('Model hub');
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -268,21 +278,10 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(adoptionFramework.getByText('90', { exact: true })).toBeVisible();
 });
 
-test('the argument sections carry the cost, the contrast, and a low-friction entry point', async ({
+test('the argument sections carry the contrast and a low-friction entry point', async ({
   page,
 }) => {
   await page.goto('/');
-
-  const cost = page.locator('#cost');
-  await expect(
-    cost.getByRole('heading', { name: 'You cannot tell what is worth paying for' }),
-  ).toBeVisible();
-  await expect(
-    cost.getByRole('heading', { name: 'People go back to doing it by hand' }),
-  ).toBeVisible();
-  await expect(
-    cost.getByRole('heading', { name: 'You end up shopping for another tool' }),
-  ).toBeVisible();
 
   // Both columns of the contrast must survive; a one-sided version makes no argument.
   const shift = page.locator('#shift');
@@ -377,6 +376,18 @@ test('the layer sequence pins and steps, and reads plainly without it', async ({
   await expect(page.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'on');
   await expect(page.locator('.layer-stack')).toHaveCSS('position', 'sticky');
 
+  const plates = page.locator('.layer-stack .layer-plate');
+  await expect(plates).toHaveCount(6);
+
+  // The plates are separated only by translateZ under the scene's preserve-3d. Anything that
+  // flattens that context — most easily a wrapper element introduced between scene and plates —
+  // collapses all six onto one line while computed transformStyle still reports preserve-3d, so
+  // measuring the geometry is the only way to catch it.
+  const plateTops = await plates.evaluateAll((nodes) =>
+    nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
+  );
+  expect(new Set(plateTops).size, 'the stack must render as six separated plates').toBe(6);
+
   // Walking the section marks every layer in turn, and walking back unmarks them again.
   const box = await page.locator('.layer-sequence').boundingBox();
   if (!box) throw new Error('the sequence should be laid out');
@@ -385,9 +396,16 @@ test('the layer sequence pins and steps, and reads plainly without it', async ({
     box.y + box.height - 400,
   );
   await expect.poll(() => page.locator('.layer-step[data-state="future"]').count()).toBe(0);
+  // The stack mirrors the list, so the last layer is the marked one and none are left ahead.
+  await expect.poll(() => plates.locator('[data-state="future"]').count()).toBe(0);
+  await expect(page.locator('.layer-stack .layer-plate[data-state="current"]')).toHaveCount(1);
+
   await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), box.y - 200);
   await expect
     .poll(() => page.locator('.layer-step[data-state="future"]').count())
+    .toBeGreaterThan(0);
+  await expect
+    .poll(() => page.locator('.layer-stack .layer-plate[data-state="future"]').count())
     .toBeGreaterThan(0);
 
   // With no JavaScript it is a diagram and a list, with every layer visible and nothing pinned.
@@ -396,6 +414,7 @@ test('the layer sequence pins and steps, and reads plainly without it', async ({
   await plain.goto('/product');
   await expect(plain.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'off');
   await expect(plain.locator('.layer-stack')).toHaveCSS('position', 'static');
+  await expect(plain.locator('.layer-stack .layer-plate')).toHaveCount(6);
   for (const name of [
     'Model hub',
     'Connectors and data',

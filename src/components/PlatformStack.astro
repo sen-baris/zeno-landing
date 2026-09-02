@@ -1,0 +1,40 @@
+---
+import LayerStack from './LayerStack.astro';
+import { withBase } from '../lib/routing/base-path';
+
+interface Props {
+  layers: readonly { name: string }[];
+}
+
+const { layers } = Astro.props;
+---
+
+{
+  /*
+  The hero's one visual. The same stack the pinned sequence on /product animates, held still here
+  with nothing marked, so the homepage shows the shape of the thing and the product page explains it
+  a layer at a time.
+
+  The scene is decorative; the ordered list beside it is the content, and below 900px it is all of
+  it — which is also what a reader with images or transforms unavailable gets.
+*/
+}
+<figure class="platform-stack" data-reveal>
+  <LayerStack layers={layers} />
+  <div class="platform-stack-key">
+    <p class="product-label">From the models up</p>
+    <ol class="layer-legend">
+      {
+        layers.map((layer, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {layer.name}
+          </li>
+        ))
+      }
+    </ol>
+    <p class="platform-stack-more">
+      <a class="text-link" href={withBase('/product')}>See how the platform works &rarr;</a>
+    </p>
+  </div>
+</figure>

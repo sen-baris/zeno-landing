@@ -13,6 +13,19 @@ for (const viewport of viewports) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/');
+
+    // A full-page screenshot is stitched from scrolled captures, and images still marked lazy below
+    // the fold never decode in time for it — the baseline would otherwise bake in empty frames where
+    // the photographs belong. Promote every image and wait for it to decode before capturing.
+    await page.evaluate(async () => {
+      for (const image of document.querySelectorAll('img')) image.loading = 'eager';
+      await Promise.all(
+        Array.from(document.images)
+          .filter((image) => !image.complete)
+          .map((image) => image.decode().catch(() => undefined)),
+      );
+    });
+
     await expect(page).toHaveScreenshot(`home-${viewport.name}.png`, {
       animations: 'disabled',
       fullPage: true,
