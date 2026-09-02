@@ -389,272 +389,200 @@ h2 {
   margin-top: 34px;
 }
 
-/* Hero demo
-   One week of work in four beats. It plays on a timer where it sits and has no relationship to the
-   scroll position — the rail steps through it, the pause control stops it.
-
-   Unarmed, the stage is an ordered list and all four beats stack, which is what a reader without
-   JavaScript or with reduced motion gets. Everything below that hides, moves or animates is behind
-   [data-demo='on'], which only the component's own controller sets. */
-.hero-demo {
-  margin: clamp(48px, 6vw, 88px) 0 0;
+/* Hero: the governed workspace
+   One scene — the agents on the left, the job they are running in the middle, and the four controls
+   it runs inside along the bottom. The whole of it is legible standing still; the choreography
+   further down only plays it in once, on arrival. */
+.hero-workspace {
+  margin: clamp(40px, 5vw, 74px) 0 0;
 }
 
-.hero-demo-stage {
+.hw-body {
   display: grid;
-  margin: 0;
-  padding: 0;
-  gap: clamp(28px, 3.4vw, 44px);
-  list-style: none;
+  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
 }
 
-.hero-demo[data-demo='on'] .hero-demo-stage {
-  /* One beat at a time, in a box tall enough for the tallest of them, so swapping never resizes
-     the frame under the reader. */
-  min-height: 268px;
-  gap: 0;
+.hw-agents {
+  border-right: 1px solid var(--rule);
+  padding: clamp(24px, 2.8vw, 38px);
 }
 
-.hero-demo-beat {
+.hw-agents ul {
   display: grid;
-  align-items: center;
-  padding: clamp(26px, 3vw, 40px) clamp(24px, 3.4vw, 46px);
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 72px);
-}
-
-.hero-demo-stage > li + li {
-  border-top: 1px solid var(--rule);
-}
-
-.hero-demo-title {
-  margin-top: 16px;
-  font-family: var(--display);
-  font-size: clamp(1.4rem, 2vw, 1.95rem);
-  line-height: 1.16;
-}
-
-.hero-demo-body {
-  max-width: 420px;
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.hero-demo .product-label > span {
-  margin-right: 9px;
-  color: var(--action);
-}
-
-/* The rail is drawn only once there is a controller to answer it. */
-.hero-demo-rail {
-  display: none;
-}
-
-.hero-demo[data-demo='on'] .hero-demo-rail {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 18px;
-  gap: 20px;
-}
-
-.hero-demo-rail ul {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
+  margin: 20px 0 0;
   padding: 0;
   gap: 8px;
   list-style: none;
 }
 
-.hero-demo-rail button {
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 540;
-  padding-block: 7px;
-  padding-inline: 13px;
-}
-
-/* Full strength, not a wash of it: at this size a 72% mix of the accent lands on 4.4:1 against the
-   canvas, a tenth under AA. */
-.hero-demo-rail button > span {
-  margin-right: 8px;
-  color: var(--action);
-  font-family: var(--mono);
-  font-size: 0.64rem;
-}
-
-.hero-demo-rail button[aria-current='true'] {
-  border-color: var(--action);
-  background: var(--action);
-  color: var(--paper);
-}
-
-.hero-demo-rail button[aria-current='true'] > span {
-  color: color-mix(in srgb, var(--paper) 78%, var(--action));
-}
-
-.hero-demo-toggle {
-  flex: 0 0 auto;
-}
-
-/* Beat visuals. Illustrative product surfaces, so they carry no text a reader needs and stay out
-   of the accessibility tree; the copy beside each one says what is happening. */
-.demo-prompt {
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 15px 17px;
-  background: var(--canvas);
-  font-size: 0.92rem;
-  font-weight: 540;
-}
-
-.demo-chips {
+.hw-agents li {
   display: flex;
-  flex-wrap: wrap;
-  margin: 14px 0 0;
-  padding: 0;
-  gap: 8px;
-  list-style: none;
-}
-
-.demo-chips li,
-.demo-schedule,
-.demo-steps li {
-  display: inline-flex;
   align-items: center;
-  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
-  border-radius: 999px;
-  padding: 7px 13px;
-  background: var(--paper);
-  color: var(--action);
-  font-size: 0.74rem;
-  font-weight: 560;
-  gap: 7px;
-}
-
-.demo-chips li::before,
-.demo-steps li::before {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--action);
-  content: '';
-}
-
-.demo-draft ul {
-  display: grid;
-  margin: 0;
-  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 11px 12px;
   gap: 11px;
-  list-style: none;
 }
 
-.demo-draft li {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 150px 1fr;
-  gap: 14px;
-  font-size: 0.8rem;
-  font-weight: 540;
-}
-
-.demo-draft i {
-  display: block;
-  overflow: hidden;
-  height: 8px;
-  border-radius: 999px;
+.hw-agents li[data-running] {
+  border-color: color-mix(in srgb, var(--action) 30%, transparent);
   background: var(--wash);
 }
 
-.demo-draft i::after {
+.hw-mark {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--action) 24%, transparent);
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+}
+
+.hw-agents li[data-running] .hw-mark {
+  background: var(--action);
+  box-shadow: none;
+  color: var(--paper);
+}
+
+.hw-agents b {
   display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: color-mix(in srgb, var(--action) 62%, var(--wash));
-  content: '';
+  font-size: 0.86rem;
+  font-weight: 560;
 }
 
-.demo-note {
-  margin-top: 16px;
+.hw-agents small {
+  display: block;
+  margin-top: 1px;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
 }
 
-.demo-schedule {
-  margin-bottom: 14px;
+.hw-job {
+  position: relative;
+  padding: clamp(24px, 2.8vw, 38px);
 }
 
-.demo-steps {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-  gap: 8px;
-  list-style: none;
+.hw-job-title {
+  margin-top: 15px;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 1.9vw, 1.85rem);
+  line-height: 1.15;
 }
 
-.demo-step-hold {
-  border-style: dashed;
-  background: transparent;
-}
-
-.demo-govern {
+.hw-job-limits {
   display: grid;
-  margin: 0;
+  margin: 20px 0 0;
   padding: 0;
   gap: 9px;
   list-style: none;
 }
 
-.demo-govern li {
+.hw-job-limits li {
+  position: relative;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.hw-job-limits li::before {
+  position: absolute;
+  top: 0.52em;
+  left: 0;
+  width: 9px;
+  height: 1px;
+  background: color-mix(in srgb, var(--action) 55%, transparent);
+  content: '';
+}
+
+/* Where the job gets to, and stops. The whole argument is that it hands back rather than finishing
+   on its own. */
+.hw-result {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
+  border-radius: 7px;
+  margin-top: 22px;
   padding: 13px 15px;
   background: var(--canvas);
   gap: 16px;
   font-size: 0.82rem;
 }
 
-.demo-govern span {
+.hw-result span {
   color: var(--muted);
 }
 
-.demo-govern b {
+.hw-result b {
   color: var(--action);
   font-weight: 560;
 }
 
+/* The floor the work runs on. Same four controls the administration console on /product sets out,
+   drawn here as the boundary of the scene rather than as a panel of its own. */
+.hw-controls {
+  display: grid;
+  margin: 0;
+  padding: 15px clamp(24px, 2.8vw, 38px);
+  border-top: 1px solid var(--rule);
+  background: var(--wash);
+  grid-template-columns: repeat(4, auto);
+  gap: 12px clamp(18px, 3vw, 44px);
+  justify-content: start;
+  list-style: none;
+}
+
+.hw-controls li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--action);
+  font-size: 0.78rem;
+  font-weight: 560;
+}
+
+.hw-controls svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: var(--action);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.hero-workspace figcaption {
+  max-width: 640px;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 @media (max-width: 820px) {
-  .hero-demo-beat {
+  .hw-body {
     grid-template-columns: 1fr;
   }
 
-  /* The steps wrap onto two rows here, so the pause control goes under them rather than floating
-     against the middle of a ragged block. */
-  .hero-demo[data-demo='on'] .hero-demo-rail {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
+  .hw-agents {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
   }
 
-  .hero-demo[data-demo='on'] .hero-demo-stage {
-    min-height: 400px;
+  .hw-controls {
+    grid-template-columns: repeat(2, auto);
   }
+}
 
-  .demo-draft li {
-    grid-template-columns: 120px 1fr;
+@media (max-width: 560px) {
+  .hw-controls {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2099,114 +2027,98 @@ html[data-motion='on'] .customer-logo-list li:nth-child(8) {
   transition-delay: 315ms;
 }
 
-/* Each beat plays itself in when it becomes the one on screen. Animations rather than transitions,
-   because a beat is display:none until it is shown and has no previous state to move from. */
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .hero-demo-said > * {
-  animation: zeno-beat-in 460ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
+/* The hero scene plays itself in as one run rather than a sequence of slides: the agent takes the
+   job, the lane it runs in opens, the limits state themselves, and the four controls confirm. About
+   two and a half seconds, once, settling into the same composition a reader with reduced motion or
+   without JavaScript gets immediately. */
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-agents li[data-running] {
+  animation: zeno-hw-take 520ms cubic-bezier(0.22, 0.68, 0.24, 1) 120ms backwards;
 }
 
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .hero-demo-said
-  > *:nth-child(2) {
-  animation-delay: 70ms;
+html[data-motion='on'] .hero-workspace .hw-job::before {
+  position: absolute;
+  top: clamp(24px, 2.8vw, 38px);
+  bottom: clamp(24px, 2.8vw, 38px);
+  left: 0;
+  width: 2px;
+  background: var(--action);
+  content: '';
+  transform: scaleY(0);
+  transform-origin: top center;
 }
 
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .hero-demo-said
-  > *:nth-child(3) {
-  animation-delay: 140ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job::before {
+  animation: zeno-hw-lane 620ms cubic-bezier(0.3, 0.7, 0.3, 1) 420ms forwards;
 }
 
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-prompt,
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-schedule,
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-note {
-  animation: zeno-beat-in 460ms cubic-bezier(0.22, 0.68, 0.24, 1) 120ms backwards;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job > * {
+  animation: zeno-hw-in 480ms cubic-bezier(0.22, 0.68, 0.24, 1) 620ms backwards;
 }
 
-/* The pieces that arrive one after another: source chips attaching, steps queueing, controls
-   resolving. */
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-chips li,
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-steps li,
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-govern li {
-  animation: zeno-beat-in 420ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job-limits li {
+  animation: zeno-hw-in 460ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
 }
 
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(1) {
-  animation-delay: 220ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job-limits li:nth-child(1) {
+  animation-delay: 900ms;
 }
 
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(2) {
-  animation-delay: 330ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job-limits li:nth-child(2) {
+  animation-delay: 1060ms;
 }
 
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(3) {
-  animation-delay: 440ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-job-limits li:nth-child(3) {
+  animation-delay: 1220ms;
 }
 
-html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(4) {
-  animation-delay: 550ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-result {
+  animation: zeno-hw-in 480ms cubic-bezier(0.22, 0.68, 0.24, 1) 1400ms backwards;
 }
 
-/* The draft writes itself: each line fills from the left, one after the next. */
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .demo-draft
-  i::after {
-  animation: zeno-draft-fill 780ms cubic-bezier(0.3, 0.7, 0.3, 1) backwards;
-  transform-origin: left center;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li {
+  animation: zeno-hw-confirm 420ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
 }
 
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .demo-draft
-  li:nth-child(1)
-  i::after {
-  animation-delay: 240ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(1) {
+  animation-delay: 1800ms;
 }
 
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .demo-draft
-  li:nth-child(2)
-  i::after {
-  animation-delay: 480ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(2) {
+  animation-delay: 1640ms;
 }
 
-html[data-motion='on']
-  .hero-demo[data-demo='on']
-  .hero-demo-beat[data-active]
-  .demo-draft
-  li:nth-child(3)
-  i::after {
-  animation-delay: 720ms;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(3) {
+  animation-delay: 1960ms;
 }
 
-@keyframes zeno-beat-in {
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(4) {
+  animation-delay: 2120ms;
+}
+
+@keyframes zeno-hw-take {
+  from {
+    border-color: transparent;
+    background: transparent;
+  }
+}
+
+@keyframes zeno-hw-lane {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes zeno-hw-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translateY(9px);
   }
 }
 
-@keyframes zeno-draft-fill {
+@keyframes zeno-hw-confirm {
   from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
 

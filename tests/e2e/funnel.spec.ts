@@ -182,12 +182,11 @@ test('reduced motion preserves the complete static product story', async ({ page
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  // The hero demo never arms, so the whole week is on the page at once and nothing is moving.
-  await expect(page.locator('.hero-demo')).toHaveAttribute('data-demo', 'off');
-  await expect(page.locator('.hero-demo-beat')).toHaveCount(4);
-  await expect(page.locator('.hero-demo-beat:not([hidden])')).toHaveCount(4);
-  await expect(page.locator('.hero-demo-rail')).toBeHidden();
-  for (const visual of ['.hero-demo', '.vision-media-lead', '.trust-certifications']) {
+  // The hero scene is simply already finished, which is the state its choreography settles into.
+  await expect(page.locator('.hw-controls li')).toHaveCount(4);
+  await expect(page.locator('.hw-result')).toBeVisible();
+  await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
+  for (const visual of ['.hero-workspace', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -235,13 +234,9 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  // All four beats are simply on the page, and the rail that would step through them is not
-  // offered, because there is nothing to answer it.
-  await expect(page.locator('.hero-demo')).toHaveAttribute('data-demo', 'off');
-  await expect(page.locator('.hero-demo-beat:not([hidden])')).toHaveCount(4);
-  await expect(page.locator('.hero-demo-rail')).toBeHidden();
+  await expect(page.locator('.hw-controls li')).toHaveCount(4);
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
-  await expect(page.getByText('IT can see who is using it and on what.')).toBeVisible();
+  await expect(page.locator('.hw-result')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -371,50 +366,53 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await context.close();
 });
 
-test('the hero demo plays a week of work where it sits, and the rail takes over', async ({
+test('the hero states the angle: specific agents on a governed workspace, one job', async ({
   page,
 }) => {
   await page.goto('/');
-  const demo = page.locator('.hero-demo');
-  await expect(demo).toHaveAttribute('data-demo', 'on');
-  await expect(demo.locator('.hero-demo-beat')).toHaveCount(4);
+  const hero = page.locator('.hero-workspace');
+  await expect(hero).toBeVisible();
 
-  const onScreen = demo.locator('.hero-demo-beat:not([hidden])');
-  await expect(onScreen).toHaveCount(1);
-  await expect(onScreen).toHaveAttribute('data-beat', 'ask');
+  // The agents, and the one that is running.
+  await expect(hero.locator('.hw-agents li')).toHaveCount(3);
+  await expect(hero.locator('.hw-agents li[data-running]')).toHaveCount(1);
+  await expect(hero.locator('.hw-agents li[data-running]')).toContainText('Finance');
 
-  // It travels with the page, one pixel per pixel. This is the invariant the pinned version it
-  // replaced broke: nothing here sticks, holds, or leaves the reader scrolling past empty canvas.
-  const before = await demo.boundingBox();
-  await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
-  const after = await demo.boundingBox();
-  if (!before || !after) throw new Error('the demo should be laid out');
-  expect(Math.round(before.y - after.y), 'the demo must not pin').toBe(300);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  // The job, the limits it runs inside, and where it stops.
+  await expect(hero.getByText('Draft the Q3 board update.')).toBeVisible();
+  await expect(hero.locator('.hw-job-limits li')).toHaveCount(3);
+  await expect(hero.locator('.hw-result')).toContainText('Waiting for sign-off');
 
-  // It advances on its own. The pointer is left alone here: entering the figure would hold it.
-  await expect.poll(() => onScreen.getAttribute('data-beat'), { timeout: 15_000 }).not.toBe('ask');
-
-  // Taking the rail jumps to that beat and stops the timer rather than moving underneath someone.
-  await demo.getByRole('button', { name: /Govern/ }).click();
-  await expect(onScreen).toHaveAttribute('data-beat', 'govern');
-  await expect(demo.getByRole('button', { name: 'Play' })).toBeVisible();
-  await page.waitForTimeout(5200);
-  await expect(onScreen).toHaveAttribute('data-beat', 'govern');
-
-  // And a keyboard reaches the same control.
-  await demo.getByRole('button', { name: /Ask/ }).focus();
-  await page.keyboard.press('Enter');
-  await expect(onScreen).toHaveAttribute('data-beat', 'ask');
-
-  // The frame never resizes as the beats change, so nothing below it moves.
-  const heights: number[] = [];
-  for (const name of [/Ask/, /Draft/, /Repeat/, /Govern/]) {
-    await demo.getByRole('button', { name }).click();
-    const each = await demo.boundingBox();
-    heights.push(Math.round(each?.height ?? 0));
+  // The four controls are the argument, so they are named here as well as on /product.
+  await expect(hero.locator('.hw-controls li')).toHaveCount(4);
+  for (const control of ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU region']) {
+    await expect(hero.locator('.hw-controls')).toContainText(control);
   }
-  expect(new Set(heights).size, 'the demo must hold one height across every beat').toBe(1);
+
+  // The choreography is a single run that finishes rather than a loop that never does.
+  await settleRevealMotion(page);
+  expect(
+    await page.evaluate(
+      () => document.getAnimations().filter((a) => a.playState === 'running').length,
+    ),
+    'the hero scene must settle',
+  ).toBe(0);
+
+  // And once it has, the scene travels with the page one pixel per pixel: nothing here pins, holds,
+  // or waits on a timer. Measured after the entrance, whose own transform would otherwise be read
+  // as movement of the scene itself.
+  const before = await hero.boundingBox();
+  await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
+  await page.waitForFunction(() => window.scrollY >= 300);
+  const after = await hero.boundingBox();
+  if (!before || !after) throw new Error('the hero scene should be laid out');
+  expect(Math.round(before.y - after.y), 'the hero scene must not pin').toBe(300);
+  const faded = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.hero-workspace *'))
+      .filter((element) => Number(getComputedStyle(element).opacity) < 1)
+      .map((element) => element.className),
+  );
+  expect(faded, 'every part of the settled scene must be fully opaque').toEqual([]);
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

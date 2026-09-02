@@ -1,0 +1,87 @@
+---
+// The angle, in one picture: specific agents running on a governed workspace to get one job done.
+//
+// The four controls along the bottom are the same four the administration console on /product
+// spells out. They are the argument, so they are stated in both places and drawn differently in
+// each: a full panel there, the floor the work runs on here.
+const agents = [
+  { mark: 'F', team: 'Finance', job: 'Board reporting', running: true },
+  { mark: 'L', team: 'Legal', job: 'Contract review', running: false },
+  { mark: 'O', team: 'Operations', job: 'Weekly ops pack', running: false },
+] as const;
+
+const controls = ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU region'] as const;
+---
+
+{
+  /*
+  One scene and one choreography, rather than a sequence of slides: the agent picks the job up, the
+  lane opens, the job states the limits it runs inside, and the four controls underneath confirm
+  themselves. It runs once when the reader arrives, about two and a half seconds, and settles.
+
+  Nothing waits on a timer and nothing follows the scroll. With reduced motion or without
+  JavaScript the same scene is simply already finished, which is the state it settles into anyway.
+*/
+}
+<figure class="hero-workspace" data-reveal>
+  <div class="product-frame">
+    <div class="product-frame-bar">
+      <div>
+        <span class="product-mark" aria-hidden="true">Z</span>
+        <span>Governed workspace</span>
+      </div>
+      <span class="product-frame-status">EU region</span>
+    </div>
+
+    <div class="hw-body">
+      <div class="hw-agents">
+        <p class="product-label">Agents</p>
+        <ul>
+          {
+            agents.map((agent) => (
+              <li data-running={agent.running ? '' : undefined}>
+                <span class="hw-mark" aria-hidden="true">
+                  {agent.mark}
+                </span>
+                <span>
+                  <b>{agent.team}</b>
+                  <small>{agent.job}</small>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="hw-job">
+        <p class="product-label">Running now</p>
+        <p class="hw-job-title">Draft the Q3 board update.</p>
+        <ul class="hw-job-limits">
+          <li>Reads only what the Finance team may see</li>
+          <li>Runs on a model IT approved</li>
+          <li>Comes back for a person to sign off</li>
+        </ul>
+
+        <p class="hw-result">
+          <span>Draft ready</span>
+          <b>Waiting for sign-off</b>
+        </p>
+      </div>
+    </div>
+
+    <ul class="hw-controls">
+      {
+        controls.map((control) => (
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <circle cx="8" cy="8" r="7" />
+              <path d="m4.8 8.2 2.2 2.2 4.2-4.6" />
+            </svg>
+            {control}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <figcaption>Specific agents, running on a governed workspace, to get one job done.</figcaption>
+</figure>
