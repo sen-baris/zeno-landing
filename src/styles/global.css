@@ -389,6 +389,275 @@ h2 {
   margin-top: 34px;
 }
 
+/* Hero demo
+   One week of work in four beats. It plays on a timer where it sits and has no relationship to the
+   scroll position — the rail steps through it, the pause control stops it.
+
+   Unarmed, the stage is an ordered list and all four beats stack, which is what a reader without
+   JavaScript or with reduced motion gets. Everything below that hides, moves or animates is behind
+   [data-demo='on'], which only the component's own controller sets. */
+.hero-demo {
+  margin: clamp(48px, 6vw, 88px) 0 0;
+}
+
+.hero-demo-stage {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: clamp(28px, 3.4vw, 44px);
+  list-style: none;
+}
+
+.hero-demo[data-demo='on'] .hero-demo-stage {
+  /* One beat at a time, in a box tall enough for the tallest of them, so swapping never resizes
+     the frame under the reader. */
+  min-height: 268px;
+  gap: 0;
+}
+
+.hero-demo-beat {
+  display: grid;
+  align-items: center;
+  padding: clamp(26px, 3vw, 40px) clamp(24px, 3.4vw, 46px);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+}
+
+.hero-demo-stage > li + li {
+  border-top: 1px solid var(--rule);
+}
+
+.hero-demo-title {
+  margin-top: 16px;
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 2vw, 1.95rem);
+  line-height: 1.16;
+}
+
+.hero-demo-body {
+  max-width: 420px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.hero-demo .product-label > span {
+  margin-right: 9px;
+  color: var(--action);
+}
+
+/* The rail is drawn only once there is a controller to answer it. */
+.hero-demo-rail {
+  display: none;
+}
+
+.hero-demo[data-demo='on'] .hero-demo-rail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  gap: 20px;
+}
+
+.hero-demo-rail ul {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.hero-demo-rail button {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 540;
+  padding-block: 7px;
+  padding-inline: 13px;
+}
+
+/* Full strength, not a wash of it: at this size a 72% mix of the accent lands on 4.4:1 against the
+   canvas, a tenth under AA. */
+.hero-demo-rail button > span {
+  margin-right: 8px;
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+
+.hero-demo-rail button[aria-current='true'] {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--paper);
+}
+
+.hero-demo-rail button[aria-current='true'] > span {
+  color: color-mix(in srgb, var(--paper) 78%, var(--action));
+}
+
+.hero-demo-toggle {
+  flex: 0 0 auto;
+}
+
+/* Beat visuals. Illustrative product surfaces, so they carry no text a reader needs and stay out
+   of the accessibility tree; the copy beside each one says what is happening. */
+.demo-prompt {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 15px 17px;
+  background: var(--canvas);
+  font-size: 0.92rem;
+  font-weight: 540;
+}
+
+.demo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.demo-chips li,
+.demo-schedule,
+.demo-steps li {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
+  border-radius: 999px;
+  padding: 7px 13px;
+  background: var(--paper);
+  color: var(--action);
+  font-size: 0.74rem;
+  font-weight: 560;
+  gap: 7px;
+}
+
+.demo-chips li::before,
+.demo-steps li::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--action);
+  content: '';
+}
+
+.demo-draft ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 11px;
+  list-style: none;
+}
+
+.demo-draft li {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
+  font-size: 0.8rem;
+  font-weight: 540;
+}
+
+.demo-draft i {
+  display: block;
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--wash);
+}
+
+.demo-draft i::after {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--action) 62%, var(--wash));
+  content: '';
+}
+
+.demo-note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.demo-schedule {
+  margin-bottom: 14px;
+}
+
+.demo-steps {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.demo-step-hold {
+  border-style: dashed;
+  background: transparent;
+}
+
+.demo-govern {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 9px;
+  list-style: none;
+}
+
+.demo-govern li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 13px 15px;
+  background: var(--canvas);
+  gap: 16px;
+  font-size: 0.82rem;
+}
+
+.demo-govern span {
+  color: var(--muted);
+}
+
+.demo-govern b {
+  color: var(--action);
+  font-weight: 560;
+}
+
+@media (max-width: 820px) {
+  .hero-demo-beat {
+    grid-template-columns: 1fr;
+  }
+
+  /* The steps wrap onto two rows here, so the pause control goes under them rather than floating
+     against the middle of a ragged block. */
+  .hero-demo[data-demo='on'] .hero-demo-rail {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hero-demo[data-demo='on'] .hero-demo-stage {
+    min-height: 400px;
+  }
+
+  .demo-draft li {
+    grid-template-columns: 120px 1fr;
+  }
+}
+
 .product-workspace {
   margin-top: clamp(64px, 8vw, 112px);
 }
@@ -1828,6 +2097,117 @@ html[data-motion='on'] .customer-logo-list li:nth-child(7) {
 
 html[data-motion='on'] .customer-logo-list li:nth-child(8) {
   transition-delay: 315ms;
+}
+
+/* Each beat plays itself in when it becomes the one on screen. Animations rather than transitions,
+   because a beat is display:none until it is shown and has no previous state to move from. */
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .hero-demo-said > * {
+  animation: zeno-beat-in 460ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
+}
+
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .hero-demo-said
+  > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .hero-demo-said
+  > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-prompt,
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-schedule,
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-note {
+  animation: zeno-beat-in 460ms cubic-bezier(0.22, 0.68, 0.24, 1) 120ms backwards;
+}
+
+/* The pieces that arrive one after another: source chips attaching, steps queueing, controls
+   resolving. */
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-chips li,
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-steps li,
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] .demo-govern li {
+  animation: zeno-beat-in 420ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
+}
+
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(1) {
+  animation-delay: 220ms;
+}
+
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(2) {
+  animation-delay: 330ms;
+}
+
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(3) {
+  animation-delay: 440ms;
+}
+
+html[data-motion='on'] .hero-demo[data-demo='on'] .hero-demo-beat[data-active] li:nth-child(4) {
+  animation-delay: 550ms;
+}
+
+/* The draft writes itself: each line fills from the left, one after the next. */
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .demo-draft
+  i::after {
+  animation: zeno-draft-fill 780ms cubic-bezier(0.3, 0.7, 0.3, 1) backwards;
+  transform-origin: left center;
+}
+
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .demo-draft
+  li:nth-child(1)
+  i::after {
+  animation-delay: 240ms;
+}
+
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .demo-draft
+  li:nth-child(2)
+  i::after {
+  animation-delay: 480ms;
+}
+
+html[data-motion='on']
+  .hero-demo[data-demo='on']
+  .hero-demo-beat[data-active]
+  .demo-draft
+  li:nth-child(3)
+  i::after {
+  animation-delay: 720ms;
+}
+
+@keyframes zeno-beat-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes zeno-draft-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* The platform overview fills in stage by stage, then its connectors appear. */

@@ -182,7 +182,12 @@ test('reduced motion preserves the complete static product story', async ({ page
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  for (const visual of ['.customer-logo-list', '.vision-media-lead', '.trust-certifications']) {
+  // The hero demo never arms, so the whole week is on the page at once and nothing is moving.
+  await expect(page.locator('.hero-demo')).toHaveAttribute('data-demo', 'off');
+  await expect(page.locator('.hero-demo-beat')).toHaveCount(4);
+  await expect(page.locator('.hero-demo-beat:not([hidden])')).toHaveCount(4);
+  await expect(page.locator('.hero-demo-rail')).toBeHidden();
+  for (const visual of ['.hero-demo', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -230,6 +235,13 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
+  // All four beats are simply on the page, and the rail that would step through them is not
+  // offered, because there is nothing to answer it.
+  await expect(page.locator('.hero-demo')).toHaveAttribute('data-demo', 'off');
+  await expect(page.locator('.hero-demo-beat:not([hidden])')).toHaveCount(4);
+  await expect(page.locator('.hero-demo-rail')).toBeHidden();
+  await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
+  await expect(page.getByText('IT can see who is using it and on what.')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -357,6 +369,52 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
   await context.close();
+});
+
+test('the hero demo plays a week of work where it sits, and the rail takes over', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const demo = page.locator('.hero-demo');
+  await expect(demo).toHaveAttribute('data-demo', 'on');
+  await expect(demo.locator('.hero-demo-beat')).toHaveCount(4);
+
+  const onScreen = demo.locator('.hero-demo-beat:not([hidden])');
+  await expect(onScreen).toHaveCount(1);
+  await expect(onScreen).toHaveAttribute('data-beat', 'ask');
+
+  // It travels with the page, one pixel per pixel. This is the invariant the pinned version it
+  // replaced broke: nothing here sticks, holds, or leaves the reader scrolling past empty canvas.
+  const before = await demo.boundingBox();
+  await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
+  const after = await demo.boundingBox();
+  if (!before || !after) throw new Error('the demo should be laid out');
+  expect(Math.round(before.y - after.y), 'the demo must not pin').toBe(300);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+
+  // It advances on its own. The pointer is left alone here: entering the figure would hold it.
+  await expect.poll(() => onScreen.getAttribute('data-beat'), { timeout: 15_000 }).not.toBe('ask');
+
+  // Taking the rail jumps to that beat and stops the timer rather than moving underneath someone.
+  await demo.getByRole('button', { name: /Govern/ }).click();
+  await expect(onScreen).toHaveAttribute('data-beat', 'govern');
+  await expect(demo.getByRole('button', { name: 'Play' })).toBeVisible();
+  await page.waitForTimeout(5200);
+  await expect(onScreen).toHaveAttribute('data-beat', 'govern');
+
+  // And a keyboard reaches the same control.
+  await demo.getByRole('button', { name: /Ask/ }).focus();
+  await page.keyboard.press('Enter');
+  await expect(onScreen).toHaveAttribute('data-beat', 'ask');
+
+  // The frame never resizes as the beats change, so nothing below it moves.
+  const heights: number[] = [];
+  for (const name of [/Ask/, /Draft/, /Repeat/, /Govern/]) {
+    await demo.getByRole('button', { name }).click();
+    const each = await demo.boundingBox();
+    heights.push(Math.round(each?.height ?? 0));
+  }
+  expect(new Set(heights).size, 'the demo must hold one height across every beat').toBe(1);
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {
