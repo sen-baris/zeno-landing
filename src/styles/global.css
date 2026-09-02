@@ -3090,6 +3090,120 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   margin-top: 20px;
 }
 
+/* Pinned layer sequence
+   The stack sticks while the steps scroll past it. Nothing here is applied unless the component's
+   own script has confirmed support and set data-sequence="on", so the no-JavaScript, reduced-motion
+   and narrow-screen paths all land on the same plain diagram-then-list rendering.
+
+   Sticky is silently killed by an overflow ancestor. Nothing between this element and the document
+   sets one today; do not add one. */
+.layer-sequence-grid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.1fr);
+  gap: clamp(40px, 6vw, 96px);
+}
+
+.layer-stack {
+  display: grid;
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: clamp(18px, 2vw, 26px);
+  background: var(--paper);
+  gap: 8px;
+}
+
+.layer-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 15px 16px;
+  gap: 12px;
+  font-size: 0.86rem;
+  font-weight: 540;
+  transition:
+    background-color 320ms var(--ease-ui),
+    border-color 320ms var(--ease-ui),
+    color 320ms var(--ease-ui);
+}
+
+.layer-bar-index {
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+
+/* State is carried by colour and weight, never by opacity: a faded bar would fail contrast and
+   would also trip the assertion that nothing inside a revealed container sits below full opacity. */
+.layer-bar[data-state='future'] {
+  color: var(--muted);
+}
+
+.layer-bar[data-state='future'] .layer-bar-index {
+  color: var(--muted);
+}
+
+.layer-bar[data-state='past'] {
+  border-color: color-mix(in srgb, var(--action) 24%, var(--rule));
+  background: var(--wash);
+}
+
+.layer-bar[data-state='current'] {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--paper);
+}
+
+.layer-bar[data-state='current'] .layer-bar-index {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+}
+
+.layer-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.layer-step h3 {
+  font-size: clamp(1.5rem, 2.1vw, 2.1rem);
+}
+
+.layer-step p {
+  margin-top: 14px;
+  max-width: 460px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.layer-step + .layer-step {
+  margin-top: clamp(44px, 5vw, 72px);
+}
+
+/* Only once the script has taken over does the stack pin and the steps get the height that gives
+   the reader one screen per layer. */
+html[data-motion='on'] .layer-sequence[data-sequence='on'] .layer-stack {
+  position: sticky;
+  top: clamp(96px, 22vh, 190px);
+}
+
+html[data-motion='on'] .layer-sequence[data-sequence='on'] .layer-step {
+  display: flex;
+  min-height: 62vh;
+  flex-direction: column;
+  justify-content: center;
+  transition: color 320ms var(--ease-ui);
+}
+
+html[data-motion='on'] .layer-sequence[data-sequence='on'] .layer-step + .layer-step {
+  margin-top: 0;
+}
+
+html[data-motion='on'] .layer-sequence[data-sequence='on'] .layer-step[data-state='future'] h3 {
+  color: var(--muted);
+}
+
 @media (max-width: 1100px) {
   :root {
     --shell: min(100% - 40px, 1040px);
@@ -3617,6 +3731,14 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   .vision-media figure {
     margin-left: 0;
     transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Sticky plus touch momentum plus a short viewport reads as broken, so the sequence simply
+     becomes a diagram followed by its list. The script declines to arm itself here too. */
+  .layer-sequence-grid {
+    grid-template-columns: 1fr;
   }
 }
 

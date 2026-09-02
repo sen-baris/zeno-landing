@@ -1,0 +1,114 @@
+---
+interface Layer {
+  name: string;
+  body: string;
+}
+
+interface Props {
+  layers: readonly Layer[];
+}
+
+const { layers } = Astro.props;
+---
+
+{
+  /*
+  The stack holds still while the reader scrolls, and each step in turn lights up its layer.
+
+  The ordered list is the real content: complete, in order, and readable on its own. The stack
+  beside it is a visual mirror with no text of its own that matters and no focusable descendants,
+  so it is hidden from assistive technology rather than read out twice.
+
+  Nothing here is hidden by default. Without JavaScript, with reduced motion, on a narrow screen, or
+  if the script fails, `data-sequence` stays "off" and the section renders as a diagram followed by
+  a plain list — which is the same path three existing tests already exercise on every run.
+*/
+}
+<section class="layer-sequence" data-sequence="off">
+  <div class="layer-sequence-grid">
+    <figure class="layer-stack" aria-hidden="true">
+      {
+        layers.map((layer, index) => (
+          <div class="layer-bar" data-state={index === 0 ? 'current' : 'future'}>
+            <span class="layer-bar-index">{String(index + 1).padStart(2, '0')}</span>
+            <span>{layer.name}</span>
+          </div>
+        ))
+      }
+    </figure>
+
+    <ol class="layer-steps">
+      {
+        layers.map((layer, index) => (
+          <li class="layer-step" data-state={index === 0 ? 'current' : 'future'}>
+            <h3>{layer.name}</h3>
+            <p>{layer.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<script>
+  const section = document.querySelector<HTMLElement>('.layer-sequence');
+  const motionOn = document.documentElement.getAttribute('data-motion') === 'on';
+
+  // Its own flag rather than data-motion-ready: the runtime's two-second failsafe must never be
+  // able to pull position: sticky out from under someone mid-scroll.
+  if (
+    section &&
+    motionOn &&
+    typeof CSS !== 'undefined' &&
+    CSS.supports('position', 'sticky') &&
+    window.matchMedia('(min-width: 900px)').matches
+  ) {
+    const steps = Array.from(section.querySelectorAll<HTMLElement>('.layer-step'));
+    const bars = Array.from(section.querySelectorAll<HTMLElement>('.layer-bar'));
+
+    if (steps.length > 0) {
+      section.dataset.sequence = 'on';
+      let queued = false;
+      let shown = -1;
+
+      // Computed from geometry rather than from IntersectionObserver events. The stack has to be
+      // right after a jump in either direction — an anchor link, a scrollbar drag, Page Up — and an
+      // observer only reports the transitions it happens to witness.
+      const update = () => {
+        queued = false;
+        const line = window.innerHeight * 0.5;
+        let active = 0;
+        for (const [index, step] of steps.entries()) {
+          if (step.getBoundingClientRect().top <= line) active = index;
+        }
+        if (active === shown) return;
+        shown = active;
+
+        for (const [index, step] of steps.entries()) {
+          const state = index === active ? 'current' : index < active ? 'past' : 'future';
+          step.dataset.state = state;
+          const bar = bars[index];
+          if (bar) bar.dataset.state = state;
+        }
+      };
+
+      const onScroll = () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+        if (!event.matches) return;
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+        section.dataset.sequence = 'off';
+        for (const element of [...steps, ...bars]) delete element.dataset.state;
+      });
+    }
+  }
+</script>

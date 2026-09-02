@@ -2,11 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AdoptionGap from '../components/AdoptionGap.astro';
 import GovernanceConsole from '../components/GovernanceConsole.astro';
-import PlatformOverview from '../components/PlatformOverview.astro';
+import PlatformSequence from '../components/PlatformSequence.astro';
 import ProductWorkspace from '../components/ProductWorkspace.astro';
 import WorkflowRun from '../components/WorkflowRun.astro';
 import { withBase } from '../lib/routing/base-path';
-import { operatingModel, platformPillars, workflowExamples } from '../lib/content/site-content';
+import { platformLayers, platformPillars, workflowExamples } from '../lib/content/site-content';
 ---
 
 <BaseLayout
@@ -28,26 +28,15 @@ import { operatingModel, platformPillars, workflowExamples } from '../lib/conten
     <div class="shell">
       <header class="section-heading split-heading">
         <div>
-          <p class="eyebrow">The workspace</p>
-          <h2 id="overview-title">One place the work happens.</h2>
+          <p class="eyebrow">The stack</p>
+          <h2 id="overview-title">Six layers, from the models up.</h2>
         </div>
         <p>
-          Your knowledge and tools on one side, the agents built on them in the middle, and the work
-          they produce on the right.
+          Each one sits on the one below it, and the top two cover everything underneath. Scroll
+          through them one at a time.
         </p>
       </header>
-      <PlatformOverview />
-      <ol class="model-list">
-        {
-          operatingModel.map((step) => (
-            <li data-reveal>
-              <span>{step.number}</span>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-            </li>
-          ))
-        }
-      </ol>
+      <PlatformSequence layers={platformLayers} />
     </div>
   </section>
 

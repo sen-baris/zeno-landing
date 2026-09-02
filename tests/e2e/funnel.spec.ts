@@ -187,7 +187,7 @@ test('reduced motion preserves the complete static product story', async ({ page
   // The mechanism visuals live on /product and must degrade the same way.
   await page.goto('/product');
   for (const visual of [
-    '.platform-overview',
+    '.layer-stack',
     '.product-workspace',
     '.workflow-run',
     '.adoption-gap',
@@ -247,12 +247,10 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(page).toHaveURL(/\/product$/);
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Connect. Equip. Run. Govern.');
-  await expect(page.getByRole('heading', { name: 'Company knowledge and tools' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Specialized agents for teams' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Everyday work and repeatable workflows' }),
+    page.getByRole('heading', { name: 'Six layers, from the models up.' }),
   ).toBeVisible();
-  await expect(page.getByText('Govern across the organization', { exact: true })).toBeVisible();
+  await expect(page.locator('.layer-step')).toHaveCount(6);
   await expect(page.getByRole('heading', { name: 'Agents that know your company' })).toBeVisible();
   await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
 
@@ -361,6 +359,63 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
   await context.close();
+});
+
+test('the layer sequence pins and steps, and reads plainly without it', async ({
+  page,
+  browser,
+}) => {
+  await page.goto('/product');
+  const steps = page.locator('.layer-step');
+  await expect(steps).toHaveCount(6);
+
+  // The stack is a visual mirror of the list, so it must not be read out a second time.
+  await expect(page.locator('.layer-stack')).toHaveAttribute('aria-hidden', 'true');
+  // Nothing focusable inside it either, or it would add phantom stops to the tab order.
+  expect(await page.locator('.layer-stack a, .layer-stack button').count()).toBe(0);
+
+  await expect(page.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'on');
+  await expect(page.locator('.layer-stack')).toHaveCSS('position', 'sticky');
+
+  // Walking the section marks every layer in turn, and walking back unmarks them again.
+  const box = await page.locator('.layer-sequence').boundingBox();
+  if (!box) throw new Error('the sequence should be laid out');
+  await page.evaluate(
+    (top) => window.scrollTo({ top, behavior: 'instant' }),
+    box.y + box.height - 400,
+  );
+  await expect.poll(() => page.locator('.layer-step[data-state="future"]').count()).toBe(0);
+  await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), box.y - 200);
+  await expect
+    .poll(() => page.locator('.layer-step[data-state="future"]').count())
+    .toBeGreaterThan(0);
+
+  // With no JavaScript it is a diagram and a list, with every layer visible and nothing pinned.
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await context.newPage();
+  await plain.goto('/product');
+  await expect(plain.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'off');
+  await expect(plain.locator('.layer-stack')).toHaveCSS('position', 'static');
+  for (const name of [
+    'Model hub',
+    'Connectors and data',
+    'Context and knowledge',
+    'Specialized agents',
+    'Products and interfaces',
+    'Security and governance',
+  ]) {
+    await expect(plain.getByRole('heading', { name, exact: true })).toBeVisible();
+  }
+  await context.close();
+});
+
+test('the layer sequence does not pin under reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/product');
+  await expect(page.locator('.layer-sequence')).toHaveAttribute('data-sequence', 'off');
+  await expect(page.locator('.layer-stack')).toHaveCSS('position', 'static');
+  await expect(page.locator('.layer-step')).toHaveCount(6);
+  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

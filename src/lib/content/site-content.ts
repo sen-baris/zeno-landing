@@ -30,26 +30,34 @@ export const benefits = [
   },
 ] as const;
 
-export const operatingModel = [
+/**
+ * The stack, read from the bottom up: the models underneath, everything built on them, and the
+ * governance that covers all of it. Each one is a step in the pinned sequence on /product.
+ */
+export const platformLayers = [
   {
-    number: '01',
-    title: 'Connect knowledge and tools',
-    body: 'Point Zeno at the documents, drives, and systems your teams already work in.',
+    name: 'Model hub',
+    body: 'Approved models from more than one provider, chosen by IT and switchable later without touching anything above.',
   },
   {
-    number: '02',
-    title: 'Equip teams with agents',
-    body: 'Set up an agent for one job, with the knowledge it needs and limits on what it can reach.',
+    name: 'Connectors and data',
+    body: 'The drives, document stores and business systems your teams already work in, connected once.',
   },
   {
-    number: '03',
-    title: 'Run repeatable workflows',
-    body: 'Chain the steps together so the whole thing runs on a schedule instead of on request.',
+    name: 'Context and knowledge',
+    body: 'Your own documents and figures, with permissions carried through, so an agent only ever sees what the person using it may see.',
   },
   {
-    number: '04',
-    title: 'Govern and improve',
-    body: 'Decide where a person signs off, and watch which teams come back to it.',
+    name: 'Specialized agents',
+    body: 'An agent per job, with the knowledge it needs, the template it has to follow, and limits on what it can reach.',
+  },
+  {
+    name: 'Products and interfaces',
+    body: 'Where the work actually happens: ask a question, draft a document, run a workflow, review what came back.',
+  },
+  {
+    name: 'Security and governance',
+    body: 'Who has access, which models are allowed, where a person has to sign off, and which teams are using any of it.',
   },
 ] as const;
 
