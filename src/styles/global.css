@@ -25,6 +25,10 @@
   --evidence: #9a621f;
   --rule: #ded8d5;
   --muted: #66616a;
+  --surface-hover: color-mix(in srgb, var(--wash) 55%, var(--paper));
+  --rule-strong: color-mix(in srgb, var(--action) 34%, var(--rule));
+  --dur-ui: 160ms;
+  --ease-ui: cubic-bezier(0.22, 0.68, 0.24, 1);
   --shell: min(1380px, calc(100% - 64px));
   --display: 'IBM Plex Serif', Georgia, serif;
   --body: 'IBM Plex Sans Variable', 'Helvetica Neue', Arial, sans-serif;
@@ -3068,6 +3072,125 @@ html[data-motion='on'] .layer-agents > ul > li:nth-child(4) {
   margin-top: 18px;
   color: var(--muted);
   font-size: 0.8rem;
+}
+
+/*
+ * Interaction states.
+ *
+ * Deliberately outside the html[data-motion='on'] scope: the reduced-motion block at the end of this
+ * file already caps every transition at 0.01ms, so scoping these too would delete hover feedback for
+ * anyone whose JavaScript failed, for no benefit. The end state still applies instantly.
+ *
+ * All of it sits inside @media (hover: hover) so a touch device never latches a hover state after a
+ * tap. Nothing here reveals content that was not already visible (WCAG 1.4.13), and nothing that is
+ * not clickable gets a pointer cursor or a lift — a card that rises under the cursor and then does
+ * nothing when clicked is a broken promise.
+ */
+@media (hover: hover) and (pointer: fine) {
+  /* Navigable: these respond because you can act on them. */
+  .site-footer nav a,
+  .trust-center-link,
+  .mobile-menu summary,
+  .wordmark {
+    transition: color var(--dur-ui) var(--ease-ui);
+  }
+
+  .trust-center-link:hover,
+  .mobile-menu summary:hover {
+    color: var(--action);
+    text-decoration: underline;
+  }
+
+  /* The footer sits on dark ink; brighten rather than reaching for the accent. */
+  .site-footer nav a:hover {
+    color: var(--paper);
+    text-decoration: underline;
+  }
+
+  .desktop-nav a:active,
+  .text-link:active,
+  .section-more a:active {
+    color: var(--action-hover);
+  }
+
+  /* Controls on the conversion path. These were the only genuinely interactive things on the site
+     with no hover state at all. */
+  .workflow-option:hover,
+  .answer-option:hover,
+  .check-field:hover {
+    background: var(--surface-hover);
+  }
+
+  /* Reading surfaces: the shift is there to help the eye settle, not to promise a click. */
+  .benefit-item:hover,
+  .cost-list > li:hover,
+  .platform-pillars article:hover,
+  .adoption-timeline li:hover {
+    border-top-color: var(--rule-strong);
+  }
+
+  .certification-list > li:hover,
+  .governance-panels > li:hover,
+  .business-case-figures > li:hover,
+  .workflow-run-steps li:hover,
+  .layer-agents > ul > li:hover,
+  .gap-stats > li:hover {
+    background: var(--surface-hover);
+  }
+
+  .layer-governed li:hover,
+  .platform-governance li:hover,
+  .scene-chips span:hover {
+    border-color: var(--action);
+  }
+}
+
+/* Transitions apply on every pointer type so the change is never abrupt where hover does fire. */
+.workflow-option,
+.answer-option,
+.check-field,
+.benefit-item,
+.cost-list > li,
+.platform-pillars article,
+.adoption-timeline li,
+.certification-list > li,
+.governance-panels > li,
+.business-case-figures > li,
+.workflow-run-steps li,
+.layer-agents > ul > li,
+.gap-stats > li,
+.layer-governed li,
+.platform-governance li,
+.scene-chips span {
+  transition:
+    background-color var(--dur-ui) var(--ease-ui),
+    border-color var(--dur-ui) var(--ease-ui);
+}
+
+/* Keyboard parity: the same affordance a mouse gets, without relying on the focus ring alone. */
+.workflow-option:focus-within,
+.answer-option:focus-within,
+.check-field:focus-within {
+  background: var(--surface-hover);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--action);
+}
+
+/* Background-only states disappear under Windows High Contrast, so fall back to a border. */
+@media (forced-colors: active) {
+  .workflow-option:hover,
+  .answer-option:hover,
+  .check-field:hover,
+  .workflow-option:focus-within,
+  .answer-option:focus-within,
+  .check-field:focus-within {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 
 @media (max-width: 1100px) {

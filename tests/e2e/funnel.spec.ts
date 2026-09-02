@@ -138,7 +138,7 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
     "Most enterprises don't have an access problem. They have an adoption problem.",
   );
   const costIndex = sectionHeadings.indexOf('What happens when nobody uses it.');
-  const proofIndex = sectionHeadings.indexOf('What enterprise customers report.');
+  const proofIndex = sectionHeadings.indexOf('What enterprises are seeing.');
   const whatIndex = sectionHeadings.indexOf('One layer over the models you already buy.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
@@ -304,7 +304,7 @@ test('the business case publishes each figure with the qualifier it depends on',
   await page.goto('/');
   const businessCase = page.locator('#business-case');
   await expect(businessCase.getByRole('heading', { level: 2 })).toHaveText(
-    'What enterprise customers report.',
+    'What enterprises are seeing.',
   );
 
   const expected = [
