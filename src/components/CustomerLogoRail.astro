@@ -7,19 +7,36 @@ interface Props {
   logos: readonly CustomerLogoAsset[];
   audiences: readonly string[];
   proof: readonly ClaimRecord[];
+  /**
+   * Published as an excerpt, never a paraphrase. The component renders the claim's own statement and
+   * attribution, so a quote cannot appear without the record that approved it.
+   */
+  // exactOptionalPropertyTypes is on, so an optional prop has to admit undefined explicitly.
+  quote?: ClaimRecord | undefined;
 }
 
-const { logos, audiences, proof } = Astro.props;
+const { logos, audiences, proof, quote } = Astro.props;
 ---
 
 <section class="customer-proof section-rule" id="audience" aria-labelledby="customer-proof-title">
   <div class="shell">
     <div class="customer-proof-heading">
       <p class="eyebrow" id="customer-proof-title">Selected customers</p>
-      <p>
-        Built for AI, innovation, IT, data, operations, and security leaders bringing AI into
-        everyday work.
-      </p>
+      {
+        quote ? (
+          <figure class="customer-quote">
+            <blockquote>
+              <p>{quote.statement}</p>
+            </blockquote>
+            <figcaption>{quote.attribution}</figcaption>
+          </figure>
+        ) : (
+          <p>
+            Built for AI, innovation, IT, data, operations, and security leaders bringing AI into
+            everyday work.
+          </p>
+        )
+      }
     </div>
     <ul class="customer-logo-list" data-reveal aria-label="Selected customer logos">
       {

@@ -51,9 +51,64 @@
 
     for (const target of targets) observer.observe(target);
 
+    // Figures marked with data-figure count up when they arrive, and again on every later arrival,
+    // so scrolling back to a panel replays it. That means never unobserving them.
+    const counters = Array.from(document.querySelectorAll<HTMLElement>('[data-figure]'));
+    const running = new WeakMap<HTMLElement, number>();
+    const COUNT_MS = 900;
+
+    function restore(element: HTMLElement): void {
+      const pending = running.get(element);
+      if (pending !== undefined) cancelAnimationFrame(pending);
+      running.delete(element);
+      if (element.dataset.figure) element.textContent = element.dataset.figure;
+    }
+
+    // Split on digit runs so everything that is not a number — a tilde, a euro sign, an en dash, a
+    // percent, an M, the word "of" — survives untouched and only the quantities move.
+    function countTo(element: HTMLElement, target: string): void {
+      const parts = target.split(/(\d+)/);
+      if (!parts.some((part) => /^\d+$/.test(part))) return;
+
+      const pending = running.get(element);
+      if (pending !== undefined) cancelAnimationFrame(pending);
+
+      const started = performance.now();
+      const frame = (now: number) => {
+        const progress = Math.min((now - started) / COUNT_MS, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        if (progress < 1) {
+          element.textContent = parts
+            .map((part) => (/^\d+$/.test(part) ? String(Math.round(Number(part) * eased)) : part))
+            .join('');
+          running.set(element, requestAnimationFrame(frame));
+        } else {
+          // Restore the approved string verbatim rather than reassembling it from the parts.
+          element.textContent = target;
+          running.delete(element);
+        }
+      };
+      running.set(element, requestAnimationFrame(frame));
+    }
+
+    const counterObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const element = entry.target as HTMLElement;
+          if (element.dataset.figure) countTo(element, element.dataset.figure);
+        }
+      },
+      { threshold: 0.6 },
+    );
+
+    for (const counter of counters) counterObserver.observe(counter);
+
     window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
       if (!event.matches) return;
       observer.disconnect();
+      counterObserver.disconnect();
+      for (const counter of counters) restore(counter);
       root.removeAttribute('data-motion');
       root.removeAttribute('data-motion-ready');
       finish();

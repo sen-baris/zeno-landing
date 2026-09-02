@@ -16,6 +16,7 @@ import {
   homepageCertificationClaimIds,
   homepageCustomerLogoClaimIds,
   homepageProofClaimIds,
+  homepageTestimonialClaimIds,
   trustCenterUrl,
 } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
@@ -38,6 +39,11 @@ const approvedBusinessCase = resolveApprovedClaims(
   claimRegistry,
   homepageBusinessCaseClaimIds,
   'home.business-case',
+);
+const approvedQuotes = resolveApprovedClaims(
+  claimRegistry,
+  homepageTestimonialClaimIds,
+  'home.testimonials',
 );
 const approvedCustomerLogoClaims = resolveApprovedClaims(
   claimRegistry,
@@ -74,7 +80,12 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
     </div>
   </section>
 
-  <CustomerLogoRail logos={approvedCustomerLogos} audiences={audiences} proof={approvedProof} />
+  <CustomerLogoRail
+    logos={approvedCustomerLogos}
+    audiences={audiences}
+    proof={approvedProof}
+    quote={approvedQuotes[0]}
+  />
 
   <section class="benefits section-rule" id="why" aria-labelledby="benefits-title">
     <div class="shell">

@@ -327,6 +327,26 @@ test('the business case publishes each figure with the qualifier it depends on',
 });
 
 const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
+const APPROVED_ADOPTION_FIGURES = ['64%', '31', '11 of 14', '9%'];
+
+test('the customer quote is published from its approved record', async ({ page }) => {
+  await page.goto('/');
+  const quote = page.locator('.customer-quote');
+  await expect(quote.locator('blockquote')).toHaveText(
+    "Today it's already one of our core operational tools that runs our business.",
+  );
+  await expect(quote.locator('figcaption')).toHaveText('Partner, strategy consultancy');
+  // The buzzword line it replaced must not come back alongside it.
+  await expect(page.getByText(/Built for AI, innovation, IT, data/)).toHaveCount(0);
+});
+
+test('the adoption figures count up and settle exactly on /product', async ({ page }) => {
+  await page.goto('/product');
+  const counts = page.locator('.gap-value [data-figure]');
+  await expect(counts).toHaveCount(APPROVED_ADOPTION_FIGURES.length);
+  await page.locator('.adoption-gap').scrollIntoViewIfNeeded();
+  await expect.poll(() => counts.allTextContents()).toEqual(APPROVED_ADOPTION_FIGURES);
+});
 
 test('the business case figures count up, settle exactly, and replay on return', async ({
   page,

@@ -861,6 +861,32 @@ h2 {
   font-size: 1.04rem;
 }
 
+.customer-quote {
+  margin: 0;
+  max-width: 480px;
+}
+
+.customer-quote blockquote {
+  margin: 0;
+}
+
+.customer-quote p {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.customer-quote figcaption {
+  margin-top: 14px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .customer-logo-list {
   display: grid;
   align-items: center;

@@ -36,7 +36,14 @@ const labelled = new Set([0, weeks.length - 1]);
         stats.map((stat) => (
           <li>
             <p class="product-label">{stat.label}</p>
-            <p class="gap-value">{stat.value}</p>
+            <p class="gap-value">
+              {/* Same contract as the business case: the animating copy is hidden from assistive
+                  technology, the twin beside it carries the real figure. */}
+              <span data-figure={stat.value} aria-hidden="true">
+                {stat.value}
+              </span>
+              <span class="visually-hidden">{stat.value}</span>
+            </p>
             <p class="gap-delta" data-direction={stat.direction}>
               <span aria-hidden="true">{stat.direction === 'down' ? '↓' : '↑'}</span>
               {stat.delta}

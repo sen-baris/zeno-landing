@@ -231,9 +231,29 @@ export const claimRegistry: readonly ClaimRecord[] = [
     notes:
       'This is a projection from an internal model, not a realised or audited customer result. The words "projected", "internal enterprise savings model", the ~2,200-user population, and the range are all material qualifiers and must stay attached wherever the figure appears. The model and its assumptions must be reviewed before the production release.',
   },
+  {
+    id: 'customer-quote-strategy-consultancy',
+    statement: "Today it's already one of our core operational tools that runs our business.",
+    category: 'customer',
+    evidence:
+      'Verbatim excerpt from a customer statement supplied by the workspace owner on 2026-09-02. Full original: "We underestimated what big operational impact, but also dependency, TextCortex would create after just six months. Today it\'s already one of our core operational tools that runs our business." The published sentence is unedited; only the preceding sentence was dropped.',
+    verified_on: '2026-09-02',
+    approval_status: 'approved',
+    approved_by: 'Baris — working-session direction',
+    approved_on: '2026-09-02',
+    allowed_surfaces: ['home.testimonials'],
+    attribution: 'Partner, strategy consultancy',
+    reverify_on: '2027-03-02',
+    notes:
+      'Published as an excerpt, never a paraphrase: the sentence is verbatim and the brand name was not substituted. The speaker is unnamed by choice; naming them, or quoting the dropped sentence, needs their own written permission. The original names Text Cortex rather than Zeno, the same operating-entity question the certification records carry.',
+  },
 ];
 
 export const homepageProofClaimIds: readonly string[] = [];
+
+export const homepageTestimonialClaimIds: readonly string[] = [
+  'customer-quote-strategy-consultancy',
+];
 
 export const homepageBusinessCaseClaimIds: readonly string[] = [
   'metric-efficiency-time-savings',
