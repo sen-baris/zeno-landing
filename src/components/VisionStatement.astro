@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+import founders from '../assets/team/founders.jpg';
+import teamEvening from '../assets/team/team-evening.jpg';
+import teamDesk from '../assets/team/team-desk.jpg';
+
+// The statement is split into sentences at authoring time, not into words. Word spans bloat the DOM
+// and fight the global text-wrap: balance and overflow-wrap: anywhere, for an effect nobody reads
+// word by word anyway.
+const lines = [
+  'We are not handing you a tool and wishing you luck.',
+  'The rollouts that work have someone from our side inside them, finding the work worth automating, building the first agent with the team that will use it, and staying until it runs without us.',
+  'That part does not scale by writing more software. We do it anyway.',
+  'And we measure ourselves the way you should measure us: whether your teams are still using it in month six.',
+];
+---
+
+<section class="vision section-rule" id="vision" aria-labelledby="vision-title">
+  <div class="shell vision-grid">
+    <div class="vision-media vision-media-lead">
+      <figure data-reveal>
+        <Image src={founders} alt="The two co-founders in the office." />
+      </figure>
+      <figure data-reveal>
+        <Image src={teamDesk} alt="Two of the team working late at a shared desk." />
+      </figure>
+    </div>
+
+    <div class="vision-copy">
+      <p class="eyebrow">Who you would be working with</p>
+      <h2 id="vision-title">Software is the easy half.</h2>
+      <div class="vision-lines">
+        {lines.map((line) => <p class="vision-line">{line}</p>)}
+      </div>
+    </div>
+
+    <div class="vision-media vision-media-trail">
+      <figure data-reveal>
+        <Image src={teamEvening} alt="Part of the team together at the end of a working day." />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Lines darken as the reader reaches them. Dimming is done with colour, never opacity: --muted
+  // still passes AA against the page, whereas a faded line would fail contrast and would also trip
+  // the assertion that nothing inside a revealed container sits below full opacity.
+  //
+  // Driven by geometry on scroll rather than IntersectionObserver. An observer only reports
+  // transitions, so a single jump — an anchor link, a scrollbar drag, a keyboard Page Down — can
+  // carry a line from below the trigger to above the viewport without ever intersecting, and it
+  // would stay dimmed behind the reader forever. Reading four rectangles on a throttled scroll is
+  // both simpler and correct.
+  if (document.documentElement.getAttribute('data-motion') === 'on') {
+    const lines = Array.from(document.querySelectorAll<HTMLElement>('.vision-line'));
+
+    if (lines.length > 0) {
+      let queued = false;
+
+      const markPassed = () => {
+        queued = false;
+        const trigger = window.innerHeight * 0.72;
+        let remaining = false;
+        for (const line of lines) {
+          if (line.getBoundingClientRect().top < trigger) {
+            line.setAttribute('data-read', '');
+          } else {
+            remaining = true;
+          }
+        }
+        // Every line has been read, so there is nothing left to watch for.
+        if (!remaining) stop();
+      };
+
+      const onScroll = () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(markPassed);
+      };
+
+      function stop(): void {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      markPassed();
+
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+        if (!event.matches) return;
+        stop();
+        for (const line of lines) line.setAttribute('data-read', '');
+      });
+    }
+  }
+</script>

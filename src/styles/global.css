@@ -835,6 +835,7 @@ h2 {
 
 .customer-proof,
 .benefits,
+.vision,
 .adoption-cost,
 .operating-model,
 .platform,
@@ -2617,6 +2618,14 @@ html[data-motion='on'] .layer-agents > ul > li:nth-child(4) {
   transition-delay: 270ms;
 }
 
+html[data-motion='on'] .vision-line {
+  transition: color 320ms var(--ease-ui);
+}
+
+html[data-motion='on'] .vision-line:not([data-read]) {
+  color: var(--muted);
+}
+
 @keyframes zeno-fade-in {
   to {
     opacity: 1;
@@ -3219,6 +3228,71 @@ html[data-motion='on'] .layer-agents > ul > li:nth-child(4) {
   }
 }
 
+/* Vision
+   Photographs scattered either side of a statement that darkens as it is read. The unread state is
+   --muted rather than a faded opacity: muted still passes AA on this background, and a translucent
+   line would fail contrast as well as the assertion that nothing inside a revealed container sits
+   below full opacity. */
+.vision {
+  background: var(--paper);
+}
+
+.vision-grid {
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(180px, 0.75fr) minmax(320px, 1.5fr) minmax(160px, 0.65fr);
+  gap: clamp(28px, 5vw, 80px);
+}
+
+.vision-media {
+  display: grid;
+  gap: clamp(24px, 3vw, 44px);
+}
+
+.vision-media figure {
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 18px 44px rgb(20 23 19 / 12%);
+}
+
+.vision-media img {
+  width: 100%;
+  height: auto;
+}
+
+/* A slight tilt so the cluster reads as pinned-up photographs rather than a gallery grid. */
+.vision-media-lead figure:first-child {
+  transform: rotate(-1.6deg);
+}
+
+.vision-media-lead figure:last-child {
+  margin-left: clamp(18px, 3vw, 44px);
+  transform: rotate(1.2deg);
+}
+
+.vision-media-trail figure {
+  transform: rotate(1.8deg);
+}
+
+.vision-copy h2 {
+  max-width: 620px;
+  font-size: clamp(2.4rem, 3.6vw, 3.4rem);
+}
+
+.vision-lines {
+  margin-top: clamp(30px, 3.5vw, 46px);
+  max-width: 620px;
+}
+
+.vision-line {
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  line-height: 1.55;
+}
+
+.vision-line + .vision-line {
+  margin-top: 20px;
+}
+
 @media (max-width: 1100px) {
   :root {
     --shell: min(100% - 40px, 1040px);
@@ -3725,6 +3799,31 @@ html[data-motion='on'] .layer-agents > ul > li:nth-child(4) {
 @media (max-width: 560px) {
   .layer-agents ul {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .vision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Statement first on a narrow screen; the photographs follow as a row beneath it. */
+  .vision-copy {
+    order: -1;
+  }
+
+  .vision-media {
+    /* Without this the shorter landscape figure stretches to match the portrait beside it and
+       shows a band of empty card below the photograph. */
+    align-items: start;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+  }
+
+  .vision-media-lead figure:last-child,
+  .vision-media figure {
+    margin-left: 0;
+    transform: none;
   }
 }
 

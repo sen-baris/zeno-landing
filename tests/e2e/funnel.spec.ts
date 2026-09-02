@@ -329,6 +329,39 @@ test('the business case publishes each figure with the qualifier it depends on',
 const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
 const APPROVED_ADOPTION_FIGURES = ['64%', '31', '11 of 14', '9%'];
 
+test('the vision statement stays readable however it is reached', async ({ page, browser }) => {
+  await page.goto('/');
+  const lines = page.locator('.vision-line');
+  await expect(lines).toHaveCount(4);
+  await expect(page.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
+
+  // Every photograph carries a description; none is decorative.
+  const photos = page.locator('#vision img');
+  await expect(photos).toHaveCount(3);
+  for (const photo of await photos.all()) {
+    expect((await photo.getAttribute('alt'))?.trim().length ?? 0).toBeGreaterThan(0);
+  }
+
+  // Reading it through leaves every line at full ink, and none of it was dimmed with opacity.
+  await settleRevealMotion(page);
+  await expect(page.locator('.vision-line:not([data-read])')).toHaveCount(0);
+  const faded = await page.evaluate(
+    () =>
+      Array.from(document.querySelectorAll('.vision-line')).filter(
+        (line) => Number(getComputedStyle(line).opacity) < 1,
+      ).length,
+  );
+  expect(faded, 'lines dim with colour, never opacity').toBe(0);
+
+  // With no JavaScript the statement is simply already read.
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await context.newPage();
+  await plain.goto('/');
+  await expect(plain.locator('.vision-line')).toHaveCount(4);
+  await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
+  await context.close();
+});
+
 test('the customer quote is published from its approved record', async ({ page }) => {
   await page.goto('/');
   const quote = page.locator('.customer-quote');

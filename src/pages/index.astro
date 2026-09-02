@@ -7,6 +7,7 @@ import CustomerLogoRail from '../components/CustomerLogoRail.astro';
 import GovernanceConsole from '../components/GovernanceConsole.astro';
 import PlatformOverview from '../components/PlatformOverview.astro';
 import TrustCertifications from '../components/TrustCertifications.astro';
+import VisionStatement from '../components/VisionStatement.astro';
 import { businessCaseAssets } from '../lib/claims/business-case-assets';
 import { certificationAssets } from '../lib/claims/certification-assets';
 import { customerLogoAssets } from '../lib/claims/customer-logo-assets';
@@ -202,6 +203,8 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
       </div>
     </div>
   </section>
+
+  <VisionStatement />
 
   <section class="adoption-trust section-rule" id="trust" aria-labelledby="trust-title">
     <div class="shell">
