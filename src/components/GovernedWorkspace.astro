@@ -17,6 +17,7 @@ const agents = [
     team: 'Finance',
     role: 'Board reporting',
     task: 'Draft the Q3 board update.',
+    sources: ['Finance drive', 'Reporting data', 'Board template'],
     shared: 'Finance team',
     schedule: 'Every Monday, 09:00',
     result: 'Draft ready',
@@ -27,6 +28,7 @@ const agents = [
     team: 'Legal',
     role: 'Contract review',
     task: 'Check the supplier renewal.',
+    sources: ['Contract store', 'Supplier records', 'Policy library'],
     shared: 'Legal, and Procurement',
     schedule: 'On request',
     result: 'Review ready',
@@ -37,11 +39,16 @@ const agents = [
     team: 'Operations',
     role: 'Weekly ops pack',
     task: 'Build the weekly ops pack.',
+    sources: ['Ops dashboards', 'Ticket system', 'Delivery log'],
     shared: 'Operations, and Finance',
     schedule: 'Every Friday, 16:00',
     result: 'Pack ready',
   },
-] as const satisfies readonly { glyph: GlyphName; [key: string]: string }[];
+] as const satisfies readonly {
+  glyph: GlyphName;
+  sources: readonly string[];
+  [key: string]: unknown;
+}[];
 
 const controls = [
   'Knowledge access',
@@ -53,9 +60,9 @@ const controls = [
 
 {
   /*
-  One scene. The agents on the left, the job the selected one is running in the middle, and the four
-  controls it runs inside along the bottom — the same four the administration console on /product
-  spells out.
+  One scene, read left to right: the agents, what the selected one is connected to, and the job it
+  is running — with the four controls it all runs inside along the bottom, the same four the
+  administration console on /product spells out.
 
   Pick an agent and the panel changes. It has no relationship to the scroll position, and nothing
   moves on a timer: the choreography plays once on arrival and then it is yours to explore.
@@ -98,6 +105,24 @@ const controls = [
             ))
           }
         </ul>
+      </div>
+
+      <div class="hw-sources">
+        <p class="product-label">Connected to</p>
+        <div class="hw-source-sets">
+          {
+            agents.map((agent) => (
+              <ul class="hw-source-set" data-sources={agent.id}>
+                {agent.sources.map((source) => (
+                  <li>{source}</li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+        <p class="hw-source-note">
+          Permissions carried through, so it sees only what the team may.
+        </p>
       </div>
 
       <div class="hw-jobs">
@@ -160,10 +185,11 @@ const controls = [
   if (figure) {
     const agents = Array.from(figure.querySelectorAll<HTMLElement>('.hw-agent'));
     const jobs = Array.from(figure.querySelectorAll<HTMLElement>('.hw-job'));
+    const sources = Array.from(figure.querySelectorAll<HTMLElement>('.hw-source-set'));
 
     // Deliberately not gated on data-motion: choosing which agent to look at is not an animation,
     // and someone who has asked for reduced motion should still be able to look around.
-    if (agents.length > 0 && agents.length === jobs.length) {
+    if (agents.length > 0 && agents.length === jobs.length && agents.length === sources.length) {
       figure.dataset.workspace = 'on';
 
       const show = (index: number) => {
@@ -173,8 +199,8 @@ const controls = [
           if (current) agent.setAttribute('aria-current', 'true');
           else agent.removeAttribute('aria-current');
         }
-        for (const [position, job] of jobs.entries()) {
-          job.toggleAttribute('data-current', position === index);
+        for (const [position, panel] of [...jobs, ...sources].entries()) {
+          panel.toggleAttribute('data-current', position % agents.length === index);
         }
       };
 

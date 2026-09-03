@@ -44,6 +44,8 @@ html {
   color: var(--ink);
   font-family: var(--body);
   scroll-behavior: smooth;
+  /* Clears the sticky header, so an anchor never lands underneath it. */
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -307,11 +309,22 @@ h2 {
   gap: 12px;
 }
 
+/* Sticky, so the nav and the demo button stay reachable the whole way down. The mobile menu it
+   contains is absolutely positioned rather than fixed, so nothing inside it minds. */
 .site-header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 30;
   border-bottom: 1px solid var(--rule);
   background: color-mix(in srgb, var(--canvas) 96%, transparent);
+}
+
+/* The bar is a shade short of opaque, which reads as a ghost over whatever scrolls beneath it
+   unless the backdrop is blurred too. */
+@supports (backdrop-filter: blur(1px)) {
+  .site-header {
+    backdrop-filter: blur(14px);
+  }
 }
 
 .header-grid {
@@ -417,14 +430,87 @@ h2 {
   flex: 0 0 auto;
 }
 
+/* Three stages, left to right: who runs it, what it is connected to, what it is doing. The same
+   shape the platform overview on /product uses, at a fraction of the size. */
 .hw-body {
   display: grid;
-  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(220px, 0.72fr) minmax(180px, 0.62fr) minmax(0, 1.16fr);
 }
 
-.hw-agents {
+.hw-agents,
+.hw-sources {
+  position: relative;
   border-right: 1px solid var(--rule);
   padding: clamp(24px, 2.8vw, 38px);
+}
+
+/* The hand-off between one stage and the next, borrowed from the overview on /product. */
+.hw-agents::after,
+.hw-sources::after {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: -6px;
+  width: 11px;
+  height: 11px;
+  border-top: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  margin-top: -6px;
+  background: var(--paper);
+  content: '';
+  transform: rotate(45deg);
+}
+
+.hw-source-sets {
+  margin-top: 20px;
+}
+
+.hero-workspace[data-workspace='on'] .hw-source-sets {
+  display: grid;
+}
+
+.hw-source-set {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 9px;
+  list-style: none;
+}
+
+.hero-workspace[data-workspace='on'] .hw-source-set {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+.hero-workspace[data-workspace='on'] .hw-source-set[data-current] {
+  visibility: visible;
+}
+
+.hw-source-sets > .hw-source-set + .hw-source-set {
+  margin-top: 9px;
+}
+
+.hw-source-set li {
+  position: relative;
+  padding-left: 17px;
+  font-size: 0.82rem;
+  font-weight: 540;
+}
+
+.hw-source-set li::before {
+  position: absolute;
+  top: 0.5em;
+  left: 0;
+  width: 8px;
+  height: 1px;
+  background: color-mix(in srgb, var(--action) 55%, transparent);
+  content: '';
+}
+
+.hw-source-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.76rem;
 }
 
 .hw-agents ul {
@@ -625,14 +711,37 @@ h2 {
   display: inline;
 }
 
+@media (max-width: 1100px) {
+  /* Two stages abreast, the job beneath them: three columns of this width would leave the detail
+     list wrapping every value. */
+  .hw-body {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hw-jobs {
+    border-top: 1px solid var(--rule);
+    grid-column: 1 / -1;
+  }
+
+  .hw-sources::after {
+    display: none;
+  }
+}
+
 @media (max-width: 820px) {
   .hw-body {
     grid-template-columns: 1fr;
   }
 
-  .hw-agents {
+  .hw-agents,
+  .hw-sources {
     border-right: 0;
     border-bottom: 1px solid var(--rule);
+  }
+
+  .hw-agents::after,
+  .hw-sources::after {
+    display: none;
   }
 
   .hw-job-detail > div {
@@ -2366,21 +2475,18 @@ html[data-motion='on'] .hero-workspace[data-revealed] .hw-agent[data-running] {
   animation: zeno-hw-take 520ms cubic-bezier(0.22, 0.68, 0.24, 1) 120ms backwards;
 }
 
-html[data-motion='on'] .hero-workspace .hw-job::before {
-  position: absolute;
-  top: clamp(24px, 2.8vw, 38px);
-  bottom: clamp(24px, 2.8vw, 38px);
-  left: 0;
-  width: 2px;
-  background: var(--action);
-  content: '';
-  transform: scaleY(0);
-  transform-origin: top center;
+/* The hand-offs arrive with the scene, the way the overview's do on /product. */
+html[data-motion='on'] .hero-workspace .hw-agents::after,
+html[data-motion='on'] .hero-workspace .hw-sources::after {
+  opacity: 0;
 }
 
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-job[data-current]::before,
-html[data-motion='on'] .hero-workspace[data-workspace='off'] .hw-job::before {
-  animation: zeno-hw-lane 560ms cubic-bezier(0.3, 0.7, 0.3, 1) 260ms forwards;
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-agents::after {
+  animation: zeno-fade-in 380ms ease 300ms forwards;
+}
+
+html[data-motion='on'] .hero-workspace[data-revealed] .hw-sources::after {
+  animation: zeno-fade-in 380ms ease 420ms forwards;
 }
 
 html[data-motion='on'] .hero-workspace[data-revealed] .hw-job[data-current] > *,
@@ -2428,12 +2534,6 @@ html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(
   from {
     border-color: transparent;
     background: transparent;
-  }
-}
-
-@keyframes zeno-hw-lane {
-  to {
-    transform: scaleY(1);
   }
 }
 

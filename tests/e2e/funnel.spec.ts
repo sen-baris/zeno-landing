@@ -249,8 +249,10 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
   await expect(page.locator('.hw-controls li')).toHaveCount(4);
-  // Every agent's job is simply on the page, and nothing is offered that cannot be clicked.
+  // Every agent's job and sources are simply on the page, and nothing is offered that cannot be
+  // clicked.
   await expect(page.locator('.hw-job')).toHaveCount(3);
+  await expect(page.locator('.hw-source-set:visible')).toHaveCount(3);
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
   await expect(page.getByText('Build the weekly ops pack.')).toBeVisible();
   await expect(page.locator('.hero-workspace [role="button"]')).toHaveCount(0);
@@ -405,6 +407,15 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
   await expect(hero.locator('.hw-agent[data-running]')).toContainText('Finance');
   await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'finance');
 
+  // Three stages read left to right: the agent, what it is connected to, what it is doing.
+  await expect(hero.locator('.hw-source-set')).toHaveCount(3);
+  await expect(hero.locator('.hw-source-set[data-current]')).toHaveCount(1);
+  await expect(hero.locator('.hw-source-set[data-current]')).toHaveAttribute(
+    'data-sources',
+    'finance',
+  );
+  await expect(hero.locator('.hw-source-set[data-current] li')).toHaveCount(3);
+
   // The four controls are the argument, so they are named here as well as on /product.
   await expect(hero.locator('.hw-controls li')).toHaveCount(4);
   for (const control of ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU operating']) {
@@ -415,6 +426,12 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
   await hero.locator('.hw-agent[data-agent="legal"]').click();
   await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'legal');
   await expect(hero.getByText('Check the supplier renewal.')).toBeVisible();
+  // The sources follow the agent: each one only ever lists what that team may reach.
+  await expect(hero.locator('.hw-source-set[data-current]')).toHaveAttribute(
+    'data-sources',
+    'legal',
+  );
+  await expect(hero.locator('.hw-source-set[data-current]')).toContainText('Contract store');
   await expect(hero.locator('.hw-agent[data-agent="legal"]')).toHaveAttribute(
     'aria-current',
     'true',
@@ -600,6 +617,29 @@ test('the trust section publishes approved certifications and a verifiable trust
   await expect(trustCenter).toHaveAttribute('href', 'https://trust.textcortex.com/home');
   await expect(trustCenter).toHaveAttribute('target', '_blank');
   await expect(trustCenter).toHaveAttribute('rel', /noopener/);
+});
+
+test('the header stays put, and an anchor never lands underneath it', async ({ page }) => {
+  await page.goto('/');
+  const header = page.locator('.site-header');
+  await expect(header).toHaveCSS('position', 'sticky');
+
+  await page.evaluate(() => window.scrollTo({ top: 2400, behavior: 'instant' }));
+  await page.waitForFunction(() => window.scrollY >= 2400);
+  const box = await header.boundingBox();
+  expect(Math.round(box?.y ?? -1), 'the header must hold the top of the viewport').toBe(0);
+  await expect(header.getByRole('link', { name: 'Book a demo' })).toBeVisible();
+
+  // scroll-padding-top has to clear it, or the section a reader asked for opens behind the bar.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page
+    .getByRole('navigation', { name: 'Primary navigation' })
+    .getByRole('link', { name: 'Why Zeno' })
+    .click();
+  const headerHeight = Math.round((await header.boundingBox())?.height ?? 0);
+  await expect
+    .poll(async () => Math.round((await page.locator('#why').boundingBox())?.y ?? -1))
+    .toBeGreaterThanOrEqual(headerHeight);
 });
 
 test('internal navigation resolves to real pages or homepage sections', async ({ page }) => {
