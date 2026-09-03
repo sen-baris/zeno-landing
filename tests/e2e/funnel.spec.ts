@@ -61,9 +61,7 @@ async function completeDemoForm(page: Page) {
 
 test('homepage to assessment result to prefilled demo', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'The governed AI workspace for European enterprises.',
-  );
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Governed AI for Europe.');
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
   await expect(page).toHaveURL(/\/ai-readiness$/);
   await completeAssessment(page);

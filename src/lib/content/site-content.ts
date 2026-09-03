@@ -1,8 +1,8 @@
 export const draftHomeCopy = {
   status: 'draft',
-  headline: 'The governed AI workspace for European enterprises.',
+  headline: 'Governed AI for Europe.',
   subhead:
-    'Your teams get their work done with AI in the systems they already use, under rules your IT team sets.',
+    'Your teams get their work done with AI in the systems they already use. Your IT team sets the rules it runs under.',
 } as const;
 
 export const releaseContentStatus = {
