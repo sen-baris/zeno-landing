@@ -1,4 +1,7 @@
 ---
+import Glyph from './Glyph.astro';
+import type { GlyphName } from './Glyph.astro';
+
 interface Props {
   kind: 'workspace' | 'access' | 'adoption';
 }
@@ -7,17 +10,17 @@ const { kind } = Astro.props;
 
 // Everyday work, in the three shapes the card beside this one names.
 const work = [
-  { mark: 'A', label: 'Ask a question' },
-  { mark: 'D', label: 'Draft a document' },
-  { mark: 'N', label: 'Check a number' },
-] as const;
+  { glyph: 'ask', label: 'Ask a question' },
+  { glyph: 'draft', label: 'Draft a document' },
+  { glyph: 'number', label: 'Check a number' },
+] as const satisfies readonly { glyph: GlyphName; label: string }[];
 
 // One agent, shared out with the access each team is given.
 const shares = [
-  { mark: 'F', team: 'Finance', access: 'Owner', level: 'own' },
-  { mark: 'L', team: 'Legal', access: 'Can run', level: 'run' },
-  { mark: 'O', team: 'Operations', access: 'Can view', level: 'view' },
-] as const;
+  { glyph: 'finance', team: 'Finance', access: 'Owner', level: 'own' },
+  { glyph: 'legal', team: 'Legal', access: 'Can run', level: 'run' },
+  { glyph: 'operations', team: 'Operations', access: 'Can view', level: 'view' },
+] as const satisfies readonly { glyph: GlyphName; team: string; access: string; level: string }[];
 
 // Weekly active users over twelve weeks. The same scenario the adoption panel on /product plots,
 // reused rather than invented again so the site tells one story.
@@ -56,7 +59,9 @@ const feet = {
         <ul class="bv-rows">
           {work.map((item) => (
             <li>
-              <span class="bv-mark">{item.mark}</span>
+              <span class="bv-mark">
+                <Glyph name={item.glyph} />
+              </span>
               {item.label}
             </li>
           ))}
@@ -69,7 +74,9 @@ const feet = {
         <ul class="bv-rows">
           {shares.map((share) => (
             <li>
-              <span class="bv-mark">{share.mark}</span>
+              <span class="bv-mark">
+                <Glyph name={share.glyph} />
+              </span>
               {share.team}
               <span class="bv-access" data-level={share.level}>
                 {share.access}

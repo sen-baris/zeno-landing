@@ -183,7 +183,10 @@ test('reduced motion preserves the complete static product story', async ({ page
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
   // The hero scene is simply already finished, which is the state its choreography settles into.
+  // Choosing an agent still works — that is interaction, not motion — so one panel is on screen.
   await expect(page.locator('.hw-controls li')).toHaveCount(4);
+  await expect(page.locator('.hw-job[data-current]')).toHaveCount(1);
+  await expect(page.locator('.hw-job[data-current] .hw-result')).toBeVisible();
   // And the card visuals are drawn in full: bars at height, the figure at its final value.
   await expect(page.locator('.benefit-visual')).toHaveCount(3);
   await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
@@ -196,7 +199,6 @@ test('reduced motion preserves the complete static product story', async ({ page
     ),
     'no bar may be left scaled down',
   ).toBe(0);
-  await expect(page.locator('.hw-result')).toBeVisible();
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
   for (const visual of ['.hero-workspace', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
@@ -247,8 +249,12 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
   await expect(page.locator('.hw-controls li')).toHaveCount(4);
+  // Every agent's job is simply on the page, and nothing is offered that cannot be clicked.
+  await expect(page.locator('.hw-job')).toHaveCount(3);
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
-  await expect(page.locator('.hw-result')).toBeVisible();
+  await expect(page.getByText('Build the weekly ops pack.')).toBeVisible();
+  await expect(page.locator('.hero-workspace [role="button"]')).toHaveCount(0);
+  await expect(page.locator('.hw-pick')).toBeHidden();
   await expect(page.locator('.benefit-visual')).toHaveCount(3);
   await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
@@ -380,28 +386,54 @@ test('the vision statement stays readable however it is reached', async ({ page,
   await context.close();
 });
 
-test('the hero states the angle: specific agents on a governed workspace, one job', async ({
+test('the hero states the angle, and picking an agent shows the job it is running', async ({
   page,
 }) => {
   await page.goto('/');
   const hero = page.locator('.hero-workspace');
   await expect(hero).toBeVisible();
+  await expect(hero).toHaveAttribute('data-workspace', 'on');
 
-  // The agents, and the one that is running.
-  await expect(hero.locator('.hw-agents li')).toHaveCount(3);
-  await expect(hero.locator('.hw-agents li[data-running]')).toHaveCount(1);
-  await expect(hero.locator('.hw-agents li[data-running]')).toContainText('Finance');
+  // Named as the platform, and stamped with the region it runs in.
+  await expect(hero.getByText('The enterprise AI platform')).toBeVisible();
+  await expect(hero.locator('.hw-region-stars')).toBeVisible();
 
-  // The job, the limits it runs inside, and where it stops.
-  await expect(hero.getByText('Draft the Q3 board update.')).toBeVisible();
-  await expect(hero.locator('.hw-job-limits li')).toHaveCount(3);
-  await expect(hero.locator('.hw-result')).toContainText('Waiting for sign-off');
+  // Three agents, one running, and every mark is a drawn glyph rather than a letter.
+  await expect(hero.locator('.hw-agent')).toHaveCount(3);
+  await expect(hero.locator('.hw-mark .glyph')).toHaveCount(3);
+  await expect(hero.locator('.hw-agent[data-running]')).toHaveCount(1);
+  await expect(hero.locator('.hw-agent[data-running]')).toContainText('Finance');
+  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'finance');
 
   // The four controls are the argument, so they are named here as well as on /product.
   await expect(hero.locator('.hw-controls li')).toHaveCount(4);
-  for (const control of ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU region']) {
+  for (const control of ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU operating']) {
     await expect(hero.locator('.hw-controls')).toContainText(control);
   }
+
+  // Picking an agent changes the job, by pointer and by keyboard, and marks which one is current.
+  await hero.locator('.hw-agent[data-agent="legal"]').click();
+  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'legal');
+  await expect(hero.getByText('Check the supplier renewal.')).toBeVisible();
+  await expect(hero.locator('.hw-agent[data-agent="legal"]')).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
+  await expect(hero.locator('.hw-agent[aria-current="true"]')).toHaveCount(1);
+
+  await hero.locator('.hw-agent[data-agent="operations"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'operations');
+
+  // The three panels share one grid cell, so the frame cannot change height as they swap. This is
+  // the guarantee that nothing below the hero ever moves under the reader.
+  const heights: number[] = [];
+  for (const agent of ['finance', 'legal', 'operations']) {
+    await hero.locator(`.hw-agent[data-agent="${agent}"]`).click();
+    const box = await hero.boundingBox();
+    heights.push(Math.round(box?.height ?? 0));
+  }
+  expect(new Set(heights).size, 'the frame must hold one height across every agent').toBe(1);
 
   // The choreography is a single run that finishes rather than a loop that never does.
   await settleRevealMotion(page);
@@ -413,20 +445,13 @@ test('the hero states the angle: specific agents on a governed workspace, one jo
   ).toBe(0);
 
   // And once it has, the scene travels with the page one pixel per pixel: nothing here pins, holds,
-  // or waits on a timer. Measured after the entrance, whose own transform would otherwise be read
-  // as movement of the scene itself.
+  // or waits on a timer.
   const before = await hero.boundingBox();
   await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
   await page.waitForFunction(() => window.scrollY >= 300);
   const after = await hero.boundingBox();
   if (!before || !after) throw new Error('the hero scene should be laid out');
   expect(Math.round(before.y - after.y), 'the hero scene must not pin').toBe(300);
-  const faded = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('.hero-workspace *'))
-      .filter((element) => Number(getComputedStyle(element).opacity) < 1)
-      .map((element) => element.className),
-  );
-  expect(faded, 'every part of the settled scene must be fully opaque').toEqual([]);
 });
 
 test('each why-card carries its own small product visual', async ({ page }) => {

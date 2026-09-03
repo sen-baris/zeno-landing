@@ -1,36 +1,81 @@
 ---
+import Glyph from './Glyph.astro';
+import type { GlyphName } from './Glyph.astro';
+
 // The angle, in one picture: specific agents running on a governed workspace to get one job done.
 //
-// The four controls along the bottom are the same four the administration console on /product
-// spells out. They are the argument, so they are stated in both places and drawn differently in
-// each: a full panel there, the floor the work runs on here.
+// Pick an agent and the panel beside it changes. What does not change is the second half of every
+// panel — the model is approved either way, and a person signs off either way — which is the whole
+// argument: the rules do not bend to the job.
+//
+// No model provider is named. Naming one would be a competitive statement, and the point is that
+// the workspace does not depend on which one was bought.
 const agents = [
-  { mark: 'F', team: 'Finance', job: 'Board reporting', running: true },
-  { mark: 'L', team: 'Legal', job: 'Contract review', running: false },
-  { mark: 'O', team: 'Operations', job: 'Weekly ops pack', running: false },
-] as const;
+  {
+    id: 'finance',
+    glyph: 'finance',
+    team: 'Finance',
+    role: 'Board reporting',
+    task: 'Draft the Q3 board update.',
+    shared: 'Finance team',
+    schedule: 'Every Monday, 09:00',
+    result: 'Draft ready',
+  },
+  {
+    id: 'legal',
+    glyph: 'legal',
+    team: 'Legal',
+    role: 'Contract review',
+    task: 'Check the supplier renewal.',
+    shared: 'Legal, and Procurement',
+    schedule: 'On request',
+    result: 'Review ready',
+  },
+  {
+    id: 'operations',
+    glyph: 'operations',
+    team: 'Operations',
+    role: 'Weekly ops pack',
+    task: 'Build the weekly ops pack.',
+    shared: 'Operations, and Finance',
+    schedule: 'Every Friday, 16:00',
+    result: 'Pack ready',
+  },
+] as const satisfies readonly { glyph: GlyphName; [key: string]: string }[];
 
-const controls = ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU region'] as const;
+const controls = [
+  'Knowledge access',
+  'Model choice',
+  'Human checkpoint',
+  'EU operating focus',
+] as const;
 ---
 
 {
   /*
-  One scene and one choreography, rather than a sequence of slides: the agent picks the job up, the
-  lane opens, the job states the limits it runs inside, and the four controls underneath confirm
-  themselves. It runs once when the reader arrives, about two and a half seconds, and settles.
+  One scene. The agents on the left, the job the selected one is running in the middle, and the four
+  controls it runs inside along the bottom — the same four the administration console on /product
+  spells out.
 
-  Nothing waits on a timer and nothing follows the scroll. With reduced motion or without
-  JavaScript the same scene is simply already finished, which is the state it settles into anyway.
+  Pick an agent and the panel changes. It has no relationship to the scroll position, and nothing
+  moves on a timer: the choreography plays once on arrival and then it is yours to explore.
+
+  The three panels share a single grid cell, so the frame is always as tall as the tallest of them
+  and switching cannot move anything below it. Without JavaScript there is no cell to share: the
+  three simply stack, every job readable at once, and no control is offered that cannot answer.
 */
 }
-<figure class="hero-workspace" data-reveal>
+<figure class="hero-workspace" data-workspace="off" data-reveal>
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
         <span class="product-mark" aria-hidden="true">Z</span>
-        <span>Governed workspace</span>
+        <span>The enterprise AI platform</span>
       </div>
-      <span class="product-frame-status">EU region</span>
+      <span class="product-frame-status hw-region">
+        <Glyph name="eu" class="hw-region-stars" />
+        EU region
+      </span>
     </div>
 
     <div class="hw-body">
@@ -39,33 +84,53 @@ const controls = ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU re
         <ul>
           {
             agents.map((agent) => (
-              <li data-running={agent.running ? '' : undefined}>
-                <span class="hw-mark" aria-hidden="true">
-                  {agent.mark}
-                </span>
-                <span>
-                  <b>{agent.team}</b>
-                  <small>{agent.job}</small>
-                </span>
+              <li>
+                <div class="hw-agent" data-agent={agent.id}>
+                  <span class="hw-mark">
+                    <Glyph name={agent.glyph} />
+                  </span>
+                  <span class="hw-agent-copy">
+                    <b>{agent.team}</b>
+                    <small>{agent.role}</small>
+                  </span>
+                </div>
               </li>
             ))
           }
         </ul>
       </div>
 
-      <div class="hw-job">
-        <p class="product-label">Running now</p>
-        <p class="hw-job-title">Draft the Q3 board update.</p>
-        <ul class="hw-job-limits">
-          <li>Reads only what the Finance team may see</li>
-          <li>Runs on a model IT approved</li>
-          <li>Comes back for a person to sign off</li>
-        </ul>
-
-        <p class="hw-result">
-          <span>Draft ready</span>
-          <b>Waiting for sign-off</b>
-        </p>
+      <div class="hw-jobs">
+        {
+          agents.map((agent) => (
+            <section class="hw-job" data-job={agent.id} aria-label={`${agent.team} agent`}>
+              <p class="product-label">{agent.team} &middot; running now</p>
+              <p class="hw-job-title">{agent.task}</p>
+              <dl class="hw-job-detail">
+                <div>
+                  <dt>Model</dt>
+                  <dd>Approved provider</dd>
+                </div>
+                <div>
+                  <dt>Shared with</dt>
+                  <dd>{agent.shared}</dd>
+                </div>
+                <div>
+                  <dt>Schedule</dt>
+                  <dd>{agent.schedule}</dd>
+                </div>
+                <div>
+                  <dt>Sign-off</dt>
+                  <dd>Required</dd>
+                </div>
+              </dl>
+              <p class="hw-result">
+                <span>{agent.result}</span>
+                <b>Waiting for sign-off</b>
+              </p>
+            </section>
+          ))
+        }
       </div>
     </div>
 
@@ -83,5 +148,51 @@ const controls = ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU re
       }
     </ul>
   </div>
-  <figcaption>Specific agents, running on a governed workspace, to get one job done.</figcaption>
+  <figcaption>
+    Specific agents, running on a governed workspace, to get one job done.{' '}
+    <span class="hw-pick">Pick one to see the job it is running.</span>
+  </figcaption>
 </figure>
+
+<script>
+  const figure = document.querySelector<HTMLElement>('.hero-workspace');
+
+  if (figure) {
+    const agents = Array.from(figure.querySelectorAll<HTMLElement>('.hw-agent'));
+    const jobs = Array.from(figure.querySelectorAll<HTMLElement>('.hw-job'));
+
+    // Deliberately not gated on data-motion: choosing which agent to look at is not an animation,
+    // and someone who has asked for reduced motion should still be able to look around.
+    if (agents.length > 0 && agents.length === jobs.length) {
+      figure.dataset.workspace = 'on';
+
+      const show = (index: number) => {
+        for (const [position, agent] of agents.entries()) {
+          const current = position === index;
+          agent.toggleAttribute('data-running', current);
+          if (current) agent.setAttribute('aria-current', 'true');
+          else agent.removeAttribute('aria-current');
+        }
+        for (const [position, job] of jobs.entries()) {
+          job.toggleAttribute('data-current', position === index);
+        }
+      };
+
+      // Upgraded here rather than shipped in the markup, so nothing offers a click before there is
+      // something to answer it. The role goes on this element rather than its li, which keeps the
+      // list's items being items.
+      for (const [index, agent] of agents.entries()) {
+        agent.setAttribute('role', 'button');
+        agent.setAttribute('tabindex', '0');
+        agent.addEventListener('click', () => show(index));
+        agent.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          show(index);
+        });
+      }
+
+      show(0);
+    }
+  }
+</script>

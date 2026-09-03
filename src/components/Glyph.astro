@@ -1,0 +1,64 @@
+---
+import { euStarsPath, euStarsViewBox } from '../lib/icons/eu-stars';
+
+export type GlyphName =
+  'ask' | 'draft' | 'number' | 'finance' | 'legal' | 'operations' | 'schedule' | 'eu';
+
+interface Props {
+  name: GlyphName;
+  class?: string | undefined;
+}
+
+const { name, class: className } = Astro.props;
+
+// Stroked marks on a 20x20 canvas, each chosen for a silhouette that survives at 14px: a letter in
+// a circle reads as a puzzle, a shape reads immediately.
+const strokes: Record<Exclude<GlyphName, 'eu'>, readonly string[]> = {
+  ask: [
+    'M5.6 4h8.8a2.6 2.6 0 0 1 2.6 2.6v4.6a2.6 2.6 0 0 1-2.6 2.6h-4l-3.6 3v-3H5.6A2.6 2.6 0 0 1 3 11.2V6.6A2.6 2.6 0 0 1 5.6 4Z',
+  ],
+  draft: [
+    'M5.4 2.8h5.2l4.2 4.2v10a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 17V4.2a1.4 1.4 0 0 1 1.4-1.4Z',
+    'M10.6 2.9V7.2h4.3',
+    'M6.8 11.4h5.6',
+    'M6.8 14.2h3.4',
+  ],
+  number: ['M3 17h14', 'M6.2 17v-4.2', 'M10 17v-7.6', 'M13.8 17v-11'],
+  finance: ['M10 2.9a7.1 7.1 0 1 0 0 14.2 7.1 7.1 0 0 0 0-14.2Z', 'M10 3v7h7'],
+  legal: [
+    'M10 3.8v11.6',
+    'M6.4 16.6h7.2',
+    'M3.4 7h13.2',
+    'M3.4 7 1.3 11.5h4.2Z',
+    'M16.6 7 14.5 11.5h4.2Z',
+  ],
+  operations: ['M16.8 10a6.8 6.8 0 1 1-2-4.8', 'M17.2 2.4v3.8h-3.8'],
+  schedule: ['M10 3.2a6.8 6.8 0 1 0 0 13.6 6.8 6.8 0 0 0 0-13.6Z', 'M10 6.2V10l2.8 1.7'],
+};
+---
+
+{
+  name === 'eu' ? (
+    <svg
+      class={['glyph', className].filter(Boolean).join(' ')}
+      data-glyph="eu"
+      viewBox={euStarsViewBox}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={euStarsPath} />
+    </svg>
+  ) : (
+    <svg
+      class={['glyph', className].filter(Boolean).join(' ')}
+      data-glyph={name}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {strokes[name].map((d) => (
+        <path d={d} />
+      ))}
+    </svg>
+  )
+}
