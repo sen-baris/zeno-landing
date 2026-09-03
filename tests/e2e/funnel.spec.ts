@@ -184,6 +184,18 @@ test('reduced motion preserves the complete static product story', async ({ page
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
   // The hero scene is simply already finished, which is the state its choreography settles into.
   await expect(page.locator('.hw-controls li')).toHaveCount(4);
+  // And the card visuals are drawn in full: bars at height, the figure at its final value.
+  await expect(page.locator('.benefit-visual')).toHaveCount(3);
+  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
+  expect(
+    await page.evaluate(
+      () =>
+        Array.from(document.querySelectorAll('.bv-col i')).filter(
+          (bar) => getComputedStyle(bar).transform !== 'none',
+        ).length,
+    ),
+    'no bar may be left scaled down',
+  ).toBe(0);
   await expect(page.locator('.hw-result')).toBeVisible();
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
   for (const visual of ['.hero-workspace', '.vision-media-lead', '.trust-certifications']) {
@@ -237,6 +249,8 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await expect(page.locator('.hw-controls li')).toHaveCount(4);
   await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
   await expect(page.locator('.hw-result')).toBeVisible();
+  await expect(page.locator('.benefit-visual')).toHaveCount(3);
+  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -413,6 +427,50 @@ test('the hero states the angle: specific agents on a governed workspace, one jo
       .map((element) => element.className),
   );
   expect(faded, 'every part of the settled scene must be fully opaque').toEqual([]);
+});
+
+test('each why-card carries its own small product visual', async ({ page }) => {
+  await page.goto('/');
+  const cards = page.locator('.benefit-item');
+  await expect(cards).toHaveCount(3);
+  await expect(page.locator('.benefit-visual')).toHaveCount(3);
+
+  // Each visual belongs to its own card rather than being repeated or mismatched.
+  await expect(cards.nth(0).locator('.benefit-visual')).toHaveAttribute('data-visual', 'workspace');
+  await expect(cards.nth(1).locator('.benefit-visual')).toHaveAttribute('data-visual', 'access');
+  await expect(cards.nth(2).locator('.benefit-visual')).toHaveAttribute('data-visual', 'adoption');
+
+  // Each illustrates the sentence above it, so none of them is read out a second time.
+  for (const index of [0, 1, 2]) {
+    await expect(cards.nth(index).locator('.benefit-visual')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+  }
+
+  await expect(cards.nth(0).locator('.bv-rows li')).toHaveCount(3);
+  await expect(cards.nth(0).locator('.bv-base')).toContainText('Your company information');
+  await expect(cards.nth(1).locator('.bv-access')).toHaveCount(3);
+  await expect(cards.nth(1).locator('[data-level="own"]')).toHaveText('Owner');
+  await expect(cards.nth(2).locator('.bv-col')).toHaveCount(8);
+
+  // The three sit on one line, which is the whole reason they share a minimum height.
+  const tops = await page
+    .locator('.benefit-visual')
+    .evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
+  expect(new Set(tops).size, 'the three visuals must share a baseline').toBe(1);
+
+  // The adoption figure counts up and lands on its value exactly, the same contract the business
+  // case figures are held to: an animation must never leave a wrong number on screen.
+  await settleRevealMotion(page);
+  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
+  const bars = await page
+    .locator('.bv-col i')
+    .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).transform));
+  expect(
+    bars.every((transform) => transform === 'none'),
+    'every bar must finish at height',
+  ).toBe(true);
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

@@ -15,16 +15,19 @@ export const audiences = ['AI', 'Innovation', 'IT', 'Data', 'Operations', 'Secur
 export const benefits = [
   {
     number: '01',
+    visual: 'workspace',
     title: 'It fits the work people already do',
     body: 'One place to ask a question, draft a document, or check a number, using your own company information.',
   },
   {
     number: '02',
+    visual: 'access',
     title: 'What one team sets up, the next can use',
     body: 'Turn what a team worked out into an agent other teams can pick up, or a workflow that runs on a schedule.',
   },
   {
     number: '03',
+    visual: 'adoption',
     title: 'You can see who is actually using it',
     body: 'Who has access, which model they are on, and where a person still has to sign off. All on one screen.',
   },

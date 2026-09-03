@@ -1,0 +1,99 @@
+---
+interface Props {
+  kind: 'workspace' | 'access' | 'adoption';
+}
+
+const { kind } = Astro.props;
+
+// Everyday work, in the three shapes the card beside this one names.
+const work = [
+  { mark: 'A', label: 'Ask a question' },
+  { mark: 'D', label: 'Draft a document' },
+  { mark: 'N', label: 'Check a number' },
+] as const;
+
+// One agent, shared out with the access each team is given.
+const shares = [
+  { mark: 'F', team: 'Finance', access: 'Owner', level: 'own' },
+  { mark: 'L', team: 'Legal', access: 'Can run', level: 'run' },
+  { mark: 'O', team: 'Operations', access: 'Can view', level: 'view' },
+] as const;
+
+// Weekly active users over twelve weeks. The same scenario the adoption panel on /product plots,
+// reused rather than invented again so the site tells one story.
+const weeks = [21, 26, 32, 38, 44, 51, 58, 64];
+const peak = Math.max(...weeks);
+---
+
+{
+  /*
+  A small illustration of the sentence directly above it. Hidden from assistive technology: the card
+  says all of this in words, so reading it twice adds nothing, and it keeps an illustrative figure
+  out of the screen-reader output.
+*/
+}
+<div class="benefit-visual" data-visual={kind} aria-hidden="true">
+  {
+    kind === 'workspace' && (
+      <>
+        <ul class="bv-rows">
+          {work.map((item) => (
+            <li>
+              <span class="bv-mark">{item.mark}</span>
+              {item.label}
+            </li>
+          ))}
+        </ul>
+        <p class="bv-base">Your company information</p>
+      </>
+    )
+  }
+
+  {
+    kind === 'access' && (
+      <>
+        <p class="bv-head">
+          <svg viewBox="0 0 16 16" focusable="false">
+            <rect x="3.2" y="7" width="9.6" height="7" rx="2" />
+            <path d="M5.6 7V5.2a2.4 2.4 0 0 1 4.8 0V7" />
+          </svg>
+          Monthly report agent
+        </p>
+        <ul class="bv-rows">
+          {shares.map((share) => (
+            <li>
+              <span class="bv-mark">{share.mark}</span>
+              {share.team}
+              <span class="bv-access" data-level={share.level}>
+                {share.access}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    kind === 'adoption' && (
+      <>
+        <p class="bv-head">Weekly active</p>
+        <p class="bv-figure">
+          <span data-figure="64%">64%</span>
+          <small>&uarr; from 21%</small>
+        </p>
+        <div class="bv-plot">
+          {weeks.map((week) => (
+            <span class="bv-col" style={`--column-height: ${Math.round((week / peak) * 100)}%`}>
+              <i />
+            </span>
+          ))}
+        </div>
+        <p class="bv-axis">
+          <span>Week 1</span>
+          <span>Week 12</span>
+        </p>
+      </>
+    )
+  }
+</div>
