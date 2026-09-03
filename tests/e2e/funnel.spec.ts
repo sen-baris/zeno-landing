@@ -33,6 +33,11 @@ async function settleRevealMotion(page: Page) {
     window.scrollTo({ top: 0, behavior: 'instant' });
   });
   await expect.poll(() => page.locator('[data-reveal]:not([data-revealed])').count()).toBe(0);
+  await settleAnimations(page);
+}
+
+/** Waits for every finite animation to finish. The looping indicators never do, so they are left. */
+async function settleAnimations(page: Page) {
   await page.evaluate(() =>
     Promise.all(
       document
@@ -464,15 +469,57 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
   await page.keyboard.press('Enter');
   await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'operations');
 
-  // The three panels share one grid cell, so the frame cannot change height as they swap. This is
-  // the guarantee that nothing below the hero ever moves under the reader.
-  const heights: number[] = [];
+  // Switching agent must move nothing at all — not the frame, and not a single thing inside it.
+  // Every landmark is sampled, because the shift that gets noticed is never the one in the frame's
+  // own height: it is a nine-pixel step in one column that only shows up when you click through.
+  const landmarks = [
+    '.hero-workspace',
+    '.hw-sources .product-label',
+    '.hw-source-sets',
+    '.hw-source-set[data-current]',
+    '.hw-source-set[data-current] li',
+    '.hw-source-note',
+    '.hw-job[data-current]',
+    '.hw-job[data-current] .hw-job-title',
+    '.hw-job[data-current] .hw-result',
+    '.hw-controls',
+  ];
+  const layouts: number[][] = [];
   for (const agent of ['finance', 'legal', 'operations']) {
     await hero.locator(`.hw-agent[data-agent="${agent}"]`).click();
-    const box = await hero.boundingBox();
-    heights.push(Math.round(box?.height ?? 0));
+    await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', agent);
+    // The panel replays its entrance on every switch, so measuring straight after the click reads
+    // a frame of that animation and calls it a layout shift.
+    await settleAnimations(page);
+    layouts.push(
+      // Offsets from the frame, not from the viewport: clicking scrolls the target into view, and a
+      // viewport-relative reading would call that scroll a layout shift.
+      await page.evaluate((selectors) => {
+        const frame = document.querySelector('.hero-workspace')?.getBoundingClientRect();
+        const boxes: number[] = [];
+        for (const selector of selectors) {
+          const box = document.querySelector(selector)?.getBoundingClientRect();
+          boxes.push(box && frame ? box.top - frame.top : -1, box?.height ?? -1);
+        }
+        return boxes;
+      }, landmarks),
+    );
   }
-  expect(new Set(heights).size, 'the frame must hold one height across every agent').toBe(1);
+
+  // A pixel of tolerance, because two different strings in the same box land on slightly different
+  // fractional baselines in Firefox and WebKit. That is type metrics, not movement, and it leaves
+  // the check far tighter than anything a reader could see.
+  const moved = landmarks
+    .map((selector, index) => {
+      const spread = (offset: number) => {
+        const values = layouts.map((layout) => layout[index * 2 + offset] ?? 0);
+        return Math.max(...values) - Math.min(...values);
+      };
+      return { selector, top: spread(0), height: spread(1) };
+    })
+    .filter((entry) => entry.top > 1 || entry.height > 1)
+    .map((entry) => `${entry.selector} moved ${entry.top.toFixed(1)}/${entry.height.toFixed(1)}`);
+  expect(moved, 'nothing may move between agents').toEqual([]);
 
   // The choreography is a single run that finishes rather than a loop that never does.
   await settleRevealMotion(page);

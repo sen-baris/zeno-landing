@@ -467,6 +467,9 @@ h2 {
 
 .hero-workspace[data-workspace='on'] .hw-source-sets {
   display: grid;
+  /* Each set at its own height rather than stretched to the row, so none of them is taller than
+     its tiles. */
+  align-items: start;
 }
 
 /* Connector marks rather than a list of nouns: these are systems people recognise on sight, and the
@@ -489,7 +492,10 @@ h2 {
   visibility: visible;
 }
 
-.hw-source-sets > .hw-source-set + .hw-source-set {
+/* Only while they are stacked. Armed, all three share one cell, and a margin on the second and
+   third would drop them nine pixels below the first — which is a layout shift you see every time
+   you change agent. */
+.hero-workspace[data-workspace='off'] .hw-source-sets > .hw-source-set + .hw-source-set {
   margin-top: 9px;
 }
 
@@ -595,12 +601,14 @@ h2 {
   padding: clamp(24px, 2.8vw, 38px);
 }
 
-.hw-jobs > .hw-job + .hw-job {
+/* Only while they are stacked, for the same reason as the source sets: a divider on the second and
+   third would sit inside the shared cell and push them down. Scoped to the unarmed state rather
+   than overridden in the armed one, so it does not come down to which rule is written last. */
+.hero-workspace[data-workspace='off'] .hw-jobs > .hw-job + .hw-job {
   border-top: 1px solid var(--rule);
 }
 
 .hero-workspace[data-workspace='on'] .hw-job {
-  border-top: 0;
   grid-area: 1 / 1;
   visibility: hidden;
 }
