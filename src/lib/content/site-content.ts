@@ -1,7 +1,8 @@
 export const draftHomeCopy = {
   status: 'draft',
-  headline: 'Make AI part of everyday work.',
-  subhead: 'Put AI into the work your teams already do, and see for yourself who is using it.',
+  headline: 'The governed AI workspace for European enterprises.',
+  subhead:
+    'Your teams get their work done with AI in the systems they already use, under rules your IT team sets.',
 } as const;
 
 export const releaseContentStatus = {
