@@ -457,8 +457,21 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
     'legal',
   );
   await expect(
-    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'Teams' }),
+    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'Spellbook' }),
   ).toBeVisible();
+  // No mark appears twice across the three agents: a repeat reads as padding rather than as the
+  // systems that team actually works in.
+  const marks = await hero
+    .locator('.hw-source-set img')
+    .evaluateAll((nodes) =>
+      nodes.map(
+        (node) =>
+          `${node.closest('[data-sources]')?.getAttribute('data-sources')}:${node.getAttribute('alt')}`,
+      ),
+    );
+  expect(new Set(marks).size, 'every agent + connector pairing must be distinct').toBe(
+    marks.length,
+  );
   await expect(hero.locator('.hw-agent[data-agent="legal"]')).toHaveAttribute(
     'aria-current',
     'true',
