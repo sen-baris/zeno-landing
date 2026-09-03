@@ -23,19 +23,36 @@ const shares = [
 // reused rather than invented again so the site tells one story.
 const weeks = [21, 26, 32, 38, 44, 51, 58, 64];
 const peak = Math.max(...weeks);
+
+const heads = {
+  workspace: 'Everyday work',
+  access: 'Monthly report agent',
+  adoption: 'Weekly active',
+} as const;
+
+const feet = {
+  workspace: 'Your company information',
+  access: 'Access set by IT',
+  adoption: '',
+} as const;
 ---
 
 {
   /*
-  A small illustration of the sentence directly above it. Hidden from assistive technology: the card
-  says all of this in words, so reading it twice adds nothing, and it keeps an illustrative figure
-  out of the screen-reader output.
+  A small illustration of the sentence directly above it. All three are the same panel — a header
+  band, a body, and a footer band, at one fixed height — so the row reads as three of one thing
+  rather than three loose sketches.
+
+  Hidden from assistive technology: the card says all of this in words, so reading it twice adds
+  nothing, and it keeps an illustrative figure out of the screen-reader output.
 */
 }
 <div class="benefit-visual" data-visual={kind} aria-hidden="true">
-  {
-    kind === 'workspace' && (
-      <>
+  <p class="bv-head">{heads[kind]}</p>
+
+  <div class="bv-body">
+    {
+      kind === 'workspace' && (
         <ul class="bv-rows">
           {work.map((item) => (
             <li>
@@ -44,21 +61,11 @@ const peak = Math.max(...weeks);
             </li>
           ))}
         </ul>
-        <p class="bv-base">Your company information</p>
-      </>
-    )
-  }
+      )
+    }
 
-  {
-    kind === 'access' && (
-      <>
-        <p class="bv-head">
-          <svg viewBox="0 0 16 16" focusable="false">
-            <rect x="3.2" y="7" width="9.6" height="7" rx="2" />
-            <path d="M5.6 7V5.2a2.4 2.4 0 0 1 4.8 0V7" />
-          </svg>
-          Monthly report agent
-        </p>
+    {
+      kind === 'access' && (
         <ul class="bv-rows">
           {shares.map((share) => (
             <li>
@@ -70,30 +77,36 @@ const peak = Math.max(...weeks);
             </li>
           ))}
         </ul>
-      </>
-    )
-  }
+      )
+    }
+
+    {
+      kind === 'adoption' && (
+        <>
+          <p class="bv-figure">
+            <span data-figure="64%">64%</span>
+            <small>&uarr; from 21%</small>
+          </p>
+          <div class="bv-plot">
+            {weeks.map((week) => (
+              <span class="bv-col" style={`--column-height: ${Math.round((week / peak) * 100)}%`}>
+                <i />
+              </span>
+            ))}
+          </div>
+        </>
+      )
+    }
+  </div>
 
   {
-    kind === 'adoption' && (
-      <>
-        <p class="bv-head">Weekly active</p>
-        <p class="bv-figure">
-          <span data-figure="64%">64%</span>
-          <small>&uarr; from 21%</small>
-        </p>
-        <div class="bv-plot">
-          {weeks.map((week) => (
-            <span class="bv-col" style={`--column-height: ${Math.round((week / peak) * 100)}%`}>
-              <i />
-            </span>
-          ))}
-        </div>
-        <p class="bv-axis">
-          <span>Week 1</span>
-          <span>Week 12</span>
-        </p>
-      </>
+    kind === 'adoption' ? (
+      <p class="bv-foot bv-axis">
+        <span>Week 1</span>
+        <span>Week 12</span>
+      </p>
+    ) : (
+      <p class="bv-foot">{feet[kind]}</p>
     )
   }
 </div>

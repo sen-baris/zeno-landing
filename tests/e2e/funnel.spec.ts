@@ -449,16 +449,24 @@ test('each why-card carries its own small product visual', async ({ page }) => {
   }
 
   await expect(cards.nth(0).locator('.bv-rows li')).toHaveCount(3);
-  await expect(cards.nth(0).locator('.bv-base')).toContainText('Your company information');
+  await expect(cards.nth(0).locator('.bv-foot')).toContainText('Your company information');
   await expect(cards.nth(1).locator('.bv-access')).toHaveCount(3);
   await expect(cards.nth(1).locator('[data-level="own"]')).toHaveText('Owner');
   await expect(cards.nth(2).locator('.bv-col')).toHaveCount(8);
 
-  // The three sit on one line, which is the whole reason they share a minimum height.
-  const tops = await page
-    .locator('.benefit-visual')
-    .evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
-  expect(new Set(tops).size, 'the three visuals must share a baseline').toBe(1);
+  // All three are the same panel: a header band, a body and a footer band, at one size. This is
+  // what makes the row read as three of one thing rather than three loose sketches.
+  for (const index of [0, 1, 2]) {
+    await expect(cards.nth(index).locator('.bv-head')).toBeVisible();
+    await expect(cards.nth(index).locator('.bv-foot')).toBeVisible();
+  }
+  const boxes = await page.locator('.benefit-visual').evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const box = node.getBoundingClientRect();
+      return `${Math.round(box.width)}x${Math.round(box.height)}@${Math.round(box.top)}`;
+    }),
+  );
+  expect(new Set(boxes).size, 'the three panels must be one size on one line').toBe(1);
 
   // The adoption figure counts up and lands on its value exactly, the same contract the business
   // case figures are held to: an animation must never leave a wrong number on screen.

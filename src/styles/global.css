@@ -972,39 +972,70 @@ h2 {
 }
 
 /* Benefit card visuals
-   A small illustration at the foot of each card. margin-top: auto puts all three on one baseline
-   whatever the copy above them does — the same trick the stage stacks use inside the platform
-   overview. Every colour here is --muted or --action at full strength: a wash of either goes under
-   AA at these sizes. */
+   One panel shape for all three — a header band, a body, and a footer band at a single fixed
+   height — so the row reads as three of one thing rather than three loose sketches. Every colour is
+   --muted or --action at full strength: a wash of either goes under AA at these sizes. */
 .benefit-visual {
   display: flex;
-  min-height: 235px;
+  overflow: hidden;
+  height: 244px;
   flex-direction: column;
-  justify-content: flex-end;
-  /* Bottom-anchored inside a shared minimum, so all three line up along the top edge as well as the
-     bottom however the copy above them wraps. 235px is the tallest of the three. */
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  /* Pushed to the foot of the card so the three line up along both edges however the copy above
+     them wraps. */
   margin-top: auto;
-  padding-top: clamp(24px, 2.6vw, 34px);
+  background: var(--paper);
 }
 
+.bv-head {
+  border-bottom: 1px solid var(--rule);
+  padding: 11px 14px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bv-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  padding: 6px 14px;
+}
+
+.bv-foot {
+  border-top: 1px solid var(--rule);
+  padding: 10px 14px;
+  background: var(--wash);
+  color: var(--action);
+  font-size: 0.74rem;
+  font-weight: 560;
+}
+
+/* Rows are divided rather than boxed: inside a panel of their own, a border on each one reads as
+   clutter. */
 .bv-rows {
   display: grid;
   margin: 0;
   padding: 0;
-  gap: 6px;
   list-style: none;
 }
 
 .bv-rows li {
   display: flex;
   align-items: center;
-  border: 1px solid var(--rule);
-  border-radius: 7px;
-  padding: 9px 11px;
-  background: var(--paper);
+  padding: 11px 0;
   gap: 10px;
   font-size: 0.8rem;
   font-weight: 540;
+}
+
+.bv-rows li + li {
+  border-top: 1px solid var(--rule);
 }
 
 .bv-mark {
@@ -1019,41 +1050,6 @@ h2 {
   color: var(--action);
   font-family: var(--mono);
   font-size: 0.6rem;
-}
-
-/* Everything above rests on this. */
-.bv-base {
-  border: 1px dashed color-mix(in srgb, var(--action) 34%, transparent);
-  border-radius: 7px;
-  margin-top: 8px;
-  padding: 9px 11px;
-  color: var(--action);
-  font-size: 0.76rem;
-  font-weight: 560;
-  text-align: center;
-}
-
-.bv-head {
-  display: flex;
-  align-items: center;
-  margin-bottom: 11px;
-  gap: 8px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.bv-head svg {
-  width: 14px;
-  height: 14px;
-  flex: 0 0 auto;
-  fill: none;
-  stroke: var(--action);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.4;
 }
 
 /* The access each team was given. Three levels, told apart by fill and by their words, never by
@@ -1085,11 +1081,11 @@ h2 {
 
 .bv-figure {
   display: flex;
-  color: var(--ink);
   align-items: baseline;
+  color: var(--ink);
   gap: 10px;
   font-family: var(--display);
-  font-size: clamp(1.6rem, 2.2vw, 2.1rem);
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
   line-height: 1;
 }
 
@@ -1102,13 +1098,10 @@ h2 {
 
 .bv-plot {
   display: flex;
-  /* Tall enough that this visual fills the same box as the other two, so the three read as one row
-     rather than one short card beside two full ones. */
-  height: 92px;
+  height: 88px;
   align-items: flex-end;
   justify-content: space-between;
-  margin-top: 16px;
-  border-bottom: 1px solid var(--rule);
+  margin-top: 14px;
   gap: 3px;
 }
 
@@ -1132,10 +1125,11 @@ h2 {
 .bv-axis {
   display: flex;
   justify-content: space-between;
-  margin-top: 9px;
   color: var(--muted);
   font-family: var(--mono);
   font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
 .operating-model {
@@ -2199,7 +2193,7 @@ html[data-motion='on'] .customer-logo-list li:nth-child(8) {
 /* The card visuals assemble as their card arrives, riding the stagger the three cards already have.
    Finite and settling at full opacity: nothing inside a [data-reveal] may stay below 1. */
 html[data-motion='on'] .bv-rows li,
-html[data-motion='on'] .bv-base {
+html[data-motion='on'] .bv-figure {
   opacity: 0;
   transform: translateY(8px);
   transition:
@@ -2208,7 +2202,7 @@ html[data-motion='on'] .bv-base {
 }
 
 html[data-motion='on'] .benefit-item[data-revealed] .bv-rows li,
-html[data-motion='on'] .benefit-item[data-revealed] .bv-base {
+html[data-motion='on'] .benefit-item[data-revealed] .bv-figure {
   opacity: 1;
   transform: none;
 }
@@ -2219,10 +2213,6 @@ html[data-motion='on'] .bv-rows li:nth-child(2) {
 
 html[data-motion='on'] .bv-rows li:nth-child(3) {
   transition-delay: 180ms;
-}
-
-html[data-motion='on'] .bv-base {
-  transition-delay: 270ms;
 }
 
 /* Same growth the adoption chart on /product uses, at a quarter of the size. */
@@ -3544,12 +3534,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   .platform-pillars {
     grid-template-columns: 1fr;
     gap: 52px;
-  }
-
-  /* One column, so there is no row to line the visuals up along and the shared minimum would only
-     leave a gap under the shorter ones. */
-  .benefit-visual {
-    min-height: 0;
   }
 
   .benefit-item h3,
