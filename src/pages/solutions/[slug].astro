@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BusinessCase from '../../components/BusinessCase.astro';
+import CustomerLogoRail from '../../components/CustomerLogoRail.astro';
+import SolutionAgents from '../../components/SolutionAgents.astro';
+import { customerLogoAssets } from '../../lib/claims/customer-logo-assets';
+import { claimRegistry, homepageCustomerLogoClaimIds } from '../../lib/claims/registry';
+import { resolveApprovedClaims } from '../../lib/claims/public-claims';
+import { solutionFigureAssets } from '../../lib/claims/solution-figures';
+import { audiences } from '../../lib/content/site-content';
+import { solutions } from '../../lib/content/solutions';
+import { withBase } from '../../lib/routing/base-path';
+
+export function getStaticPaths() {
+  return solutions.map((solution) => ({ params: { slug: solution.slug }, props: { solution } }));
+}
+
+const { solution } = Astro.props;
+
+// Every figure is resolved against this page's own surface, so a range approved for one industry
+// cannot be rendered on another: the resolver throws at build rather than publishing it.
+const figures = resolveApprovedClaims(
+  claimRegistry,
+  solution.figureClaimIds,
+  `solutions.${solution.slug}`,
+);
+
+const logoClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageCustomerLogoClaimIds,
+  'solutions.customer-logos',
+);
+const logoByClaimId = new Map(customerLogoAssets.map((logo) => [logo.claimId, logo]));
+const logos = logoClaims.map((claim) => {
+  const logo = logoByClaimId.get(claim.id);
+  if (!logo) throw new Error(`Approved customer logo asset "${claim.id}" is missing.`);
+  return logo;
+});
+---
+
+<BaseLayout
+  title={`${solution.eyebrow} | Zeno`}
+  description={solution.metaDescription}
+  canonicalPath={`/solutions/${solution.slug}`}
+>
+  <section class="page-intro section-rule">
+    <div class="shell narrow-shell">
+      <p class="eyebrow">{solution.eyebrow}</p>
+      <h1>{solution.headline}</h1>
+      <p>{solution.subhead}</p>
+      <div class="button-row solution-intro-actions">
+        <a class="button button-primary" href={withBase('/demo')}>Book a demo</a>
+        <a class="text-link" href={withBase('/product')}>See how the platform works &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="solution-figures section-rule" aria-labelledby="solution-figures-title">
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow" id="solution-figures-title">What to plan for</p>
+      </header>
+      <BusinessCase results={figures} assets={solutionFigureAssets} />
+      <p class="solution-figures-note">
+        Ranges to budget against, not results anyone has measured. The figures customers have
+        actually reported are on the <a class="text-link" href={withBase('/#business-case')}
+          >business case</a
+        >.
+      </p>
+    </div>
+  </section>
+
+  <section class="solution-work section-rule" aria-labelledby="solution-work-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">The work</p>
+          <h2 id="solution-work-title">An agent per job, not one assistant for everything.</h2>
+        </div>
+        <p>
+          Each one is given the job, the sources it may read, and the person who signs off what it
+          produces.
+        </p>
+      </header>
+      <SolutionAgents label={solution.agentsLabel} agents={solution.agents} />
+    </div>
+  </section>
+
+  <section class="solution-walls section-rule" aria-labelledby="solution-walls-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">The walls</p>
+          <h2 id="solution-walls-title">{solution.wallsTitle}</h2>
+        </div>
+        <p>{solution.wallsBody}</p>
+      </header>
+      <ul class="solution-wall-list">
+        {
+          solution.walls.map((wall) => (
+            <li data-reveal>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <circle cx="8" cy="8" r="7" />
+                <path d="m4.8 8.2 2.2 2.2 4.2-4.6" />
+              </svg>
+              {wall}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CustomerLogoRail logos={logos} audiences={audiences} proof={[]} />
+
+  <section class="solution-questions section-rule" aria-labelledby="solution-questions-title">
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow">Before you ask</p>
+        <h2 id="solution-questions-title">The questions that come up first.</h2>
+      </header>
+      <dl class="solution-question-list">
+        {
+          solution.questions.map((entry) => (
+            <div data-reveal>
+              <dt>{entry.question}</dt>
+              <dd>{entry.answer}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="conversion" aria-labelledby="solution-cta-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">One job, then the next</p>
+        <h2 id="solution-cta-title">{solution.closing}</h2>
+      </div>
+      <div>
+        <p>
+          Bring one document your team produces every week and we will walk through how it would be
+          set up, what it would read, and who would sign it off.
+        </p>
+        <div class="button-row">
+          <a class="button button-paper" href={withBase('/demo')}>Book a demo</a>
+          <a class="button button-inverse" href={withBase('/ai-readiness')}>Assess AI readiness</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

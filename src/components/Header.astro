@@ -1,4 +1,5 @@
 ---
+import { solutions } from '../lib/content/solutions';
 import { withBase } from '../lib/routing/base-path';
 
 const onHome = Astro.url.pathname === withBase('/');
@@ -11,6 +12,32 @@ const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
     <nav class="desktop-nav" aria-label="Primary navigation">
       <a href={anchor('why')}>Why Zeno</a>
       <a href={withBase('/product')}>Product</a>
+      {
+        /*
+        A details element rather than a scripted menu: it opens on click and on Enter and announces
+        itself as expandable with no JavaScript at all. What it does not do natively is close again
+        when attention moves elsewhere, so the script below adds Escape, outside click and focus
+        leaving. Without it the menu still opens and every link still works.
+      */
+      }
+      <details class="nav-menu">
+        <summary>Solutions</summary>
+        <div class="nav-menu-panel">
+          <p class="product-label">By industry</p>
+          <ul>
+            {
+              solutions.map((solution) => (
+                <li>
+                  <a href={withBase(`/solutions/${solution.slug}`)}>{solution.navLabel}</a>
+                </li>
+              ))
+            }
+            <li class="nav-menu-all">
+              <a href={withBase('/solutions')}>All industries</a>
+            </li>
+          </ul>
+        </div>
+      </details>
       <a href={anchor('business-case')}>Business case</a>
       <a href={anchor('trust')}>Trust</a>
     </nav>
@@ -23,6 +50,14 @@ const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
       <nav aria-label="Mobile navigation">
         <a href={anchor('why')}>Why Zeno</a>
         <a href={withBase('/product')}>Product</a>
+        <a href={withBase('/solutions')}>Solutions</a>
+        {
+          solutions.map((solution) => (
+            <a class="mobile-menu-nested" href={withBase(`/solutions/${solution.slug}`)}>
+              {solution.navLabel}
+            </a>
+          ))
+        }
         <a href={anchor('business-case')}>Business case</a>
         <a href={anchor('trust')}>Trust</a>
         <a href={withBase('/ai-readiness')}>Assess readiness</a>
@@ -36,4 +71,28 @@ const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
   document.querySelectorAll<HTMLAnchorElement>('.mobile-menu a').forEach((link) => {
     link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'));
   });
+
+  // Opening is native. Closing again when attention moves elsewhere is not, so it is added here:
+  // Escape, a click outside, and focus leaving.
+  const menu = document.querySelector<HTMLDetailsElement>('.nav-menu');
+  if (menu) {
+    const close = () => menu.removeAttribute('open');
+    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !menu.open) return;
+      close();
+      // Escape should leave the reader where they were, not at the top of the document.
+      menu.querySelector('summary')?.focus();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!menu.open || menu.contains(event.target as Node)) return;
+      close();
+    });
+    document.addEventListener('focusin', (event) => {
+      if (!menu.open || menu.contains(event.target as Node)) return;
+      close();
+    });
+  }
 </script>

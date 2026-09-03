@@ -368,6 +368,90 @@ h2 {
   gap: 20px;
 }
 
+/* Solutions dropdown
+   A details element, so it opens on click and on Enter, closes on Escape, and announces itself as
+   expandable without a line of JavaScript. Everything here is presentation on top of that. */
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu summary {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 6px;
+  list-style: none;
+}
+
+/* Safari draws its own triangle unless both of these are gone. */
+.nav-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-menu summary::marker {
+  content: '';
+}
+
+.nav-menu summary::after {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  margin-top: -3px;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.nav-menu[open] summary::after {
+  margin-top: 2px;
+  transform: rotate(-135deg);
+}
+
+.nav-menu-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 14px);
+  left: 50%;
+  width: max-content;
+  min-width: 232px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 16px 8px 8px;
+  background: var(--paper);
+  box-shadow: 0 22px 48px rgb(20 23 19 / 14%);
+  transform: translateX(-50%);
+}
+
+.nav-menu-panel .product-label {
+  padding: 0 12px 10px;
+}
+
+.nav-menu-panel ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-menu-panel a {
+  display: block;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-weight: 540;
+  text-decoration: none;
+}
+
+.nav-menu-all {
+  border-top: 1px solid var(--rule);
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+.nav-menu-all a {
+  color: var(--action);
+}
+
 .mobile-menu {
   display: none;
 }
@@ -3633,6 +3717,11 @@ html[data-motion='on'] .vision-line:not([data-read]) {
     display: none;
   }
 
+  .mobile-menu-nested {
+    padding-left: 26px;
+    color: var(--muted);
+  }
+
   .header-grid {
     grid-template-columns: 1fr auto auto;
   }
@@ -4061,6 +4150,203 @@ html[data-motion='on'] .vision-line:not([data-read]) {
     --tilt: 0deg;
 
     margin-left: 0;
+  }
+}
+
+/* Solutions pages
+   One template, five industries. Everything here reuses the product frame, the business-case figure
+   band and the customer rail, so an industry page cannot drift away from the rest of the site. */
+.solution-intro-actions {
+  margin-top: 32px;
+  align-items: center;
+}
+
+.solution-figures-note {
+  max-width: 640px;
+  margin-top: 26px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.solution-agents {
+  margin-top: clamp(38px, 5vw, 62px);
+}
+
+.solution-agent-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(2, 1fr);
+  list-style: none;
+}
+
+.solution-agent-list > li {
+  padding: clamp(24px, 2.8vw, 40px);
+}
+
+.solution-agent-list > li:nth-child(odd) {
+  border-right: 1px solid var(--rule);
+}
+
+.solution-agent-list > li:nth-child(n + 3) {
+  border-top: 1px solid var(--rule);
+}
+
+.solution-agent-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.solution-agent-head b {
+  font-size: 1rem;
+  font-weight: 560;
+}
+
+.solution-agent-mark {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--wash);
+  color: var(--action);
+}
+
+.solution-agent-does {
+  max-width: 420px;
+  margin-top: 13px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.solution-agent-from {
+  margin-top: 15px;
+  color: var(--ink);
+  font-size: 0.78rem;
+}
+
+.solution-agent-from span {
+  margin-right: 9px;
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.solution-wall-list {
+  display: grid;
+  margin: clamp(34px, 4vw, 52px) 0 0;
+  padding: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px clamp(30px, 5vw, 72px);
+  list-style: none;
+}
+
+.solution-wall-list li {
+  display: flex;
+  align-items: flex-start;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+  gap: 11px;
+  font-size: 0.92rem;
+}
+
+.solution-wall-list svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  fill: none;
+  stroke: var(--action);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.solution-question-list {
+  display: grid;
+  margin: clamp(34px, 4vw, 52px) 0 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.solution-question-list dt {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+  font-size: 1.02rem;
+  font-weight: 560;
+}
+
+.solution-question-list dd {
+  max-width: 460px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.solution-index-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.solution-index-list a {
+  display: grid;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  padding: clamp(24px, 3vw, 38px) 0;
+  grid-template-columns: 60px 1fr auto;
+  gap: 20px;
+  text-decoration: none;
+}
+
+.solution-index-list li:last-child a {
+  border-bottom: 1px solid var(--rule);
+}
+
+.solution-index-copy b {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 400;
+}
+
+.solution-index-copy small {
+  display: block;
+  max-width: 620px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.solution-index-go {
+  color: var(--action);
+  font-size: 1.2rem;
+}
+
+@media (max-width: 820px) {
+  .solution-agent-list,
+  .solution-wall-list,
+  .solution-question-list {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-agent-list > li:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .solution-agent-list > li + li {
+    border-top: 1px solid var(--rule);
+  }
+
+  .solution-index-list a {
+    grid-template-columns: 44px 1fr auto;
   }
 }
 

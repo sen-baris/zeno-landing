@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { assessmentQuestions } from '../../src/lib/assessment/questions';
+import { solutions } from '../../src/lib/content/solutions';
 
 async function completeAssessment(page: Page) {
   await page.getByRole('radio', { name: /Research and synthesis/i }).check();
@@ -60,6 +61,11 @@ async function completeDemoForm(page: Page) {
 }
 
 test('homepage to assessment result to prefilled demo', async ({ page }) => {
+  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
+  // browsers running the rest of the suite alongside it.
+  test.slow();
+
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Governed AI for Europe.');
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
@@ -80,6 +86,11 @@ test('homepage to assessment result to prefilled demo', async ({ page }) => {
 });
 
 test('homepage to successful native demo submission', async ({ page }) => {
+  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
+  // browsers running the rest of the suite alongside it.
+  test.slow();
+
   await page.route('**/api/leads', async (route) => {
     await route.fulfill({
       status: 200,
@@ -95,6 +106,11 @@ test('homepage to successful native demo submission', async ({ page }) => {
 });
 
 test('demo server failure is understandable and retry succeeds', async ({ page }) => {
+  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
+  // browsers running the rest of the suite alongside it.
+  test.slow();
+
   let attempts = 0;
   await page.route('**/api/leads', async (route) => {
     attempts += 1;
@@ -125,7 +141,16 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
   // three browsers running the rest of the suite alongside it.
   test.slow();
 
-  for (const path of ['/', '/product', '/ai-readiness', '/demo']) {
+  // The index and one industry page, not all six: the five industry pages are one template with
+  // different words in it, and each route here costs a full axe pass on a test already marked slow.
+  for (const path of [
+    '/',
+    '/product',
+    '/solutions',
+    '/solutions/manufacturing',
+    '/ai-readiness',
+    '/demo',
+  ]) {
     await page.goto(path);
     // Entrance motion fades content in from transparent, so audit the settled page rather than a
     // frame mid-transition.
@@ -601,6 +626,78 @@ test('each why-card carries its own small product visual', async ({ page }) => {
     bars.every((transform) => transform === 'none'),
     'every bar must finish at height',
   ).toBe(true);
+});
+
+test('every solutions page is written for its own industry', async ({ page }) => {
+  const seenAgents = new Set<string>();
+
+  for (const solution of solutions) {
+    await page.goto(`/solutions/${solution.slug}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(solution.headline);
+
+    // The agents are the substance of these pages. Each page carries its own, and no agent name is
+    // reused: one that fits two industries is written too generally to be worth naming.
+    const agents = await page.locator('.solution-agent-head b').allTextContents();
+    expect(agents, `${solution.slug} agents`).toEqual(solution.agents.map((agent) => agent.name));
+    for (const agent of agents) {
+      expect(seenAgents.has(agent), `"${agent}" appears on more than one solutions page`).toBe(
+        false,
+      );
+      seenAgents.add(agent);
+    }
+
+    // Every agent states what it is allowed to read, which is half the argument on these pages.
+    await expect(page.locator('.solution-agent-from')).toHaveCount(solution.agents.length);
+
+    // The figures are planning ranges, so each one publishes its qualifier next to the number. A
+    // figure without it reads as a measured result.
+    const qualifiers = await page.locator('.business-case-qualifier').allTextContents();
+    expect(qualifiers).toHaveLength(solution.figureClaimIds.length);
+    for (const qualifier of qualifiers) {
+      expect(qualifier, `${solution.slug} figure qualifier`).toContain('not a measured result');
+    }
+    await expect(page.locator('.solution-figures-note')).toContainText('not results anyone has');
+
+    await expect(page.locator('.solution-wall-list li')).toHaveCount(solution.walls.length);
+    await expect(page.locator('.solution-question-list dt')).toHaveCount(solution.questions.length);
+    await expect(page.locator('.customer-logo-list img')).toHaveCount(8);
+  }
+});
+
+test('the solutions menu opens without scripting and closes once armed', async ({
+  page,
+  browser,
+}) => {
+  await page.goto('/');
+  const menu = page.locator('.nav-menu');
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(menu.locator('a')).toHaveCount(solutions.length + 1);
+
+  // Opening is native to details. Closing again is not, so it is the part worth testing.
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open', '');
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toHaveAttribute('open', '');
+  expect(
+    await page.evaluate(
+      () => document.activeElement === document.querySelector('.nav-menu summary'),
+    ),
+    'Escape must leave focus where the reader was',
+  ).toBe(true);
+
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open', '');
+  await page.mouse.click(1200, 500);
+  await expect(menu).not.toHaveAttribute('open', '');
+
+  // The whole point of building it on details: it still opens with no JavaScript at all.
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await context.newPage();
+  await plain.goto('/');
+  await plain.locator('.nav-menu summary').click();
+  await expect(plain.locator('.nav-menu')).toHaveAttribute('open', '');
+  await expect(plain.locator('.nav-menu-panel a')).toHaveCount(solutions.length + 1);
+  await context.close();
 });
 
 test('the customer quote is published from its approved record', async ({ page }) => {

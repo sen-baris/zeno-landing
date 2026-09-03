@@ -33,3 +33,23 @@ for (const viewport of viewports) {
     });
   });
 }
+
+// One industry page, since all five are the same template with different words in it.
+test('solutions page at 1440px', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/solutions/private-equity');
+  await page.evaluate(async () => {
+    for (const image of document.querySelectorAll('img')) image.loading = 'eager';
+    await Promise.all(
+      Array.from(document.images)
+        .filter((image) => !image.complete)
+        .map((image) => image.decode().catch(() => undefined)),
+    );
+  });
+  await expect(page).toHaveScreenshot('solutions-private-equity-1440.png', {
+    animations: 'disabled',
+    fullPage: true,
+    maxDiffPixelRatio: 0.01,
+  });
+});

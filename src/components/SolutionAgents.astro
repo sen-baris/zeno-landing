@@ -1,0 +1,48 @@
+---
+import Glyph from './Glyph.astro';
+import type { SolutionAgent } from '../lib/content/solutions';
+
+interface Props {
+  label: string;
+  agents: readonly SolutionAgent[];
+}
+
+const { label, agents } = Astro.props;
+---
+
+{
+  /*
+  The agents this industry would actually deploy, each named for the job rather than the technique.
+  Every one carries what it is allowed to read, because on these pages that is half the argument:
+  an agent is only as trustworthy as the material it can reach.
+*/
+}
+<div class="solution-agents product-frame" data-reveal>
+  <div class="product-frame-bar">
+    <div>
+      <span class="product-mark" aria-hidden="true">Z</span>
+      <span>{label}</span>
+    </div>
+    <span class="product-frame-status">Governed workspace</span>
+  </div>
+
+  <ul class="solution-agent-list">
+    {
+      agents.map((agent) => (
+        <li>
+          <p class="solution-agent-head">
+            <span class="solution-agent-mark">
+              <Glyph name={agent.glyph} />
+            </span>
+            <b>{agent.name}</b>
+          </p>
+          <p class="solution-agent-does">{agent.does}</p>
+          <p class="solution-agent-from">
+            <span>Reads</span>
+            {agent.from}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</div>

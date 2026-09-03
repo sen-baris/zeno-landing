@@ -1,7 +1,16 @@
 import type { APIRoute } from 'astro';
 import { withBase } from '../lib/routing/base-path';
 
-const paths = ['/', '/product', '/ai-readiness', '/demo'];
+import { solutions } from '../lib/content/solutions';
+
+const paths = [
+  '/',
+  '/product',
+  '/solutions',
+  ...solutions.map((solution) => `/solutions/${solution.slug}`),
+  '/ai-readiness',
+  '/demo',
+];
 
 export const GET: APIRoute = ({ site }) => {
   const origin = site ?? new URL('https://heyzeno.com');

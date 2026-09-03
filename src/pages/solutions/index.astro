@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { solutions } from '../../lib/content/solutions';
+import { withBase } from '../../lib/routing/base-path';
+---
+
+<BaseLayout
+  title="Solutions | Zeno"
+  description="Zeno by industry: manufacturing, management consulting, M&A advisory, private equity and legal. The same governed workspace, with agents named for the work each one actually produces."
+  canonicalPath="/solutions"
+>
+  <section class="page-intro section-rule">
+    <div class="shell narrow-shell">
+      <p class="eyebrow">Solutions</p>
+      <h1>The same workspace. Your work.</h1>
+      <p>
+        One governed platform, with agents named for the documents your teams already produce and
+        the confidentiality your industry already works inside.
+      </p>
+    </div>
+  </section>
+
+  <section class="solution-index section-rule" aria-labelledby="solution-index-title">
+    <div class="shell">
+      <h2 id="solution-index-title" class="visually-hidden">Industries</h2>
+      <ul class="solution-index-list">
+        {
+          solutions.map((solution, index) => (
+            <li data-reveal>
+              <a href={withBase(`/solutions/${solution.slug}`)}>
+                <span class="item-number">{String(index + 1).padStart(2, '0')}</span>
+                <span class="solution-index-copy">
+                  <b>{solution.navLabel}</b>
+                  <small>{solution.summary}</small>
+                </span>
+                <span class="solution-index-go" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="conversion" aria-labelledby="solutions-cta-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">Not on the list?</p>
+        <h2 id="solutions-cta-title">The workspace does not care what the document is.</h2>
+      </div>
+      <div>
+        <p>
+          These are the industries we know best. The platform underneath them is the same one, and
+          it is set up the same way whatever your teams produce.
+        </p>
+        <div class="button-row">
+          <a class="button button-paper" href={withBase('/demo')}>Book a demo</a>
+          <a class="button button-inverse" href={withBase('/product')}>See the product</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
