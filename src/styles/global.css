@@ -971,6 +971,18 @@ h2 {
   font-size: 0.92rem;
 }
 
+/* Split from the shared rules above, so /product's pillars keep their proportions. These cards now
+   carry a panel at the foot, so the air moves out from above the heading and into the gap between
+   the copy and the panel — margin-top: auto alone collapses to nothing here, because three equal
+   cards leave no spare height for it to distribute. */
+.benefit-item h3 {
+  margin-top: clamp(30px, 3.4vw, 48px);
+}
+
+.benefit-item > p {
+  margin-bottom: clamp(32px, 3.4vw, 46px);
+}
+
 /* Benefit card visuals
    One panel shape for all three — a header band, a body, and a footer band at a single fixed
    height — so the row reads as three of one thing rather than three loose sketches. Every colour is
