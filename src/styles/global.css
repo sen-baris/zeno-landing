@@ -469,8 +469,11 @@ h2 {
   display: grid;
 }
 
+/* Connector marks rather than a list of nouns: these are systems people recognise on sight, and the
+   mark says "already built" faster than the word does. Nothing labels them, so each image carries
+   its name in alt text instead. */
 .hw-source-set {
-  display: grid;
+  display: flex;
   margin: 0;
   padding: 0;
   gap: 9px;
@@ -491,20 +494,23 @@ h2 {
 }
 
 .hw-source-set li {
-  position: relative;
-  padding-left: 17px;
-  font-size: 0.82rem;
-  font-weight: 540;
+  display: flex;
+  width: 46px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--paper);
 }
 
-.hw-source-set li::before {
-  position: absolute;
-  top: 0.5em;
-  left: 0;
-  width: 8px;
-  height: 1px;
-  background: color-mix(in srgb, var(--action) 55%, transparent);
-  content: '';
+/* The marks are not all square — Salesforce is 37x26, Gmail 20x16 — so a fixed box with contain
+   gives them one optical size instead of shrinking the wide ones to fit a square. The height is set
+   in CSS either way, so nothing shifts while they load. */
+.hw-source-set img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
 }
 
 .hw-source-note {

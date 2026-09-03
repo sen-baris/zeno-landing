@@ -1,6 +1,7 @@
 ---
 import Glyph from './Glyph.astro';
 import type { GlyphName } from './Glyph.astro';
+import { withBase } from '../lib/routing/base-path';
 
 // The angle, in one picture: specific agents running on a governed workspace to get one job done.
 //
@@ -9,7 +10,8 @@ import type { GlyphName } from './Glyph.astro';
 // argument: the rules do not bend to the job.
 //
 // No model provider is named. Naming one would be a competitive statement, and the point is that
-// the workspace does not depend on which one was bought.
+// the workspace does not depend on which one was bought. The connectors are named and drawn,
+// because those are the systems the work already lives in and every one of them is built.
 const agents = [
   {
     id: 'finance',
@@ -17,7 +19,11 @@ const agents = [
     team: 'Finance',
     role: 'Board reporting',
     task: 'Draft the Q3 board update.',
-    sources: ['Finance drive', 'Reporting data', 'Board template'],
+    connectors: [
+      { file: 'outlook', name: 'Outlook' },
+      { file: 'sharepoint', name: 'SharePoint' },
+      { file: 'salesforce', name: 'Salesforce' },
+    ],
     shared: 'Finance team',
     schedule: 'Every Monday, 09:00',
     result: 'Draft ready',
@@ -28,7 +34,11 @@ const agents = [
     team: 'Legal',
     role: 'Contract review',
     task: 'Check the supplier renewal.',
-    sources: ['Contract store', 'Supplier records', 'Policy library'],
+    connectors: [
+      { file: 'sharepoint', name: 'SharePoint' },
+      { file: 'outlook', name: 'Outlook' },
+      { file: 'teams', name: 'Teams' },
+    ],
     shared: 'Legal, and Procurement',
     schedule: 'On request',
     result: 'Review ready',
@@ -39,14 +49,18 @@ const agents = [
     team: 'Operations',
     role: 'Weekly ops pack',
     task: 'Build the weekly ops pack.',
-    sources: ['Ops dashboards', 'Ticket system', 'Delivery log'],
+    connectors: [
+      { file: 'jira', name: 'Jira' },
+      { file: 'slack', name: 'Slack' },
+      { file: 'asana', name: 'Asana' },
+    ],
     shared: 'Operations, and Finance',
     schedule: 'Every Friday, 16:00',
     result: 'Pack ready',
   },
 ] as const satisfies readonly {
   glyph: GlyphName;
-  sources: readonly string[];
+  connectors: readonly { file: string; name: string }[];
   [key: string]: unknown;
 }[];
 
@@ -113,8 +127,19 @@ const controls = [
           {
             agents.map((agent) => (
               <ul class="hw-source-set" data-sources={agent.id}>
-                {agent.sources.map((source) => (
-                  <li>{source}</li>
+                {agent.connectors.map((connector) => (
+                  <li>
+                    {/* Nothing names these but the mark itself, so the mark has to carry the name
+                        rather than being decorative. */}
+                    <img
+                      src={withBase(`/connector-logos/${connector.file}.svg`)}
+                      alt={connector.name}
+                      width="26"
+                      height="26"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  </li>
                 ))}
               </ul>
             ))

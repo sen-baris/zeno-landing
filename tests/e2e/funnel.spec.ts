@@ -415,6 +415,26 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
     'finance',
   );
   await expect(hero.locator('.hw-source-set[data-current] li')).toHaveCount(3);
+  // Real connectors, drawn: the mark carries recognition, the name beside it carries meaning, and
+  // the image is decorative because the name is already text.
+  await expect(hero.locator('.hw-source-set[data-current] img')).toHaveCount(3);
+  // Nothing labels the marks in text, so every one has to name itself in alt or the column says
+  // nothing at all to a screen reader.
+  await expect(
+    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'SharePoint' }),
+  ).toBeVisible();
+  expect(
+    await hero
+      .locator('.hw-source-set img')
+      .evaluateAll((nodes) => nodes.every((node) => (node.getAttribute('alt') ?? '').length > 0)),
+    'a mark with no label beside it must carry its own name',
+  ).toBe(true);
+  expect(
+    await hero
+      .locator('.hw-source-set img')
+      .evaluateAll((nodes) => nodes.every((node) => (node as HTMLImageElement).naturalWidth > 0)),
+    'every connector mark must actually load',
+  ).toBe(true);
 
   // The four controls are the argument, so they are named here as well as on /product.
   await expect(hero.locator('.hw-controls li')).toHaveCount(4);
@@ -431,7 +451,9 @@ test('the hero states the angle, and picking an agent shows the job it is runnin
     'data-sources',
     'legal',
   );
-  await expect(hero.locator('.hw-source-set[data-current]')).toContainText('Contract store');
+  await expect(
+    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'Teams' }),
+  ).toBeVisible();
   await expect(hero.locator('.hw-agent[data-agent="legal"]')).toHaveAttribute(
     'aria-current',
     'true',
