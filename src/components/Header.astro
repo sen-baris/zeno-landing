@@ -17,7 +17,8 @@ const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
         A details element rather than a scripted menu: it opens on click and on Enter and announces
         itself as expandable with no JavaScript at all. What it does not do natively is close again
         when attention moves elsewhere, so the script below adds Escape, outside click and focus
-        leaving. Without it the menu still opens and every link still works.
+        leaving, and opens it on hover where there is a pointer that can hover. Without any of it
+        the menu still opens and every link still works.
       */
       }
       <details class="nav-menu">
@@ -93,6 +94,47 @@ const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
     document.addEventListener('focusin', (event) => {
       if (!menu.open || menu.contains(event.target as Node)) return;
       close();
+    });
+
+    // On a device with a pointer that can hover, the menu follows the pointer. A touch screen
+    // reports no hover and keeps the native tap-to-open, which is the only thing that works there.
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const panel = menu.querySelector('.nav-menu-panel');
+    let closeTimer = 0;
+
+    menu.addEventListener('pointerenter', () => {
+      if (!canHover.matches) return;
+      window.clearTimeout(closeTimer);
+      menu.open = true;
+    });
+
+    menu.addEventListener('pointerleave', () => {
+      if (!canHover.matches) return;
+      // A short grace period covers a diagonal path off the trigger. Closing under a reader who is
+      // tabbing through the panel would throw their focus to the top of the document, so the panel
+      // stays open while it holds focus. Focus resting on the trigger does not count: that is where
+      // a click leaves it, and a pointer moving away should still close what it opened.
+      window.clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(() => {
+        if (!panel?.contains(document.activeElement)) close();
+      }, 120);
+    });
+
+    // WebKit does not activate a summary with Enter, only with Space, so Safari readers cannot
+    // open this from the keyboard at all. Enter is handled here for every engine, and the default
+    // is prevented so the ones that do act on it are not toggling twice.
+    menu.querySelector('summary')?.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      menu.open = !menu.open;
+    });
+
+    menu.querySelector('summary')?.addEventListener('click', (event) => {
+      // Arriving at the trigger already opened it, so the native toggle would close it on the way
+      // in. Only a click on an open menu is suppressed: once it is closed, by Escape or otherwise,
+      // clicking has to open it again even though the pointer never left.
+      if (!canHover.matches || !menu.open) return;
+      event.preventDefault();
     });
   }
 </script>

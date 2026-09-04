@@ -352,7 +352,10 @@ h2 {
   gap: clamp(18px, 2.3vw, 40px);
 }
 
+/* The dropdown trigger is a summary, not an anchor, so it has to be named here or it renders a
+   size larger and a weight lighter than every item beside it. */
 .desktop-nav a,
+.desktop-nav .nav-menu summary,
 .text-link {
   font-size: 0.84rem;
   font-weight: 520;
@@ -360,6 +363,7 @@ h2 {
 }
 
 .desktop-nav a:hover,
+.desktop-nav .nav-menu summary:hover,
 .text-link:hover {
   text-decoration: underline;
 }
@@ -422,6 +426,18 @@ h2 {
   background: var(--paper);
   box-shadow: 0 22px 48px rgb(20 23 19 / 14%);
   transform: translateX(-50%);
+}
+
+/* The panel hangs clear of the header rule, which leaves a gap the pointer has to cross on its
+   way down. Without something under it the pointer leaves the menu mid-journey and a panel opened
+   on hover shuts before it can be used. */
+.nav-menu[open] .nav-menu-panel::before {
+  position: absolute;
+  top: -34px;
+  right: 0;
+  left: 0;
+  height: 34px;
+  content: '';
 }
 
 .nav-menu-panel .product-label {

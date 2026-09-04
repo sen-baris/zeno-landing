@@ -753,6 +753,60 @@ test('the solutions menu opens without scripting and closes once armed', async (
   await context.close();
 });
 
+test('the solutions menu follows the pointer and still answers the keyboard', async ({ page }) => {
+  await page.goto('/');
+  const menu = page.locator('.nav-menu');
+  const summary = menu.locator('summary');
+  const away = async () => {
+    await page.mouse.move(1200, 600);
+    await expect(menu).not.toHaveAttribute('open', '');
+  };
+
+  // The trigger is a summary, not an anchor, so it does not pick up the nav link rule on its own.
+  // Left unnamed there it renders a size larger and a weight lighter than every link beside it.
+  const [triggerType, linkType] = await page.evaluate(() => {
+    const type = (element: Element) => {
+      const style = getComputedStyle(element);
+      return `${style.fontSize}/${style.fontWeight}/${style.fontFamily}`;
+    };
+    return [
+      type(document.querySelector('.nav-menu > summary')!),
+      type(document.querySelector('.desktop-nav a')!),
+    ];
+  });
+  expect(triggerType, 'the trigger is set like the links beside it').toBe(linkType);
+
+  await expect(menu).not.toHaveAttribute('open', '');
+  await summary.hover();
+  await expect(menu).toHaveAttribute('open', '');
+
+  // The panel hangs below the header rule, so the pointer crosses a gap to reach it. It must not
+  // shut on the way down.
+  await menu.locator('.nav-menu-panel a').first().hover();
+  await page.waitForTimeout(220);
+  await expect(menu).toHaveAttribute('open', '');
+  await away();
+
+  // A click lands on a menu the pointer has already opened, so the native toggle would close it.
+  await summary.click();
+  await expect(menu).toHaveAttribute('open', '');
+  await away();
+
+  // Enter is pressed with the pointer elsewhere, and keeps the toggle it depends on.
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(menu).toHaveAttribute('open', '');
+
+  // Closing it under a reader working through the panel would throw their focus to the top of the
+  // page, so a panel holding focus stays open however the pointer moves. Focus is set directly
+  // rather than by Tab: WebKit leaves links out of the tab order unless full keyboard access is on.
+  await page.locator('.nav-menu-panel a').first().focus();
+  await page.mouse.move(1200, 600);
+  await page.waitForTimeout(220);
+  await expect(menu).toHaveAttribute('open', '');
+  await expect(page.locator('.nav-menu-panel a').first()).toBeFocused();
+});
+
 test('the customer quote is published from its approved record', async ({ page }) => {
   await page.goto('/');
   const quote = page.locator('.customer-quote');
