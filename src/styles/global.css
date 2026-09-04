@@ -410,13 +410,15 @@ h2 {
 .nav-menu-panel {
   position: absolute;
   z-index: 40;
-  top: calc(100% + 14px);
+  /* Measured from the summary, but it has to clear the header's own bottom rule: the summary
+     sits 26px above it, so anything less punches a hole through the header. */
+  top: calc(100% + 34px);
   left: 50%;
   width: max-content;
   min-width: 232px;
   border: 1px solid var(--rule);
   border-radius: 10px;
-  padding: 16px 8px 8px;
+  padding: 12px 8px;
   background: var(--paper);
   box-shadow: 0 22px 48px rgb(20 23 19 / 14%);
   transform: translateX(-50%);
@@ -1566,7 +1568,7 @@ h2 {
   max-width: 980px;
 }
 
-.page-intro .narrow-shell > p:last-child,
+.page-intro .narrow-shell > h1 + p,
 .demo-intro > .shell > p:last-child {
   max-width: 690px;
   margin-top: 35px;
@@ -2991,12 +2993,22 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--paper);
-  grid-template-columns: repeat(4, 1fr);
+  /* Tracks follow the number of figures published. Four on the homepage, three on an industry
+     page: a fixed repeat(4) left the last figure absorbing the empty track at double width. */
+  grid-template-columns: repeat(var(--figure-columns, 4), 1fr);
   list-style: none;
 }
 
 .business-case-figures > li {
+  display: flex;
+  flex-direction: column;
   padding: clamp(28px, 3vw, 48px);
+}
+
+/* Labels wrap to one or two lines depending on the figure, so the qualifier is pinned to the
+   bottom of the row instead of floating wherever its own label happens to end. */
+.business-case-qualifier {
+  margin-top: auto;
 }
 
 .business-case-figures > li:not(:last-child) {
@@ -3019,7 +3031,7 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 }
 
 .business-case-qualifier {
-  margin-top: 9px;
+  padding-top: 9px;
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.45;
@@ -4073,6 +4085,38 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   .business-case-figures > li:nth-child(-n + 2) {
     border-bottom: 1px solid var(--rule);
   }
+
+  /* Three into two columns leaves a half-empty second row, so a three-figure band holds its
+     own tracks until there is no longer room for them. */
+  .business-case-figures[data-figure-count='3'] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .business-case-figures[data-figure-count='3'] > li:nth-child(2n) {
+    border-right: 1px solid var(--rule);
+  }
+
+  .business-case-figures[data-figure-count='3'] > li:last-child {
+    border-right: 0;
+  }
+
+  .business-case-figures[data-figure-count='3'] > li:nth-child(-n + 2) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .business-case-figures[data-figure-count='3'] {
+    grid-template-columns: 1fr;
+  }
+
+  .business-case-figures[data-figure-count='3'] > li {
+    border-right: 0;
+  }
+
+  .business-case-figures[data-figure-count='3'] > li:not(:last-child) {
+    border-bottom: 1px solid var(--rule);
+  }
 }
 
 @media (max-width: 560px) {
@@ -4156,6 +4200,22 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 /* Solutions pages
    One template, five industries. Everything here reuses the product frame, the business-case figure
    band and the customer rail, so an industry page cannot drift away from the rest of the site. */
+/* The site's own sections all breathe on the same measure. These four were written without it,
+   which is why every eyebrow sat on the rule above it and the figure note touched the next
+   section by a single pixel. */
+.solution-figures,
+.solution-work,
+.solution-walls,
+.solution-questions {
+  padding-block: clamp(90px, 10vw, 150px);
+}
+
+/* The index is a list of rows that reads better edge to edge, so it takes a shorter measure and
+   lets the row padding carry the rest. */
+.solution-index {
+  padding-block: clamp(28px, 3vw, 48px);
+}
+
 .solution-intro-actions {
   margin-top: 32px;
   align-items: center;
@@ -4166,6 +4226,15 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   margin-top: 26px;
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+/* The shared split heading divides 1.2fr / 0.8fr, which puts its paragraph 159px right of the
+   two equal columns underneath it. On these pages the heading takes the same halves as the list
+   it introduces, so both right-hand columns start on the same line. */
+.solution-work .split-heading,
+.solution-walls .split-heading {
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(30px, 5vw, 72px);
 }
 
 .solution-agents {
@@ -4238,12 +4307,15 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   text-transform: uppercase;
 }
 
+/* The rule belongs to the row, not to each cell. A column gap left two hairlines at the same y
+   with a hole between them, so the gutter is carried as cell padding instead and the rule runs
+   the width of the shell. */
 .solution-wall-list {
   display: grid;
   margin: clamp(34px, 4vw, 52px) 0 0;
   padding: 0;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px clamp(30px, 5vw, 72px);
+  gap: 16px 0;
   list-style: none;
 }
 
@@ -4254,6 +4326,14 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   padding-top: 16px;
   gap: 11px;
   font-size: 0.92rem;
+}
+
+.solution-wall-list > li:nth-child(odd) {
+  padding-right: clamp(15px, 2.5vw, 36px);
+}
+
+.solution-wall-list > li:nth-child(even) {
+  padding-left: clamp(15px, 2.5vw, 36px);
 }
 
 .solution-wall-list svg {
@@ -4272,12 +4352,23 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   display: grid;
   margin: clamp(34px, 4vw, 52px) 0 0;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(28px, 4vw, 56px);
+  gap: clamp(28px, 4vw, 56px) 0;
+}
+
+.solution-question-list > div {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+}
+
+.solution-question-list > div:nth-child(odd) {
+  padding-right: clamp(15px, 2.5vw, 36px);
+}
+
+.solution-question-list > div:nth-child(even) {
+  padding-left: clamp(15px, 2.5vw, 36px);
 }
 
 .solution-question-list dt {
-  border-top: 1px solid var(--rule);
-  padding-top: 18px;
   font-size: 1.02rem;
   font-weight: 560;
 }
@@ -4298,7 +4389,9 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 
 .solution-index-list a {
   display: grid;
-  align-items: center;
+  /* The number reads as the title's own marker, so it sits on the title's baseline rather than
+     halfway down a row that is two lines taller than it. */
+  align-items: baseline;
   border-top: 1px solid var(--rule);
   padding: clamp(24px, 3vw, 38px) 0;
   grid-template-columns: 60px 1fr auto;
@@ -4306,8 +4399,10 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   text-decoration: none;
 }
 
-.solution-index-list li:last-child a {
-  border-bottom: 1px solid var(--rule);
+/* The section already carries a rule top and bottom. Row borders on the first and last rows
+   stacked a second hairline on each of them. */
+.solution-index-list li:first-child a {
+  border-top: 0;
 }
 
 .solution-index-copy b {
@@ -4343,6 +4438,14 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 
   .solution-agent-list > li + li {
     border-top: 1px solid var(--rule);
+  }
+
+  .solution-wall-list > li:nth-child(odd),
+  .solution-wall-list > li:nth-child(even),
+  .solution-question-list > div:nth-child(odd),
+  .solution-question-list > div:nth-child(even) {
+    padding-right: 0;
+    padding-left: 0;
   }
 
   .solution-index-list a {

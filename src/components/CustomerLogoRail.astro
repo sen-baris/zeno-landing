@@ -13,9 +13,17 @@ interface Props {
    */
   // exactOptionalPropertyTypes is on, so an optional prop has to admit undefined explicitly.
   quote?: ClaimRecord | undefined;
+  /** Who the rail is being shown to. The industry pages name their own reader. */
+  intro?: string | undefined;
 }
 
-const { logos, audiences, proof, quote } = Astro.props;
+const {
+  logos,
+  audiences,
+  proof,
+  quote,
+  intro = 'Built for AI, innovation, IT, data, operations, and security leaders bringing AI into everyday work.',
+} = Astro.props;
 ---
 
 <section class="customer-proof section-rule" id="audience" aria-labelledby="customer-proof-title">
@@ -31,10 +39,7 @@ const { logos, audiences, proof, quote } = Astro.props;
             <figcaption>{quote.attribution}</figcaption>
           </figure>
         ) : (
-          <p>
-            Built for AI, innovation, IT, data, operations, and security leaders bringing AI into
-            everyday work.
-          </p>
+          <p>{intro}</p>
         )
       }
     </div>

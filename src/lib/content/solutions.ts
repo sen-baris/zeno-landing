@@ -26,13 +26,23 @@ export interface Solution {
   summary: string;
   metaDescription: string;
   agentsLabel: string;
+  /** Named for what this industry produces. Two pages sharing a heading means neither is targeted. */
+  workTitle: string;
+  workBody: string;
   agents: readonly SolutionAgent[];
   /** The confidentiality boundary this industry actually works inside. */
   wallsTitle: string;
   wallsBody: string;
   walls: readonly string[];
   figureClaimIds: readonly string[];
+  questionsTitle: string;
   questions: readonly SolutionQuestion[];
+  /**
+   * The same approved logos as everywhere else, ordered so the ones this reader recognises lead,
+   * and a line naming who the rail is being shown to.
+   */
+  logoIntro: string;
+  logoLead: readonly string[];
   closing: string;
 }
 
@@ -56,6 +66,9 @@ export const solutions: readonly Solution[] = [
     metaDescription:
       'Zeno for manufacturing: agents that draft 8D and CAPA reports, compare customer specifications against your standard, and answer supplier quality questions, on a workspace IT governs.',
     agentsLabel: 'Agents on the plant floor',
+    workTitle: 'An agent per document, not one assistant for the plant.',
+    workBody:
+      'Each one is given the document it drafts, the records it may read, and the engineer who signs it off.',
     agents: [
       {
         name: 'Supplier Quality Agent',
@@ -82,7 +95,7 @@ export const solutions: readonly Solution[] = [
         from: 'Line and downtime data, shift handover notes',
       },
     ],
-    wallsTitle: 'What an agent on a plant floor must never do',
+    wallsTitle: 'What an agent on a plant floor must never do.',
     wallsBody:
       'Manufacturing runs on documents that belong to somebody else. A customer drawing under NDA, a supplier price, a part under export control. The workspace treats those as the boundary they are.',
     walls: [
@@ -96,6 +109,9 @@ export const solutions: readonly Solution[] = [
       'solution-manufacturing-first-agent',
       'solution-manufacturing-teams',
     ],
+    questionsTitle: 'What quality and plant IT ask first.',
+    logoIntro: 'Built for quality, operations and plant IT leaders bringing AI into everyday work.',
+    logoLead: ['customer-logo-mahle', 'customer-logo-bovensiepen', 'customer-logo-tmg-consultants'],
     questions: [
       {
         question: 'Does it work from our drawings, or from a general model?',
@@ -131,6 +147,9 @@ export const solutions: readonly Solution[] = [
     metaDescription:
       'Zeno for management consultancies: agents that draft proposals from your credentials, synthesise interviews with sources, and build the weekly client pack, with client separation enforced.',
     agentsLabel: 'Agents on the engagement',
+    workTitle: 'An agent per deliverable, not one assistant for the firm.',
+    workBody:
+      'Each one is given the deliverable it drafts, the engagement files it may read, and the partner who signs it off.',
     agents: [
       {
         name: 'Proposal Agent',
@@ -157,7 +176,7 @@ export const solutions: readonly Solution[] = [
         from: 'Your own past studies and benchmark sets',
       },
     ],
-    wallsTitle: 'One client never sees another',
+    wallsTitle: 'One client never sees another.',
     wallsBody:
       'A consultancy sells judgement and confidentiality in the same breath. An assistant that quietly carried one client’s numbers into another client’s deck would end the relationship, and possibly the firm.',
     walls: [
@@ -171,6 +190,9 @@ export const solutions: readonly Solution[] = [
       'solution-consulting-first-agent',
       'solution-consulting-teams',
     ],
+    questionsTitle: 'What partners ask first.',
+    logoIntro: 'Built for partners, knowledge and IT leaders bringing AI into everyday work.',
+    logoLead: ['customer-logo-kbc', 'customer-logo-tmg-consultants', 'customer-logo-atares'],
     questions: [
       {
         question: 'How do you keep one client’s material out of another’s deck?',
@@ -206,6 +228,9 @@ export const solutions: readonly Solution[] = [
     metaDescription:
       'Zeno for M&A advisers: agents that screen targets against the mandate, draft the teaser and information memorandum from the data room, and answer buyer questions with citations.',
     agentsLabel: 'Agents on the deal',
+    workTitle: 'An agent per stage of the process.',
+    workBody:
+      'Each one is given the document it drafts, the data room it may read, and the banker who signs it off.',
     agents: [
       {
         name: 'Longlist Agent',
@@ -232,7 +257,7 @@ export const solutions: readonly Solution[] = [
         from: 'Your closed-deal record and licensed transaction data',
       },
     ],
-    wallsTitle: 'Deal team means deal team',
+    wallsTitle: 'Deal team means deal team.',
     wallsBody:
       'A live process has an insider list, and the list is the point. The workspace enforces it the way the compliance team already does on paper.',
     walls: [
@@ -246,6 +271,9 @@ export const solutions: readonly Solution[] = [
       'solution-manda-first-agent',
       'solution-manda-teams',
     ],
+    questionsTitle: 'What deal teams ask first.',
+    logoIntro: 'Built for deal teams and the IT and compliance leaders who support them.',
+    logoLead: ['customer-logo-atares', 'customer-logo-b2venture', 'customer-logo-kbc'],
     questions: [
       {
         question: 'Can it answer a buyer directly?',
@@ -281,6 +309,9 @@ export const solutions: readonly Solution[] = [
     metaDescription:
       'Zeno for private equity: agents that screen deals against the fund mandate, draft the IC memo from diligence, build the quarterly portfolio pack and prepare the LP update, with MNPI handling.',
     agentsLabel: 'Agents across the fund',
+    workTitle: 'An agent per stage, from first screen to LP update.',
+    workBody:
+      'Each one is given the document it drafts, the diligence and reporting it may read, and the partner who signs it off.',
     agents: [
       {
         name: 'Deal Screen Agent',
@@ -307,7 +338,7 @@ export const solutions: readonly Solution[] = [
         from: 'Portfolio reporting, prior LP letters, fund performance data',
       },
     ],
-    wallsTitle: 'Material non-public information, handled as such',
+    wallsTitle: 'Material non-public information, handled as such.',
     wallsBody:
       'A fund holds information it is not free to act on, and holds it across deals that must not touch. The workspace treats a deal and a fund as separate rooms, because the regulator does.',
     walls: [
@@ -317,6 +348,9 @@ export const solutions: readonly Solution[] = [
       'Access, model and sign-off are on one screen for compliance to read.',
     ],
     figureClaimIds: ['solution-pe-first-draft', 'solution-pe-first-agent', 'solution-pe-teams'],
+    questionsTitle: 'What investment teams ask first.',
+    logoIntro: 'Built for investment teams and the operations and IT leaders behind them.',
+    logoLead: ['customer-logo-b2venture', 'customer-logo-atares', 'customer-logo-kbc'],
     questions: [
       {
         question: 'How is MNPI kept where it belongs?',
@@ -352,6 +386,9 @@ export const solutions: readonly Solution[] = [
     metaDescription:
       'Zeno for law firms and in-house legal teams: agents that review contracts against your playbook, find the closest precedent in your own know-how, and summarise a matter, with privilege respected.',
     agentsLabel: 'Agents on the matter',
+    workTitle: 'An agent per task on the matter, not one assistant for the firm.',
+    workBody:
+      'Each one is given the task it does, the matter it may read, and the lawyer who signs off what it produces.',
     agents: [
       {
         name: 'Review Agent',
@@ -378,7 +415,7 @@ export const solutions: readonly Solution[] = [
         from: 'Matter record, prior updates to that client',
       },
     ],
-    wallsTitle: 'Privilege is not a setting you add later',
+    wallsTitle: 'Privilege is not a setting you add later.',
     wallsBody:
       'A matter is confidential to the people on it, and an information barrier is a professional obligation rather than a preference. The workspace starts there instead of arriving at it.',
     walls: [
@@ -392,6 +429,9 @@ export const solutions: readonly Solution[] = [
       'solution-legal-first-agent',
       'solution-legal-teams',
     ],
+    questionsTitle: 'What partners and risk ask first.',
+    logoIntro: 'Built for partners, innovation and risk leaders bringing AI into everyday work.',
+    logoLead: ['customer-logo-frommer-legal', 'customer-logo-beeradvocaten', 'customer-logo-kbc'],
     questions: [
       {
         question: 'Does anything we put in leave the firm?',

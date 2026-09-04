@@ -630,10 +630,17 @@ test('each why-card carries its own small product visual', async ({ page }) => {
 
 test('every solutions page is written for its own industry', async ({ page }) => {
   const seenAgents = new Set<string>();
+  const seenHeadings = new Set<string>();
 
   for (const solution of solutions) {
     await page.goto(`/solutions/${solution.slug}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(solution.headline);
+
+    // A heading that reads the same on two industries is boilerplate, not targeting.
+    for (const heading of await page.locator('main h2:not(.visually-hidden)').allTextContents()) {
+      expect(seenHeadings.has(heading), `"${heading}" is used on more than one page`).toBe(false);
+      seenHeadings.add(heading);
+    }
 
     // The agents are the substance of these pages. Each page carries its own, and no agent name is
     // reused: one that fits two industries is written too generally to be worth naming.
@@ -661,6 +668,52 @@ test('every solutions page is written for its own industry', async ({ page }) =>
     await expect(page.locator('.solution-wall-list li')).toHaveCount(solution.walls.length);
     await expect(page.locator('.solution-question-list dt')).toHaveCount(solution.questions.length);
     await expect(page.locator('.customer-logo-list img')).toHaveCount(8);
+
+    const layout = await page.evaluate(() => {
+      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+      const heading = box('.page-intro h1');
+      const lede = document.querySelector('.page-intro h1 + p')!.getBoundingClientRect();
+      const cells = [...document.querySelectorAll('.business-case-figures > li')].map((cell) =>
+        cell.getBoundingClientRect(),
+      );
+      const wall = [...document.querySelectorAll('.solution-wall-list > li')].map((item) =>
+        item.getBoundingClientRect(),
+      );
+      return {
+        ledeGap: lede.top - heading.bottom,
+        ledeWidth: lede.width,
+        figureRows: new Set(cells.map((cell) => Math.round(cell.top))).size,
+        figureWidths: new Set(cells.map((cell) => Math.round(cell.width))).size,
+        // The rule under a two-column row belongs to the row: a column gap splits it into two
+        // hairlines with a hole between them.
+        wallSeam: Math.round(wall[1]!.left - wall[0]!.right),
+        headingColumn: Math.round(
+          document.querySelector('.split-heading > p')!.getBoundingClientRect().left,
+        ),
+        // The item's own left edge carries the rule; its content sits inside the half-gutter, and
+        // that is the line the heading above has to meet.
+        wallColumn: Math.round(
+          document
+            .querySelectorAll('.solution-wall-list > li')[1]!
+            .querySelector('svg')!
+            .getBoundingClientRect().left,
+        ),
+      };
+    });
+
+    // The lede is styled by a rule that once matched on :last-child, so adding anything after it
+    // silently stripped its spacing and its measure and dropped it onto the headline's descenders.
+    expect(layout.ledeGap, `${solution.slug} lede spacing`).toBeGreaterThan(24);
+    expect(layout.ledeWidth, `${solution.slug} lede measure`).toBeLessThanOrEqual(700);
+
+    // Three figures in a grid sized for four leaves the last one spanning the empty track.
+    expect(layout.figureRows, `${solution.slug} figures sit on one row`).toBe(1);
+    expect(layout.figureWidths, `${solution.slug} figures share one width`).toBe(1);
+
+    expect(layout.wallSeam, `${solution.slug} wall rule is continuous`).toBe(0);
+    expect(layout.headingColumn, `${solution.slug} heading aligns with its list`).toBe(
+      layout.wallColumn,
+    );
   }
 });
 

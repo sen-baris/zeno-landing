@@ -25,7 +25,12 @@ const figures = results.map((claim) => {
 });
 ---
 
-<ul class="business-case-figures" data-reveal>
+<ul
+  class="business-case-figures"
+  data-reveal
+  data-figure-count={figures.length}
+  style={`--figure-columns:${figures.length}`}
+>
   {
     figures.map(({ claim, asset }) => (
       <li data-metric={claim.id}>
