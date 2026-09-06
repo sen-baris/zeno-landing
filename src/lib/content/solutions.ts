@@ -86,6 +86,7 @@ export const solutions: readonly Solution[] = [
           field: { label: 'Plant', value: 'Assembly, line 2' },
           prompt:
             'Draft the 8D against our template. Use the containment already recorded, and cite the past CAPA where this failure mode was closed out before.',
+          reply: 'Reading the complaint and the past CAPA files',
         },
       },
       {
@@ -185,6 +186,7 @@ export const solutions: readonly Solution[] = [
           field: { label: 'Engagement', value: 'New client, no prior work' },
           prompt:
             'Draft the proposal on our template. Pull comparable scopes and staffing from past engagements, and leave the fee section for the partner.',
+          reply: 'Pulling comparable scopes from past engagements',
         },
       },
       {
@@ -290,6 +292,7 @@ export const solutions: readonly Solution[] = [
           field: { label: 'Disclosure', value: 'Anonymised, pre-NDA' },
           prompt:
             'Draft the one-page teaser on our template. Keep the company unidentifiable, and flag anything that would name it.',
+          reply: 'Checking the pack for anything that would name the company',
         },
       },
       {

@@ -4470,29 +4470,160 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   margin-bottom: 7px;
 }
 
-/* Assistant */
-.surface-ask {
-  border-left: 2px solid var(--action);
-  padding-left: 14px;
-  font-size: 0.9rem;
+/* Chat: the assistant and a workflow asked for in it. Both end on a composer, because the product
+   is a conversation and the governed part is which model answers, not a form somewhere else. */
+.surface-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* The thread is the flex parent the message aligns itself against. Left as a plain block, the
+   bubble's align-self resolves against nothing and a short question never moves to the right. */
+.surface-thread {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.surface-applied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.surface-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.surface-chip[data-chip='workflow'] {
+  border-color: color-mix(in srgb, var(--action) 34%, transparent);
+  background: var(--wash);
+  color: var(--action);
   font-weight: 560;
 }
 
+/* What the person asked, set as the thing they said. */
+.surface-message {
+  max-width: 88%;
+  align-self: flex-end;
+  /* The bubble sizes to its text, so a short question stays a short bubble rather than a band. */
+  width: fit-content;
+  border-radius: 10px 10px 3px 10px;
+  padding: 14px 16px;
+  background: var(--wash);
+}
+
+.surface-message p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.surface-message .surface-files {
+  margin-top: 11px;
+}
+
+/* The agent, mid-answer. */
+.surface-working {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.surface-spark {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--action);
+}
+
+.surface-composer {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule-strong);
+  border-radius: 9px;
+  padding: 9px 9px 9px 14px;
+  gap: 10px;
+}
+
+.surface-composer-field {
+  flex: 1 1 auto;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.surface-model {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 560;
+  white-space: nowrap;
+}
+
+.surface-model::after {
+  width: 5px;
+  height: 5px;
+  border-right: 1.3px solid currentcolor;
+  border-bottom: 1.3px solid currentcolor;
+  margin-top: -3px;
+  margin-left: 8px;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.surface-send {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.surface-send svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--paper);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
 .surface-answer {
-  margin-top: 18px;
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.55;
 }
 
-.surface-assistant .product-label {
-  margin-top: 22px;
+.surface-reply {
+  align-self: stretch;
+}
+
+.surface-reply .product-label {
+  margin-top: 18px;
 }
 
 .surface-cites {
-  display: grid;
+  display: flex;
   margin: 10px 0 0;
   padding: 0;
+  flex-wrap: wrap;
   gap: 7px;
   list-style: none;
 }
@@ -4500,33 +4631,10 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 .surface-cites li {
   border: 1px solid var(--rule);
   border-radius: 5px;
-  padding: 9px 12px;
+  padding: 6px 10px;
   background: var(--canvas);
   font-family: var(--mono);
-  font-size: 0.7rem;
-}
-
-/* Workflow */
-.surface-fields {
-  margin: 20px 0 0;
-}
-
-.surface-fields > div {
-  display: grid;
-  align-items: baseline;
-  border-top: 1px solid var(--rule);
-  padding: 14px 0;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 16px;
-}
-
-.surface-fields dt {
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.surface-fields dd {
-  margin: 0;
+  font-size: 0.68rem;
 }
 
 .surface-files {
@@ -4539,40 +4647,12 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 }
 
 .surface-files li {
-  border: 1px solid var(--rule);
+  border: 1px solid color-mix(in srgb, var(--action) 22%, transparent);
   border-radius: 5px;
   padding: 6px 10px;
-  background: var(--canvas);
+  background: var(--paper);
   font-family: var(--mono);
   font-size: 0.68rem;
-}
-
-.surface-select {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--rule-strong);
-  border-radius: 5px;
-  padding: 6px 11px;
-  font-size: 0.8rem;
-  font-weight: 560;
-}
-
-.surface-select::after {
-  width: 6px;
-  height: 6px;
-  border-right: 1.4px solid currentcolor;
-  border-bottom: 1.4px solid currentcolor;
-  margin-top: -3px;
-  margin-left: 9px;
-  content: '';
-  transform: rotate(45deg);
-}
-
-.surface-prompt {
-  border-top: 1px solid var(--rule);
-  padding-top: 18px;
-  font-size: 0.88rem;
-  line-height: 1.55;
 }
 
 .surface-actions {

@@ -12,10 +12,14 @@ const { surface, agent } = Astro.props;
 
 const statuses = {
   assistant: 'Answering',
-  workflow: 'Ready to run',
+  workflow: 'Drafting',
   automation: 'In progress',
   result: 'Waiting for sign-off',
 } as const satisfies Record<SolutionSurface['kind'], string>;
+
+// The chat surfaces close on a composer, because that is what the product is: work is asked for in
+// a conversation, and the governed part is which model answers, not a form somewhere else.
+const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
 ---
 
 {
@@ -41,48 +45,57 @@ const statuses = {
   </div>
 
   {
-    surface.kind === 'assistant' && (
-      <div class="surface-body surface-assistant">
-        <p class="surface-ask">{surface.ask}</p>
-        <p class="surface-answer">{surface.answer}</p>
-        <p class="product-label">From</p>
-        <ul class="surface-cites">
-          {surface.cites.map((cite) => (
-            <li>{cite}</li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
+    isChat && (
+      <div class="surface-body surface-chat">
+        <div class="surface-thread">
+          {surface.kind === 'workflow' && (
+            <p class="surface-applied">
+              <span class="surface-chip" data-chip="workflow">
+                {surface.workflow}
+              </span>
+              <span class="surface-chip">
+                {surface.field.label}: {surface.field.value}
+              </span>
+            </p>
+          )}
 
-  {
-    surface.kind === 'workflow' && (
-      <div class="surface-body surface-workflow">
-        <p class="surface-workflow-name">
-          <span class="product-label">Workflow</span>
-          {surface.workflow}
-        </p>
-        <dl class="surface-fields">
-          <div>
-            <dt>Files</dt>
-            <dd>
+          <div class="surface-message">
+            <p>{surface.kind === 'workflow' ? surface.prompt : surface.ask}</p>
+            {surface.kind === 'workflow' && (
               <ul class="surface-files">
                 {surface.files.map((file) => (
                   <li>{file}</li>
                 ))}
               </ul>
-            </dd>
+            )}
           </div>
-          <div>
-            <dt>{surface.field.label}</dt>
-            <dd>
-              <span class="surface-select">{surface.field.value}</span>
-            </dd>
-          </div>
-        </dl>
-        <p class="surface-prompt">{surface.prompt}</p>
-        <p class="surface-actions">
-          <span class="review-action">Run workflow</span>
+
+          {surface.kind === 'workflow' ? (
+            <p class="surface-working">
+              <span class="surface-spark" />
+              {surface.reply}
+            </p>
+          ) : (
+            <div class="surface-reply">
+              <p class="surface-answer">{surface.answer}</p>
+              <p class="product-label">From</p>
+              <ul class="surface-cites">
+                {surface.cites.map((cite) => (
+                  <li>{cite}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <p class="surface-composer">
+          <span class="surface-composer-field">Ask anything</span>
+          <span class="surface-model">Approved provider</span>
+          <span class="surface-send">
+            <svg viewBox="0 0 16 16" focusable="false">
+              <path d="M8 12.5V3.5M4.2 7.3 8 3.5l3.8 3.8" />
+            </svg>
+          </span>
         </p>
       </div>
     )

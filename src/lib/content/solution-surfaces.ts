@@ -20,13 +20,18 @@ export interface AssistantSurface {
   cites: readonly string[];
 }
 
-/** A named workflow about to run: what it reads, the one thing it needs told, and the brief. */
+/**
+ * A named workflow asked for in the chat: the brief, what it was given to read, the one thing it
+ * needed told, and the agent already working on it.
+ */
 export interface WorkflowSurface {
   kind: 'workflow';
   workflow: string;
   files: readonly string[];
   field: { label: string; value: string };
   prompt: string;
+  /** What the agent says back while it works. */
+  reply: string;
 }
 
 /** A recurring run, stopped at the checkpoint where a person has to decide. */

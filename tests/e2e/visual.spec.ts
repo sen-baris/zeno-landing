@@ -34,17 +34,23 @@ for (const viewport of viewports) {
   });
 }
 
-// One industry page, since all five are the same template with different words in it. Both a wide
-// and a narrow capture: the use-case rows alternate sides on one and stack on the other, and the
-// changeover is the part most likely to regress.
+/* Two industry pages, not one: they share a template but no longer share their screens, and
+   between these two all four surfaces are covered. Private equity carries the result and the
+   automation, M&A the workflow and the assistant. The wide and narrow pair also catches the
+   changeover where the rows stop alternating and stack. */
 for (const shot of [
-  { name: 'solutions-private-equity-1440', width: 1440, height: 1000 },
-  { name: 'solutions-private-equity-390', width: 390, height: 844 },
+  {
+    name: 'solutions-private-equity-1440',
+    path: '/solutions/private-equity',
+    width: 1440,
+    height: 1000,
+  },
+  { name: 'solutions-m-and-a-390', path: '/solutions/m-and-a', width: 390, height: 844 },
 ]) {
-  test(`solutions page at ${shot.width}px`, async ({ page }) => {
+  test(`${shot.name}`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: shot.width, height: shot.height });
-    await page.goto('/solutions/private-equity');
+    await page.goto(shot.path);
     await page.evaluate(async () => {
       for (const image of document.querySelectorAll('img')) image.loading = 'eager';
       await Promise.all(

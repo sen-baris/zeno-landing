@@ -38,6 +38,11 @@ Two of Legora's four reference screens were deliberately **not** reproduced:
 The four surfaces that were built each map to something the product is: `assistant`, `workflow`,
 `automation`, and the `result` those hand back for sign-off.
 
+The two chat surfaces close on a composer rather than a submit button, because the product is a
+conversation: work is asked for in the thread, and the governed part is which model answers. The
+model selector reads "Approved provider", which is the wording the homepage and `/product` already
+use for the same control.
+
 ## Langdock
 
 - Component and intended value: comparison point named by the workspace owner as the closer
