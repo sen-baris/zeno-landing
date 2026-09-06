@@ -4257,24 +4257,66 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   margin-top: clamp(38px, 5vw, 62px);
 }
 
-.solution-agent-list {
+/* One use case per row: what it does on the left, the screen it does it on to the right. The copy
+   is always first in the source. On a wide viewport the second row swaps sides with grid-column,
+   so the alternation is an arrangement and never a reading order. */
+.solution-case {
   display: grid;
-  margin: 0;
+  align-items: center;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(40px, 6vw, 96px);
+}
+
+.solution-case + .solution-case {
+  margin-top: clamp(64px, 8vw, 120px);
+}
+
+/* The tracks are uneven, so swapping the sides has to swap their widths with them or the screen
+   lands in the column sized for the copy. */
+.solution-case:nth-of-type(even) {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+
+.solution-case:nth-of-type(even) > .solution-case-copy {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.solution-case:nth-of-type(even) > .solution-case-visual {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.solution-case-copy h3 {
+  max-width: 460px;
+  margin: 18px 0 0;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 1.9vw, 1.72rem);
+  font-weight: 400;
+  line-height: 1.28;
+}
+
+/* The two use cases that did not earn a screen. Same information, a quieter measure. */
+.solution-agent-rest {
+  display: grid;
+  margin: clamp(64px, 8vw, 120px) 0 0;
   padding: 0;
   grid-template-columns: repeat(2, 1fr);
+  gap: 0;
   list-style: none;
 }
 
-.solution-agent-list > li {
-  padding: clamp(24px, 2.8vw, 40px);
-}
-
-.solution-agent-list > li:nth-child(odd) {
-  border-right: 1px solid var(--rule);
-}
-
-.solution-agent-list > li:nth-child(n + 3) {
+.solution-agent-rest > li {
   border-top: 1px solid var(--rule);
+  padding-top: 22px;
+}
+
+.solution-agent-rest > li:nth-child(odd) {
+  padding-right: clamp(15px, 2.5vw, 36px);
+}
+
+.solution-agent-rest > li:nth-child(even) {
+  padding-left: clamp(15px, 2.5vw, 36px);
 }
 
 .solution-agent-head {
@@ -4396,6 +4438,266 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   font-size: 0.92rem;
 }
 
+/* The four product screens
+   One shell, four bodies. Everything reuses .product-frame and .product-frame-bar so a use-case
+   screen cannot drift away from the product visuals on the homepage and /product.
+
+   Every state is a word before it is a colour: the dot beside a verdict or a step is decoration
+   over a label that already says the same thing, so the scene survives monochrome, a colour-blind
+   reader, and a dot that fails to paint. */
+.solution-surface .product-frame-bar {
+  min-height: 56px;
+  font-size: 0.8rem;
+}
+
+.solution-surface .product-mark {
+  width: 28px;
+  height: 28px;
+  font-size: 0.88rem;
+}
+
+.surface-body {
+  padding: clamp(20px, 2.4vw, 30px);
+}
+
+.surface-workflow-name {
+  font-size: 0.95rem;
+  font-weight: 560;
+}
+
+.surface-workflow-name .product-label {
+  display: block;
+  margin-bottom: 7px;
+}
+
+/* Assistant */
+.surface-ask {
+  border-left: 2px solid var(--action);
+  padding-left: 14px;
+  font-size: 0.9rem;
+  font-weight: 560;
+}
+
+.surface-answer {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.surface-assistant .product-label {
+  margin-top: 22px;
+}
+
+.surface-cites {
+  display: grid;
+  margin: 10px 0 0;
+  padding: 0;
+  gap: 7px;
+  list-style: none;
+}
+
+.surface-cites li {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 9px 12px;
+  background: var(--canvas);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+
+/* Workflow */
+.surface-fields {
+  margin: 20px 0 0;
+}
+
+.surface-fields > div {
+  display: grid;
+  align-items: baseline;
+  border-top: 1px solid var(--rule);
+  padding: 14px 0;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.surface-fields dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.surface-fields dd {
+  margin: 0;
+}
+
+.surface-files {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 7px;
+  list-style: none;
+}
+
+.surface-files li {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 6px 10px;
+  background: var(--canvas);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.surface-select {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule-strong);
+  border-radius: 5px;
+  padding: 6px 11px;
+  font-size: 0.8rem;
+  font-weight: 560;
+}
+
+.surface-select::after {
+  width: 6px;
+  height: 6px;
+  border-right: 1.4px solid currentcolor;
+  border-bottom: 1.4px solid currentcolor;
+  margin-top: -3px;
+  margin-left: 9px;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.surface-prompt {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.surface-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 16px;
+}
+
+/* Automation */
+.surface-trigger {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.surface-steps {
+  display: grid;
+  margin: 20px 0 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.surface-steps li {
+  display: grid;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 13px 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  font-size: 0.85rem;
+}
+
+.surface-step-state {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.surface-step-state::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: currentcolor;
+  content: '';
+}
+
+.surface-steps li[data-state='running'] {
+  border-color: var(--rule-strong);
+  background: var(--wash);
+}
+
+.surface-steps li[data-state='running'] .surface-step-state,
+.surface-steps li[data-state='waiting'] .surface-step-state {
+  color: var(--action);
+}
+
+.surface-steps li[data-state='waiting'] .surface-step-state::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.4px currentcolor;
+}
+
+/* Result */
+.surface-findings {
+  display: grid;
+  margin: 20px 0 0;
+  padding: 0;
+  gap: 0;
+  list-style: none;
+}
+
+.surface-findings li {
+  display: grid;
+  align-items: baseline;
+  border-top: 1px solid var(--rule);
+  padding: 13px 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  font-size: 0.85rem;
+}
+
+.surface-finding-verdict {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.surface-finding-verdict::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: currentcolor;
+  content: '';
+}
+
+.surface-findings li[data-verdict='check'] .surface-finding-verdict,
+.surface-findings li[data-verdict='blocked'] .surface-finding-verdict {
+  color: var(--action);
+}
+
+.surface-findings li[data-verdict='blocked'] .surface-finding-verdict::before {
+  border-radius: 1px;
+}
+
+.surface-result-foot {
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .solution-index-list {
   display: grid;
   margin: 0;
@@ -4441,25 +4743,47 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   font-size: 1.2rem;
 }
 
+/* Half of 1100px is not enough for a product screen, so the rows stack well before the mobile
+   breakpoint. The alternation stops with them: source order is copy then screen on every row, so
+   dropping the grid-column swap is all it takes to make reading order and visual order agree.
+
+   Declared here rather than in the earlier 1100px block because a media query adds no specificity,
+   and the base .solution-case rules are further down the file than that block is. */
+@media (max-width: 1100px) {
+  .solution-case,
+  .solution-case:nth-of-type(even) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(26px, 4vw, 40px);
+  }
+
+  .solution-case:nth-of-type(even) > .solution-case-copy,
+  .solution-case:nth-of-type(even) > .solution-case-visual {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .solution-case + .solution-case {
+    margin-top: clamp(52px, 7vw, 88px);
+  }
+}
+
 @media (max-width: 820px) {
-  .solution-agent-list,
   .solution-wall-list,
-  .solution-question-list {
+  .solution-question-list,
+  .solution-agent-rest {
     grid-template-columns: 1fr;
   }
 
-  .solution-agent-list > li:nth-child(odd) {
-    border-right: 0;
-  }
-
-  .solution-agent-list > li + li {
-    border-top: 1px solid var(--rule);
+  .solution-agent-rest > li + li {
+    margin-top: 26px;
   }
 
   .solution-wall-list > li:nth-child(odd),
   .solution-wall-list > li:nth-child(even),
   .solution-question-list > div:nth-child(odd),
-  .solution-question-list > div:nth-child(even) {
+  .solution-question-list > div:nth-child(even),
+  .solution-agent-rest > li:nth-child(odd),
+  .solution-agent-rest > li:nth-child(even) {
     padding-right: 0;
     padding-left: 0;
   }

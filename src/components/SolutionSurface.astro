@@ -1,0 +1,133 @@
+---
+import { stepLabels, verdictLabels } from '../lib/content/solution-surfaces';
+import type { SolutionSurface } from '../lib/content/solution-surfaces';
+
+interface Props {
+  surface: SolutionSurface;
+  /** The agent the surface belongs to, shown in the frame bar. */
+  agent: string;
+}
+
+const { surface, agent } = Astro.props;
+
+const statuses = {
+  assistant: 'Answering',
+  workflow: 'Ready to run',
+  automation: 'In progress',
+  result: 'Waiting for sign-off',
+} as const satisfies Record<SolutionSurface['kind'], string>;
+---
+
+{
+  /*
+  One product screen, showing the use case named in the caption beside it.
+
+  Hidden from assistive technology: the caption states the agent, the job and the sources it may
+  read in words, so reading the same thing again as a list of interface fragments adds nothing and
+  keeps an illustrative scene out of the screen-reader output. That trade only holds while the
+  caption stays complete, which the funnel suite asserts.
+
+  Every state here is a word before it is a colour, so the scene survives a monochrome print, a
+  colour-blind reader, and the dot never being the thing that carries the meaning.
+*/
+}
+<div class="solution-surface product-frame" data-surface={surface.kind} aria-hidden="true">
+  <div class="product-frame-bar">
+    <div>
+      <span class="product-mark">Z</span>
+      <span>{agent}</span>
+    </div>
+    <span class="product-frame-status">{statuses[surface.kind]}</span>
+  </div>
+
+  {
+    surface.kind === 'assistant' && (
+      <div class="surface-body surface-assistant">
+        <p class="surface-ask">{surface.ask}</p>
+        <p class="surface-answer">{surface.answer}</p>
+        <p class="product-label">From</p>
+        <ul class="surface-cites">
+          {surface.cites.map((cite) => (
+            <li>{cite}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    surface.kind === 'workflow' && (
+      <div class="surface-body surface-workflow">
+        <p class="surface-workflow-name">
+          <span class="product-label">Workflow</span>
+          {surface.workflow}
+        </p>
+        <dl class="surface-fields">
+          <div>
+            <dt>Files</dt>
+            <dd>
+              <ul class="surface-files">
+                {surface.files.map((file) => (
+                  <li>{file}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt>{surface.field.label}</dt>
+            <dd>
+              <span class="surface-select">{surface.field.value}</span>
+            </dd>
+          </div>
+        </dl>
+        <p class="surface-prompt">{surface.prompt}</p>
+        <p class="surface-actions">
+          <span class="review-action">Run workflow</span>
+        </p>
+      </div>
+    )
+  }
+
+  {
+    surface.kind === 'automation' && (
+      <div class="surface-body surface-automation">
+        <p class="surface-workflow-name">
+          <span class="product-label">Runs</span>
+          {surface.run}
+        </p>
+        <p class="surface-trigger">{surface.trigger}</p>
+        <ol class="surface-steps">
+          {surface.steps.map((step) => (
+            <li data-state={step.state}>
+              <span class="surface-step-title">{step.title}</span>
+              <span class="surface-step-state">{stepLabels[step.state]}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+  }
+
+  {
+    surface.kind === 'result' && (
+      <div class="surface-body surface-result">
+        <p class="surface-workflow-name">
+          <span class="product-label">Draft</span>
+          {surface.document}
+        </p>
+        <ul class="surface-findings">
+          {surface.findings.map((finding) => (
+            <li data-verdict={finding.verdict}>
+              <span class="surface-finding-label">{finding.label}</span>
+              <span class="surface-finding-verdict">{verdictLabels[finding.verdict]}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="surface-actions surface-result-foot">
+          <span>{surface.status}</span>
+          <span class="review-action">Open for review</span>
+        </p>
+      </div>
+    )
+  }
+</div>

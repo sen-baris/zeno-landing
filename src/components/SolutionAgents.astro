@@ -1,13 +1,16 @@
 ---
 import Glyph from './Glyph.astro';
-import type { SolutionAgent } from '../lib/content/solutions';
+import SolutionSurface from './SolutionSurface.astro';
+import { featuredAgents, remainingAgents } from '../lib/content/solutions';
+import type { Solution } from '../lib/content/solutions';
 
 interface Props {
-  label: string;
-  agents: readonly SolutionAgent[];
+  solution: Solution;
 }
 
-const { label, agents } = Astro.props;
+const { solution } = Astro.props;
+const featured = featuredAgents(solution);
+const remaining = remainingAgents(solution);
 ---
 
 {
@@ -15,20 +18,40 @@ const { label, agents } = Astro.props;
   The agents this industry would actually deploy, each named for the job rather than the technique.
   Every one carries what it is allowed to read, because on these pages that is half the argument:
   an agent is only as trustworthy as the material it can reach.
+
+  The two that sell hardest get the screen they run on beside them. The caption always comes first
+  in the source; on a wide viewport the second row swaps sides with grid-column, so the alternation
+  is a visual arrangement and never a reading order. Below the breakpoint the rows stack in source
+  order and the swap simply stops applying.
 */
 }
-<div class="solution-agents product-frame" data-reveal>
-  <div class="product-frame-bar">
-    <div>
-      <span class="product-mark" aria-hidden="true">Z</span>
-      <span>{label}</span>
-    </div>
-    <span class="product-frame-status">Governed workspace</span>
-  </div>
+<div class="solution-agents">
+  {
+    featured.map((agent) => (
+      <article class="solution-case" data-reveal>
+        <div class="solution-case-copy">
+          <p class="solution-agent-head">
+            <span class="solution-agent-mark">
+              <Glyph name={agent.glyph} />
+            </span>
+            <b>{agent.name}</b>
+          </p>
+          <h3>{agent.does}</h3>
+          <p class="solution-agent-from">
+            <span>Reads</span>
+            {agent.from}
+          </p>
+        </div>
+        <div class="solution-case-visual">
+          <SolutionSurface surface={agent.surface!} agent={agent.name} />
+        </div>
+      </article>
+    ))
+  }
 
-  <ul class="solution-agent-list">
+  <ul class="solution-agent-rest" data-reveal>
     {
-      agents.map((agent) => (
+      remaining.map((agent) => (
         <li>
           <p class="solution-agent-head">
             <span class="solution-agent-mark">

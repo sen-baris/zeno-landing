@@ -34,22 +34,29 @@ for (const viewport of viewports) {
   });
 }
 
-// One industry page, since all five are the same template with different words in it.
-test('solutions page at 1440px', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/solutions/private-equity');
-  await page.evaluate(async () => {
-    for (const image of document.querySelectorAll('img')) image.loading = 'eager';
-    await Promise.all(
-      Array.from(document.images)
-        .filter((image) => !image.complete)
-        .map((image) => image.decode().catch(() => undefined)),
-    );
+// One industry page, since all five are the same template with different words in it. Both a wide
+// and a narrow capture: the use-case rows alternate sides on one and stack on the other, and the
+// changeover is the part most likely to regress.
+for (const shot of [
+  { name: 'solutions-private-equity-1440', width: 1440, height: 1000 },
+  { name: 'solutions-private-equity-390', width: 390, height: 844 },
+]) {
+  test(`solutions page at ${shot.width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: shot.width, height: shot.height });
+    await page.goto('/solutions/private-equity');
+    await page.evaluate(async () => {
+      for (const image of document.querySelectorAll('img')) image.loading = 'eager';
+      await Promise.all(
+        Array.from(document.images)
+          .filter((image) => !image.complete)
+          .map((image) => image.decode().catch(() => undefined)),
+      );
+    });
+    await expect(page).toHaveScreenshot(`${shot.name}.png`, {
+      animations: 'disabled',
+      fullPage: true,
+      maxDiffPixelRatio: 0.01,
+    });
   });
-  await expect(page).toHaveScreenshot('solutions-private-equity-1440.png', {
-    animations: 'disabled',
-    fullPage: true,
-    maxDiffPixelRatio: 0.01,
-  });
-});
+}

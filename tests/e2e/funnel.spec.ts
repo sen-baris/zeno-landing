@@ -644,8 +644,14 @@ test('every solutions page is written for its own industry', async ({ page }) =>
 
     // The agents are the substance of these pages. Each page carries its own, and no agent name is
     // reused: one that fits two industries is written too generally to be worth naming.
+    // The two shown on a screen come first, then the rest, so the page order is the two groups in
+    // sequence rather than the order they happen to be declared in.
+    const shown = [
+      ...solution.agents.filter((agent) => agent.surface),
+      ...solution.agents.filter((agent) => !agent.surface),
+    ].map((agent) => agent.name);
     const agents = await page.locator('.solution-agent-head b').allTextContents();
-    expect(agents, `${solution.slug} agents`).toEqual(solution.agents.map((agent) => agent.name));
+    expect(agents, `${solution.slug} agents`).toEqual(shown);
     for (const agent of agents) {
       expect(seenAgents.has(agent), `"${agent}" appears on more than one solutions page`).toBe(
         false,
@@ -655,6 +661,31 @@ test('every solutions page is written for its own industry', async ({ page }) =>
 
     // Every agent states what it is allowed to read, which is half the argument on these pages.
     await expect(page.locator('.solution-agent-from')).toHaveCount(solution.agents.length);
+
+    // Two of them are shown on the screen they run on, and the rest stay as text.
+    const featured = solution.agents.filter((agent) => agent.surface);
+    expect(featured, `${solution.slug} featured agents`).toHaveLength(2);
+    const rows = page.locator('.solution-case');
+    await expect(rows).toHaveCount(2);
+    await expect(page.locator('.solution-agent-rest > li')).toHaveCount(solution.agents.length - 2);
+
+    for (const [index, agent] of featured.entries()) {
+      const row = rows.nth(index);
+      // The screen drawn is the one the agent declares. A surface we do not ship is a capability
+      // claim, so which kind renders is worth pinning rather than trusting the template.
+      await expect(row.locator('.solution-surface')).toHaveAttribute(
+        'data-surface',
+        agent.surface!.kind,
+      );
+
+      // The screen is hidden from assistive technology, so the caption beside it is the whole
+      // accessible account of the row and has to carry the name, the job and the sources.
+      await expect(row.locator('.solution-surface')).toHaveAttribute('aria-hidden', 'true');
+      const caption = row.locator('.solution-case-copy');
+      await expect(caption).toContainText(agent.name);
+      await expect(caption).toContainText(agent.does);
+      await expect(caption).toContainText(agent.from);
+    }
 
     // The figures are planning ranges, so each one publishes its qualifier next to the number. A
     // figure without it reads as a measured result.
@@ -687,6 +718,12 @@ test('every solutions page is written for its own industry', async ({ page }) =>
         // The rule under a two-column row belongs to the row: a column gap splits it into two
         // hairlines with a hole between them.
         wallSeam: Math.round(wall[1]!.left - wall[0]!.right),
+        caseCopyFirst: [...document.querySelectorAll('.solution-case')].every((row) => {
+          const copy = row.querySelector('.solution-case-copy')!;
+          const visual = row.querySelector('.solution-case-visual')!;
+          // DOCUMENT_POSITION_FOLLOWING: the screen comes after the caption in the source.
+          return (copy.compareDocumentPosition(visual) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+        }),
         headingColumn: Math.round(
           document.querySelector('.split-heading > p')!.getBoundingClientRect().left,
         ),
@@ -710,10 +747,64 @@ test('every solutions page is written for its own industry', async ({ page }) =>
     expect(layout.figureRows, `${solution.slug} figures sit on one row`).toBe(1);
     expect(layout.figureWidths, `${solution.slug} figures share one width`).toBe(1);
 
+    // The rows alternate sides on a wide viewport, and the copy is first in the source both ways,
+    // so the arrangement is never a reading order.
+    expect(layout.caseCopyFirst, `${solution.slug} copy precedes its screen`).toBe(true);
+
     expect(layout.wallSeam, `${solution.slug} wall rule is continuous`).toBe(0);
     expect(layout.headingColumn, `${solution.slug} heading aligns with its list`).toBe(
       layout.wallColumn,
     );
+  }
+});
+
+test('the use-case rows stack and stop alternating before the mobile breakpoint', async ({
+  page,
+}) => {
+  const read = async () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('.solution-case')].map((row) => {
+        const copy = row.querySelector('.solution-case-copy')!.getBoundingClientRect();
+        const visual = row.querySelector('.solution-case-visual')!.getBoundingClientRect();
+        return {
+          stacked: visual.top >= copy.bottom - 1,
+          copyLeft: Math.round(copy.left),
+          visualLeft: Math.round(visual.left),
+          visualWidth: Math.round(visual.width),
+        };
+      }),
+    );
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/solutions/manufacturing');
+  const wide = await read();
+  expect(wide).toHaveLength(2);
+  // Side by side, and the second row swaps which side each half is on.
+  expect(wide.every((row) => !row.stacked)).toBe(true);
+  expect(wide[0]!.copyLeft).toBeLessThan(wide[0]!.visualLeft);
+  expect(wide[1]!.copyLeft).toBeGreaterThan(wide[1]!.visualLeft);
+  // Swapping sides has to swap the track widths with it, or the screen lands in the column sized
+  // for the copy and the second row renders visibly narrower than the first.
+  expect(wide[1]!.visualWidth).toBe(wide[0]!.visualWidth);
+
+  // Half of 1100px is not enough for a product screen. The rows stack there, not at 820.
+  for (const width of [1100, 820, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const narrow = await read();
+    expect(
+      narrow.every((row) => row.stacked),
+      `stacked at ${width}px`,
+    ).toBe(true);
+    // The alternation stops with the stacking: both halves start on the same edge on every row.
+    for (const row of narrow) {
+      expect(row.copyLeft, `alternation reset at ${width}px`).toBe(row.visualLeft);
+    }
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      ),
+      `no horizontal overflow at ${width}px`,
+    ).toBe(false);
   }
 });
 

@@ -1,4 +1,5 @@
 import type { GlyphName } from '../icons/glyph-names';
+import type { SolutionSurface } from './solution-surfaces';
 
 export interface SolutionAgent {
   /** Named the way the team would name it, not after the technique behind it. */
@@ -8,6 +9,11 @@ export interface SolutionAgent {
   does: string;
   /** What it is allowed to read to do it. */
   from: string;
+  /**
+   * The product screen this use case is shown on. Exactly two agents per industry carry one: the
+   * two that sell hardest to that reader. The rest stay as text, which is what they are.
+   */
+  surface?: SolutionSurface | undefined;
 }
 
 export interface SolutionQuestion {
@@ -25,7 +31,6 @@ export interface Solution {
   /** One line for the index page. */
   summary: string;
   metaDescription: string;
-  agentsLabel: string;
   /** Named for what this industry produces. Two pages sharing a heading means neither is targeted. */
   workTitle: string;
   workBody: string;
@@ -65,7 +70,6 @@ export const solutions: readonly Solution[] = [
     summary: 'Quality reporting, supplier answers and spec checks, drafted from your own records.',
     metaDescription:
       'Zeno for manufacturing: agents that draft 8D and CAPA reports, compare customer specifications against your standard, and answer supplier quality questions, on a workspace IT governs.',
-    agentsLabel: 'Agents on the plant floor',
     workTitle: 'An agent per document, not one assistant for the plant.',
     workBody:
       'Each one is given the document it drafts, the records it may read, and the engineer who signs it off.',
@@ -75,12 +79,31 @@ export const solutions: readonly Solution[] = [
         glyph: 'draft',
         does: 'Drafts the 8D from the complaint, the containment already taken and how the same failure was closed out before.',
         from: 'Complaint records, past 8D and CAPA files, the supplier file',
+        surface: {
+          kind: 'workflow',
+          workflow: 'Draft an 8D from a customer complaint',
+          files: ['Complaint_record.pdf', 'Containment_note.pdf', 'CAPA_history.xlsx'],
+          field: { label: 'Plant', value: 'Assembly, line 2' },
+          prompt:
+            'Draft the 8D against our template. Use the containment already recorded, and cite the past CAPA where this failure mode was closed out before.',
+        },
       },
       {
         name: 'Specification Agent',
         glyph: 'number',
         does: 'Reads a customer drawing against your standard and lists only where the two differ, with the clause beside each one.',
         from: 'Customer drawings and specs, your internal standards library',
+        surface: {
+          kind: 'result',
+          document: 'Customer drawing vs internal standard',
+          status: 'Every difference cites the clause it came from.',
+          findings: [
+            { label: 'Surface finish', verdict: 'clear' },
+            { label: 'Hole position tolerance', verdict: 'check' },
+            { label: 'Material specification', verdict: 'blocked' },
+            { label: 'Heat treatment', verdict: 'clear' },
+          ],
+        },
       },
       {
         name: 'Quotation Agent',
@@ -146,7 +169,6 @@ export const solutions: readonly Solution[] = [
     summary: 'Proposals, synthesis and client packs, with a wall between every engagement.',
     metaDescription:
       'Zeno for management consultancies: agents that draft proposals from your credentials, synthesise interviews with sources, and build the weekly client pack, with client separation enforced.',
-    agentsLabel: 'Agents on the engagement',
     workTitle: 'An agent per deliverable, not one assistant for the firm.',
     workBody:
       'Each one is given the deliverable it drafts, the engagement files it may read, and the partner who signs it off.',
@@ -156,12 +178,31 @@ export const solutions: readonly Solution[] = [
         glyph: 'draft',
         does: 'Drafts against the brief using your credentials, your methodology and the engagements that actually resemble this one.',
         from: 'The brief, credentials library, comparable past engagements',
+        surface: {
+          kind: 'workflow',
+          workflow: 'Draft a proposal from the brief',
+          files: ['Client_brief.pdf', 'Scoping_notes.docx', 'Rate_card.xlsx'],
+          field: { label: 'Engagement', value: 'New client, no prior work' },
+          prompt:
+            'Draft the proposal on our template. Pull comparable scopes and staffing from past engagements, and leave the fee section for the partner.',
+        },
       },
       {
         name: 'Synthesis Agent',
         glyph: 'ask',
         does: 'Turns a fortnight of interviews into findings, each one carrying the quote it rests on.',
         from: 'Interview transcripts and notes from this engagement only',
+        surface: {
+          kind: 'assistant',
+          ask: 'What did the operations interviews say about the handover between planning and delivery?',
+          answer:
+            'Four of the eleven interviews raised the handover directly. Two describe the plan arriving after the delivery team has already committed capacity, and one names a workaround the team built themselves.',
+          cites: [
+            'Interview_07_Operations_lead.docx',
+            'Interview_09_Planning_manager.docx',
+            'Workshop_notes_week_2.docx',
+          ],
+        },
       },
       {
         name: 'Steering Pack Agent',
@@ -227,7 +268,6 @@ export const solutions: readonly Solution[] = [
     summary: 'Longlists, IMs and buyer Q&A, drafted from the data room and kept to the deal team.',
     metaDescription:
       'Zeno for M&A advisers: agents that screen targets against the mandate, draft the teaser and information memorandum from the data room, and answer buyer questions with citations.',
-    agentsLabel: 'Agents on the deal',
     workTitle: 'An agent per stage of the process.',
     workBody:
       'Each one is given the document it drafts, the data room it may read, and the banker who signs it off.',
@@ -243,12 +283,31 @@ export const solutions: readonly Solution[] = [
         glyph: 'draft',
         does: 'Drafts the teaser and the information memorandum from the data room and what management told you.',
         from: 'The data room, management inputs, your house IM format',
+        surface: {
+          kind: 'workflow',
+          workflow: 'Draft a teaser from the management pack',
+          files: ['Management_pack.pdf', 'Financial_summary.xlsx', 'Positioning_note.docx'],
+          field: { label: 'Disclosure', value: 'Anonymised, pre-NDA' },
+          prompt:
+            'Draft the one-page teaser on our template. Keep the company unidentifiable, and flag anything that would name it.',
+        },
       },
       {
         name: 'Buyer Q&A Agent',
         glyph: 'legal',
         does: 'Answers buyer questions from the data room with the document cited, and routes anything it cannot answer to the person who can.',
         from: 'The data room for that process, the Q&A log so far',
+        surface: {
+          kind: 'assistant',
+          ask: 'Buyer question: are any customer contracts terminable on a change of control?',
+          answer:
+            'Three of the uploaded customer agreements contain a change of control clause. Two are terminable on notice. The third is not in the data room, so this one goes to the deal team rather than back to the buyer.',
+          cites: [
+            'Customer_agreement_A.pdf',
+            'Customer_agreement_C.pdf',
+            'Not in the data room: routed to the deal team',
+          ],
+        },
       },
       {
         name: 'Comparables Agent',
@@ -308,7 +367,6 @@ export const solutions: readonly Solution[] = [
     summary: 'Screens, IC memos, portfolio packs and LP updates, drafted from your own file.',
     metaDescription:
       'Zeno for private equity: agents that screen deals against the fund mandate, draft the IC memo from diligence, build the quarterly portfolio pack and prepare the LP update, with MNPI handling.',
-    agentsLabel: 'Agents across the fund',
     workTitle: 'An agent per stage, from first screen to LP update.',
     workBody:
       'Each one is given the document it drafts, the diligence and reporting it may read, and the partner who signs it off.',
@@ -324,12 +382,34 @@ export const solutions: readonly Solution[] = [
         glyph: 'draft',
         does: 'Drafts the committee memo from the diligence actually done, and marks the questions still open.',
         from: 'Diligence reports, the model, the data room, prior memos',
+        surface: {
+          kind: 'result',
+          document: 'Investment committee memo, first draft',
+          status: 'Every section points back to the diligence it came from.',
+          findings: [
+            { label: 'Market and competition', verdict: 'clear' },
+            { label: 'Revenue quality', verdict: 'check' },
+            { label: 'Customer concentration', verdict: 'blocked' },
+            { label: 'Management assessment', verdict: 'clear' },
+          ],
+        },
       },
       {
         name: 'Portfolio Agent',
         glyph: 'number',
         does: 'Builds the quarterly pack from what the portfolio companies submitted, and flags what did not arrive.',
         from: 'Portfolio company submissions, the reporting template',
+        surface: {
+          kind: 'automation',
+          run: 'Quarterly portfolio pack',
+          trigger: 'On the first working day after quarter end',
+          steps: [
+            { title: 'Collect company reporting', state: 'done' },
+            { title: 'Check figures against last quarter', state: 'done' },
+            { title: 'Draft the commentary', state: 'running' },
+            { title: 'Deal partner review', state: 'waiting' },
+          ],
+        },
       },
       {
         name: 'LP Update Agent',
@@ -385,7 +465,6 @@ export const solutions: readonly Solution[] = [
     summary: 'Contract review, precedent search and matter summaries, inside the matter.',
     metaDescription:
       'Zeno for law firms and in-house legal teams: agents that review contracts against your playbook, find the closest precedent in your own know-how, and summarise a matter, with privilege respected.',
-    agentsLabel: 'Agents on the matter',
     workTitle: 'An agent per task on the matter, not one assistant for the firm.',
     workBody:
       'Each one is given the task it does, the matter it may read, and the lawyer who signs off what it produces.',
@@ -395,6 +474,17 @@ export const solutions: readonly Solution[] = [
         glyph: 'legal',
         does: 'Reviews against your playbook and reports only the departures from it, with the clause beside each one.',
         from: 'The playbook, the contract, positions taken on past matters',
+        surface: {
+          kind: 'result',
+          document: 'Supplier agreement against the firm playbook',
+          status: 'Each position cites the playbook rule behind it.',
+          findings: [
+            { label: 'Limitation of liability', verdict: 'blocked' },
+            { label: 'Governing law', verdict: 'clear' },
+            { label: 'Termination for convenience', verdict: 'check' },
+            { label: 'Confidentiality', verdict: 'clear' },
+          ],
+        },
       },
       {
         name: 'Precedent Agent',
@@ -413,6 +503,17 @@ export const solutions: readonly Solution[] = [
         glyph: 'schedule',
         does: 'Drafts the update from the matter record, in the form the client already receives it.',
         from: 'Matter record, prior updates to that client',
+        surface: {
+          kind: 'automation',
+          run: 'Matter update to the client',
+          trigger: 'Every Friday, on matters marked active',
+          steps: [
+            { title: 'Gather this week on the matter', state: 'done' },
+            { title: 'Draft the update', state: 'running' },
+            { title: 'Responsible partner review', state: 'waiting' },
+            { title: 'Send to the client', state: 'waiting' },
+          ],
+        },
       },
     ],
     wallsTitle: 'Privilege is not a setting you add later.',
@@ -457,6 +558,31 @@ export const solutions: readonly Solution[] = [
     closing: 'Start with the contract type that comes through most often.',
   },
 ];
+
+/**
+ * The work section pairs each featured agent with a product screen and leaves the rest as text.
+ * Two is the shape it is built and tested for, so a third surface added to a page, or one dropped,
+ * fails the build rather than quietly rendering a lopsided row.
+ */
+for (const solution of solutions) {
+  const featured = solution.agents.filter((agent) => agent.surface);
+  if (featured.length !== 2) {
+    throw new Error(
+      `/solutions/${solution.slug} features ${featured.length} agents with a product surface. ` +
+        `Exactly two carry one.`,
+    );
+  }
+}
+
+/** The agents shown beside a product screen, in the order they are declared. */
+export function featuredAgents(solution: Solution): readonly SolutionAgent[] {
+  return solution.agents.filter((agent) => agent.surface);
+}
+
+/** The rest, which stay as text under the rows. */
+export function remainingAgents(solution: Solution): readonly SolutionAgent[] {
+  return solution.agents.filter((agent) => !agent.surface);
+}
 
 export function solutionBySlug(slug: string): Solution {
   const solution = solutions.find((candidate) => candidate.slug === slug);
