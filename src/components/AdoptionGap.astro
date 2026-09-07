@@ -1,4 +1,6 @@
 ---
+import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
+
 // The adoption view, showing a rollout that took hold. Every figure here is a scenario, not a
 // measured Zeno result, which is why the frame is labelled as one and the caption says so plainly.
 // It carries no claim record for the same reason the "Today" column of the contrast does not.
@@ -7,15 +9,10 @@
 // plotted. Column fill is --action and the deltas are --evidence; that pair was checked for
 // colour-vision separation (ΔE 19.0 deutan, 19.5 normal) and contrast against the panel surface.
 // The deltas carry an arrow and words, so the state never depends on colour alone.
-const stats = [
-  { label: 'Weekly active', value: '64%', direction: 'up', delta: 'from 21% in month one' },
-  { label: 'Messages per active user', value: '31', direction: 'up', delta: 'from 9 at launch' },
-  { label: 'Teams using it twice', value: '11 of 14', direction: 'up', delta: 'up from 3' },
-  { label: 'Seats idle 30 days', value: '9%', direction: 'down', delta: 'down from 46%' },
-] as const;
+const stats = Object.values(illustrativeAdoptionScenario.metrics);
 
 // Weekly active users, week 1 to 12: a slow start, then it holds and keeps climbing.
-const weeks = [21, 27, 33, 36, 40, 45, 48, 52, 55, 58, 61, 64];
+const weeks = illustrativeAdoptionScenario.series.values;
 const peak = Math.max(...weeks);
 // Label the first and last column only. A number on every column goes unread.
 const labelled = new Set([0, weeks.length - 1]);
@@ -55,8 +52,8 @@ const labelled = new Set([0, weeks.length - 1]);
 
     <div class="gap-chart">
       <div class="gap-chart-head">
-        <p class="product-label">Weekly active users</p>
-        <span>Week 1 to week 12</span>
+        <p class="product-label">{illustrativeAdoptionScenario.series.label}</p>
+        <span>{illustrativeAdoptionScenario.series.period}</span>
       </div>
       {/* The figures are already stated in the tiles above, so the plot itself is decorative. */}
       <div class="gap-plot" aria-hidden="true">

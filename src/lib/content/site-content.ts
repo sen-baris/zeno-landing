@@ -1,8 +1,11 @@
 export const draftHomeCopy = {
   status: 'draft',
-  headline: 'Governed AI for Europe.',
+  title: 'AI agents your teams actually use | Zeno',
+  description:
+    'Find the workflows worth automating, build AI agents with the people who use them, and support adoption on a governed workspace built for Europe.',
+  headline: 'AI agents your teams actually use.',
   subhead:
-    'Your teams get their work done with AI in the systems they already use. Your IT team sets the rules it runs under.',
+    'We find the workflows worth automating, build the agents with your people, and stay through rollout and adoption.',
 } as const;
 
 export const releaseContentStatus = {
@@ -13,26 +16,35 @@ export const releaseContentStatus = {
 
 export const audiences = ['AI', 'Innovation', 'IT', 'Data', 'Operations', 'Security'] as const;
 
-export const benefits = [
-  {
-    number: '01',
-    visual: 'workspace',
-    title: 'It fits the work people already do',
-    body: 'One place to ask a question, draft a document, or check a number, using your own company information.',
-  },
-  {
-    number: '02',
-    visual: 'access',
-    title: 'What one team sets up, the next can use',
-    body: 'Turn what a team worked out into an agent other teams can pick up, or a workflow that runs on a schedule.',
-  },
-  {
-    number: '03',
-    visual: 'adoption',
-    title: 'You can see who is actually using it',
-    body: 'Who has access, which model they are on, and where a person still has to sign off. All on one screen.',
-  },
-] as const;
+/**
+ * Draft service language for the work that continues after launch. It describes the intended
+ * partnership model without a fixed duration, quantified result, or guaranteed adoption outcome.
+ */
+export const adoptionPartnership = {
+  status: 'draft',
+  eyebrow: 'After launch',
+  title: 'Adoption is built together.',
+  intro:
+    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+  partnerLabel: 'Zeno + your team',
+  stages: [
+    {
+      id: 'launch',
+      label: 'First team live',
+      action: 'Review real usage',
+    },
+    {
+      id: 'return',
+      label: 'Teams returning',
+      action: 'Improve with the team',
+    },
+    {
+      id: 'habit',
+      label: 'Platform in everyday use',
+      action: 'Expand what works',
+    },
+  ],
+} as const;
 
 export const workflowExamples = [
   'Research and synthesis',

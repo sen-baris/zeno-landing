@@ -13,37 +13,7 @@ const lines = [
   'We are not handing you a tool and wishing you luck.',
   'The rollouts that work have someone from our side inside them, finding the work worth automating, building the first agent with the team that will use it, and staying once it runs.',
   'That part does not scale by writing more software. We do it anyway.',
-  'Three steps, and you are in all of them.',
-];
-
-// The three steps the sentences above describe. The promise on its own is a claim; a reader who
-// believes it still has no idea what the first month looks like, so each step says who does what.
-//
-// The last line of the statement used to carry the month-six measure. Step three carries it now:
-// on one screen it only needed saying once.
-const steps = [
-  {
-    number: '01',
-    name: 'The workshop',
-    body: 'We sit with the team and find the work worth automating.',
-    ours: 'We run it and bring what we have seen work elsewhere.',
-    yours: 'You leave having chosen the first agent, not holding a strategy deck.',
-  },
-  {
-    number: '02',
-    name: 'The first agent',
-    body: 'We build it with the people who will use it, on your systems and your documents.',
-    ours: 'We build, connect the sources, and set what it may read.',
-    yours: 'Your team reviews what it produces until they would put their name to it.',
-  },
-  {
-    number: '03',
-    name: 'After it is live',
-    body: 'We stay for the next one, and for the ones that stall.',
-    ours: 'We keep building, and we watch where adoption drops.',
-    yours:
-      'You hold us to the only measure that counts: whether your teams are still using the first one in month six.',
-  },
+  'And we measure ourselves the way you should measure us: whether your teams keep coming back after launch.',
 ];
 ---
 
@@ -78,37 +48,6 @@ const steps = [
       </figure>
     </div>
   </div>
-
-  {
-    /*
-    Below the grid rather than inside it: the statement sits in the middle column of three, which is
-    too narrow to hold a row of steps without setting them at a size nothing else on the page uses.
-
-    Plain markup with one reveal. The scroll script above only touches .vision-line, so these read
-    the same with no JavaScript, under reduced motion, and on a page where the script failed.
-  */
-  }
-  <ol class="shell vision-steps" data-reveal aria-label="How a rollout goes">
-    {
-      steps.map((step) => (
-        <li>
-          <p class="vision-step-head">
-            <span class="item-number">{step.number}</span>
-            <b>{step.name}</b>
-          </p>
-          <p class="vision-step-body">{step.body}</p>
-          <p class="vision-step-part">
-            <span>From us</span>
-            {step.ours}
-          </p>
-          <p class="vision-step-part">
-            <span>From you</span>
-            {step.yours}
-          </p>
-        </li>
-      ))
-    }
-  </ol>
 </section>
 
 <script>

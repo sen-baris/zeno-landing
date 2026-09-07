@@ -504,299 +504,521 @@ h2 {
   margin-top: 34px;
 }
 
-/* Hero: the governed workspace
-   One scene — the agents on the left, the job the selected one is running in the middle, and the
-   four controls it runs inside along the bottom. The whole of it is legible standing still; the
-   choreography further down only plays it in once, on arrival. */
-.hero-workspace {
-  margin: clamp(40px, 5vw, 74px) 0 0;
+/* Hero journey
+   The words remain a normal ordered list. On a wide, tall viewport a tall scroll track pins the
+   complete story scene below the header and advances it from track progress; everywhere else each
+   pair is simply laid out in reading order. */
+.hero-journey {
+  margin: clamp(52px, 6vw, 76px) 0 0;
 }
 
-.hw-region {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.hj-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.38fr);
+  gap: 42px clamp(40px, 5vw, 72px);
 }
 
-/* The star ring stands in for the status dot the bar draws for every other status. Qualified so it
-   beats .product-frame-status::before, which is declared later in this file. */
-.product-frame-bar .hw-region::before {
+.hj-story,
+.hj-visual,
+.hj-frame,
+.hj-panels {
+  display: contents;
+}
+
+.hj-story {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hj-story > li {
+  align-self: center;
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+}
+
+.hj-story > li:nth-child(1),
+.hj-panel[data-stage-panel='find'] {
+  grid-row: 1;
+}
+
+.hj-story > li:nth-child(2),
+.hj-panel[data-stage-panel='build'] {
+  grid-row: 2;
+}
+
+.hj-story > li:nth-child(3),
+.hj-panel[data-stage-panel='adopt'] {
+  grid-row: 3;
+}
+
+.hj-story > li,
+.hw-governance {
+  grid-column: 1;
+}
+
+.hj-panel {
+  display: flex;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 350px;
+  flex-direction: column;
+  align-self: stretch;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.hj-panel,
+.hj-visual > .hw-governance {
+  grid-column: 2;
+}
+
+.hj-story .item-number {
+  color: var(--action);
+}
+
+.hj-story-title {
+  max-width: 340px;
+  margin-top: 18px;
+  font-size: clamp(1.52rem, 2vw, 1.82rem);
+  font-weight: 600;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.hj-story-title + p {
+  max-width: 380px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.hj-progress {
   display: none;
 }
 
-/* Twelve stars need the room: below about 22px the ring collapses into a dotted circle and stops
-   reading as the flag at all. */
-.hw-region-stars {
-  width: 24px;
-  height: 24px;
-  flex: 0 0 auto;
-}
-
-/* Three stages, left to right: who runs it, what it is connected to, what it is doing. The same
-   shape the platform overview on /product uses, at a fraction of the size. */
-.hw-body {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(180px, 0.62fr) minmax(0, 1.16fr);
-}
-
-.hw-agents,
-.hw-sources {
-  position: relative;
-  border-right: 1px solid var(--rule);
-  padding: clamp(24px, 2.8vw, 38px);
-}
-
-/* The hand-off between one stage and the next, borrowed from the overview on /product. */
-.hw-agents::after,
-.hw-sources::after {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  right: -6px;
-  width: 11px;
-  height: 11px;
-  border-top: 1px solid var(--rule);
-  border-right: 1px solid var(--rule);
-  margin-top: -6px;
-  background: var(--paper);
-  content: '';
-  transform: rotate(45deg);
-}
-
-.hw-source-sets {
-  margin-top: 20px;
-}
-
-.hero-workspace[data-workspace='on'] .hw-source-sets {
-  display: grid;
-  /* Each set at its own height rather than stretched to the row, so none of them is taller than
-     its tiles. */
-  align-items: start;
-}
-
-/* Connector marks rather than a list of nouns: these are systems people recognise on sight, and the
-   mark says "already built" faster than the word does. Nothing labels them, so each image carries
-   its name in alt text instead. */
-.hw-source-set {
+.hj-panel-heading {
   display: flex;
+  min-height: 80px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding: 16px clamp(20px, 2.4vw, 30px);
+  gap: 20px;
+}
+
+.hj-panel-title {
+  margin-top: 4px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.hj-status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--wash);
+  color: var(--action);
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hj-status-healthy {
+  background: var(--action);
+  color: var(--paper);
+}
+
+.hj-panel-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.hj-find {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: minmax(0, 0.9fr) minmax(210px, 1.1fr);
+  gap: clamp(18px, 2.4vw, 28px);
+}
+
+.hj-find-shortlist {
+  display: flex;
+  min-width: 0;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.hj-find-shortlist > ul {
+  display: grid;
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 0;
+  gap: 7px;
+  list-style: none;
+}
+
+.hj-find-shortlist li {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  border-radius: 7px;
+  padding: 10px 12px;
+  color: var(--muted);
+  gap: 11px;
+}
+
+.hj-find-shortlist li[data-selected='true'] {
+  background: var(--wash);
+  color: var(--ink);
+}
+
+.hj-find-shortlist li > span {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--rule);
+  color: transparent;
+  font-size: 0.68rem;
+}
+
+.hj-find-shortlist li[data-selected='true'] > span {
+  background: var(--action);
+  color: var(--paper);
+}
+
+.hj-find-shortlist li b {
+  font-size: 0.82rem;
+  font-weight: 560;
+}
+
+.hj-selection-summary {
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  flex-direction: column;
+  border-radius: 9px;
+  padding: clamp(20px, 2.5vw, 30px);
+  background: var(--wash);
+  gap: 22px;
+}
+
+.hj-selection-title {
+  max-width: 250px;
+  margin-top: 10px;
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  line-height: 1.1;
+}
+
+.hj-selection-summary ul {
+  display: grid;
   margin: 0;
   padding: 0;
   gap: 9px;
   list-style: none;
 }
 
-.hero-workspace[data-workspace='on'] .hw-source-set {
-  grid-area: 1 / 1;
-  visibility: hidden;
-}
-
-.hero-workspace[data-workspace='on'] .hw-source-set[data-current] {
-  visibility: visible;
-}
-
-/* Only while they are stacked. Armed, all three share one cell, and a margin on the second and
-   third would drop them nine pixels below the first — which is a layout shift you see every time
-   you change agent. */
-.hero-workspace[data-workspace='off'] .hw-source-sets > .hw-source-set + .hw-source-set {
-  margin-top: 9px;
-}
-
-.hw-source-set li {
+.hj-selection-summary li {
   display: flex;
-  width: 46px;
-  height: 46px;
+  align-items: center;
+  color: var(--action);
+  font-size: 0.76rem;
+  font-weight: 560;
+  gap: 8px;
+}
+
+.hj-selection-summary li > span {
+  display: inline-flex;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--paper);
+  border-radius: 50%;
+  background: var(--action);
+  color: var(--paper);
+  font-size: 0.58rem;
 }
 
-/* The marks are not all square — Salesforce is 37x26, Gmail 20x16 — so a fixed box with contain
-   gives them one optical size instead of shrinking the wide ones to fit a square. The height is set
-   in CSS either way, so nothing shifts while they load. */
-.hw-source-set img {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-}
-
-.hw-source-note {
-  margin-top: 18px;
-  color: var(--muted);
-  font-size: 0.76rem;
-}
-
-.hw-agents ul {
+.hj-build {
   display: grid;
-  margin: 20px 0 0;
+  align-items: stretch;
+  grid-template-columns: minmax(0, 1.35fr) minmax(190px, 0.65fr);
+  gap: clamp(16px, 2.2vw, 26px);
+}
+
+.hj-build-document {
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  flex-direction: column;
+  border-radius: 9px;
+  padding: clamp(20px, 2.5vw, 30px);
+  background: var(--canvas);
+  gap: 16px;
+}
+
+.hj-build-document-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hj-build-document-head > span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: var(--paper);
+  color: var(--action);
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.hj-document-preview {
+  display: grid;
+  min-height: 72px;
+  align-content: center;
+  border-radius: 7px;
+  padding: 16px;
+  background: var(--paper);
+  gap: 8px;
+}
+
+.hj-document-preview > span {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--rule);
+}
+
+.hj-document-preview > span:nth-child(1) {
+  width: 42%;
+  background: var(--rule-strong);
+}
+
+.hj-document-preview > span:nth-child(2) {
+  width: 88%;
+}
+
+.hj-document-preview > span:nth-child(3) {
+  width: 72%;
+}
+
+.hj-document-preview > span:nth-child(4) {
+  width: 56%;
+}
+
+.hj-build-side {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: 1fr auto auto;
+  gap: 10px;
+}
+
+.hj-task {
+  max-width: 600px;
+  margin-top: 8px;
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 2vw, 1.82rem);
+  line-height: 1.18;
+}
+
+.hj-connected ul {
+  display: flex;
+  margin: 9px 0 0;
   padding: 0;
   gap: 8px;
   list-style: none;
 }
 
-.hw-agent {
-  display: flex;
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  padding: 11px 12px;
-  gap: 11px;
-}
-
-/* Only worth a pointer once the controller is there to answer it. */
-.hero-workspace[data-workspace='on'] .hw-agent {
-  cursor: pointer;
-  transition:
-    background-color var(--dur-ui) var(--ease-ui),
-    border-color var(--dur-ui) var(--ease-ui);
-}
-
-.hw-agent[data-running] {
-  border-color: color-mix(in srgb, var(--action) 30%, transparent);
+.hj-connected {
+  border-radius: 9px;
+  padding: 16px;
   background: var(--wash);
 }
 
-.hw-mark {
-  display: inline-flex;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 auto;
+.hj-connected li {
+  display: flex;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
-  /* Padding sets the glyph's drawn size: a 30px disc less 7px each side leaves a 16px mark. */
+  border: 1px solid var(--rule);
+  border-radius: 8px;
   padding: 7px;
-  border-radius: 50%;
   background: var(--paper);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--action) 24%, transparent);
-  color: var(--action);
 }
 
-.hw-agent[data-running] .hw-mark {
-  background: var(--action);
-  box-shadow: none;
-  color: var(--paper);
-}
-
-.hw-agent-copy b {
+.hj-connected img {
   display: block;
-  font-size: 0.86rem;
-  font-weight: 560;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
-.hw-agent-copy small {
-  display: block;
-  margin-top: 1px;
-  color: var(--muted);
-  font-size: 0.76rem;
-}
-
-/* Unarmed the three jobs simply stack. Armed they share one grid cell, so the frame is always as
-   tall as the tallest of them and switching agent cannot move anything below it. Held out of view
-   with visibility rather than display, which keeps the cell — and the height — occupied. */
-.hero-workspace[data-workspace='on'] .hw-jobs {
-  display: grid;
-}
-
-.hw-job {
-  position: relative;
-  padding: clamp(24px, 2.8vw, 38px);
-}
-
-/* Only while they are stacked, for the same reason as the source sets: a divider on the second and
-   third would sit inside the shared cell and push them down. Scoped to the unarmed state rather
-   than overridden in the armed one, so it does not come down to which rule is written last. */
-.hero-workspace[data-workspace='off'] .hw-jobs > .hw-job + .hw-job {
-  border-top: 1px solid var(--rule);
-}
-
-.hero-workspace[data-workspace='on'] .hw-job {
-  grid-area: 1 / 1;
-  visibility: hidden;
-}
-
-.hero-workspace[data-workspace='on'] .hw-job[data-current] {
-  visibility: visible;
-}
-
-.hw-job-title {
-  margin-top: 15px;
-  font-family: var(--display);
-  font-size: clamp(1.35rem, 1.9vw, 1.85rem);
-  line-height: 1.15;
-}
-
-.hw-job-detail {
-  display: grid;
-  margin: 22px 0 0;
-  gap: 9px;
-}
-
-.hw-job-detail > div {
-  display: grid;
-  align-items: baseline;
-  grid-template-columns: 104px 1fr;
-  gap: 14px;
-}
-
-.hw-job-detail dt {
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.hw-job-detail dd {
-  margin: 0;
-  font-size: 0.86rem;
-  font-weight: 540;
-}
-
-/* Where the job gets to, and stops. The whole argument is that it hands back rather than finishing
-   on its own. */
-.hw-result {
+.hj-collaboration {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid color-mix(in srgb, var(--action) 26%, transparent);
   border-radius: 7px;
-  margin-top: 22px;
-  padding: 13px 15px;
+  margin: 0;
+  padding: 12px 14px;
   background: var(--canvas);
-  gap: 16px;
-  font-size: 0.82rem;
-}
-
-.hw-result span {
   color: var(--muted);
+  gap: 16px;
+  font-size: 0.76rem;
 }
 
-.hw-result b {
+.hj-collaboration b {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.hj-approval {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 7px;
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--canvas);
+  color: var(--muted);
+  gap: 16px;
+  font-size: 0.76rem;
+}
+
+.hj-approval b {
   color: var(--action);
-  font-weight: 560;
+  font-weight: 600;
+  text-align: right;
 }
 
-/* The floor the work runs on. Same four controls the administration console on /product sets out,
-   drawn here as the boundary of the scene rather than as a panel of its own. */
-.hw-controls {
+.hj-adoption {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: minmax(0, 1.55fr) minmax(150px, 0.75fr);
+  gap: clamp(22px, 3vw, 38px);
+}
+
+.hj-chart {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.hj-chart-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.hj-chart-heading > div > span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+
+.hj-chart-plot {
+  display: grid;
+  min-height: 138px;
+  flex: 1;
+  align-items: end;
+  margin-top: 18px;
+  grid-template-columns: repeat(12, minmax(3px, 1fr));
+  gap: clamp(3px, 0.55vw, 7px);
+}
+
+.hj-chart-plot > span {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: end;
+}
+
+.hj-chart-plot i {
+  display: block;
+  width: 100%;
+  height: var(--column-height);
+  min-height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--action);
+}
+
+.hj-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+  padding-top: 6px;
+  color: var(--muted);
+  font-size: 0.6rem;
+}
+
+.hj-adoption-stats {
   display: grid;
   margin: 0;
-  padding: 15px clamp(24px, 2.8vw, 38px);
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+
+.hj-adoption-stats li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 7px;
+  padding: 14px;
+  background: var(--canvas);
+}
+
+.hj-adoption-stats strong {
+  margin-top: 7px;
+  color: var(--action);
+  font-family: var(--display);
+  font-size: 1.65rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.hw-governance {
+  display: grid;
+  align-items: center;
   border-top: 1px solid var(--rule);
+  padding: 14px 24px;
   background: var(--wash);
-  grid-template-columns: repeat(4, auto);
-  gap: 12px clamp(18px, 3vw, 44px);
-  justify-content: start;
+  grid-template-columns: minmax(145px, 0.65fr) auto minmax(135px, 0.55fr);
+  gap: 14px 20px;
+}
+
+.hw-controls {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  gap: 9px 14px;
   list-style: none;
 }
 
 .hw-controls li {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   color: var(--action);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 560;
 }
 
@@ -811,70 +1033,367 @@ h2 {
   stroke-width: 1.6;
 }
 
-.hero-workspace figcaption {
-  max-width: 640px;
-  margin-top: 16px;
-  color: var(--muted);
-  font-size: 0.82rem;
+.hw-europe {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-self: end;
+  border-left: 1px solid color-mix(in srgb, var(--action) 25%, transparent);
+  padding-left: clamp(18px, 2.5vw, 34px);
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 560;
+  gap: 8px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
-/* An instruction is only worth giving when it can be followed. */
-.hw-pick {
-  display: none;
+.hw-europe-stars {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
 }
 
-.hero-workspace[data-workspace='on'] .hw-pick {
-  display: inline;
+.hero-journey[data-journey='static'] .hw-governance {
+  align-self: stretch;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  grid-row: 4;
+  grid-column: 1 / -1;
 }
 
-@media (max-width: 1100px) {
-  /* Two stages abreast, the job beneath them: three columns of this width would leave the detail
-     list wrapping every value. */
-  .hw-body {
-    grid-template-columns: 1fr 1fr;
+@media (min-width: 1101px) and (min-height: 720px) {
+  .hero-journey[data-journey='on'] {
+    height: 300vh;
   }
 
-  .hw-jobs {
-    border-top: 1px solid var(--rule);
-    grid-column: 1 / -1;
+  .hero-journey[data-journey='on'] .hj-layout {
+    position: sticky;
+    top: 76px;
+    height: calc(100vh - 76px);
+    align-items: start;
+    grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
   }
 
-  .hw-sources::after {
-    display: none;
+  .hero-journey[data-journey='on'] .hj-story {
+    display: grid;
+    align-self: center;
+    grid-column: 1;
+  }
+
+  .hero-journey[data-journey='on'] .hj-story > li {
+    display: flex;
+    min-height: 0;
+    justify-content: center;
+    flex-direction: column;
+    border-top: 0;
+    padding-top: 0;
+    color: var(--muted);
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition:
+      color 320ms var(--ease-ui),
+      opacity 320ms var(--ease-ui),
+      transform 320ms var(--ease-ui);
+  }
+
+  .hero-journey[data-journey='on'] .hj-story > li[data-current] {
+    color: var(--ink);
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .hero-journey[data-journey='on'] .hj-story > li:not([data-current]) .hj-story-title + p {
+    color: var(--muted);
+  }
+
+  .hero-journey[data-journey='on'] .hj-visual {
+    position: static;
+    display: block;
+    min-width: 0;
+    align-self: center;
+    grid-column: 2;
+  }
+
+  .hero-journey[data-journey='on'] .hj-progress {
+    display: grid;
+    align-items: center;
+    margin-bottom: 14px;
+    grid-template-columns: auto minmax(26px, 1fr) auto minmax(26px, 1fr) auto;
+    gap: 10px;
+  }
+
+  .hj-progress-node {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    color: var(--muted);
+    gap: 7px;
+  }
+
+  .hj-progress-node > span {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--rule);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.56rem;
+  }
+
+  .hj-progress-node b {
+    max-width: 125px;
+    font-size: 0.67rem;
+    font-weight: 560;
+    line-height: 1.15;
+  }
+
+  .hj-progress-segment {
+    overflow: hidden;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+
+  .hj-progress-segment i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--action);
+    transform: scaleX(var(--segment-progress, 0));
+    transform-origin: left;
+    transition: transform 420ms var(--ease-ui);
+  }
+
+  [data-progress-segment='1'] i {
+    --segment-progress: var(--segment-one, 0);
+  }
+
+  [data-progress-segment='2'] i {
+    --segment-progress: var(--segment-two, 0);
+  }
+
+  .hero-journey[data-stage='find'] [data-progress-node='find'],
+  .hero-journey[data-stage='build'] [data-progress-node='build'],
+  .hero-journey[data-stage='adopt'] [data-progress-node='adopt'],
+  .hero-journey[data-stage='build'] [data-progress-node='find'],
+  .hero-journey[data-stage='adopt'] [data-progress-node='find'],
+  .hero-journey[data-stage='adopt'] [data-progress-node='build'] {
+    color: var(--action);
+  }
+
+  .hero-journey[data-stage='find'] [data-progress-node='find'] > span,
+  .hero-journey[data-stage='build'] [data-progress-node='build'] > span,
+  .hero-journey[data-stage='adopt'] [data-progress-node='adopt'] > span,
+  .hero-journey[data-stage='build'] [data-progress-node='find'] > span,
+  .hero-journey[data-stage='adopt'] [data-progress-node='find'] > span,
+  .hero-journey[data-stage='adopt'] [data-progress-node='build'] > span {
+    background: var(--action);
+    color: var(--paper);
+  }
+
+  .hero-journey[data-journey='on'] .hj-frame {
+    display: flex;
+    height: min(500px, calc(100vh - 160px));
+    min-height: 460px;
+    flex-direction: column;
+  }
+
+  .hero-journey[data-journey='on'] .hj-panels {
+    display: grid;
+    min-height: 0;
+    flex: 1;
+  }
+
+  .hero-journey[data-journey='on'] .hj-panel {
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    opacity: 0;
+    grid-area: 1 / 1;
+    transform: translateY(10px);
+    transition:
+      opacity 320ms var(--ease-ui),
+      transform 320ms var(--ease-ui),
+      visibility 0s linear 320ms;
+    visibility: hidden;
+  }
+
+  .hero-journey[data-journey='on'] .hj-panel[data-current] {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+    visibility: visible;
+  }
+
+  .hero-journey[data-journey='on'] .hw-governance {
+    flex: 0 0 auto;
   }
 }
 
 @media (max-width: 820px) {
-  .hw-body {
+  .hj-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .hj-story > li,
+  .hj-panel,
+  .hero-journey[data-journey='static'] .hw-governance {
+    grid-column: 1;
+  }
+
+  .hj-story > li:nth-child(1) {
+    grid-row: 1;
+  }
+
+  .hj-panel[data-stage-panel='find'] {
+    grid-row: 2;
+  }
+
+  .hj-story > li:nth-child(2) {
+    grid-row: 3;
+  }
+
+  .hj-panel[data-stage-panel='build'] {
+    grid-row: 4;
+  }
+
+  .hj-story > li:nth-child(3) {
+    grid-row: 5;
+  }
+
+  .hj-panel[data-stage-panel='adopt'] {
+    grid-row: 6;
+  }
+
+  .hero-journey[data-journey='static'] .hw-governance {
+    grid-row: 7;
+  }
+
+  .hj-story > li {
+    margin-top: 24px;
+  }
+
+  .hj-panel {
+    min-height: 330px;
+  }
+
+  .hj-adoption {
+    grid-template-columns: minmax(0, 1.35fr) minmax(140px, 0.65fr);
+  }
+
+  .hw-governance {
     grid-template-columns: 1fr;
   }
 
-  .hw-agents,
-  .hw-sources {
-    border-right: 0;
-    border-bottom: 1px solid var(--rule);
+  .hw-europe {
+    justify-self: start;
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .hj-find,
+  .hj-build {
+    grid-template-columns: 1fr;
   }
 
-  .hw-agents::after,
-  .hw-sources::after {
-    display: none;
-  }
-
-  .hw-job-detail > div {
-    grid-template-columns: 96px 1fr;
-  }
-
-  .hw-controls {
-    grid-template-columns: repeat(2, auto);
+  .hj-selection-summary,
+  .hj-build-document {
+    min-height: 220px;
   }
 }
 
 @media (max-width: 560px) {
-  .hw-controls {
+  .hero-journey {
+    margin-top: 44px;
+  }
+
+  .hj-story-title {
+    margin-top: 18px;
+    font-size: 1.34rem;
+  }
+
+  .hj-panel {
+    min-height: 0;
+  }
+
+  .hj-panel-heading {
+    min-height: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 18px;
+    gap: 12px;
+  }
+
+  .hj-panel-body {
+    padding: 22px 18px;
+  }
+
+  .hj-task {
+    font-size: 1.35rem;
+  }
+
+  .hj-collaboration,
+  .hj-approval {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .hj-approval b {
+    text-align: left;
+  }
+
+  .hj-collaboration b {
+    text-align: left;
+  }
+
+  .hj-adoption {
     grid-template-columns: 1fr;
   }
-}
 
+  .hj-chart-plot {
+    min-height: 150px;
+  }
+
+  .hj-adoption-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hj-adoption-stats li {
+    min-height: 122px;
+    padding: 12px;
+  }
+
+  .hj-adoption-stats strong {
+    font-size: 1.45rem;
+  }
+
+  .hw-governance {
+    padding: 18px 20px;
+    gap: 13px;
+  }
+
+  .hw-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hw-controls li {
+    align-items: flex-start;
+    font-size: 0.7rem;
+  }
+}
 .product-workspace {
   margin-top: clamp(64px, 8vw, 112px);
 }
@@ -1104,7 +1623,7 @@ h2 {
 }
 
 .customer-proof,
-.benefits,
+.adoption-partnership,
 .vision,
 .operating-model,
 .platform,
@@ -1219,22 +1738,15 @@ h2 {
   max-width: 900px;
 }
 
-.benefit-grid,
 .platform-pillars {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(30px, 5vw, 76px);
 }
 
-.benefit-item,
 .platform-pillars article {
   border-top: 1px solid var(--rule);
   padding-top: 22px;
-}
-
-.benefit-item {
-  display: flex;
-  flex-direction: column;
 }
 
 .item-number,
@@ -1242,7 +1754,6 @@ h2 {
   color: var(--action);
 }
 
-.benefit-item h3,
 .platform-pillars h3 {
   /* Constrain the measure so every heading in the row wraps, and reserve the second line so the
      bodies below start together even if one of them ever fits on a single line. */
@@ -1253,23 +1764,10 @@ h2 {
 
 /* The card's own body copy. Scoped to a direct child so the paragraphs inside a card visual, which
    set their own size and colour, are not dragged into it. */
-.benefit-item > p,
 .platform-pillars p {
   max-width: 390px;
   color: var(--muted);
   font-size: 0.92rem;
-}
-
-/* Split from the shared rules above, so /product's pillars keep their proportions. These cards now
-   carry a panel at the foot, so the air moves out from above the heading and into the gap between
-   the copy and the panel — margin-top: auto alone collapses to nothing here, because three equal
-   cards leave no spare height for it to distribute. */
-.benefit-item h3 {
-  margin-top: clamp(30px, 3.4vw, 48px);
-}
-
-.benefit-item > p {
-  margin-bottom: clamp(32px, 3.4vw, 46px);
 }
 
 /* Line marks
@@ -1298,165 +1796,217 @@ h2 {
   stroke: none;
 }
 
-/* Benefit card visuals
-   One panel shape for all three — a header band, a body, and a footer band at a single fixed
-   height — so the row reads as three of one thing rather than three loose sketches. Every colour is
-   --muted or --action at full strength: a wash of either goes under AA at these sizes. */
-.benefit-visual {
-  display: flex;
+/* Post-launch adoption
+   One curve describes the platform becoming part of everyday work. The solid band beneath it
+   names the shared work that moves each stage forward, keeping the story about partnership rather
+   than another product dashboard. */
+.adoption-partnership-story {
+  position: relative;
+  min-height: 450px;
   overflow: hidden;
-  height: 244px;
-  flex-direction: column;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  /* Pushed to the foot of the card so the three line up along both edges however the copy above
-     them wraps. */
-  margin-top: auto;
-  background: var(--paper);
 }
 
-.bv-head {
-  border-bottom: 1px solid var(--rule);
-  padding: 11px 14px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.adoption-curve {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 260px;
 }
 
-.bv-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 0;
-  padding: 6px 14px;
+.adoption-curve-area {
+  fill: color-mix(in srgb, var(--wash) 82%, var(--paper));
 }
 
-.bv-foot {
-  border-top: 1px solid var(--rule);
-  padding: 10px 14px;
-  background: var(--wash);
-  color: var(--action);
-  font-size: 0.74rem;
-  font-weight: 560;
+.adoption-curve-line {
+  fill: none;
+  stroke: var(--action);
+  stroke-linecap: round;
+  stroke-width: 2;
 }
 
-/* Rows are divided rather than boxed: inside a panel of their own, a border on each one reads as
-   clutter. */
-.bv-rows {
+.adoption-stages {
+  position: relative;
+  z-index: 1;
   display: grid;
+  min-height: 260px;
   margin: 0;
-  padding: 0;
+  padding: 0 clamp(28px, 4vw, 64px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   list-style: none;
 }
 
-.bv-rows li {
+.adoption-stages li {
   display: flex;
-  align-items: center;
-  padding: 11px 0;
-  gap: 10px;
-  font-size: 0.8rem;
-  font-weight: 540;
+  max-width: 220px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.bv-rows li + li {
-  border-top: 1px solid var(--rule);
+.adoption-stages li[data-adoption-stage='launch'] {
+  align-self: end;
+  margin-bottom: 22px;
 }
 
-.bv-mark {
-  display: inline-flex;
-  width: 26px;
-  height: 26px;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
+.adoption-stages li[data-adoption-stage='return'] {
+  align-self: center;
+  justify-self: center;
+  margin-top: 14px;
+}
+
+.adoption-stages li[data-adoption-stage='habit'] {
+  align-self: start;
+  justify-self: end;
+  margin-top: 22px;
+}
+
+.adoption-stages li > span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 4px solid var(--paper);
   border-radius: 50%;
-  /* Padding sets the glyph's drawn size: a 26px disc less 6px each side leaves a 14px mark. */
-  padding: 6px;
-  background: var(--wash);
-  color: var(--action);
+  background: var(--action);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--action) 22%, transparent);
 }
 
-/* The access each team was given. Three levels, told apart by fill and by their words, never by
-   colour alone. */
-.bv-access {
-  margin-left: auto;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 3px 9px;
-  font-size: 0.66rem;
-  font-weight: 560;
-  white-space: nowrap;
+.adoption-stages b {
+  max-width: 180px;
+  font-family: var(--display);
+  font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  line-height: 1.12;
 }
 
-.bv-access[data-level='own'] {
+.adoption-partner-band {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 116px;
+  align-items: center;
+  margin-top: 34px;
+  border-radius: 9px;
+  padding: 22px clamp(22px, 3vw, 42px);
   background: var(--action);
   color: var(--paper);
+  grid-template-columns: minmax(155px, 0.42fr) minmax(0, 1.58fr);
+  gap: clamp(28px, 5vw, 76px);
 }
 
-.bv-access[data-level='run'] {
-  border-color: color-mix(in srgb, var(--action) 40%, transparent);
-  color: var(--action);
+.adoption-partner-band > .product-label {
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
 }
 
-.bv-access[data-level='view'] {
-  border-color: var(--rule-strong);
-  color: var(--muted);
+.adoption-partner-band ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 50px);
+  list-style: none;
 }
 
-.bv-figure {
+.adoption-partner-band li {
   display: flex;
-  align-items: baseline;
-  color: var(--ink);
-  gap: 10px;
-  font-family: var(--display);
-  font-size: clamp(1.5rem, 2vw, 1.9rem);
-  line-height: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
 }
 
-.bv-figure small {
-  color: var(--action);
-  font-family: var(--body);
-  font-size: 0.74rem;
+.adoption-partner-band li > span {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 12%, transparent);
+}
+
+.adoption-partner-band svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+}
+
+.adoption-partner-band b {
+  font-size: 0.82rem;
   font-weight: 560;
+  line-height: 1.28;
 }
 
-.bv-plot {
-  display: flex;
-  height: 88px;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-top: 14px;
-  gap: 3px;
+@media (max-width: 900px) {
+  .adoption-partnership-story {
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .adoption-curve {
+    display: none;
+  }
+
+  .adoption-stages {
+    min-height: 0;
+    padding: 0;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .adoption-stages li,
+  .adoption-stages li[data-adoption-stage] {
+    position: relative;
+    max-width: none;
+    align-self: auto;
+    justify-self: auto;
+    margin: 0;
+    padding: 0 0 34px 42px;
+  }
+
+  .adoption-stages li:not(:last-child)::after {
+    position: absolute;
+    top: 18px;
+    bottom: 0;
+    left: 8px;
+    width: 1px;
+    background: color-mix(in srgb, var(--action) 28%, transparent);
+    content: '';
+  }
+
+  .adoption-stages li > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .adoption-stages b {
+    max-width: none;
+  }
+
+  .adoption-partner-band {
+    min-height: 0;
+    margin-top: 14px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
-.bv-col {
-  display: flex;
-  width: 100%;
-  max-width: 18px;
-  height: var(--column-height);
-  align-items: flex-end;
-}
+@media (max-width: 560px) {
+  .adoption-partner-band {
+    padding: 24px 20px;
+  }
 
-.bv-col i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 3px 3px 0 0;
-  background: var(--action);
-  transform-origin: center bottom;
-}
-
-.bv-axis {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  .adoption-partner-band ol {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
 }
 
 .operating-model {
@@ -2463,13 +3013,11 @@ html[data-motion='on'] [data-reveal]:not([data-revealed]) {
   transform: translateY(20px);
 }
 
-html[data-motion='on'] .benefit-grid > [data-reveal]:nth-child(2),
 html[data-motion='on'] .platform-pillars > [data-reveal]:nth-child(2),
 html[data-motion='on'] .adoption-timeline > [data-reveal]:nth-child(2) {
   transition-delay: 90ms;
 }
 
-html[data-motion='on'] .benefit-grid > [data-reveal]:nth-child(3),
 html[data-motion='on'] .platform-pillars > [data-reveal]:nth-child(3),
 html[data-motion='on'] .adoption-timeline > [data-reveal]:nth-child(3) {
   transition-delay: 180ms;
@@ -2515,156 +3063,6 @@ html[data-motion='on'] .customer-logo-list li:nth-child(7) {
 
 html[data-motion='on'] .customer-logo-list li:nth-child(8) {
   transition-delay: 315ms;
-}
-
-/* The card visuals assemble as their card arrives, riding the stagger the three cards already have.
-   Finite and settling at full opacity: nothing inside a [data-reveal] may stay below 1. */
-html[data-motion='on'] .bv-rows li,
-html[data-motion='on'] .bv-figure {
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 420ms ease,
-    transform 420ms ease;
-}
-
-html[data-motion='on'] .benefit-item[data-revealed] .bv-rows li,
-html[data-motion='on'] .benefit-item[data-revealed] .bv-figure {
-  opacity: 1;
-  transform: none;
-}
-
-html[data-motion='on'] .bv-rows li:nth-child(2) {
-  transition-delay: 90ms;
-}
-
-html[data-motion='on'] .bv-rows li:nth-child(3) {
-  transition-delay: 180ms;
-}
-
-/* Same growth the adoption chart on /product uses, at a quarter of the size. */
-html[data-motion='on'] .bv-col i {
-  transform: scaleY(0);
-  transition: transform 520ms cubic-bezier(0.25, 0.75, 0.3, 1);
-}
-
-html[data-motion='on'] .benefit-item[data-revealed] .bv-col i {
-  transform: none;
-}
-
-html[data-motion='on'] .bv-col:nth-child(2) i {
-  transition-delay: 45ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(3) i {
-  transition-delay: 90ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(4) i {
-  transition-delay: 135ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(5) i {
-  transition-delay: 180ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(6) i {
-  transition-delay: 225ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(7) i {
-  transition-delay: 270ms;
-}
-
-html[data-motion='on'] .bv-col:nth-child(8) i {
-  transition-delay: 315ms;
-}
-
-/* The hero scene plays itself in as one run rather than a sequence of slides: the agent takes the
-   job, the lane it runs in opens, the job states itself, and the four controls confirm. About two
-   seconds, once, settling into the same composition a reader with reduced motion or without
-   JavaScript gets immediately.
-
-   The job panel's own rules key off [data-current] rather than the reveal, so picking a different
-   agent replays them for the panel that just arrived. */
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-agent[data-running] {
-  animation: zeno-hw-take 520ms cubic-bezier(0.22, 0.68, 0.24, 1) 120ms backwards;
-}
-
-/* The hand-offs arrive with the scene, the way the overview's do on /product. */
-html[data-motion='on'] .hero-workspace .hw-agents::after,
-html[data-motion='on'] .hero-workspace .hw-sources::after {
-  opacity: 0;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-agents::after {
-  animation: zeno-fade-in 380ms ease 300ms forwards;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-sources::after {
-  animation: zeno-fade-in 380ms ease 420ms forwards;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-job[data-current] > *,
-html[data-motion='on'] .hero-workspace[data-workspace='off'] .hw-job > * {
-  animation: zeno-hw-in 440ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
-}
-
-html[data-motion='on'] .hero-workspace .hw-job > *:nth-child(1) {
-  animation-delay: 360ms;
-}
-
-html[data-motion='on'] .hero-workspace .hw-job > *:nth-child(2) {
-  animation-delay: 460ms;
-}
-
-html[data-motion='on'] .hero-workspace .hw-job > *:nth-child(3) {
-  animation-delay: 560ms;
-}
-
-html[data-motion='on'] .hero-workspace .hw-job > *:nth-child(4) {
-  animation-delay: 680ms;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li {
-  animation: zeno-hw-confirm 420ms cubic-bezier(0.22, 0.68, 0.24, 1) backwards;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(1) {
-  animation-delay: 900ms;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(2) {
-  animation-delay: 1010ms;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(3) {
-  animation-delay: 1120ms;
-}
-
-html[data-motion='on'] .hero-workspace[data-revealed] .hw-controls li:nth-child(4) {
-  animation-delay: 1230ms;
-}
-
-@keyframes zeno-hw-take {
-  from {
-    border-color: transparent;
-    background: transparent;
-  }
-}
-
-@keyframes zeno-hw-in {
-  from {
-    opacity: 0;
-    transform: translateY(9px);
-  }
-}
-
-@keyframes zeno-hw-confirm {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
 }
 
 /* The platform overview fills in stage by stage, then its connectors appear. */
@@ -3576,7 +3974,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   }
 
   /* Reading surfaces: the shift is there to help the eye settle, not to promise a click. */
-  .benefit-item:hover,
   .platform-pillars article:hover,
   .adoption-timeline li:hover {
     border-top-color: var(--rule-strong);
@@ -3599,7 +3996,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 .workflow-option,
 .answer-option,
 .check-field,
-.benefit-item,
 .platform-pillars article,
 .adoption-timeline li,
 .certification-list > li,
@@ -3668,65 +4064,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   align-items: center;
   grid-template-columns: minmax(200px, 0.85fr) minmax(300px, 1.35fr) minmax(180px, 0.7fr);
   gap: clamp(28px, 5vw, 80px);
-}
-
-/* The three steps the statement describes, set as one row under it rather than a section of their
-   own: they are the evidence for the sentence above, not a new argument. */
-.vision-steps {
-  display: grid;
-  margin: clamp(60px, 7vw, 104px) auto 0;
-  padding: 0;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  list-style: none;
-}
-
-.vision-steps > li {
-  border-top: 1px solid var(--rule);
-  padding-top: 24px;
-}
-
-.vision-steps > li + li {
-  padding-left: clamp(20px, 3vw, 48px);
-}
-
-.vision-steps > li:not(:last-child) {
-  padding-right: clamp(20px, 3vw, 48px);
-}
-
-.vision-step-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.vision-step-head b {
-  font-family: var(--display);
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-  font-weight: 400;
-}
-
-.vision-step-body {
-  margin-top: 12px;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.vision-step-part {
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 0.86rem;
-  line-height: 1.5;
-}
-
-.vision-step-part span {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--action);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
 }
 
 .vision-media {
@@ -3938,13 +4275,11 @@ html[data-motion='on'] .vision-line:not([data-read]) {
     gap: 34px 46px;
   }
 
-  .benefit-grid,
   .platform-pillars {
     grid-template-columns: 1fr;
     gap: 52px;
   }
 
-  .benefit-item h3,
   .platform-pillars h3 {
     margin-top: 34px;
   }
@@ -4264,25 +4599,6 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 @media (max-width: 900px) {
   .vision-grid {
     grid-template-columns: 1fr;
-  }
-
-  /* One column, and the gutter carried as padding goes with it. */
-  .vision-steps {
-    grid-template-columns: 1fr;
-  }
-
-  .vision-steps > li + li {
-    margin-top: 30px;
-    padding-left: 0;
-  }
-
-  .vision-steps > li:not(:last-child) {
-    padding-right: 0;
-  }
-
-  /* Statement first on a narrow screen; the photographs follow as a row beneath it. */
-  .vision-copy {
-    order: -1;
   }
 
   .vision-media {

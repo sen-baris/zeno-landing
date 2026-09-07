@@ -67,7 +67,9 @@ test('homepage to assessment result to prefilled demo', async ({ page }) => {
   test.slow();
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Governed AI for Europe.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'AI agents your teams actually use.',
+  );
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
   await expect(page).toHaveURL(/\/ai-readiness$/);
   await completeAssessment(page);
@@ -167,16 +169,14 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
 }) => {
   await page.goto('/');
   const sectionHeadings = await page.locator('h2').allTextContents();
-  const whyIndex = sectionHeadings.indexOf(
-    "Most enterprises don't have an access problem. They have an adoption problem.",
-  );
+  const whyIndex = sectionHeadings.indexOf('Adoption is built together.');
   const proofIndex = sectionHeadings.indexOf('What enterprises are seeing.');
   const visionIndex = sectionHeadings.indexOf('Software is the easy half.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
-  // One line through the page: proof, then the problem, then the people who work on it, then the
-  // before and after. The mechanism lives on /product, and the hero's stack is the only place the
-  // homepage draws it, so nothing here explains it twice.
+  // One line through the page: proof, then the work that turns launch into adoption, then the
+  // people who work on it, then the before and after. The mechanism lives on /product, so the
+  // homepage does not explain it twice.
   expect(proofIndex).toBeGreaterThanOrEqual(0);
   expect(whyIndex).toBeGreaterThan(proofIndex);
   expect(visionIndex).toBeGreaterThan(whyIndex);
@@ -196,8 +196,9 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
+  const customers = page.getByRole('region', { name: 'In good company' });
   await expect(
-    page.getByRole('list', { name: 'Selected customer logos' }).getByRole('img'),
+    customers.getByRole('list', { name: 'Customer logos' }).getByRole('img'),
   ).toHaveCount(8);
   await expect(
     page.getByText(/working copy|illustrative product view|no customer data/i),
@@ -210,25 +211,20 @@ test('reduced motion preserves the complete static product story', async ({ page
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  // The hero scene is simply already finished, which is the state its choreography settles into.
-  // Choosing an agent still works — that is interaction, not motion — so one panel is on screen.
-  await expect(page.locator('.hw-controls li')).toHaveCount(4);
-  await expect(page.locator('.hw-job[data-current]')).toHaveCount(1);
-  await expect(page.locator('.hw-job[data-current] .hw-result')).toBeVisible();
-  // And the card visuals are drawn in full: bars at height, the figure at its final value.
-  await expect(page.locator('.benefit-visual')).toHaveCount(3);
-  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
-  expect(
-    await page.evaluate(
-      () =>
-        Array.from(document.querySelectorAll('.bv-col i')).filter(
-          (bar) => getComputedStyle(bar).transform !== 'none',
-        ).length,
-    ),
-    'no bar may be left scaled down',
-  ).toBe(0);
-  await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
-  for (const visual of ['.hero-workspace', '.vision-media-lead', '.trust-certifications']) {
+  // Scrolling is an optional presentation. The complete story remains in the normal document flow
+  // when the reader asks for less motion.
+  const hero = page.locator('.hero-journey');
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+  await expect(hero.locator('.hj-panel')).toHaveCount(3);
+  for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
+  await expect(hero.locator('.hw-controls li')).toHaveCount(3);
+  await expect(hero.getByText('Healthy adoption', { exact: true })).toBeVisible();
+  // The complete partnership chapter is present without internal choreography waiting to run.
+  await expect(page.locator('.adoption-partnership-story')).toBeVisible();
+  await expect(page.locator('.adoption-stages > li')).toHaveCount(3);
+  await expect(page.locator('.adoption-partner-band li')).toHaveCount(3);
+  await expect(page.getByText('Draft the monthly finance report.')).toBeVisible();
+  for (const visual of ['.hero-journey', '.vision-media-lead', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -255,7 +251,12 @@ test('every revealable product visual becomes visible once motion runs', async (
 
   const faded = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
-      .filter((element) => Number(getComputedStyle(element).opacity) < 1)
+      .filter(
+        (element) =>
+          Number(getComputedStyle(element).opacity) < 1 &&
+          !element.closest('.hero-journey[data-journey="on"] .hj-panel:not([data-current])') &&
+          !element.closest('.hero-journey[data-journey="on"] .hj-story > li:not([data-current])'),
+      )
       .map((element) => element.className || element.tagName),
   );
   expect(faded, 'motion must leave every revealed element fully opaque').toEqual([]);
@@ -276,17 +277,38 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
-  await expect(page.locator('.hw-controls li')).toHaveCount(4);
-  // Every agent's job and sources are simply on the page, and nothing is offered that cannot be
-  // clicked.
-  await expect(page.locator('.hw-job')).toHaveCount(3);
-  await expect(page.locator('.hw-source-set:visible')).toHaveCount(3);
-  await expect(page.getByText('Draft the Q3 board update.')).toBeVisible();
-  await expect(page.getByText('Build the weekly ops pack.')).toBeVisible();
-  await expect(page.locator('.hero-workspace [role="button"]')).toHaveCount(0);
-  await expect(page.locator('.hw-pick')).toBeHidden();
-  await expect(page.locator('.benefit-visual')).toHaveCount(3);
-  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
+  const hero = page.locator('.hero-journey');
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+  await expect(hero.locator('.hw-controls li')).toHaveCount(3);
+  // Every finished stage is in normal flow, while the semantic narrative carries the connector
+  // names and qualitative adoption state that the supporting visual hides from assistive technology.
+  await expect(hero.locator('.hj-panel')).toHaveCount(3);
+  for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
+  await expect(hero.locator('.hj-story')).toContainText('Outlook, SharePoint, and Salesforce');
+  await expect(hero.locator('.hj-story')).toContainText('source permissions, IT-approved models');
+  await expect(hero.locator('.hj-story')).toContainText(
+    'weekly activity rises after launch, more teams return, and fewer seats remain inactive',
+  );
+  await expect(hero.locator('.hj-story')).not.toContainText('percent');
+  await expect(hero.locator('[role="button"]')).toHaveCount(0);
+  await expect(hero.locator('img')).toHaveCount(3);
+  expect(
+    await hero
+      .locator('img')
+      .evaluateAll((images) =>
+        images.every(
+          (image) =>
+            image.getAttribute('src')?.includes('/connector-logos/') &&
+            (image.getAttribute('alt') ?? '').length > 0,
+        ),
+      ),
+    'the only hero images are named connector marks',
+  ).toBe(true);
+  await expect(page.locator('.adoption-partnership-story')).toBeVisible();
+  await expect(page.locator('.adoption-stages > li')).toHaveCount(3);
+  await expect(page.locator('.adoption-partner-band')).toContainText('Zeno + your team');
+  await expect(page.locator('.adoption-partner-band li')).toHaveCount(3);
+  await expect(page.locator('.benefit-visual, .benefit-item')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
@@ -407,246 +429,414 @@ test('the vision statement stays readable however it is reached', async ({ page,
   );
   expect(faded, 'lines dim with colour, never opacity').toBe(0);
 
-  // The statement promises someone from our side is in the rollout. The steps are what that
-  // actually means, so each one has to say who does which part.
-  const steps = page.locator('.vision-steps > li');
-  await expect(steps).toHaveCount(3);
-  await expect(steps.locator('b')).toHaveText([
-    'The workshop',
-    'The first agent',
-    'After it is live',
-  ]);
-  for (const step of await steps.all()) {
-    await expect(step.locator('.item-number')).toHaveText(/^0[1-3]$/);
-    await expect(step.locator('.vision-step-body')).not.toBeEmpty();
-    await expect(step.locator('.vision-step-part')).toHaveCount(2);
-    await expect(step.locator('.vision-step-part span')).toHaveText(['From us', 'From you']);
-  }
-
-  // With no JavaScript the statement is simply already read, and the steps do not depend on the
-  // scroll script at all: it only ever touches .vision-line.
+  // With no JavaScript the statement is simply already read.
   const context = await browser.newContext({ javaScriptEnabled: false });
   const plain = await context.newPage();
   await plain.goto('/');
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
-  await expect(plain.locator('.vision-steps > li')).toHaveCount(3);
-  await expect(plain.locator('.vision-steps .vision-step-body').first()).toBeVisible();
   await context.close();
 });
 
-test('the hero states the angle, and picking an agent shows the job it is running', async ({
+test('the hero scroll-locks one scene from first workflow to healthy adoption', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  const hero = page.locator('.hero-workspace');
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'AI agents your teams actually use.',
+  );
+  await expect(page.locator('.hero-subhead')).toHaveText(
+    'We find the workflows worth automating, build the agents with your people, and stay through rollout and adoption.',
+  );
+  const heroAction = page.getByRole('group', { name: 'Hero call to action' });
+  await expect(heroAction.getByRole('link')).toHaveCount(1);
+  await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toHaveAttribute(
+    'href',
+    '/demo',
+  );
+
+  // The next section continues the story after launch instead of replaying the three hero stages.
+  const why = page.getByRole('region', { name: 'Adoption is built together.' });
+  await expect(why.getByText('After launch')).toBeVisible();
+  await expect(why.locator('.split-heading > p')).toHaveText(
+    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+  );
+
+  const hero = page.locator('.hero-journey');
   await expect(hero).toBeVisible();
-  await expect(hero).toHaveAttribute('data-workspace', 'on');
+  await expect(hero).toHaveAttribute('data-journey', 'on');
+  await expect(hero.locator('.hj-story-title')).toHaveText([
+    'We find the workflow with you',
+    'We build the agent with you',
+    'We stay through adoption',
+  ]);
+  await expect(hero.locator('.hj-story-title + p')).toHaveText([
+    'We start with the monthly finance report: repeated, important, and still assembled by hand.',
+    'We build it around your systems and documents. Your team reviews the work; the owner approves it.',
+    'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
+  ]);
+  await expect(hero.locator('.hj-progress-node')).toHaveCount(3);
+  await expect(hero.locator('.hj-progress-segment')).toHaveCount(2);
+  await expect(hero.locator('button, [role="button"], [aria-pressed]')).toHaveCount(0);
 
-  // Named as the platform, and stamped with the region it runs in.
-  await expect(hero.getByText('The enterprise AI platform')).toBeVisible();
-  await expect(hero.locator('.hw-region-stars')).toBeVisible();
+  // Find selects one clear candidate; Build keeps that same agent, its task and three real system
+  // marks; Adopt makes a qualitative adoption view the dominant state.
+  const findPanel = hero.locator('[data-stage-panel="find"]');
+  await expect(findPanel.locator('.hj-find-shortlist li')).toHaveText([
+    '✓Finance report',
+    'Supplier contract',
+    'Project updates',
+  ]);
+  await expect(findPanel.locator('.hj-find li[data-selected="true"]')).toHaveCount(1);
+  await expect(findPanel.locator('.hj-selection-title')).toHaveText('Finance report');
+  await expect(findPanel.locator('.hj-selection-summary li')).toHaveText([
+    '✓Every month',
+    '✓Assembled by hand',
+    '✓Owned by Finance',
+  ]);
 
-  // Three agents, one running, and every mark is a drawn glyph rather than a letter.
-  await expect(hero.locator('.hw-agent')).toHaveCount(3);
-  await expect(hero.locator('.hw-mark .glyph')).toHaveCount(3);
-  await expect(hero.locator('.hw-agent[data-running]')).toHaveCount(1);
-  await expect(hero.locator('.hw-agent[data-running]')).toContainText('Finance');
-  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'finance');
+  const buildPanel = hero.locator('[data-stage-panel="build"]');
+  await expect(buildPanel).toContainText('Finance report agent');
+  await expect(buildPanel).toContainText('Draft the monthly finance report.');
+  await expect(buildPanel).toContainText('Draft ready');
+  await expect(buildPanel).toContainText('Owner approves');
+  await expect(buildPanel).toContainText('Built withZeno + your team');
+  await expect(buildPanel).toContainText('Human approval required');
 
-  // Three stages read left to right: the agent, what it is connected to, what it is doing.
-  await expect(hero.locator('.hw-source-set')).toHaveCount(3);
-  await expect(hero.locator('.hw-source-set[data-current]')).toHaveCount(1);
-  await expect(hero.locator('.hw-source-set[data-current]')).toHaveAttribute(
-    'data-sources',
-    'finance',
-  );
-  await expect(hero.locator('.hw-source-set[data-current] li')).toHaveCount(3);
-  // Real connectors, drawn: the mark carries recognition, the name beside it carries meaning, and
-  // the image is decorative because the name is already text.
-  await expect(hero.locator('.hw-source-set[data-current] img')).toHaveCount(3);
-  // Nothing labels the marks in text, so every one has to name itself in alt or the column says
-  // nothing at all to a screen reader.
-  await expect(
-    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'SharePoint' }),
-  ).toBeVisible();
+  // The people photography belongs to the later team section. Every hero image is a local,
+  // explicitly named connector mark with reserved dimensions.
+  await expect(hero.locator('img')).toHaveCount(3);
   expect(
     await hero
-      .locator('.hw-source-set img')
-      .evaluateAll((nodes) => nodes.every((node) => (node.getAttribute('alt') ?? '').length > 0)),
-    'a mark with no label beside it must carry its own name',
-  ).toBe(true);
-  expect(
-    await hero
-      .locator('.hw-source-set img')
-      .evaluateAll((nodes) => nodes.every((node) => (node as HTMLImageElement).naturalWidth > 0)),
-    'every connector mark must actually load',
-  ).toBe(true);
-
-  // The four controls are the argument, so they are named here as well as on /product.
-  await expect(hero.locator('.hw-controls li')).toHaveCount(4);
-  for (const control of ['Knowledge access', 'Model choice', 'Human checkpoint', 'EU operating']) {
-    await expect(hero.locator('.hw-controls')).toContainText(control);
-  }
-
-  // Picking an agent changes the job, by pointer and by keyboard, and marks which one is current.
-  await hero.locator('.hw-agent[data-agent="legal"]').click();
-  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'legal');
-  await expect(hero.getByText('Check the supplier renewal.')).toBeVisible();
-  // The sources follow the agent: each one only ever lists what that team may reach.
-  await expect(hero.locator('.hw-source-set[data-current]')).toHaveAttribute(
-    'data-sources',
-    'legal',
-  );
-  await expect(
-    hero.locator('.hw-source-set[data-current]').getByRole('img', { name: 'Spellbook' }),
-  ).toBeVisible();
-  // No mark appears twice across the three agents: a repeat reads as padding rather than as the
-  // systems that team actually works in.
-  const marks = await hero
-    .locator('.hw-source-set img')
-    .evaluateAll((nodes) =>
-      nodes.map(
-        (node) =>
-          `${node.closest('[data-sources]')?.getAttribute('data-sources')}:${node.getAttribute('alt')}`,
+      .locator('img')
+      .evaluateAll((images) =>
+        images.every(
+          (image) =>
+            image.getAttribute('src')?.includes('/connector-logos/') &&
+            (image.getAttribute('alt') ?? '').length > 0 &&
+            image.getAttribute('width') === '24' &&
+            image.getAttribute('height') === '24' &&
+            (image as HTMLImageElement).naturalWidth > 0,
+        ),
       ),
-    );
-  expect(new Set(marks).size, 'every agent + connector pairing must be distinct').toBe(
-    marks.length,
-  );
-  await expect(hero.locator('.hw-agent[data-agent="legal"]')).toHaveAttribute(
-    'aria-current',
-    'true',
-  );
-  await expect(hero.locator('.hw-agent[aria-current="true"]')).toHaveCount(1);
-
-  await hero.locator('.hw-agent[data-agent="operations"]').focus();
-  await page.keyboard.press('Enter');
-  await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', 'operations');
-
-  // Switching agent must move nothing at all — not the frame, and not a single thing inside it.
-  // Every landmark is sampled, because the shift that gets noticed is never the one in the frame's
-  // own height: it is a nine-pixel step in one column that only shows up when you click through.
-  const landmarks = [
-    '.hero-workspace',
-    '.hw-sources .product-label',
-    '.hw-source-sets',
-    '.hw-source-set[data-current]',
-    '.hw-source-set[data-current] li',
-    '.hw-source-note',
-    '.hw-job[data-current]',
-    '.hw-job[data-current] .hw-job-title',
-    '.hw-job[data-current] .hw-result',
-    '.hw-controls',
-  ];
-  const layouts: number[][] = [];
-  for (const agent of ['finance', 'legal', 'operations']) {
-    await hero.locator(`.hw-agent[data-agent="${agent}"]`).click();
-    await expect(hero.locator('.hw-job[data-current]')).toHaveAttribute('data-job', agent);
-    // The panel replays its entrance on every switch, so measuring straight after the click reads
-    // a frame of that animation and calls it a layout shift.
-    await settleAnimations(page);
-    layouts.push(
-      // Offsets from the frame, not from the viewport: clicking scrolls the target into view, and a
-      // viewport-relative reading would call that scroll a layout shift.
-      await page.evaluate((selectors) => {
-        const frame = document.querySelector('.hero-workspace')?.getBoundingClientRect();
-        const boxes: number[] = [];
-        for (const selector of selectors) {
-          const box = document.querySelector(selector)?.getBoundingClientRect();
-          boxes.push(box && frame ? box.top - frame.top : -1, box?.height ?? -1);
-        }
-        return boxes;
-      }, landmarks),
-    );
-  }
-
-  // A pixel of tolerance, because two different strings in the same box land on slightly different
-  // fractional baselines in Firefox and WebKit. That is type metrics, not movement, and it leaves
-  // the check far tighter than anything a reader could see.
-  const moved = landmarks
-    .map((selector, index) => {
-      const spread = (offset: number) => {
-        const values = layouts.map((layout) => layout[index * 2 + offset] ?? 0);
-        return Math.max(...values) - Math.min(...values);
-      };
-      return { selector, top: spread(0), height: spread(1) };
-    })
-    .filter((entry) => entry.top > 1 || entry.height > 1)
-    .map((entry) => `${entry.selector} moved ${entry.top.toFixed(1)}/${entry.height.toFixed(1)}`);
-  expect(moved, 'nothing may move between agents').toEqual([]);
-
-  // The choreography is a single run that finishes rather than a loop that never does.
-  await settleRevealMotion(page);
+    'only loaded, named connector SVGs may appear in the hero',
+  ).toBe(true);
   expect(
-    await page.evaluate(
-      () => document.getAnimations().filter((a) => a.playState === 'running').length,
-    ),
-    'the hero scene must settle',
-  ).toBe(0);
+    await hero
+      .locator('.hj-connected li')
+      .evaluateAll((items) => items.every((item) => (item.textContent ?? '').trim() === '')),
+    'connector names are accessible alternatives, not visible pills',
+  ).toBe(true);
 
-  // And once it has, the scene travels with the page one pixel per pixel: nothing here pins, holds,
-  // or waits on a timer.
-  const before = await hero.boundingBox();
-  await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
-  await page.waitForFunction(() => window.scrollY >= 300);
-  const after = await hero.boundingBox();
-  if (!before || !after) throw new Error('the hero scene should be laid out');
-  expect(Math.round(before.y - after.y), 'the hero scene must not pin').toBe(300);
-});
+  const adoptPanel = hero.locator('[data-stage-panel="adopt"]');
+  await expect(adoptPanel.locator('.hj-panel-title')).toHaveText('Adoption');
+  await expect(adoptPanel.locator('.hj-status')).toHaveText('Healthy adoption');
+  await expect(adoptPanel.locator('.hj-chart-plot > span')).toHaveCount(12);
+  await expect(adoptPanel.locator('.hj-chart-axis')).toHaveText('LaunchNow');
+  await expect(adoptPanel.locator('.hj-adoption-stats li')).toHaveText([
+    'Teams returningGrowing',
+    'Inactive seatsFalling',
+  ]);
+  await expect(hero).not.toContainText(/Illustrative|21%|64%|11 of 14|46%|\+65%/i);
 
-test('each why-card carries its own small product visual', async ({ page }) => {
-  await page.goto('/');
-  const cards = page.locator('.benefit-item');
-  await expect(cards).toHaveCount(3);
-  await expect(page.locator('.benefit-visual')).toHaveCount(3);
+  // The product foundation is one restrained policy rail, with Europe positioned separately.
+  await expect(hero.locator('.hw-controls li')).toHaveText([
+    'Source permissions',
+    'IT-approved models',
+    'Human approval',
+  ]);
+  await expect(hero).not.toContainText('Runs under IT policy');
+  await expect(hero.locator('.hw-europe')).toHaveText('Built for Europe');
 
-  // Each visual belongs to its own card rather than being repeated or mismatched.
-  await expect(cards.nth(0).locator('.benefit-visual')).toHaveAttribute('data-visual', 'workspace');
-  await expect(cards.nth(1).locator('.benefit-visual')).toHaveAttribute('data-visual', 'access');
-  await expect(cards.nth(2).locator('.benefit-visual')).toHaveAttribute('data-visual', 'adoption');
+  const desktopGeometry = await hero.evaluate((element) => {
+    const scene = element.querySelector<HTMLElement>('.hj-layout');
+    const title = element.querySelector<HTMLElement>('.hj-story-title');
+    const body = element.querySelector<HTMLElement>('.hj-story-title + p');
+    if (!scene || !title || !body) throw new Error('Missing hero geometry');
+    const columns = getComputedStyle(scene)
+      .gridTemplateColumns.split(' ')
+      .map((value) => Number.parseFloat(value));
+    const [leftColumn, rightColumn] = columns;
+    if (!leftColumn || !rightColumn) throw new Error('Missing hero grid columns');
+    return {
+      bodySize: Number.parseFloat(getComputedStyle(body).fontSize),
+      height: element.getBoundingClientRect().height,
+      leftShare: leftColumn / (leftColumn + rightColumn),
+      titleSize: Number.parseFloat(getComputedStyle(title).fontSize),
+    };
+  });
+  expect(desktopGeometry.leftShare).toBeGreaterThan(0.35);
+  expect(desktopGeometry.leftShare).toBeLessThan(0.37);
+  expect(desktopGeometry.titleSize).toBeGreaterThanOrEqual(28);
+  expect(desktopGeometry.bodySize).toBeGreaterThanOrEqual(14.5);
+  expect(desktopGeometry.height).toBeGreaterThanOrEqual(2698);
+  expect(desktopGeometry.height).toBeLessThanOrEqual(2702);
 
-  // Each illustrates the sentence above it, so none of them is read out a second time.
-  for (const index of [0, 1, 2]) {
-    await expect(cards.nth(index).locator('.benefit-visual')).toHaveAttribute(
-      'aria-hidden',
-      'true',
+  const reachStage = async (stage: 'find' | 'build' | 'adopt') => {
+    const targetProgress = { find: 0.08, build: 0.5, adopt: 0.88 }[stage];
+    await page.evaluate((progress) => {
+      const journey = document.querySelector<HTMLElement>('.hero-journey');
+      const scene = journey?.querySelector<HTMLElement>('.hj-layout');
+      if (!journey || !scene) throw new Error('Missing hero scroll scene');
+      const journeyRect = journey.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(getComputedStyle(scene).top) || 0;
+      const journeyTop = window.scrollY + journeyRect.top;
+      const travel = journeyRect.height - sceneRect.height;
+      window.scrollTo({
+        top: journeyTop - stickyTop + travel * progress,
+        behavior: 'instant',
+      });
+    }, targetProgress);
+    await expect(hero).toHaveAttribute('data-stage', stage);
+    await expect(hero.locator('.hj-panel[data-current]')).toHaveAttribute(
+      'data-stage-panel',
+      stage,
     );
-  }
+    await expect(hero.locator('.hj-story > li[data-current]')).toHaveAttribute(
+      'data-story-step',
+      stage,
+    );
+    await expect
+      .poll(async () => {
+        const scene = hero.locator('.hj-layout');
+        const box = await scene.boundingBox();
+        const stickyTop = await scene.evaluate(
+          (element) => Number.parseFloat(getComputedStyle(element).top) || 0,
+        );
+        return Math.abs((box?.y ?? -1) - stickyTop);
+      })
+      .toBeLessThanOrEqual(1);
+    await settleAnimations(page);
+    const frame = await hero.locator('.hj-frame').boundingBox();
+    const scene = await hero.locator('.hj-layout').boundingBox();
+    const progress = await hero.locator('.hj-progress-segment').evaluateAll((segments) =>
+      segments.map((segment) => {
+        const trackWidth = segment.getBoundingClientRect().width;
+        const fillWidth = segment.firstElementChild?.getBoundingClientRect().width ?? 0;
+        return trackWidth === 0 ? 0 : fillWidth / trackWidth;
+      }),
+    );
+    const narrativeOpacity = await hero
+      .locator('.hj-story > li')
+      .evaluateAll((steps) => steps.map((step) => Number(getComputedStyle(step).opacity)));
+    if (!frame || !scene) throw new Error('Hero scene should be laid out');
+    return { frame, narrativeOpacity, progress, scene };
+  };
 
-  await expect(cards.nth(0).locator('.bv-rows li')).toHaveCount(3);
-  await expect(cards.nth(0).locator('.bv-foot')).toContainText('Your company information');
-  await expect(cards.nth(1).locator('.bv-access')).toHaveCount(3);
-  await expect(cards.nth(1).locator('[data-level="own"]')).toHaveText('Owner');
-  await expect(cards.nth(2).locator('.bv-col')).toHaveCount(8);
+  // The introduction scrolls away, then the complete narrative-and-visual scene stays locked below
+  // the header while scroll progress changes its contents and fills the connecting segments.
+  const headlineBefore = await page.getByRole('heading', { level: 1 }).boundingBox();
+  const find = await reachStage('find');
+  const headlineAfter = await page.getByRole('heading', { level: 1 }).boundingBox();
+  expect(headlineAfter?.y ?? 0, 'the headline scrolls normally').toBeLessThan(
+    (headlineBefore?.y ?? 0) - 100,
+  );
+  expect(find.progress[0]).toBeGreaterThan(0.15);
+  expect(find.progress[0]).toBeLessThan(0.35);
+  expect(find.progress[1]).toBeLessThan(0.05);
+  expect(find.narrativeOpacity).toEqual([1, 0, 0]);
 
-  // All three are the same panel: a header band, a body and a footer band, at one size. This is
-  // what makes the row read as three of one thing rather than three loose sketches.
-  for (const index of [0, 1, 2]) {
-    await expect(cards.nth(index).locator('.bv-head')).toBeVisible();
-    await expect(cards.nth(index).locator('.bv-foot')).toBeVisible();
-  }
-  const boxes = await page.locator('.benefit-visual').evaluateAll((nodes) =>
-    nodes.map((node) => {
-      const box = node.getBoundingClientRect();
-      return `${Math.round(box.width)}x${Math.round(box.height)}@${Math.round(box.top)}`;
+  const build = await reachStage('build');
+  expect(build.progress[0]).toBeGreaterThan(0.95);
+  expect(build.progress[1]).toBeGreaterThan(0.4);
+  expect(build.progress[1]).toBeLessThan(0.6);
+  expect(build.narrativeOpacity).toEqual([0, 1, 0]);
+
+  const adopt = await reachStage('adopt');
+  expect(
+    adopt.progress.every((fill) => fill > 0.95),
+    'Adopt completes both connectors',
+  ).toBe(true);
+  expect(adopt.narrativeOpacity).toEqual([0, 0, 1]);
+  const frameWidths = [find.frame.width, build.frame.width, adopt.frame.width];
+  const frameHeights = [find.frame.height, build.frame.height, adopt.frame.height];
+  expect(Math.max(...frameWidths) - Math.min(...frameWidths)).toBeLessThanOrEqual(1);
+  expect(Math.max(...frameHeights) - Math.min(...frameHeights)).toBeLessThanOrEqual(1);
+  expect(find.frame.height).toBeGreaterThanOrEqual(460);
+  expect(find.frame.height).toBeLessThanOrEqual(500.5);
+  const pinnedTops = [find.scene.y, build.scene.y];
+  expect(Math.max(...pinnedTops) - Math.min(...pinnedTops)).toBeLessThanOrEqual(1);
+  expect(Math.round(find.scene.y), 'the complete scene stays below the sticky header').toBe(76);
+  const frameOffsets = [find, build, adopt].map((state) => state.frame.y - state.scene.y);
+  expect(
+    Math.max(...frameOffsets) - Math.min(...frameOffsets),
+    'the frame must not move inside the scene as stages change',
+  ).toBeLessThanOrEqual(1);
+
+  const reversed = await reachStage('find');
+  expect(reversed.progress[0]).toBeLessThan(0.35);
+  expect(reversed.progress[1]).toBeLessThan(0.05);
+
+  // This is ordinary page scrolling, so keyboard paging must drive the same geometry-based state.
+  const pressPageKey = async (key: 'PageDown' | 'PageUp') => {
+    await page.keyboard.press(key);
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        }),
+    );
+  };
+  await pressPageKey('PageDown');
+  await pressPageKey('PageDown');
+  await expect(hero).toHaveAttribute('data-stage', /build|adopt/);
+  await pressPageKey('PageUp');
+  await pressPageKey('PageUp');
+  await expect(hero).toHaveAttribute('data-stage', 'find');
+
+  const customerSection = page.getByRole('region', { name: 'In good company' });
+  await customerSection.evaluate((element) =>
+    window.scrollTo({
+      top: window.scrollY + element.getBoundingClientRect().top - 120,
+      behavior: 'instant',
     }),
   );
-  expect(new Set(boxes).size, 'the three panels must be one size on one line').toBe(1);
+  const releasedScene = await hero.locator('.hj-layout').boundingBox();
+  const customerBox = await customerSection.boundingBox();
+  expect(releasedScene?.y ?? 0).toBeLessThan(customerBox?.y ?? 0);
+  expect((releasedScene?.y ?? 0) + (releasedScene?.height ?? 0)).toBeLessThanOrEqual(
+    (customerBox?.y ?? 0) + 1,
+  );
 
-  // The adoption figure counts up and lands on its value exactly, the same contract the business
-  // case figures are held to: an animation must never leave a wrong number on screen.
-  await settleRevealMotion(page);
-  await expect(page.locator('.bv-figure span[data-figure]')).toHaveText('64%');
-  const bars = await page
-    .locator('.bv-col i')
-    .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).transform));
+  // Tablet, mobile and shallow desktops render the same stages as ordinary document content.
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+  for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
+  const tabletOrder = await page.evaluate(() =>
+    [
+      '[data-story-step="find"]',
+      '[data-stage-panel="find"]',
+      '[data-story-step="build"]',
+      '[data-stage-panel="build"]',
+      '[data-story-step="adopt"]',
+      '[data-stage-panel="adopt"]',
+    ].map((selector) =>
+      Math.round(document.querySelector(selector)?.getBoundingClientRect().top ?? -1),
+    ),
+  );
+  expect(tabletOrder).toEqual([...tabletOrder].sort((a, b) => a - b));
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(hero).toHaveAttribute('data-journey', 'static');
   expect(
-    bars.every((transform) => transform === 'none'),
-    'every bar must finish at height',
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+    'the complete mobile story must not overflow horizontally',
+  ).toBe(true);
+
+  await page.setViewportSize({ width: 1440, height: 700 });
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+
+  // The enhancement changes over exactly at the documented width and height boundaries.
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+  await page.setViewportSize({ width: 1101, height: 900 });
+  await expect(hero).toHaveAttribute('data-journey', 'on');
+  await page.setViewportSize({ width: 1440, height: 719 });
+  await expect(hero).toHaveAttribute('data-journey', 'static');
+  await page.setViewportSize({ width: 1440, height: 720 });
+  await expect(hero).toHaveAttribute('data-journey', 'on');
+  await reachStage('build');
+  const boundaryVisual = await hero.locator('.hj-visual').boundingBox();
+  if (!boundaryVisual) throw new Error('Hero visual should be laid out at its height boundary');
+  expect(boundaryVisual.y).toBeGreaterThanOrEqual(76);
+  expect(boundaryVisual.y + boundaryVisual.height).toBeLessThanOrEqual(720);
+});
+test('the adoption chapter shows how Zeno and the customer build platform habits together', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  const section = page.getByRole('region', { name: 'Adoption is built together.' });
+  await expect(section.getByText('After launch', { exact: true })).toBeVisible();
+  await expect(section.locator('.split-heading > p')).toHaveText(
+    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+  );
+
+  const story = section.locator('.adoption-partnership-story');
+  await expect(story).toHaveCount(1);
+  await expect(story).not.toContainText(/illustrative/i);
+
+  const stages = story
+    .getByRole('list', { name: 'Platform adoption after launch' })
+    .getByRole('listitem');
+  await expect(stages).toHaveCount(3);
+  for (const [index, stage] of ['launch', 'return', 'habit'].entries()) {
+    await expect(stages.nth(index)).toHaveAttribute('data-adoption-stage', stage);
+  }
+  await expect(stages).toHaveText([
+    'First team live',
+    'Teams returning',
+    'Platform in everyday use',
+  ]);
+
+  const partnerBand = story.locator('.adoption-partner-band');
+  await expect(partnerBand).toContainText('Zeno + your team');
+  const actions = partnerBand
+    .getByRole('list', { name: 'Partnership actions after launch' })
+    .getByRole('listitem');
+  await expect(actions).toHaveCount(3);
+  for (const [index, stage] of ['launch', 'return', 'habit'].entries()) {
+    await expect(actions.nth(index)).toHaveAttribute('data-partner-action', stage);
+  }
+  await expect(actions).toHaveText([
+    'Review real usage',
+    'Improve with the team',
+    'Expand what works',
+  ]);
+
+  // The rejected controls composition and older deployment miniatures are gone. On desktop the
+  // stage labels follow the rising curve and the shared action band sits beneath the whole journey.
+  await expect(
+    section.locator(
+      '.benefit-grid, .benefit-item, .benefit-visual, .scale-story, .scale-budget, .scale-principles',
+    ),
+  ).toHaveCount(0);
+  const desktopStages = await stages.evaluateAll((nodes) =>
+    nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
+  );
+  const desktopBand = await partnerBand.boundingBox();
+  const [launchTop, returnTop, habitTop] = desktopStages;
+  if (
+    !desktopBand ||
+    launchTop === undefined ||
+    returnTop === undefined ||
+    habitTop === undefined
+  ) {
+    throw new Error('Adoption partnership composition should be laid out');
+  }
+  expect(launchTop).toBeGreaterThan(returnTop);
+  expect(returnTop).toBeGreaterThan(habitTop);
+  expect(desktopBand.y).toBeGreaterThan(Math.max(...desktopStages));
+
+  // At tablet width the adoption stages become one ordinary reading sequence. The partnership
+  // actions remain complete, and neither layout introduces horizontal overflow.
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const tabletStages = await stages.evaluateAll((nodes) =>
+    nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
+  );
+  expect(tabletStages).toEqual([...tabletStages].sort((a, b) => a - b));
+  expect(new Set(tabletStages).size).toBe(3);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+    'the adoption partnership must not overflow at tablet width',
+  ).toBe(true);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileColumns = await partnerBand
+    .locator('ol')
+    .evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+  expect(mobileColumns).toBe(1);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+    'the adoption partnership must not overflow on mobile',
   ).toBe(true);
 });
-
 test('every solutions page is written for its own industry', async ({ page }) => {
   const seenAgents = new Set<string>();
   const seenHeadings = new Set<string>();

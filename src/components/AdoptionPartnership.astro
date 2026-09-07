@@ -1,0 +1,77 @@
+---
+import { adoptionPartnership } from '../lib/content/site-content';
+---
+
+{
+  /*
+  One adoption curve carries the outcome; the band beneath it carries the work Zeno and the
+  customer do together. The labels remain a pair of ordered lists so the relationship survives
+  without the decorative curve, motion, or desktop layout.
+*/
+}
+<div class="adoption-partnership-story" data-reveal>
+  <ol class="adoption-stages" aria-label="Platform adoption after launch">
+    {
+      adoptionPartnership.stages.map((stage) => (
+        <li data-adoption-stage={stage.id}>
+          <span aria-hidden="true" />
+          <b>{stage.label}</b>
+        </li>
+      ))
+    }
+  </ol>
+
+  <svg
+    class="adoption-curve"
+    viewBox="0 0 1200 260"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      class="adoption-curve-area"
+      d="M0 226 C142 225 202 209 292 190 S486 175 594 138 S776 104 882 78 S1085 52 1200 28 L1200 260 L0 260 Z"
+    ></path>
+    <path
+      class="adoption-curve-line"
+      d="M0 226 C142 225 202 209 292 190 S486 175 594 138 S776 104 882 78 S1085 52 1200 28"></path>
+  </svg>
+
+  <div class="adoption-partner-band">
+    <p class="product-label">{adoptionPartnership.partnerLabel}</p>
+    <ol aria-label="Partnership actions after launch">
+      {
+        adoptionPartnership.stages.map((stage) => (
+          <li data-partner-action={stage.id}>
+            <span aria-hidden="true">
+              <svg viewBox="0 0 28 28" focusable="false">
+                {stage.id === 'launch' && (
+                  <>
+                    <circle cx="14" cy="14" r="8" />
+                    <circle cx="14" cy="14" r="2.5" />
+                    <path d="M3 14c3-5.4 6.7-8 11-8s8 2.6 11 8c-3 5.4-6.7 8-11 8s-8-2.6-11-8Z" />
+                  </>
+                )}
+                {stage.id === 'return' && (
+                  <>
+                    <path d="M5 8h18M5 14h18M5 20h18" />
+                    <circle cx="10" cy="8" r="2.2" />
+                    <circle cx="18" cy="14" r="2.2" />
+                    <circle cx="12" cy="20" r="2.2" />
+                  </>
+                )}
+                {stage.id === 'habit' && (
+                  <>
+                    <circle cx="14" cy="14" r="10" />
+                    <path d="M14 8v12M8 14h12" />
+                  </>
+                )}
+              </svg>
+            </span>
+            <b>{stage.action}</b>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</div>

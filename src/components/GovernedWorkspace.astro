@@ -1,249 +1,365 @@
 ---
 import Glyph from './Glyph.astro';
-import type { GlyphName } from './Glyph.astro';
+import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
 import { withBase } from '../lib/routing/base-path';
 
-// The angle, in one picture: specific agents running on a governed workspace to get one job done.
-//
-// Pick an agent and the panel beside it changes. What does not change is the second half of every
-// panel — the model is approved either way, and a person signs off either way — which is the whole
-// argument: the rules do not bend to the job.
-//
-// No model provider is named. Naming one would be a competitive statement, and the point is that
-// the workspace does not depend on which one was bought. The connectors are named and drawn,
-// because those are the systems the work already lives in and every one of them is built.
-const agents = [
-  {
-    id: 'finance',
-    glyph: 'finance',
-    team: 'Finance',
-    role: 'Board reporting',
-    task: 'Draft the Q3 board update.',
-    connectors: [
-      { file: 'outlook', name: 'Outlook' },
-      { file: 'sharepoint', name: 'SharePoint' },
-      { file: 'salesforce', name: 'Salesforce' },
-    ],
-    shared: 'Finance team',
-    schedule: 'Every Monday, 09:00',
-    result: 'Draft ready',
-  },
-  {
-    id: 'legal',
-    glyph: 'legal',
-    team: 'Legal',
-    role: 'Contract review',
-    task: 'Check the supplier renewal.',
-    connectors: [
-      { file: 'sharepoint', name: 'SharePoint' },
-      { file: 'spellbook', name: 'Spellbook' },
-      { file: 'teams', name: 'Teams' },
-    ],
-    shared: 'Legal, and Procurement',
-    schedule: 'On request',
-    result: 'Review ready',
-  },
-  {
-    id: 'operations',
-    glyph: 'operations',
-    team: 'Operations',
-    role: 'Weekly ops pack',
-    task: 'Build the weekly ops pack.',
-    connectors: [
-      { file: 'jira', name: 'Jira' },
-      { file: 'slack', name: 'Slack' },
-      { file: 'asana', name: 'Asana' },
-    ],
-    shared: 'Operations, and Finance',
-    schedule: 'Every Friday, 16:00',
-    result: 'Pack ready',
-  },
-] as const satisfies readonly {
-  glyph: GlyphName;
-  connectors: readonly { file: string; name: string }[];
-  [key: string]: unknown;
-}[];
-
-const controls = [
-  'Knowledge access',
-  'Model choice',
-  'Human checkpoint',
-  'EU operating focus',
+const connectorAssets = [
+  { name: 'Outlook', src: '/connector-logos/outlook.svg' },
+  { name: 'SharePoint', src: '/connector-logos/sharepoint.svg' },
+  { name: 'Salesforce', src: '/connector-logos/salesforce.svg' },
 ] as const;
+
+const storySteps = [
+  {
+    id: 'find',
+    number: '01',
+    title: 'We find the workflow with you',
+    body: 'We start with the monthly finance report: repeated, important, and still assembled by hand.',
+    accessibleDetail:
+      'Finance report is selected from a shortlist of Finance report, Supplier contract, and Project updates. It runs every month, is assembled by hand, and is owned by Finance.',
+  },
+  {
+    id: 'build',
+    number: '02',
+    title: 'We build the agent with you',
+    body: 'We build it around your systems and documents. Your team reviews the work; the owner approves it.',
+    accessibleDetail:
+      'The Finance report agent connects to Outlook, SharePoint, and Salesforce and prepares a monthly finance report draft. It is built with Zeno and the customer team, with human approval required. Its governed workspace includes source permissions, IT-approved models, human approval, and a Built for Europe marker.',
+  },
+  {
+    id: 'adopt',
+    number: '03',
+    title: 'We stay through adoption',
+    body: 'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
+    accessibleDetail:
+      'The Finance report agent shows healthy adoption: weekly activity rises after launch, more teams return, and fewer seats remain inactive.',
+  },
+] as const;
+
+const workflows = [
+  { label: 'Finance report', selected: true },
+  { label: 'Supplier contract', selected: false },
+  { label: 'Project updates', selected: false },
+] as const;
+
+const selectionReasons = ['Every month', 'Assembled by hand', 'Owned by Finance'] as const;
+
+const adoptionWeeks = illustrativeAdoptionScenario.series.values;
+const adoptionPeak = Math.max(...adoptionWeeks);
+const controls = ['Source permissions', 'IT-approved models', 'Human approval'] as const;
 ---
 
 {
   /*
-  One scene, read left to right: the agents, what the selected one is connected to, and the job it
-  is running — with the four controls it all runs inside along the bottom, the same four the
-  administration console on /product spells out.
+  The narrative list owns the meaning and stays readable in every mode. On a wide, tall,
+  motion-enabled viewport the complete story scene stays pinned while its narrative and supporting
+  visual advance together; in every other environment the same three finished stages form one
+  static sequence.
 
-  Pick an agent and the panel changes. It has no relationship to the scroll position, and nothing
-  moves on a timer: the choreography plays once on arrival and then it is yours to explore.
-
-  The three panels share a single grid cell, so the frame is always as tall as the tallest of them
-  and switching cannot move anything below it. Without JavaScript there is no cell to share: the
-  three simply stack, every job readable at once, and no control is offered that cannot answer.
+  The adoption shape is qualitative: the synthetic series controls only the relative bar heights,
+  while no scenario figure is exposed as visible or assistive content.
 */
 }
-<figure class="hero-workspace" data-workspace="off" data-reveal>
-  <div class="product-frame">
-    <div class="product-frame-bar">
-      <div>
-        <span class="product-mark" aria-hidden="true">Z</span>
-        <span>The enterprise AI platform</span>
-      </div>
-      <span class="product-frame-status hw-region">
-        <Glyph name="eu" class="hw-region-stars" />
-        EU region
-      </span>
-    </div>
-
-    <div class="hw-body">
-      <div class="hw-agents">
-        <p class="product-label">Agents</p>
-        <ul>
-          {
-            agents.map((agent) => (
-              <li>
-                <div class="hw-agent" data-agent={agent.id}>
-                  <span class="hw-mark">
-                    <Glyph name={agent.glyph} />
-                  </span>
-                  <span class="hw-agent-copy">
-                    <b>{agent.team}</b>
-                    <small>{agent.role}</small>
-                  </span>
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div class="hw-sources">
-        <p class="product-label">Connected to</p>
-        <div class="hw-source-sets">
-          {
-            agents.map((agent) => (
-              <ul class="hw-source-set" data-sources={agent.id}>
-                {agent.connectors.map((connector) => (
-                  <li>
-                    {/* Nothing names these but the mark itself, so the mark has to carry the name
-                        rather than being decorative. */}
-                    <img
-                      src={withBase(`/connector-logos/${connector.file}.svg`)}
-                      alt={connector.name}
-                      width="26"
-                      height="26"
-                      loading="eager"
-                      decoding="async"
-                    />
-                  </li>
-                ))}
-              </ul>
-            ))
-          }
-        </div>
-        <p class="hw-source-note">
-          Permissions carried through, so it sees only what the team may.
-        </p>
-      </div>
-
-      <div class="hw-jobs">
-        {
-          agents.map((agent) => (
-            <section class="hw-job" data-job={agent.id} aria-label={`${agent.team} agent`}>
-              <p class="product-label">{agent.team} &middot; running now</p>
-              <p class="hw-job-title">{agent.task}</p>
-              <dl class="hw-job-detail">
-                <div>
-                  <dt>Model</dt>
-                  <dd>Approved provider</dd>
-                </div>
-                <div>
-                  <dt>Shared with</dt>
-                  <dd>{agent.shared}</dd>
-                </div>
-                <div>
-                  <dt>Schedule</dt>
-                  <dd>{agent.schedule}</dd>
-                </div>
-                <div>
-                  <dt>Sign-off</dt>
-                  <dd>Required</dd>
-                </div>
-              </dl>
-              <p class="hw-result">
-                <span>{agent.result}</span>
-                <b>Waiting for sign-off</b>
-              </p>
-            </section>
-          ))
-        }
-      </div>
-    </div>
-
-    <ul class="hw-controls">
+<figure
+  class="hero-journey"
+  data-journey="static"
+  data-stage="find"
+  data-reveal
+  aria-labelledby="hero-journey-caption"
+>
+  <div class="hj-layout">
+    <ol class="hj-story" aria-label="From first workflow to adoption">
       {
-        controls.map((control) => (
-          <li>
-            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <circle cx="8" cy="8" r="7" />
-              <path d="m4.8 8.2 2.2 2.2 4.2-4.6" />
-            </svg>
-            {control}
+        storySteps.map((step) => (
+          <li data-story-step={step.id}>
+            <span class="item-number">{step.number}</span>
+            <p class="hj-story-title">{step.title}</p>
+            <p>{step.body}</p>
+            <span class="visually-hidden">{step.accessibleDetail}</span>
           </li>
         ))
       }
-    </ul>
+    </ol>
+
+    <div class="hj-visual" aria-hidden="true">
+      <div class="hj-progress">
+        {
+          storySteps.map((step, index) => (
+            <>
+              <div class="hj-progress-node" data-progress-node={step.id}>
+                <span>{step.number}</span>
+                <b>{step.title}</b>
+              </div>
+              {index < storySteps.length - 1 && (
+                <span class="hj-progress-segment" data-progress-segment={index + 1}>
+                  <i />
+                </span>
+              )}
+            </>
+          ))
+        }
+      </div>
+
+      <div class="product-frame hj-frame">
+        <div class="hj-panels">
+          <section class="hj-panel" data-stage-panel="find" data-current>
+            <header class="hj-panel-heading">
+              <div>
+                <p class="product-label">01 / Find</p>
+                <p class="hj-panel-title">Choose the first workflow</p>
+              </div>
+              <span class="hj-status">First workflow selected</span>
+            </header>
+            <div class="hj-panel-body hj-find">
+              <div class="hj-find-shortlist">
+                <p class="product-label">Workflow shortlist</p>
+                <ul>
+                  {
+                    workflows.map((workflow) => (
+                      <li data-selected={String(workflow.selected)}>
+                        <span>{workflow.selected ? '✓' : ''}</span>
+                        <b>{workflow.label}</b>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+              <div class="hj-selection-summary">
+                <div>
+                  <p class="product-label">Selected workflow</p>
+                  <p class="hj-selection-title">Finance report</p>
+                </div>
+                <ul>
+                  {
+                    selectionReasons.map((reason) => (
+                      <li>
+                        <span>✓</span>
+                        {reason}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="hj-panel" data-stage-panel="build">
+            <header class="hj-panel-heading">
+              <div>
+                <p class="product-label">02 / Build</p>
+                <p class="hj-panel-title">Finance report agent</p>
+              </div>
+              <span class="hj-status">Owner approves</span>
+            </header>
+            <div class="hj-panel-body hj-build">
+              <div class="hj-build-document">
+                <div class="hj-build-document-head">
+                  <p class="product-label">Current task</p>
+                  <span>Draft ready</span>
+                </div>
+                <p class="hj-task">Draft the monthly finance report.</p>
+                <div class="hj-document-preview">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="hj-build-side">
+                <div class="hj-connected">
+                  <p class="product-label">Connected systems</p>
+                  <ul>
+                    {
+                      connectorAssets.map((connector) => (
+                        <li>
+                          <img
+                            src={withBase(connector.src)}
+                            alt={connector.name}
+                            width="24"
+                            height="24"
+                            loading="eager"
+                            decoding="async"
+                          />
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+                <p class="hj-collaboration">
+                  <span>Built with</span>
+                  <b>Zeno + your team</b>
+                </p>
+                <p class="hj-approval">
+                  <span>Owner review</span>
+                  <b>Human approval required</b>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="hj-panel" data-stage-panel="adopt">
+            <header class="hj-panel-heading">
+              <div>
+                <p class="product-label">Finance report agent</p>
+                <p class="hj-panel-title">Adoption</p>
+              </div>
+              <span class="hj-status hj-status-healthy">{illustrativeAdoptionScenario.health}</span>
+            </header>
+            <div class="hj-panel-body hj-adoption">
+              <div class="hj-chart">
+                <div class="hj-chart-heading">
+                  <div>
+                    <p class="product-label">Weekly activity</p>
+                    <span>Since launch</span>
+                  </div>
+                </div>
+                <div class="hj-chart-plot">
+                  {
+                    adoptionWeeks.map((week) => (
+                      <span style={`--column-height: ${Math.round((week / adoptionPeak) * 100)}%`}>
+                        <i />
+                      </span>
+                    ))
+                  }
+                </div>
+                <div class="hj-chart-axis">
+                  <span>Launch</span>
+                  <span>Now</span>
+                </div>
+              </div>
+              <ul class="hj-adoption-stats">
+                <li>
+                  <p class="product-label">Teams returning</p>
+                  <strong>Growing</strong>
+                </li>
+                <li>
+                  <p class="product-label">Inactive seats</p>
+                  <strong>Falling</strong>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <div class="hw-governance">
+          <div class="hw-governance-title">
+            <p class="product-label">Governed workspace</p>
+          </div>
+          <ul class="hw-controls">
+            {
+              controls.map((control) => (
+                <li>
+                  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <circle cx="8" cy="8" r="7" />
+                    <path d="m4.8 8.2 2.2 2.2 4.2-4.6" />
+                  </svg>
+                  {control}
+                </li>
+              ))
+            }
+          </ul>
+          <span class="hw-europe">
+            <Glyph name="eu" class="hw-europe-stars" />
+            Built for Europe
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
-  <figcaption>
-    Specific agents, running on a governed workspace, to get one job done.{' '}
-    <span class="hw-pick">Pick one to see the job it is running.</span>
+
+  <figcaption id="hero-journey-caption" class="visually-hidden">
+    One Finance report agent moves from workflow selection, through collaborative build and human
+    approval, into adoption measurement and improvement.
   </figcaption>
 </figure>
 
 <script>
-  const figure = document.querySelector<HTMLElement>('.hero-workspace');
+  const journey = document.querySelector<HTMLElement>('.hero-journey');
 
-  if (figure) {
-    const agents = Array.from(figure.querySelectorAll<HTMLElement>('.hw-agent'));
-    const jobs = Array.from(figure.querySelectorAll<HTMLElement>('.hw-job'));
-    const sources = Array.from(figure.querySelectorAll<HTMLElement>('.hw-source-set'));
+  if (journey) {
+    const root = document.documentElement;
+    const scene = journey.querySelector<HTMLElement>('.hj-layout');
+    const steps = Array.from(journey.querySelectorAll<HTMLElement>('[data-story-step]'));
+    const panels = Array.from(journey.querySelectorAll<HTMLElement>('[data-stage-panel]'));
+    const viewport = window.matchMedia('(min-width: 1101px) and (min-height: 720px)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let enhanced = false;
+    let queuedFrame: number | undefined;
 
-    // Deliberately not gated on data-motion: choosing which agent to look at is not an animation,
-    // and someone who has asked for reduced motion should still be able to look around.
-    if (agents.length > 0 && agents.length === jobs.length && agents.length === sources.length) {
-      figure.dataset.workspace = 'on';
+    const show = (index: number) => {
+      const nextStep = steps[index];
+      if (!nextStep) return;
 
-      const show = (index: number) => {
-        for (const [position, agent] of agents.entries()) {
-          const current = position === index;
-          agent.toggleAttribute('data-running', current);
-          if (current) agent.setAttribute('aria-current', 'true');
-          else agent.removeAttribute('aria-current');
-        }
-        for (const [position, panel] of [...jobs, ...sources].entries()) {
-          panel.toggleAttribute('data-current', position % agents.length === index);
-        }
-      };
+      const stage = nextStep.dataset.storyStep;
+      if (!stage) return;
 
-      // Upgraded here rather than shipped in the markup, so nothing offers a click before there is
-      // something to answer it. The role goes on this element rather than its li, which keeps the
-      // list's items being items.
-      for (const [index, agent] of agents.entries()) {
-        agent.setAttribute('role', 'button');
-        agent.setAttribute('tabindex', '0');
-        agent.addEventListener('click', () => show(index));
-        agent.addEventListener('keydown', (event) => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          event.preventDefault();
-          show(index);
-        });
+      journey.dataset.stage = stage;
+      for (const [position, step] of steps.entries()) {
+        step.toggleAttribute('data-current', position === index);
       }
+      for (const [position, panel] of panels.entries()) {
+        panel.toggleAttribute('data-current', position === index);
+      }
+    };
 
-      show(0);
-    }
+    const update = () => {
+      queuedFrame = undefined;
+      if (!enhanced || !scene || steps.length === 0) return;
+
+      const journeyRect = journey.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(getComputedStyle(scene).top) || 0;
+      const travel = Math.max(1, journeyRect.height - sceneRect.height);
+      const progress = Math.min(1, Math.max(0, (stickyTop - journeyRect.top) / travel));
+      const current = Math.min(steps.length - 1, Math.floor(progress * steps.length));
+
+      journey.style.setProperty('--segment-one', String(Math.min(1, progress * 3)));
+      journey.style.setProperty(
+        '--segment-two',
+        String(Math.min(1, Math.max(0, (progress - 1 / 3) * 3))),
+      );
+      show(current);
+    };
+
+    const queueUpdate = () => {
+      if (!enhanced || queuedFrame !== undefined) return;
+      queuedFrame = window.requestAnimationFrame(update);
+    };
+
+    const stop = () => {
+      if (!enhanced) return;
+      enhanced = false;
+      window.removeEventListener('scroll', queueUpdate);
+      window.removeEventListener('resize', queueUpdate);
+      if (queuedFrame !== undefined) window.cancelAnimationFrame(queuedFrame);
+      queuedFrame = undefined;
+      journey.dataset.journey = 'static';
+      journey.dataset.stage = 'find';
+      journey.style.removeProperty('--segment-one');
+      journey.style.removeProperty('--segment-two');
+      for (const step of steps) step.removeAttribute('data-current');
+      for (const panel of panels) panel.removeAttribute('data-current');
+    };
+
+    const start = () => {
+      if (enhanced) return;
+      enhanced = true;
+      journey.dataset.journey = 'on';
+      window.addEventListener('scroll', queueUpdate, { passive: true });
+      window.addEventListener('resize', queueUpdate, { passive: true });
+      update();
+    };
+
+    const sync = () => {
+      const canEnhance =
+        viewport.matches && !reducedMotion.matches && root.getAttribute('data-motion') === 'on';
+      if (canEnhance) start();
+      else stop();
+    };
+
+    viewport.addEventListener('change', sync);
+    reducedMotion.addEventListener('change', sync);
+    window.addEventListener('pagehide', stop, { once: true });
+    sync();
   }
 </script>

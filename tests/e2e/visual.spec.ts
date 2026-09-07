@@ -34,6 +34,48 @@ for (const viewport of viewports) {
   });
 }
 
+test('desktop hero adoption journey at each active stage', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+
+  const journey = page.locator('.hero-journey');
+  const visual = journey.locator('.hj-visual');
+  const scene = journey.locator('.hj-layout');
+  await expect(journey).toHaveAttribute('data-journey', 'on');
+  await expect
+    .poll(() =>
+      visual
+        .locator('img')
+        .evaluateAll((images) =>
+          images.every((image) => (image as HTMLImageElement).naturalWidth > 0),
+        ),
+    )
+    .toBe(true);
+
+  for (const stage of ['find', 'build', 'adopt'] as const) {
+    const targetProgress = { find: 0.08, build: 0.5, adopt: 0.88 }[stage];
+    await page.evaluate((progress) => {
+      const journey = document.querySelector<HTMLElement>('.hero-journey');
+      const scene = journey?.querySelector<HTMLElement>('.hj-layout');
+      if (!journey || !scene) throw new Error('Missing hero scroll scene');
+      const journeyRect = journey.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(getComputedStyle(scene).top) || 0;
+      const journeyTop = window.scrollY + journeyRect.top;
+      const travel = journeyRect.height - sceneRect.height;
+      window.scrollTo({
+        top: journeyTop - stickyTop + travel * progress,
+        behavior: 'instant',
+      });
+    }, targetProgress);
+    await expect(journey).toHaveAttribute('data-stage', stage);
+    await expect(scene).toHaveScreenshot(`home-hero-${stage}-1440.png`, {
+      animations: 'disabled',
+      maxDiffPixelRatio: 0.01,
+    });
+  }
+});
+
 /* Two industry pages, not one: they share a template but no longer share their screens, and
    between these two all four surfaces are covered. Private equity carries the result and the
    automation, M&A the workflow and the assistant. The wide and narrow pair also catches the
