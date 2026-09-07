@@ -407,12 +407,31 @@ test('the vision statement stays readable however it is reached', async ({ page,
   );
   expect(faded, 'lines dim with colour, never opacity').toBe(0);
 
-  // With no JavaScript the statement is simply already read.
+  // The statement promises someone from our side is in the rollout. The steps are what that
+  // actually means, so each one has to say who does which part.
+  const steps = page.locator('.vision-steps > li');
+  await expect(steps).toHaveCount(3);
+  await expect(steps.locator('b')).toHaveText([
+    'The workshop',
+    'The first agent',
+    'After it is live',
+  ]);
+  for (const step of await steps.all()) {
+    await expect(step.locator('.item-number')).toHaveText(/^0[1-3]$/);
+    await expect(step.locator('.vision-step-body')).not.toBeEmpty();
+    await expect(step.locator('.vision-step-part')).toHaveCount(2);
+    await expect(step.locator('.vision-step-part span')).toHaveText(['From us', 'From you']);
+  }
+
+  // With no JavaScript the statement is simply already read, and the steps do not depend on the
+  // scroll script at all: it only ever touches .vision-line.
   const context = await browser.newContext({ javaScriptEnabled: false });
   const plain = await context.newPage();
   await plain.goto('/');
   await expect(plain.locator('.vision-line')).toHaveCount(4);
   await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
+  await expect(plain.locator('.vision-steps > li')).toHaveCount(3);
+  await expect(plain.locator('.vision-steps .vision-step-body').first()).toBeVisible();
   await context.close();
 });
 
@@ -976,6 +995,25 @@ test('the business case figures never move under reduced motion', async ({ page 
   });
   expect(settled, 'no counting when the reader asked for reduced motion').toBe(0);
   await expect(page.locator('.business-case-count')).toHaveText(APPROVED_FIGURES);
+});
+
+test('the deployment fact publishes with the qualifier that keeps it honest', async ({ page }) => {
+  await page.goto('/');
+  const line = page.locator('.trust-deployment');
+  await expect(line).toHaveCount(1);
+
+  // "Available" is not "default". The qualifier is part of the claim record and has to be on the
+  // page with it, the way the business-case figures carry theirs.
+  await expect(line).toContainText('dedicated single-tenant infrastructure');
+  await expect(line.locator('span')).toHaveText(
+    'offered alongside the shared deployment, not in place of it',
+  );
+
+  // The models the owner did not confirm must not appear anywhere on the page.
+  const body = (await page.locator('body').innerText()).toLowerCase();
+  for (const unconfirmed of ['on-premise', 'on premise', 'air-gapped', 'bring your own cloud']) {
+    expect(body, `"${unconfirmed}" is not an approved deployment claim`).not.toContain(unconfirmed);
+  }
 });
 
 test('the trust section publishes approved certifications and a verifiable trust centre link', async ({

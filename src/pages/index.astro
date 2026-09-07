@@ -14,6 +14,7 @@ import {
   homepageBusinessCaseClaimIds,
   homepageCertificationClaimIds,
   homepageCustomerLogoClaimIds,
+  homepageDeploymentClaimIds,
   homepageProofClaimIds,
   homepageTestimonialClaimIds,
   trustCenterUrl,
@@ -28,6 +29,14 @@ const approvedCertifications = resolveApprovedClaims(
   homepageCertificationClaimIds,
   'home.trust',
 );
+// One deployment fact, resolved the same way as everything else on this surface, so it cannot be
+// published without the record that approved it.
+const approvedDeployment = resolveApprovedClaims(
+  claimRegistry,
+  homepageDeploymentClaimIds,
+  'home.trust',
+);
+
 const approvedBusinessCase = resolveApprovedClaims(
   claimRegistry,
   homepageBusinessCaseClaimIds,
@@ -165,6 +174,14 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           visible to IT.
         </p>
       </header>
+      {
+        approvedDeployment.map((claim) => (
+          <p class="trust-deployment">
+            {claim.statement}
+            {claim.attribution && <span>{claim.attribution}</span>}
+          </p>
+        ))
+      }
       <TrustCertifications
         certifications={approvedCertifications}
         assets={certificationAssets}

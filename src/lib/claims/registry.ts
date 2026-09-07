@@ -168,6 +168,22 @@ export const claimRegistry: readonly ClaimRecord[] = [
       'Report access is granted through the trust center, not this page. Counsel must confirm the operating-entity attribution before the production release.',
   },
   {
+    id: 'deployment-single-tenant',
+    statement: 'Available on dedicated single-tenant infrastructure.',
+    category: 'security',
+    evidence:
+      'Confirmed by the workspace owner on 2026-09-06 as a deployment model available today. The other models a European buyer commonly asks for, running in the customer\u2019s own cloud and on-premise, were explicitly not confirmed and must not be implied.',
+    verified_on: '2026-09-06',
+    approval_status: 'approved',
+    approved_by: 'Baris \u2014 working-session direction',
+    approved_on: '2026-09-06',
+    allowed_surfaces: ['home.trust'],
+    attribution: 'offered alongside the shared deployment, not in place of it',
+    reverify_on: '2027-03-06',
+    notes:
+      'States availability, not the default, and the attribution carries that. Do not extend to bring-your-own-cloud or on-premise, and do not turn it into a guarantee of isolation without the architecture evidence behind it.',
+  },
+  {
     id: 'metric-efficiency-time-savings',
     statement: '3–10% efficiency / time savings after a year.',
     category: 'metric',
@@ -501,6 +517,9 @@ export const homepageBusinessCaseClaimIds: readonly string[] = [
   'metric-weekly-active-usage',
   'metric-projected-annual-savings',
 ];
+
+/** The one deployment fact confirmed for publication. Resolved on its own surface, like the rest. */
+export const homepageDeploymentClaimIds: readonly string[] = ['deployment-single-tenant'];
 
 export const homepageCertificationClaimIds: readonly string[] = [
   'certification-iso-27001',

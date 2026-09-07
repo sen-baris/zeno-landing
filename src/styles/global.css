@@ -3644,6 +3644,21 @@ html[data-motion='on'] .vision-line:not([data-read]) {
    --muted rather than a faded opacity: muted still passes AA on this background, and a translucent
    line would fail contrast as well as the assertion that nothing inside a revealed container sits
    below full opacity. */
+/* The qualifier renders with the fact, the way the business-case figures carry theirs: "available"
+   is not "default", and dropping that turns an option into a promise. */
+.trust-deployment {
+  max-width: 640px;
+  margin-top: clamp(28px, 3vw, 44px);
+  font-size: 0.95rem;
+}
+
+.trust-deployment span {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .vision {
   background: var(--paper);
 }
@@ -3653,6 +3668,65 @@ html[data-motion='on'] .vision-line:not([data-read]) {
   align-items: center;
   grid-template-columns: minmax(200px, 0.85fr) minmax(300px, 1.35fr) minmax(180px, 0.7fr);
   gap: clamp(28px, 5vw, 80px);
+}
+
+/* The three steps the statement describes, set as one row under it rather than a section of their
+   own: they are the evidence for the sentence above, not a new argument. */
+.vision-steps {
+  display: grid;
+  margin: clamp(60px, 7vw, 104px) auto 0;
+  padding: 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  list-style: none;
+}
+
+.vision-steps > li {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+
+.vision-steps > li + li {
+  padding-left: clamp(20px, 3vw, 48px);
+}
+
+.vision-steps > li:not(:last-child) {
+  padding-right: clamp(20px, 3vw, 48px);
+}
+
+.vision-step-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.vision-step-head b {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  font-weight: 400;
+}
+
+.vision-step-body {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.vision-step-part {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.vision-step-part span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .vision-media {
@@ -4190,6 +4264,20 @@ html[data-motion='on'] .vision-line:not([data-read]) {
 @media (max-width: 900px) {
   .vision-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* One column, and the gutter carried as padding goes with it. */
+  .vision-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .vision-steps > li + li {
+    margin-top: 30px;
+    padding-left: 0;
+  }
+
+  .vision-steps > li:not(:last-child) {
+    padding-right: 0;
   }
 
   /* Statement first on a narrow screen; the photographs follow as a row beneath it. */
