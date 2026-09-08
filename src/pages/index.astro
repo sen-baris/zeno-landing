@@ -13,22 +13,36 @@ import {
   claimRegistry,
   homepageBusinessCaseClaimIds,
   homepageCertificationClaimIds,
+  homepageCustomerProofVoiceClaimIds,
   homepageCustomerLogoClaimIds,
   homepageDeploymentClaimIds,
+  homepageHeroCapabilityClaimIds,
   homepageProofClaimIds,
   homepageTestimonialClaimIds,
   trustCenterUrl,
 } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { withBase } from '../lib/routing/base-path';
+import { audiences, draftHomeCopy, operatingShift } from '../lib/content/site-content';
 import {
-  adoptionPartnership,
-  audiences,
-  draftHomeCopy,
-  operatingShift,
-} from '../lib/content/site-content';
+  customerStoryDrafts,
+  customerVoiceDrafts,
+  getCustomerStoryClaimIds,
+  homepageCustomerProofLogoOrder,
+  resolveCustomerProofMode,
+  selectCustomerStoriesForMode,
+  type CustomerVoice,
+} from '../lib/content/customer-stories';
 
 const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
+const [agentStartingPointClaim] = resolveApprovedClaims(
+  claimRegistry,
+  homepageHeroCapabilityClaimIds,
+  'home.hero',
+);
+if (!agentStartingPointClaim) {
+  throw new Error('The approved homepage agent starting-point claim is missing.');
+}
 const approvedCertifications = resolveApprovedClaims(
   claimRegistry,
   homepageCertificationClaimIds,
@@ -52,6 +66,11 @@ const approvedQuotes = resolveApprovedClaims(
   homepageTestimonialClaimIds,
   'home.testimonials',
 );
+const approvedCustomerProofVoiceClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageCustomerProofVoiceClaimIds,
+  'home.customer-proof',
+);
 const approvedCustomerLogoClaims = resolveApprovedClaims(
   claimRegistry,
   homepageCustomerLogoClaimIds,
@@ -63,6 +82,46 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
   if (!logo) throw new Error(`Approved customer logo asset "${claim.id}" is missing.`);
   return logo;
 });
+const contentMode = resolveCustomerProofMode();
+const customerStories = selectCustomerStoriesForMode(customerStoryDrafts, contentMode);
+for (const story of customerStories) {
+  const [narrativeClaimId, firstResultClaimId] = getCustomerStoryClaimIds(story);
+  const previewClaimIds = [narrativeClaimId, firstResultClaimId].filter(
+    (claimId): claimId is string => Boolean(claimId),
+  );
+  resolveApprovedClaims(claimRegistry, previewClaimIds, 'home.customer-proof');
+}
+const customerVoiceDraftById = new Map(customerVoiceDrafts.map((voice) => [voice.id, voice]));
+const approvedCustomerVoices = approvedQuotes.map((quote): CustomerVoice => ({
+  id: quote.id,
+  excerpt: quote.statement,
+  attribution: quote.attribution,
+  approvalStatus: 'approved',
+}));
+const approvedLinkedCustomerVoices = approvedCustomerProofVoiceClaims.map(
+  (quote): CustomerVoice => {
+    const voice = customerVoiceDraftById.get(quote.id);
+    if (!voice?.logoClaimId) {
+      throw new Error(`Approved customer voice "${quote.id}" is missing its logo association.`);
+    }
+    return {
+      id: quote.id,
+      excerpt: quote.statement,
+      attribution: quote.attribution,
+      approvalStatus: 'approved',
+      logoClaimId: voice.logoClaimId,
+    };
+  },
+);
+const customerVoices = [...approvedCustomerVoices, ...approvedLinkedCustomerVoices];
+const customerLogoOrder = new Map<string, number>(
+  homepageCustomerProofLogoOrder.map((claimId, index) => [claimId, index]),
+);
+const homepageCustomerLogos = [...approvedCustomerLogos].sort(
+  (left, right) =>
+    (customerLogoOrder.get(left.claimId) ?? Number.MAX_SAFE_INTEGER) -
+    (customerLogoOrder.get(right.claimId) ?? Number.MAX_SAFE_INTEGER),
+);
 ---
 
 <BaseLayout title={draftHomeCopy.title} description={draftHomeCopy.description} canonicalPath="/">
@@ -79,15 +138,17 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
           </div>
         </div>
       </div>
-      <GovernedWorkspace />
+      <GovernedWorkspace buildStartingPoint={agentStartingPointClaim.statement} />
     </div>
   </section>
 
   <CustomerLogoRail
-    logos={approvedCustomerLogos}
+    logos={homepageCustomerLogos}
     audiences={audiences}
     proof={approvedProof}
-    quote={approvedQuotes[0]}
+    variant="proof"
+    stories={customerStories}
+    voices={customerVoices}
   />
 
   <section
@@ -110,13 +171,6 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
     aria-labelledby="adoption-partnership-title"
   >
     <div class="shell">
-      <header class="section-heading split-heading">
-        <div>
-          <p class="eyebrow">{adoptionPartnership.eyebrow}</p>
-          <h2 id="adoption-partnership-title">{adoptionPartnership.title}</h2>
-        </div>
-        <p>{adoptionPartnership.intro}</p>
-      </header>
       <AdoptionPartnership />
     </div>
   </section>

@@ -3,6 +3,12 @@ import Glyph from './Glyph.astro';
 import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
 import { withBase } from '../lib/routing/base-path';
 
+interface Props {
+  buildStartingPoint: string;
+}
+
+const { buildStartingPoint } = Astro.props;
+
 const connectorAssets = [
   { name: 'Outlook', src: '/connector-logos/outlook.svg' },
   { name: 'SharePoint', src: '/connector-logos/sharepoint.svg' },
@@ -22,9 +28,9 @@ const storySteps = [
     id: 'build',
     number: '02',
     title: 'We build the agent with you',
-    body: 'We build it around your systems and documents. Your team reviews the work; the owner approves it.',
+    body: `${buildStartingPoint} We connect it to your systems; your team reviews and the owner approves.`,
     accessibleDetail:
-      'The Finance report agent connects to Outlook, SharePoint, and Salesforce and prepares a monthly finance report draft. It is built with Zeno and the customer team, with human approval required. Its governed workspace includes source permissions, IT-approved models, human approval, and a Built for Europe marker.',
+      'The Finance report agent can start from the prebuilt finance agent shown here or from a custom build. It connects to Outlook, SharePoint, and Salesforce and prepares a monthly finance report draft. It is configured with Zeno and the customer team, with human approval required. Its governed workspace includes source permissions, IT-approved models, human approval, and a Built for Europe marker.',
   },
   {
     id: 'adopt',
@@ -149,7 +155,11 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                 <p class="product-label">02 / Build</p>
                 <p class="hj-panel-title">Finance report agent</p>
               </div>
-              <span class="hj-status">Owner approves</span>
+              <div class="hj-starting-point">
+                <span class="hj-status">Prebuilt agent</span>
+                <small>or</small>
+                <span>Custom built</span>
+              </div>
             </header>
             <div class="hj-panel-body hj-build">
               <div class="hj-build-document">
@@ -185,10 +195,6 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                     }
                   </ul>
                 </div>
-                <p class="hj-collaboration">
-                  <span>Built with</span>
-                  <b>Zeno + your team</b>
-                </p>
                 <p class="hj-approval">
                   <span>Owner review</span>
                   <b>Human approval required</b>
@@ -268,8 +274,8 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
   </div>
 
   <figcaption id="hero-journey-caption" class="visually-hidden">
-    One Finance report agent moves from workflow selection, through collaborative build and human
-    approval, into adoption measurement and improvement.
+    One Finance report agent moves from workflow selection, through a prebuilt or custom starting
+    point, collaborative setup and human approval, into adoption measurement and improvement.
   </figcaption>
 </figure>
 

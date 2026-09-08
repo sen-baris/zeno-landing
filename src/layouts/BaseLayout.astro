@@ -13,9 +13,10 @@ interface Props {
   description: string;
   canonicalPath: string;
   pageClass?: string;
+  noIndex?: boolean;
 }
 
-const { title, description, canonicalPath, pageClass = '' } = Astro.props;
+const { title, description, canonicalPath, pageClass = '', noIndex = false } = Astro.props;
 const canonical = new URL(withBase(canonicalPath), Astro.site);
 
 // A shared preview is not a launch. Keep unlaunched brand, draft copy, and customer logos out of
@@ -32,7 +33,7 @@ const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
     <meta name="theme-color" content="#F7F3EE" />
     <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <meta name="description" content={description} />
-    {isPreviewDeploy && <meta name="robots" content="noindex, nofollow" />}
+    {(noIndex || isPreviewDeploy) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Zeno" />

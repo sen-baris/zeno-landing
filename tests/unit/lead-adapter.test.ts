@@ -67,6 +67,7 @@ describe('lead submission adapter', () => {
     });
     await expect(rejected.submit(submission)).rejects.toMatchObject({
       code: 'submission-rejected',
+      message: 'The request was not accepted. Nothing was lost. Please try again.',
     });
 
     const malformed = createLeadSubmissionAdapter({

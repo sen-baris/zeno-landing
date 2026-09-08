@@ -98,7 +98,7 @@ export function createLeadSubmissionAdapter(
       if (!response.ok) {
         throw new LeadSubmissionError(
           'submission-rejected',
-          'The request was not accepted. Nothing was lost—please try again.',
+          'The request was not accepted. Nothing was lost. Please try again.',
         );
       }
 

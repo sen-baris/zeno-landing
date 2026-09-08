@@ -2,6 +2,16 @@ import type { APIRoute } from 'astro';
 import { withBase } from '../lib/routing/base-path';
 
 import { solutions } from '../lib/content/solutions';
+import {
+  customerStoryDrafts,
+  resolveCustomerProofMode,
+  selectCustomerStoriesForMode,
+} from '../lib/content/customer-stories';
+
+const customerStoryPaths = selectCustomerStoriesForMode(
+  customerStoryDrafts,
+  resolveCustomerProofMode(),
+).map((story) => `/customers/${story.slug}`);
 
 const paths = [
   '/',
@@ -10,6 +20,7 @@ const paths = [
   ...solutions.map((solution) => `/solutions/${solution.slug}`),
   '/ai-readiness',
   '/demo',
+  ...customerStoryPaths,
 ];
 
 export const GET: APIRoute = ({ site }) => {

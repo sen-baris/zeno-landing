@@ -1,57 +1,158 @@
 ---
 import type { CustomerLogoAsset } from '../lib/claims/customer-logo-assets';
 import type { ClaimRecord } from '../lib/claims/types';
+import type { CustomerStoryDraft, CustomerVoice } from '../lib/content/customer-stories';
 import { withBase } from '../lib/routing/base-path';
 
 interface Props {
   logos: readonly CustomerLogoAsset[];
   audiences: readonly string[];
   proof: readonly ClaimRecord[];
-  /**
-   * Published as an excerpt, never a paraphrase. The component renders the claim's own statement and
-   * attribution, so a quote cannot appear without the record that approved it.
-   */
-  // exactOptionalPropertyTypes is on, so an optional prop has to admit undefined explicitly.
-  quote?: ClaimRecord | undefined;
   /** Who the rail is being shown to. The industry pages name their own reader. */
   intro?: string | undefined;
+  variant?: 'rail' | 'proof';
+  stories?: readonly CustomerStoryDraft[];
+  voices?: readonly CustomerVoice[];
 }
 
 const {
   logos,
   audiences,
   proof,
-  quote,
   intro = 'Built for AI, innovation, IT, data, operations, and security leaders bringing AI into everyday work.',
+  variant = 'rail',
+  stories = [],
+  voices = [],
 } = Astro.props;
+
+const anonymousVoices = voices.filter((voice) => !voice.logoClaimId);
+const storyByLogoClaimId = new Map(stories.map((story) => [story.logoClaimId, story]));
+const voiceByLogoClaimId = new Map(
+  voices.filter((voice) => voice.logoClaimId).map((voice) => [voice.logoClaimId as string, voice]),
+);
 ---
 
-<section class="customer-proof section-rule" id="audience" aria-labelledby="customer-proof-title">
+<section
+  class="customer-proof section-rule"
+  id="audience"
+  aria-labelledby="customer-proof-title"
+  data-customer-proof-variant={variant}
+>
   <div class="shell">
-    <div class="customer-proof-heading">
-      <p class="eyebrow" id="customer-proof-title">In good company</p>
-      {
-        quote ? (
-          <figure class="customer-quote">
-            <blockquote>
-              <p>{quote.statement}</p>
-            </blockquote>
-            <figcaption>{quote.attribution}</figcaption>
-          </figure>
-        ) : (
-          <p>{intro}</p>
-        )
-      }
-    </div>
-    <ul class="customer-logo-list" data-reveal aria-label="Customer logos">
-      {
-        logos.map((logo) => (
-          <li data-logo={logo.claimId}>
-            <img src={withBase(logo.src)} alt={logo.name} loading="eager" decoding="async" />
-          </li>
-        ))
-      }
-    </ul>
+    {
+      variant === 'proof' ? (
+        <>
+          <header class="customer-proof-intro">
+            <p class="eyebrow">Customer proof</p>
+            <h2 id="customer-proof-title">AI becomes useful when people keep using it.</h2>
+          </header>
+          {anonymousVoices.length > 0 && (
+            <div class="customer-voice-grid" aria-label="Customer perspectives">
+              {anonymousVoices.map((voice) => (
+                <figure class="customer-quote">
+                  <blockquote>
+                    <p>“{voice.excerpt}”</p>
+                  </blockquote>
+                  <figcaption>{voice.attribution}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+          <ul class="customer-logo-list customer-proof-grid" aria-label="Customer logos">
+            {logos.map((logo) => {
+              const story = storyByLogoClaimId.get(logo.claimId);
+              const voice = voiceByLogoClaimId.get(logo.claimId);
+              const highlight = !voice && story ? story.qualifiedResults[0] : undefined;
+              const hasPreview = Boolean(story || voice);
+
+              return (
+                <li data-logo={logo.claimId}>
+                  {hasPreview ? (
+                    <details name="customer-proof-preview" data-customer-proof-detail>
+                      <summary class="customer-proof-trigger">
+                        <span class="customer-proof-logo">
+                          <img
+                            src={withBase(logo.src)}
+                            alt={logo.name}
+                            loading="eager"
+                            decoding="async"
+                          />
+                        </span>
+                        <span class="customer-proof-control">
+                          {story ? 'Case study' : 'Customer quote'}
+                          <span aria-hidden="true" class="customer-proof-symbol">
+                            +
+                          </span>
+                        </span>
+                      </summary>
+                      <div class="customer-proof-panel">
+                        <p class="product-label">
+                          {story ? 'Customer story' : 'Customer perspective'}
+                        </p>
+                        {story ? (
+                          <h3>{story.title}</h3>
+                        ) : (
+                          <h3>Why one familiar workspace matters.</h3>
+                        )}
+                        {voice && (
+                          <figure>
+                            <blockquote>
+                              <p>“{voice.excerpt}”</p>
+                            </blockquote>
+                            <figcaption>{voice.attribution}</figcaption>
+                          </figure>
+                        )}
+                        {highlight && (
+                          <p class="customer-proof-highlight">
+                            <strong>{highlight.value}</strong>
+                            <span>{highlight.label}</span>
+                          </p>
+                        )}
+                        {story && (
+                          <a
+                            class="customer-proof-link"
+                            href={withBase(`/customers/${story.slug}`)}
+                          >
+                            Read customer story <span aria-hidden="true">→</span>
+                          </a>
+                        )}
+                      </div>
+                    </details>
+                  ) : (
+                    <div class="customer-proof-logo-only">
+                      <span class="customer-proof-logo">
+                        <img
+                          src={withBase(logo.src)}
+                          alt={logo.name}
+                          loading="eager"
+                          decoding="async"
+                        />
+                      </span>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      ) : (
+        <>
+          <div class="customer-proof-heading">
+            <p class="eyebrow" id="customer-proof-title">
+              In good company
+            </p>
+            <p>{intro}</p>
+          </div>
+          <ul class="customer-logo-list" data-reveal aria-label="Customer logos">
+            {logos.map((logo) => (
+              <li data-logo={logo.claimId}>
+                <img src={withBase(logo.src)} alt={logo.name} loading="eager" decoding="async" />
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
     {
       proof.length > 0 && (
         <div class="approved-proof" aria-label="Approved Zeno evidence">
@@ -68,3 +169,157 @@ const {
     <span class="visually-hidden">Audience: {audiences.join(', ')}</span>
   </div>
 </section>
+
+<script>
+  const setupCustomerProofPreviews = () => {
+    const root = document.querySelector<HTMLElement>('[data-customer-proof-variant="proof"]');
+    if (!root || root.dataset.customerProofReady === 'true') return;
+
+    root.dataset.customerProofReady = 'true';
+    const controller = new AbortController();
+    const { signal } = controller;
+    const desktopPreview = window.matchMedia(
+      '(min-width: 1101px) and (hover: hover) and (pointer: fine)',
+    );
+    const details = Array.from(
+      root.querySelectorAll<HTMLDetailsElement>('details[data-customer-proof-detail]'),
+    );
+    let closeTimer = 0;
+
+    const close = (detail: HTMLDetailsElement, restoreFocus = false) => {
+      detail.open = false;
+      delete detail.dataset.previewState;
+      if (restoreFocus) detail.querySelector('summary')?.focus();
+    };
+
+    const closeOthers = (current?: HTMLDetailsElement) => {
+      for (const detail of details) {
+        if (detail !== current && detail.open) close(detail);
+      }
+    };
+
+    const openTemporary = (detail: HTMLDetailsElement) => {
+      if (!desktopPreview.matches || detail.dataset.previewState === 'pinned') return;
+      window.clearTimeout(closeTimer);
+      closeOthers(detail);
+      detail.open = true;
+      detail.dataset.previewState = 'temporary';
+    };
+
+    for (const detail of details) {
+      const summary = detail.querySelector<HTMLElement>('summary');
+      if (!summary) continue;
+
+      const hoverControl = summary.querySelector<HTMLElement>('.customer-proof-control');
+      hoverControl?.addEventListener('pointerenter', () => openTemporary(detail), { signal });
+
+      detail.addEventListener(
+        'pointerleave',
+        () => {
+          if (!desktopPreview.matches || detail.dataset.previewState !== 'temporary') return;
+          window.clearTimeout(closeTimer);
+          closeTimer = window.setTimeout(() => {
+            if (!detail.contains(document.activeElement)) close(detail);
+          }, 120);
+        },
+        { signal },
+      );
+
+      summary.addEventListener('focus', () => openTemporary(detail), { signal });
+
+      summary.addEventListener(
+        'keydown',
+        (event) => {
+          if (event.key !== 'Enter') return;
+          event.preventDefault();
+          summary.click();
+        },
+        { signal },
+      );
+
+      summary.addEventListener(
+        'click',
+        (event) => {
+          if (!desktopPreview.matches) return;
+          event.preventDefault();
+          window.clearTimeout(closeTimer);
+
+          if (detail.dataset.previewState === 'pinned') {
+            close(detail);
+            return;
+          }
+
+          closeOthers(detail);
+          detail.open = true;
+          detail.dataset.previewState = 'pinned';
+        },
+        { signal },
+      );
+
+      detail.addEventListener(
+        'toggle',
+        () => {
+          if (!detail.open) delete detail.dataset.previewState;
+        },
+        { signal },
+      );
+    }
+
+    document.addEventListener(
+      'click',
+      (event) => {
+        const target = event.target;
+        if (!(target instanceof Node)) return;
+        if (details.some((detail) => detail.contains(target))) return;
+        closeOthers();
+      },
+      { signal },
+    );
+
+    document.addEventListener(
+      'focusin',
+      (event) => {
+        const target = event.target;
+        if (!(target instanceof Node)) return;
+        for (const detail of details) {
+          if (detail.dataset.previewState === 'temporary' && !detail.contains(target)) {
+            close(detail);
+          }
+        }
+      },
+      { signal },
+    );
+
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key !== 'Escape') return;
+        const openDetail = details.find((detail) => detail.open);
+        if (openDetail) close(openDetail, true);
+      },
+      { signal },
+    );
+
+    desktopPreview.addEventListener(
+      'change',
+      () => {
+        window.clearTimeout(closeTimer);
+        for (const detail of details) delete detail.dataset.previewState;
+      },
+      { signal },
+    );
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        window.clearTimeout(closeTimer);
+        controller.abort();
+        delete root.dataset.customerProofReady;
+      },
+      { once: true, signal },
+    );
+  };
+
+  setupCustomerProofPreviews();
+  document.addEventListener('astro:page-load', setupCustomerProofPreviews);
+</script>

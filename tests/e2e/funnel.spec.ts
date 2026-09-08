@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { assessmentQuestions } from '../../src/lib/assessment/questions';
+import { customerStoryDrafts } from '../../src/lib/content/customer-stories';
 import { solutions } from '../../src/lib/content/solutions';
 
 async function completeAssessment(page: Page) {
@@ -150,6 +151,7 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
     '/product',
     '/solutions',
     '/solutions/manufacturing',
+    '/customers/atares',
     '/ai-readiness',
     '/demo',
   ]) {
@@ -171,7 +173,7 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   const sectionHeadings = await page.locator('h2').allTextContents();
   const whyIndex = sectionHeadings.indexOf('Adoption is built together.');
   const proofIndex = sectionHeadings.indexOf('What enterprises are seeing.');
-  const visionIndex = sectionHeadings.indexOf('Software is the easy half.');
+  const visionIndex = sectionHeadings.indexOf('AI should strengthen human expertise.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
 
   // One line through the page: proof, then the work that turns launch into adoption, then the
@@ -196,7 +198,9 @@ test('homepage presents the why, how, and what hierarchy with a focused product 
   await expect(heroAction.getByRole('link', { name: 'Book a demo' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'MAHLE' })).toBeVisible();
   await expect(page.getByRole('img', { name: 'TMG Consultants' })).toBeVisible();
-  const customers = page.getByRole('region', { name: 'In good company' });
+  const customers = page.getByRole('region', {
+    name: 'AI becomes useful when people keep using it.',
+  });
   await expect(
     customers.getByRole('list', { name: 'Customer logos' }).getByRole('img'),
   ).toHaveCount(8);
@@ -219,12 +223,21 @@ test('reduced motion preserves the complete static product story', async ({ page
   for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
   await expect(hero.locator('.hw-controls li')).toHaveCount(3);
   await expect(hero.getByText('Healthy adoption', { exact: true })).toBeVisible();
+  await expect(hero.getByText('Prebuilt agent', { exact: true })).toBeVisible();
+  await expect(hero.getByText('Custom built', { exact: true })).toBeVisible();
   // The complete partnership chapter is present without internal choreography waiting to run.
-  await expect(page.locator('.adoption-partnership-story')).toBeVisible();
-  await expect(page.locator('.adoption-stages > li')).toHaveCount(3);
-  await expect(page.locator('.adoption-partner-band li')).toHaveCount(3);
+  const adoptionStory = page.locator('.adoption-partnership-story');
+  await expect(adoptionStory).toBeVisible();
+  await expect(adoptionStory).toHaveAttribute('data-adoption-journey', 'static');
+  await expect(adoptionStory.locator('[data-adoption-curve-clip]')).toHaveAttribute(
+    'width',
+    '1200',
+  );
+  await expect(adoptionStory.locator('[data-current], [data-reached]')).toHaveCount(0);
+  await expect(adoptionStory.locator('.adoption-stages > li')).toHaveCount(3);
+  await expect(adoptionStory.locator('.adoption-partner-band li')).toHaveCount(3);
   await expect(page.getByText('Draft the monthly finance report.')).toBeVisible();
-  for (const visual of ['.hero-journey', '.vision-media-lead', '.trust-certifications']) {
+  for (const visual of ['.hero-journey', '.vision-founders', '.trust-certifications']) {
     await expect(page.locator(visual)).toBeVisible();
   }
   await expect(page.locator('.shift-compare')).toBeVisible();
@@ -285,6 +298,11 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await expect(hero.locator('.hj-panel')).toHaveCount(3);
   for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
   await expect(hero.locator('.hj-story')).toContainText('Outlook, SharePoint, and Salesforce');
+  await expect(hero.locator('.hj-story')).toContainText(
+    'Start from a prebuilt agent or build one from scratch around your workflow.',
+  );
+  await expect(hero.getByText('Prebuilt agent', { exact: true })).toBeVisible();
+  await expect(hero.getByText('Custom built', { exact: true })).toBeVisible();
   await expect(hero.locator('.hj-story')).toContainText('source permissions, IT-approved models');
   await expect(hero.locator('.hj-story')).toContainText(
     'weekly activity rises after launch, more teams return, and fewer seats remain inactive',
@@ -304,10 +322,17 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
       ),
     'the only hero images are named connector marks',
   ).toBe(true);
-  await expect(page.locator('.adoption-partnership-story')).toBeVisible();
-  await expect(page.locator('.adoption-stages > li')).toHaveCount(3);
-  await expect(page.locator('.adoption-partner-band')).toContainText('Zeno + your team');
-  await expect(page.locator('.adoption-partner-band li')).toHaveCount(3);
+  const adoptionStory = page.locator('.adoption-partnership-story');
+  await expect(adoptionStory).toBeVisible();
+  await expect(adoptionStory).toHaveAttribute('data-adoption-journey', 'static');
+  await expect(adoptionStory.locator('[data-adoption-curve-clip]')).toHaveAttribute(
+    'width',
+    '1200',
+  );
+  await expect(adoptionStory.locator('[data-current], [data-reached]')).toHaveCount(0);
+  await expect(adoptionStory.locator('.adoption-stages > li')).toHaveCount(3);
+  await expect(adoptionStory.locator('.adoption-partner-band')).toContainText('Zeno + your team');
+  await expect(adoptionStory.locator('.adoption-partner-band li')).toHaveCount(3);
   await expect(page.locator('.benefit-visual, .benefit-item')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'ISO 27001' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
@@ -405,36 +430,77 @@ test('the business case publishes each figure with the qualifier it depends on',
 const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
 const APPROVED_ADOPTION_FIGURES = ['64%', '31', '11 of 14', '9%'];
 
-test('the vision statement stays readable however it is reached', async ({ page, browser }) => {
+test('the vision presents one professional, photography-led statement at every size', async ({
+  page,
+  browser,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  const lines = page.locator('.vision-line');
-  await expect(lines).toHaveCount(4);
-  await expect(page.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
+  const vision = page.getByRole('region', { name: 'AI should strengthen human expertise.' });
+  await expect(vision.getByText('Our vision', { exact: true })).toBeVisible();
+  await expect(vision.locator('.vision-statement > p')).toHaveText([
+    'Enterprise AI should give people more capacity for judgment, creativity, and decision-making. It should not add another layer of tools to manage.',
+    'That future depends on technology grounded in real work, governed with care, and shaped with the people who use it. Our ambition is to make AI a trusted part of how organisations operate, while keeping human expertise at the centre.',
+  ]);
+  expect(await page.locator('body').innerText()).not.toContain('—');
 
-  // Every photograph carries a description; none is decorative.
-  const photos = page.locator('#vision img');
-  await expect(photos).toHaveCount(5);
-  for (const photo of await photos.all()) {
-    expect((await photo.getAttribute('alt'))?.trim().length ?? 0).toBeGreaterThan(0);
-  }
+  const photo = vision.getByRole('img', {
+    name: "Zeno's two co-founders together in the office.",
+  });
+  await expect(photo).toHaveCount(1);
+  await expect(vision.locator('img')).toHaveCount(1);
+  await expect(vision).not.toContainText('Software is the easy half.');
+  await expect(vision.locator('.vision-media, .vision-line, script')).toHaveCount(0);
 
-  // Reading it through leaves every line at full ink, and none of it was dimmed with opacity.
+  // The complete photograph follows the right-hand statement directly. It must not wait for the
+  // much taller headline in the left column to finish before it can begin.
   await settleRevealMotion(page);
-  await expect(page.locator('.vision-line:not([data-read])')).toHaveCount(0);
-  const faded = await page.evaluate(
-    () =>
-      Array.from(document.querySelectorAll('.vision-line')).filter(
-        (line) => Number(getComputedStyle(line).opacity) < 1,
-      ).length,
-  );
-  expect(faded, 'lines dim with colour, never opacity').toBe(0);
+  const desktopHeading = await vision.locator('.vision-heading').boundingBox();
+  const desktopStatement = await vision.locator('.vision-statement').boundingBox();
+  const desktopPhoto = await vision.locator('.vision-founders').boundingBox();
+  if (!desktopHeading || !desktopStatement || !desktopPhoto) {
+    throw new Error('Vision composition should be laid out');
+  }
+  expect(desktopHeading.x).toBeLessThan(desktopStatement.x);
+  expect(Math.abs(desktopPhoto.x - desktopStatement.x)).toBeLessThanOrEqual(1);
+  expect(desktopPhoto.width).toBeLessThanOrEqual(680);
+  const statementPhotoGap = desktopPhoto.y - (desktopStatement.y + desktopStatement.height);
+  expect(statementPhotoGap).toBeGreaterThanOrEqual(47);
+  expect(statementPhotoGap).toBeLessThanOrEqual(57);
+  expect(desktopPhoto.y).toBeLessThan(desktopHeading.y + desktopHeading.height);
+  const photoRatio = await photo.evaluate((image) => ({
+    natural: (image as HTMLImageElement).naturalWidth / (image as HTMLImageElement).naturalHeight,
+    rendered: image.getBoundingClientRect().width / image.getBoundingClientRect().height,
+  }));
+  expect(Math.abs(photoRatio.natural - photoRatio.rendered)).toBeLessThan(0.01);
+  expect(
+    await page
+      .locator('.shift-today li')
+      .first()
+      .evaluate((item) => getComputedStyle(item, '::before').content),
+  ).not.toContain('—');
 
-  // With no JavaScript the statement is simply already read.
+  // Tablet and mobile follow the semantic heading, statement, photograph order and never overflow.
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const tabletTops = await vision
+    .locator('.vision-heading, .vision-statement, .vision-founders')
+    .evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
+  expect(tabletTops).toEqual([...tabletTops].sort((a, b) => a - b));
+  expect(new Set(tabletTops).size).toBe(3);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+    'the vision must not overflow on mobile',
+  ).toBe(true);
+
+  // With no JavaScript the same complete editorial statement and photograph remain visible.
   const context = await browser.newContext({ javaScriptEnabled: false });
   const plain = await context.newPage();
   await plain.goto('/');
-  await expect(plain.locator('.vision-line')).toHaveCount(4);
-  await expect(plain.getByRole('heading', { name: 'Software is the easy half.' })).toBeVisible();
+  const plainVision = plain.getByRole('region', { name: 'AI should strengthen human expertise.' });
+  await expect(plainVision.locator('.vision-statement > p')).toHaveCount(2);
+  await expect(plainVision.getByRole('img')).toBeVisible();
   await context.close();
 });
 
@@ -474,7 +540,7 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   ]);
   await expect(hero.locator('.hj-story-title + p')).toHaveText([
     'We start with the monthly finance report: repeated, important, and still assembled by hand.',
-    'We build it around your systems and documents. Your team reviews the work; the owner approves it.',
+    'Start from a prebuilt agent or build one from scratch around your workflow. We connect it to your systems; your team reviews and the owner approves.',
     'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
   ]);
   await expect(hero.locator('.hj-progress-node')).toHaveCount(3);
@@ -501,8 +567,15 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   await expect(buildPanel).toContainText('Finance report agent');
   await expect(buildPanel).toContainText('Draft the monthly finance report.');
   await expect(buildPanel).toContainText('Draft ready');
-  await expect(buildPanel).toContainText('Owner approves');
-  await expect(buildPanel).toContainText('Built withZeno + your team');
+  await expect(buildPanel).not.toContainText('Owner approves');
+  const startingPoint = buildPanel.locator('.hj-panel-heading .hj-starting-point');
+  await expect(startingPoint).toHaveText('Prebuilt agentorCustom built');
+  await expect(startingPoint).not.toContainText('Starting point');
+  await expect(startingPoint.locator('.hj-status')).toHaveText('Prebuilt agent');
+  await expect(buildPanel.locator('.hj-build-side .hj-starting-point')).toHaveCount(0);
+  await expect(
+    startingPoint.locator('a, button, input, select, textarea, [role], [tabindex]'),
+  ).toHaveCount(0);
   await expect(buildPanel).toContainText('Human approval required');
 
   // The people photography belongs to the later team section. Every hero image is a local,
@@ -672,22 +745,44 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
 
   // This is ordinary page scrolling, so keyboard paging must drive the same geometry-based state.
   const pressPageKey = async (key: 'PageDown' | 'PageUp') => {
+    const startingScroll = await page.evaluate(() => window.scrollY);
     await page.keyboard.press(key);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).not.toBe(startingScroll);
     await page.evaluate(
       () =>
         new Promise<void>((resolve) => {
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+          let previousScroll = window.scrollY;
+          let stableFrames = 0;
+
+          const waitForScrollToSettle = () => {
+            const currentScroll = window.scrollY;
+            stableFrames = Math.abs(currentScroll - previousScroll) < 0.5 ? stableFrames + 1 : 0;
+            previousScroll = currentScroll;
+
+            if (stableFrames >= 4) {
+              resolve();
+              return;
+            }
+
+            requestAnimationFrame(waitForScrollToSettle);
+          };
+
+          requestAnimationFrame(waitForScrollToSettle);
         }),
     );
   };
   await pressPageKey('PageDown');
   await pressPageKey('PageDown');
   await expect(hero).toHaveAttribute('data-stage', /build|adopt/);
-  await pressPageKey('PageUp');
-  await pressPageKey('PageUp');
+  for (let pageUpCount = 0; pageUpCount < 4; pageUpCount += 1) {
+    if ((await hero.getAttribute('data-stage')) === 'find') break;
+    await pressPageKey('PageUp');
+  }
   await expect(hero).toHaveAttribute('data-stage', 'find');
 
-  const customerSection = page.getByRole('region', { name: 'In good company' });
+  const customerSection = page.getByRole('region', {
+    name: 'AI becomes useful when people keep using it.',
+  });
   await customerSection.evaluate((element) =>
     window.scrollTo({
       top: window.scrollY + element.getBoundingClientRect().top - 120,
@@ -790,6 +885,167 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
     'Expand what works',
   ]);
 
+  await expect(story).toHaveAttribute('data-adoption-journey', 'on');
+  const scene = story.locator('.adoption-partnership-scene');
+  const heading = scene.locator('.section-heading');
+  const clip = story.locator('[data-adoption-curve-clip]');
+  await expect(heading).toHaveCount(1);
+  await expect(section.locator(':scope > .shell > .section-heading')).toHaveCount(0);
+
+  // Marker coordinates and the SVG share one 1200 × 260 coordinate system. Their centres should
+  // land on the exact declared curve points instead of floating above the line.
+  const markerOffsets = await stages.evaluateAll((items) => {
+    const svg = document.querySelector<SVGSVGElement>('.adoption-curve');
+    const path = svg?.querySelector<SVGPathElement>('[data-adoption-curve-path]');
+    if (!svg || !path) throw new Error('Adoption curve should be laid out');
+    const svgBox = svg.getBoundingClientRect();
+    const totalLength = path.getTotalLength();
+
+    return items.map((item) => {
+      const marker = item.querySelector<HTMLElement>(':scope > span');
+      const markerBox = marker?.getBoundingClientRect();
+      const targetX = Number(item.getAttribute('data-stage-x'));
+      if (!markerBox) throw new Error('Adoption marker should be laid out');
+
+      let low = 0;
+      let high = totalLength;
+      for (let index = 0; index < 24; index += 1) {
+        const middle = (low + high) / 2;
+        if (path.getPointAtLength(middle).x < targetX) low = middle;
+        else high = middle;
+      }
+      const point = path.getPointAtLength((low + high) / 2);
+
+      return {
+        x: markerBox.left + markerBox.width / 2 - (svgBox.left + (point.x / 1200) * svgBox.width),
+        y: markerBox.top + markerBox.height / 2 - (svgBox.top + (point.y / 260) * svgBox.height),
+      };
+    });
+  });
+  for (const offset of markerOffsets) {
+    expect(
+      Math.abs(offset.x),
+      'marker centre aligns horizontally with its curve point',
+    ).toBeLessThanOrEqual(1);
+    expect(
+      Math.abs(offset.y),
+      'marker centre aligns vertically with its curve point',
+    ).toBeLessThanOrEqual(1);
+  }
+
+  const reachAdoptionStage = async (
+    stage: 'launch' | 'return' | 'habit',
+    targetProgress: number,
+  ) => {
+    // A viewport change can cross the media-query boundary that creates the 300vh track. Let the
+    // browser commit that geometry before deriving a deterministic scroll position from it.
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        }),
+    );
+    await page.evaluate((progress) => {
+      const journey = document.querySelector<HTMLElement>('.adoption-partnership-story');
+      const stickyScene = journey?.querySelector<HTMLElement>('.adoption-partnership-scene');
+      if (!journey || !stickyScene) throw new Error('Missing adoption scroll scene');
+      const journeyRect = journey.getBoundingClientRect();
+      const sceneRect = stickyScene.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(getComputedStyle(stickyScene).top) || 0;
+      const journeyTop = window.scrollY + journeyRect.top;
+      const travel = journeyRect.height - sceneRect.height;
+      window.scrollTo({
+        top: journeyTop - stickyTop + travel * progress,
+        behavior: 'instant',
+      });
+    }, targetProgress);
+    await expect(story).toHaveAttribute('data-stage', stage);
+    await expect(story.locator('.adoption-stages > li[data-current]')).toHaveAttribute(
+      'data-adoption-stage',
+      stage,
+    );
+    await expect(story.locator('.adoption-partner-band li[data-current]')).toHaveAttribute(
+      'data-partner-action',
+      stage,
+    );
+    await expect
+      .poll(async () => {
+        const box = await scene.boundingBox();
+        const stickyTop = await scene.evaluate(
+          (element) => Number.parseFloat(getComputedStyle(element).top) || 0,
+        );
+        return Math.abs((box?.y ?? -1) - stickyTop);
+      })
+      .toBeLessThanOrEqual(1);
+
+    return {
+      clipWidth: Number(await clip.getAttribute('width')),
+      reachedActions: await actions.evaluateAll((items) =>
+        items.map((item) => item.hasAttribute('data-reached')),
+      ),
+      reachedStages: await stages.evaluateAll((items) =>
+        items.map((item) => item.hasAttribute('data-reached')),
+      ),
+      heading: await heading.boundingBox(),
+      chart: await story.locator('.adoption-chart').boundingBox(),
+      band: await partnerBand.boundingBox(),
+      scene: await scene.boundingBox(),
+    };
+  };
+
+  const expectCompleteSceneInViewport = (
+    layout: Awaited<ReturnType<typeof reachAdoptionStage>>,
+    viewportHeight: number,
+  ) => {
+    if (!layout.heading || !layout.chart || !layout.band || !layout.scene) {
+      throw new Error('The complete adoption scene should be laid out');
+    }
+    expect(layout.heading.y).toBeGreaterThanOrEqual(layout.scene.y - 1);
+    expect(layout.chart.y).toBeGreaterThanOrEqual(layout.heading.y + layout.heading.height - 1);
+    expect(layout.band.y).toBeGreaterThanOrEqual(layout.chart.y + layout.chart.height - 1);
+    expect(layout.band.y + layout.band.height).toBeLessThanOrEqual(viewportHeight + 1);
+  };
+
+  const launch = await reachAdoptionStage('launch', 0.08);
+  const returning = await reachAdoptionStage('return', 0.5);
+  const habit = await reachAdoptionStage('habit', 0.88);
+  expect(launch.clipWidth).toBeGreaterThan(60);
+  expect(returning.clipWidth).toBeGreaterThan(538);
+  expect(habit.clipWidth).toBeGreaterThan(1000);
+  expect(launch.clipWidth).toBeLessThan(returning.clipWidth);
+  expect(returning.clipWidth).toBeLessThan(habit.clipWidth);
+  expect(launch.reachedStages).toEqual([true, false, false]);
+  expect(returning.reachedStages).toEqual([true, true, false]);
+  expect(habit.reachedStages).toEqual([true, true, true]);
+  expect(launch.reachedActions).toEqual(launch.reachedStages);
+  expect(returning.reachedActions).toEqual(returning.reachedStages);
+  expect(habit.reachedActions).toEqual(habit.reachedStages);
+  expect(Math.round(launch.scene?.y ?? -1)).toBe(76);
+  expect(Math.round(returning.scene?.y ?? -1)).toBe(76);
+  expect(Math.round(habit.scene?.y ?? -1)).toBe(76);
+  expectCompleteSceneInViewport(launch, 900);
+  expectCompleteSceneInViewport(returning, 900);
+  expectCompleteSceneInViewport(habit, 900);
+  expect(Math.abs((launch.heading?.y ?? 0) - (returning.heading?.y ?? 1))).toBeLessThanOrEqual(1);
+  expect(Math.abs((returning.heading?.y ?? 0) - (habit.heading?.y ?? 1))).toBeLessThanOrEqual(1);
+
+  const finished = await reachAdoptionStage('habit', 1);
+  expect(finished.clipWidth).toBeCloseTo(1200, 3);
+  expect(finished.reachedStages).toEqual([true, true, true]);
+
+  const reversed = await reachAdoptionStage('launch', 0.08);
+  expect(reversed.clipWidth).toBeLessThan(returning.clipWidth);
+
+  // Ordinary keyboard paging drives the same scroll geometry in both directions.
+  await page.keyboard.press('PageDown');
+  await expect
+    .poll(async () => Number(await clip.getAttribute('width')))
+    .toBeGreaterThan(reversed.clipWidth);
+  await page.keyboard.press('PageUp');
+  await expect
+    .poll(async () => Number(await clip.getAttribute('width')))
+    .toBeLessThan(returning.clipWidth);
+
   // The rejected controls composition and older deployment miniatures are gone. On desktop the
   // stage labels follow the rising curve and the shared action band sits beneath the whole journey.
   await expect(
@@ -817,6 +1073,9 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
   // At tablet width the adoption stages become one ordinary reading sequence. The partnership
   // actions remain complete, and neither layout introduces horizontal overflow.
   await page.setViewportSize({ width: 768, height: 1024 });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(story).toHaveAttribute('data-adoption-journey', 'static');
+  await expect(clip).toHaveAttribute('width', '1200');
   const tabletStages = await stages.evaluateAll((nodes) =>
     nodes.map((node) => Math.round(node.getBoundingClientRect().top)),
   );
@@ -828,6 +1087,7 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
   ).toBe(true);
 
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'static');
   const mobileColumns = await partnerBand
     .locator('ol')
     .evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
@@ -836,6 +1096,27 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
     await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
     'the adoption partnership must not overflow on mobile',
   ).toBe(true);
+
+  // The pinned enhancement changes over at the same width and height boundaries as the hero.
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'static');
+  await page.setViewportSize({ width: 1101, height: 900 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'on');
+  await page.setViewportSize({ width: 1440, height: 719 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'static');
+  await page.setViewportSize({ width: 1440, height: 720 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'on');
+  const heightBoundary = await reachAdoptionStage('return', 0.5);
+  expect(Math.round(heightBoundary.scene?.y ?? -1)).toBe(76);
+  expectCompleteSceneInViewport(heightBoundary, 720);
+
+  // At the smallest enhanced viewport, visitors still see the heading, chart, and action band as
+  // one composition rather than losing the section's premise when the pin begins.
+  await page.setViewportSize({ width: 1101, height: 720 });
+  await expect(story).toHaveAttribute('data-adoption-journey', 'on');
+  const combinedBoundary = await reachAdoptionStage('return', 0.5);
+  expect(Math.round(combinedBoundary.scene?.y ?? -1)).toBe(76);
+  expectCompleteSceneInViewport(combinedBoundary, 720);
 });
 test('every solutions page is written for its own industry', async ({ page }) => {
   const seenAgents = new Set<string>();
@@ -908,6 +1189,8 @@ test('every solutions page is written for its own industry', async ({ page }) =>
     await expect(page.locator('.solution-wall-list li')).toHaveCount(solution.walls.length);
     await expect(page.locator('.solution-question-list dt')).toHaveCount(solution.questions.length);
     await expect(page.locator('.customer-logo-list img')).toHaveCount(8);
+    await expect(page.locator('.customer-logo-list details')).toHaveCount(0);
+    await expect(page.getByText('Case study', { exact: true })).toHaveCount(0);
 
     const layout = await page.evaluate(() => {
       const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
@@ -1109,13 +1392,255 @@ test('the solutions menu follows the pointer and still answers the keyboard', as
 
 test('the customer quote is published from its approved record', async ({ page }) => {
   await page.goto('/');
-  const quote = page.locator('.customer-quote');
+  const quote = page.locator('.customer-quote').filter({ hasText: 'core operational tools' });
   await expect(quote.locator('blockquote')).toHaveText(
-    "Today it's already one of our core operational tools that runs our business.",
+    "“Today it's already one of our core operational tools that runs our business.”",
   );
   await expect(quote.locator('figcaption')).toHaveText('Partner, strategy consultancy');
   // The buzzword line it replaced must not come back alongside it.
   await expect(page.getByText(/Built for AI, innovation, IT, data/)).toHaveCount(0);
+});
+
+test('customer proof opens one accessible preview at a time', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const proof = page.locator('#audience');
+  const logos = proof.getByRole('list', { name: 'Customer logos' });
+
+  await expect(logos.getByRole('img')).toHaveCount(8);
+  expect(
+    await logos
+      .getByRole('img')
+      .evaluateAll((images) => images.map((image) => (image as HTMLImageElement).alt)),
+  ).toEqual([
+    'atares',
+    'b2venture',
+    'MAHLE',
+    'KBC',
+    'Frommer Legal',
+    'beeradvocaten',
+    'Bovensiepen',
+    'TMG Consultants',
+  ]);
+  await expect(
+    proof.locator('.customer-proof-control').filter({ hasText: /^Case study/ }),
+  ).toHaveCount(4);
+  await expect(
+    proof.locator('.customer-proof-control').filter({ hasText: /^Customer quote/ }),
+  ).toHaveCount(1);
+  await expect(proof.getByText(/approval pending|source and review status/i)).toHaveCount(0);
+
+  const atares = proof.locator('[data-logo="customer-logo-atares"] details');
+  const b2venture = proof.locator('[data-logo="customer-logo-b2venture"] details');
+  const mahle = proof.locator('[data-logo="customer-logo-mahle"] details');
+  const frommer = proof.locator('[data-logo="customer-logo-frommer-legal"] details');
+
+  await atares.locator('.customer-proof-logo').hover();
+  await expect(atares).not.toHaveAttribute('open', '');
+
+  await atares.locator('.customer-proof-control').hover();
+  await expect(atares).toHaveAttribute('open', '');
+  await expect(atares).toHaveAttribute('data-preview-state', 'temporary');
+  await expect(atares).toContainText(
+    'Real agents that can do things for you ... are my favorite part of TextCortex.',
+  );
+
+  await atares.locator('summary').click();
+  await expect(atares).toHaveAttribute('data-preview-state', 'pinned');
+  await page.mouse.move(1400, 40);
+  await page.waitForTimeout(180);
+  await expect(atares).toHaveAttribute('open', '');
+  await atares.locator('summary').click();
+  await expect(atares).not.toHaveAttribute('open', '');
+  await atares.locator('summary').click();
+  await expect(atares).toHaveAttribute('data-preview-state', 'pinned');
+  await expect(atares.getByRole('link', { name: 'Read customer story' })).toHaveAttribute(
+    'href',
+    '/customers/atares',
+  );
+  const expandedAccessibility = await new AxeBuilder({ page })
+    .include('#audience')
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze();
+  expect(expandedAccessibility.violations).toEqual([]);
+
+  await proof.locator('.customer-proof-intro').click();
+  await expect(atares).not.toHaveAttribute('open', '');
+
+  await b2venture.locator('summary').focus();
+  await expect(b2venture).toHaveAttribute('data-preview-state', 'temporary');
+  await page.keyboard.press('Enter');
+  await expect(b2venture).toHaveAttribute('open', '');
+  await expect(b2venture).toHaveAttribute('data-preview-state', 'pinned');
+  await expect(b2venture).toContainText('Over 70%');
+  const resultTypography = await b2venture.locator('.customer-proof-highlight').evaluate((node) => {
+    const result = node.querySelector('strong');
+    const qualifier = node.querySelector('span');
+    if (!result || !qualifier) throw new Error('Customer result line should be complete');
+    return {
+      resultSize: getComputedStyle(result).fontSize,
+      resultWeight: Number.parseInt(getComputedStyle(result).fontWeight, 10),
+      qualifierSize: getComputedStyle(qualifier).fontSize,
+      qualifierWeight: Number.parseInt(getComputedStyle(qualifier).fontWeight, 10),
+    };
+  });
+  expect(resultTypography.resultSize).toBe(resultTypography.qualifierSize);
+  expect(resultTypography.resultWeight).toBeGreaterThan(resultTypography.qualifierWeight);
+  await expect(atares).not.toHaveAttribute('open', '');
+
+  await mahle.locator('summary').focus();
+  await page.keyboard.press('Space');
+  await expect(mahle).toHaveAttribute('open', '');
+  await expect(mahle).toContainText("TextCortex's Agent platform");
+  await expect(mahle).toContainText('MAHLE');
+  await expect(b2venture).not.toHaveAttribute('open', '');
+
+  await page.keyboard.press('Escape');
+  await expect(mahle).not.toHaveAttribute('open', '');
+  await expect(mahle.locator('summary')).toBeFocused();
+
+  await frommer.locator('summary').click();
+  await expect(frommer).toHaveAttribute('open', '');
+  await expect(frommer).toContainText(
+    'I only need to train my colleagues on one tool that continuously develops within the familiar interface.',
+  );
+  await expect(mahle).not.toHaveAttribute('open', '');
+});
+
+test('desktop customer previews remain attached to every logo and inside the viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const proof = page.locator('#audience');
+  const details = proof.locator('details[data-customer-proof-detail]');
+  await proof.locator('.customer-proof-grid').scrollIntoViewIfNeeded();
+
+  for (let index = 0; index < (await details.count()); index += 1) {
+    const detail = details.nth(index);
+    const summary = detail.locator('summary');
+    await detail.locator('.customer-proof-control').hover();
+    const summaryBox = await summary.boundingBox();
+    const panelBox = await detail.locator('.customer-proof-panel').boundingBox();
+    if (!summaryBox || !panelBox) throw new Error('Customer preview should be laid out');
+
+    expect(panelBox.x).toBeGreaterThanOrEqual(0);
+    expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(1440);
+    expect(panelBox.y).toBeGreaterThanOrEqual(0);
+    expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(900);
+
+    const logoIndex = await detail.evaluate((node) =>
+      Array.from(node.closest('ul')!.children).indexOf(node.closest('li')!),
+    );
+    if (logoIndex < 4) {
+      expect(Math.abs(panelBox.y - (summaryBox.y + summaryBox.height))).toBeLessThanOrEqual(2);
+    } else {
+      expect(Math.abs(panelBox.y + panelBox.height - summaryBox.y)).toBeLessThanOrEqual(2);
+    }
+  }
+});
+
+test('customer proof reflows without overflow and discloses without JavaScript', async ({
+  browser,
+  page,
+}) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1100, height: 900 },
+    { width: 1101, height: 900 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    const details = page.locator('[data-logo="customer-logo-atares"] details');
+    await details.locator('summary').click();
+    await expect(details).toHaveAttribute('open', '');
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+      `customer proof must not overflow at ${viewport.width}px`,
+    ).toBe(true);
+
+    if (viewport.width === 390) {
+      const summaryBox = await details.locator('summary').boundingBox();
+      const panelBox = await details.locator('.customer-proof-panel').boundingBox();
+      expect(panelBox?.y ?? 0).toBeGreaterThanOrEqual(
+        (summaryBox?.y ?? 0) + (summaryBox?.height ?? 0) - 1,
+      );
+    }
+
+    if (viewport.width === 768 || viewport.width === 1100) {
+      const summaryBox = await details.locator('summary').boundingBox();
+      const panelBox = await details.locator('.customer-proof-panel').boundingBox();
+      expect(panelBox?.y ?? 0).toBeGreaterThanOrEqual(
+        (summaryBox?.y ?? 0) + (summaryBox?.height ?? 0) - 1,
+      );
+    }
+  }
+
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await context.newPage();
+  await plain.setViewportSize({ width: 1440, height: 900 });
+  await plain.goto('/');
+  const details = plain.locator('[data-logo="customer-logo-atares"] details');
+  await details.locator('summary').click();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(details.getByRole('link', { name: 'Read customer story' })).toHaveAttribute(
+    'href',
+    '/customers/atares',
+  );
+  await details.getByRole('link', { name: 'Read customer story' }).click();
+  await expect(plain.getByRole('heading', { level: 1 })).toHaveText(
+    'How atares saves time on research and target discovery.',
+  );
+  await context.close();
+});
+
+test('customer stories publish qualified evidence without internal review copy', async ({
+  page,
+}) => {
+  for (const story of customerStoryDrafts) {
+    await page.goto(`/customers/${story.slug}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(story.title);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+    await expect(page.getByText('Customer story', { exact: true })).toBeVisible();
+    await expect(
+      page.getByText(/approval pending|story draft|source and review status/i),
+    ).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /TextCortex source/i })).toHaveCount(0);
+    for (const result of story.qualifiedResults) {
+      await expect(page.getByText(result.value, { exact: true })).toBeVisible();
+      await expect(page.getByText(result.label, { exact: true })).toBeVisible();
+      await expect(page.getByText(result.qualifier, { exact: true }).first()).toBeVisible();
+    }
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      new RegExp(`/customers/${story.slug}$`),
+    );
+    await expect(page.getByRole('link', { name: 'Book a demo' }).last()).toHaveAttribute(
+      'href',
+      '/demo',
+    );
+  }
+
+  await page.goto('/customers/mahle');
+  const mahleQuote = page.getByRole('region', { name: 'Customer quotation' });
+  await expect(mahleQuote).toContainText("TextCortex's Agent platform");
+  await expect(mahleQuote.locator('figcaption')).toHaveText('MAHLE');
+  await expect(mahleQuote).not.toContainText('MAHLE New Ventures');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/customers/atares');
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+  ).toBe(true);
+
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(sitemap.ok()).toBe(true);
+  const sitemapText = await sitemap.text();
+  for (const story of customerStoryDrafts) {
+    expect(sitemapText).toContain(`/customers/${story.slug}`);
+  }
 });
 
 test('the adoption figures count up and settle exactly on /product', async ({ page }) => {

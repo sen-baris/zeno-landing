@@ -1,4 +1,5 @@
 import type { ClaimRecord } from './types';
+import { customerProofClaims } from './customer-proof-claims';
 
 // Every entry requires explicit Zeno approval. Public TextCortex evidence remains research
 // context and must never be inserted here by default. The customer-logo records below reflect
@@ -115,6 +116,23 @@ export const claimRegistry: readonly ClaimRecord[] = [
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
+  },
+  ...customerProofClaims,
+  {
+    id: 'product-agent-starting-point',
+    statement: 'Start from a prebuilt agent or build one from scratch around your workflow.',
+    category: 'product',
+    evidence:
+      'Capability and public wording approved by the workspace owner in the 2026-09-08 working session.',
+    verified_on: '2026-09-08',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-08',
+    allowed_surfaces: ['home.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-08',
+    notes:
+      'Approval covers the homepage statement and representative prebuilt finance-agent visual. Do not imply instant deployment or no configuration. Presentation, finance, legal, and other catalog detail is reserved for a separately reviewed product-page treatment.',
   },
   {
     id: 'certification-iso-27001',
@@ -507,8 +525,17 @@ export const claimRegistry: readonly ClaimRecord[] = [
 
 export const homepageProofClaimIds: readonly string[] = [];
 
+export const homepageHeroCapabilityClaimIds: readonly string[] = ['product-agent-starting-point'];
+
 export const homepageTestimonialClaimIds: readonly string[] = [
+  'customer-voice-global-energy-enterprise',
   'customer-quote-strategy-consultancy',
+];
+
+export const homepageCustomerProofVoiceClaimIds: readonly string[] = [
+  'customer-voice-atares',
+  'customer-voice-mahle',
+  'customer-voice-frommer-legal',
 ];
 
 export const homepageBusinessCaseClaimIds: readonly string[] = [

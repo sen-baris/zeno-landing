@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { claimRegistry } from '../../lib/claims/registry';
+import { customerLogoAssets } from '../../lib/claims/customer-logo-assets';
+import { resolveApprovedClaims } from '../../lib/claims/public-claims';
+import {
+  customerStoryDrafts,
+  customerVoiceDrafts,
+  getCustomerStoryClaimIds,
+  resolveCustomerProofMode,
+  selectCustomerStoriesForMode,
+  type CustomerStoryDraft,
+} from '../../lib/content/customer-stories';
+import { withBase } from '../../lib/routing/base-path';
+
+export function getStaticPaths() {
+  return selectCustomerStoriesForMode(customerStoryDrafts, resolveCustomerProofMode()).map(
+    (story) => ({
+      params: { slug: story.slug },
+      props: { story },
+    }),
+  );
+}
+
+interface Props {
+  story: CustomerStoryDraft;
+}
+
+const { story } = Astro.props;
+const storySurface = `customers.${story.slug}`;
+resolveApprovedClaims(claimRegistry, getCustomerStoryClaimIds(story), storySurface);
+const logo = customerLogoAssets.find((asset) => asset.claimId === story.logoClaimId);
+if (!logo) throw new Error(`Customer logo asset "${story.logoClaimId}" is missing.`);
+const voiceDraft = story.quoteId
+  ? customerVoiceDrafts.find((candidate) => candidate.id === story.quoteId)
+  : undefined;
+const voiceClaim = story.quoteId
+  ? resolveApprovedClaims(claimRegistry, [story.quoteId], storySurface)[0]
+  : undefined;
+const voice =
+  voiceDraft && voiceClaim
+    ? { ...voiceDraft, verbatimExcerpt: voiceClaim.statement, attribution: voiceClaim.attribution }
+    : undefined;
+---
+
+<BaseLayout
+  title={`${story.title} | Zeno`}
+  description={story.summary}
+  canonicalPath={`/customers/${story.slug}`}
+  pageClass="customer-story-page"
+>
+  <article class="customer-story">
+    <header class="customer-story-hero section-rule">
+      <div class="shell customer-story-hero-grid">
+        <div class="customer-story-identity">
+          <a class="customer-story-back" href={withBase('/#audience')}>← Customer proof</a>
+          <img src={withBase(logo.src)} alt={logo.name} width="130" height="130" />
+        </div>
+        <div>
+          <p class="eyebrow">Customer story</p>
+          <h1>{story.title}</h1>
+          <p class="customer-story-summary">{story.summary}</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="customer-story-results section-rule" aria-labelledby="results-title">
+      <div class="shell">
+        <p class="eyebrow" id="results-title">Reported results</p>
+        <dl>
+          {
+            story.qualifiedResults.map((result) => (
+              <div>
+                <dt>{result.value}</dt>
+                <dd>{result.label}</dd>
+                <dd class="customer-story-qualifier">{result.qualifier}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <section class="customer-story-body section-rule">
+      <div class="shell customer-story-body-grid">
+        <section aria-labelledby="challenge-title">
+          <p class="product-label">Challenge</p>
+          <h2 id="challenge-title">What was getting in the way.</h2>
+          <p>{story.challenge}</p>
+        </section>
+        <section aria-labelledby="approach-title">
+          <p class="product-label">Approach</p>
+          <h2 id="approach-title">What the team changed.</h2>
+          <p>{story.approach}</p>
+        </section>
+      </div>
+    </section>
+
+    {
+      voice && (
+        <section class="customer-story-quote section-rule" aria-label="Customer quotation">
+          <div class="shell">
+            <figure>
+              <blockquote>
+                <p>“{voice.verbatimExcerpt}”</p>
+              </blockquote>
+              <figcaption>{voice.attribution}</figcaption>
+            </figure>
+          </div>
+        </section>
+      )
+    }
+
+    <footer class="customer-story-footer">
+      <div class="shell customer-story-footer-grid customer-story-footer-grid-single">
+        <div>
+          <h2>Put one workflow to work.</h2>
+          <p>See how Zeno could support a specific process with clear ownership and review.</p>
+          <a class="button button-inverse" href={withBase('/demo')}>Book a demo</a>
+        </div>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>

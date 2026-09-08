@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { claimRegistry, homepageTestimonialClaimIds } from '../../src/lib/claims/registry';
 import { resolveApprovedClaims } from '../../src/lib/claims/public-claims';
 
-const now = new Date('2026-09-02T12:00:00Z');
+const now = new Date('2026-09-08T12:00:00Z');
 
 describe('homepage customer quotes', () => {
   const quotes = resolveApprovedClaims(

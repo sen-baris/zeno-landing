@@ -46,6 +46,17 @@ export const adoptionPartnership = {
   ],
 } as const;
 
+/** Draft editorial positioning for the homepage vision section. */
+export const companyVision = {
+  status: 'draft',
+  eyebrow: 'Our vision',
+  title: 'AI should strengthen human expertise.',
+  paragraphs: [
+    'Enterprise AI should give people more capacity for judgment, creativity, and decision-making. It should not add another layer of tools to manage.',
+    'That future depends on technology grounded in real work, governed with care, and shaped with the people who use it. Our ambition is to make AI a trusted part of how organisations operate, while keeping human expertise at the centre.',
+  ],
+} as const;
+
 export const workflowExamples = [
   'Research and synthesis',
   'Data collection and preparation',

@@ -19,6 +19,8 @@ If no approved record exists, do not publish the claim. Mark draft copy as unver
 
 ## Protect trust
 
+- Write public-facing copy without em dashes. Use sentence breaks, commas, parentheses, or another
+  construction that preserves the intended meaning.
 - Treat public TextCortex material as research context only. It is not transferable proof for the standalone brand without a new-brand approval record.
 - Require explicit approval for customer names, logos, quotes, case-study facts, certifications, benchmarks, adoption figures, and savings claims.
 - Preserve qualifiers, sample sizes, study dates, regions, and attribution required by the evidence.

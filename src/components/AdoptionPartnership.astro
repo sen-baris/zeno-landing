@@ -1,77 +1,245 @@
 ---
 import { adoptionPartnership } from '../lib/content/site-content';
+
+const curvePath =
+  'M0 226 C142 225 202 209 292 190 S486 175 594 138 S776 104 882 78 S1085 52 1200 28';
+
+// These three points sit on curvePath. Keeping the positions beside the drawing makes the curve,
+// milestones, and scroll thresholds one geometry instead of three visual approximations.
+const stagePositions = {
+  launch: { x: 60, y: 224.5 },
+  return: { x: 538, y: 153.9 },
+  habit: { x: 1000, y: 56.9 },
+} as const;
 ---
 
 {
   /*
-  One adoption curve carries the outcome; the band beneath it carries the work Zeno and the
-  customer do together. The labels remain a pair of ordered lists so the relationship survives
-  without the decorative curve, motion, or desktop layout.
+  Both ordered lists own the meaning and remain complete in every mode. On a wide, tall,
+  motion-enabled viewport the scene pins while the decorative curve advances through those same
+  stages; everywhere else this is the finished static composition.
 */
 }
-<div class="adoption-partnership-story" data-reveal>
-  <ol class="adoption-stages" aria-label="Platform adoption after launch">
-    {
-      adoptionPartnership.stages.map((stage) => (
-        <li data-adoption-stage={stage.id}>
-          <span aria-hidden="true" />
-          <b>{stage.label}</b>
-        </li>
-      ))
-    }
-  </ol>
+<div class="adoption-partnership-story" data-adoption-journey="static" data-stage="habit">
+  <div class="adoption-partnership-scene">
+    <header class="section-heading split-heading">
+      <div>
+        <p class="eyebrow">{adoptionPartnership.eyebrow}</p>
+        <h2 id="adoption-partnership-title">{adoptionPartnership.title}</h2>
+      </div>
+      <p>{adoptionPartnership.intro}</p>
+    </header>
 
-  <svg
-    class="adoption-curve"
-    viewBox="0 0 1200 260"
-    preserveAspectRatio="none"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <path
-      class="adoption-curve-area"
-      d="M0 226 C142 225 202 209 292 190 S486 175 594 138 S776 104 882 78 S1085 52 1200 28 L1200 260 L0 260 Z"
-    ></path>
-    <path
-      class="adoption-curve-line"
-      d="M0 226 C142 225 202 209 292 190 S486 175 594 138 S776 104 882 78 S1085 52 1200 28"></path>
-  </svg>
+    <div class="adoption-chart">
+      <ol class="adoption-stages" aria-label="Platform adoption after launch">
+        {
+          adoptionPartnership.stages.map((stage) => {
+            const position = stagePositions[stage.id];
+            const style = `--stage-x: ${(position.x / 1200) * 100}%; --stage-y: ${(position.y / 260) * 100}%;`;
 
-  <div class="adoption-partner-band">
-    <p class="product-label">{adoptionPartnership.partnerLabel}</p>
-    <ol aria-label="Partnership actions after launch">
-      {
-        adoptionPartnership.stages.map((stage) => (
-          <li data-partner-action={stage.id}>
-            <span aria-hidden="true">
-              <svg viewBox="0 0 28 28" focusable="false">
-                {stage.id === 'launch' && (
-                  <>
-                    <circle cx="14" cy="14" r="8" />
-                    <circle cx="14" cy="14" r="2.5" />
-                    <path d="M3 14c3-5.4 6.7-8 11-8s8 2.6 11 8c-3 5.4-6.7 8-11 8s-8-2.6-11-8Z" />
-                  </>
-                )}
-                {stage.id === 'return' && (
-                  <>
-                    <path d="M5 8h18M5 14h18M5 20h18" />
-                    <circle cx="10" cy="8" r="2.2" />
-                    <circle cx="18" cy="14" r="2.2" />
-                    <circle cx="12" cy="20" r="2.2" />
-                  </>
-                )}
-                {stage.id === 'habit' && (
-                  <>
-                    <circle cx="14" cy="14" r="10" />
-                    <path d="M14 8v12M8 14h12" />
-                  </>
-                )}
-              </svg>
-            </span>
-            <b>{stage.action}</b>
-          </li>
-        ))
-      }
-    </ol>
+            return (
+              <li data-adoption-stage={stage.id} data-stage-x={position.x} style={style}>
+                <span aria-hidden="true" />
+                <b>{stage.label}</b>
+              </li>
+            );
+          })
+        }
+      </ol>
+
+      <svg
+        class="adoption-curve"
+        viewBox="0 0 1200 260"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <clipPath id="adoption-curve-progress" clipPathUnits="userSpaceOnUse">
+            <rect data-adoption-curve-clip x="0" y="0" width="1200" height="260"></rect>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#adoption-curve-progress)">
+          <path class="adoption-curve-area" d={`${curvePath} L1200 260 L0 260 Z`}></path>
+          <path class="adoption-curve-line" data-adoption-curve-path d={curvePath}></path>
+        </g>
+        <circle class="adoption-curve-cursor" data-adoption-curve-cursor cx="60" cy="224.5" r="7">
+        </circle>
+      </svg>
+    </div>
+
+    <div class="adoption-partner-band">
+      <p class="product-label">{adoptionPartnership.partnerLabel}</p>
+      <ol aria-label="Partnership actions after launch">
+        {
+          adoptionPartnership.stages.map((stage) => (
+            <li data-partner-action={stage.id}>
+              <span aria-hidden="true">
+                <svg viewBox="0 0 28 28" focusable="false">
+                  {stage.id === 'launch' && (
+                    <>
+                      <circle cx="14" cy="14" r="8" />
+                      <circle cx="14" cy="14" r="2.5" />
+                      <path d="M3 14c3-5.4 6.7-8 11-8s8 2.6 11 8c-3 5.4-6.7 8-11 8s-8-2.6-11-8Z" />
+                    </>
+                  )}
+                  {stage.id === 'return' && (
+                    <>
+                      <path d="M5 8h18M5 14h18M5 20h18" />
+                      <circle cx="10" cy="8" r="2.2" />
+                      <circle cx="18" cy="14" r="2.2" />
+                      <circle cx="12" cy="20" r="2.2" />
+                    </>
+                  )}
+                  {stage.id === 'habit' && (
+                    <>
+                      <circle cx="14" cy="14" r="10" />
+                      <path d="M14 8v12M8 14h12" />
+                    </>
+                  )}
+                </svg>
+              </span>
+              <b>{stage.action}</b>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </div>
 </div>
+
+<script>
+  const adoptionJourney = document.querySelector<HTMLElement>('.adoption-partnership-story');
+
+  if (adoptionJourney) {
+    const root = document.documentElement;
+    const scene = adoptionJourney.querySelector<HTMLElement>('.adoption-partnership-scene');
+    const curve = adoptionJourney.querySelector<SVGPathElement>('[data-adoption-curve-path]');
+    const clip = adoptionJourney.querySelector<SVGRectElement>('[data-adoption-curve-clip]');
+    const cursor = adoptionJourney.querySelector<SVGCircleElement>('[data-adoption-curve-cursor]');
+    const stages = Array.from(
+      adoptionJourney.querySelectorAll<HTMLElement>('[data-adoption-stage]'),
+    );
+    const actions = Array.from(
+      adoptionJourney.querySelectorAll<HTMLElement>('[data-partner-action]'),
+    );
+    const viewport = window.matchMedia('(min-width: 1101px) and (min-height: 720px)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let enhanced = false;
+    let queuedFrame: number | undefined;
+    let totalLength = 0;
+    let stageLengths: number[] = [];
+
+    const lengthAtX = (targetX: number): number => {
+      if (!curve) return 0;
+
+      let low = 0;
+      let high = totalLength;
+      for (let index = 0; index < 24; index += 1) {
+        const middle = (low + high) / 2;
+        if (curve.getPointAtLength(middle).x < targetX) low = middle;
+        else high = middle;
+      }
+      return (low + high) / 2;
+    };
+
+    const show = (index: number): void => {
+      const current = stages[index];
+      const stage = current?.dataset.adoptionStage;
+      if (!stage) return;
+
+      adoptionJourney.dataset.stage = stage;
+      for (const [position, item] of stages.entries()) {
+        item.toggleAttribute('data-current', position === index);
+        item.toggleAttribute('data-reached', position <= index);
+      }
+      for (const [position, action] of actions.entries()) {
+        action.toggleAttribute('data-current', position === index);
+        action.toggleAttribute('data-reached', position <= index);
+      }
+    };
+
+    const update = (): void => {
+      queuedFrame = undefined;
+      if (!enhanced || !scene || !curve || !clip || !cursor || stageLengths.length === 0) return;
+
+      const journeyRect = adoptionJourney.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(getComputedStyle(scene).top) || 0;
+      const travel = Math.max(1, journeyRect.height - sceneRect.height);
+      const measuredProgress = Math.min(1, Math.max(0, (stickyTop - journeyRect.top) / travel));
+      // Scroll positions are quantized differently by each engine. Snap the final sub-pixel of
+      // travel so the completed state never leaves a hairline sliver clipped from the curve.
+      const progress = measuredProgress >= 0.999 ? 1 : measuredProgress;
+      const startLength = stageLengths[0] ?? 0;
+      const cursorLength = startLength + (totalLength - startLength) * progress;
+      const point = curve.getPointAtLength(cursorLength);
+      let currentIndex = 0;
+
+      for (const [index, stageLength] of stageLengths.entries()) {
+        if (cursorLength >= stageLength) currentIndex = index;
+      }
+
+      clip.setAttribute('width', progress === 1 ? '1200' : String(point.x));
+      cursor.setAttribute('cx', String(point.x));
+      cursor.setAttribute('cy', String(point.y));
+      show(currentIndex);
+    };
+
+    const queueUpdate = (): void => {
+      if (!enhanced || queuedFrame !== undefined) return;
+      queuedFrame = window.requestAnimationFrame(update);
+    };
+
+    const reset = (): void => {
+      adoptionJourney.dataset.adoptionJourney = 'static';
+      adoptionJourney.dataset.stage = 'habit';
+      clip?.setAttribute('width', '1200');
+      cursor?.setAttribute('cx', '60');
+      cursor?.setAttribute('cy', '224.5');
+      for (const stage of stages) {
+        stage.removeAttribute('data-current');
+        stage.removeAttribute('data-reached');
+      }
+      for (const action of actions) {
+        action.removeAttribute('data-current');
+        action.removeAttribute('data-reached');
+      }
+    };
+
+    const stop = (): void => {
+      if (enhanced) {
+        enhanced = false;
+        window.removeEventListener('scroll', queueUpdate);
+        window.removeEventListener('resize', queueUpdate);
+      }
+      if (queuedFrame !== undefined) window.cancelAnimationFrame(queuedFrame);
+      queuedFrame = undefined;
+      reset();
+    };
+
+    const start = (): void => {
+      if (enhanced || !scene || !curve || !clip || !cursor || stages.length === 0) return;
+
+      totalLength = curve.getTotalLength();
+      stageLengths = stages.map((stage) => lengthAtX(Number(stage.dataset.stageX)));
+      enhanced = true;
+      adoptionJourney.dataset.adoptionJourney = 'on';
+      window.addEventListener('scroll', queueUpdate, { passive: true });
+      window.addEventListener('resize', queueUpdate, { passive: true });
+      update();
+    };
+
+    const sync = (): void => {
+      const canEnhance =
+        viewport.matches && !reducedMotion.matches && root.getAttribute('data-motion') === 'on';
+      if (canEnhance) start();
+      else stop();
+    };
+
+    viewport.addEventListener('change', sync);
+    reducedMotion.addEventListener('change', sync);
+    window.addEventListener('pagehide', stop, { once: true });
+    sync();
+  }
+</script>

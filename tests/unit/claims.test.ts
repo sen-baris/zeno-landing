@@ -5,6 +5,7 @@ import {
   isClaimCurrent,
   resolveApprovedClaims,
 } from '../../src/lib/claims/public-claims';
+import { claimRegistry, homepageHeroCapabilityClaimIds } from '../../src/lib/claims/registry';
 import type { ClaimRecord } from '../../src/lib/claims/types';
 
 const approved: ClaimRecord = {
@@ -79,5 +80,30 @@ describe('claims publication boundary', () => {
     expect(() => resolveApprovedClaims([approved], [approved.id], 'demo', now)).toThrow(
       /not approved for demo/,
     );
+  });
+
+  it('publishes the approved agent starting-point choice only in the homepage hero', () => {
+    const [claim] = resolveApprovedClaims(
+      claimRegistry,
+      homepageHeroCapabilityClaimIds,
+      'home.hero',
+      new Date('2026-09-08T12:00:00Z'),
+    );
+
+    expect(claim?.statement).toBe(
+      'Start from a prebuilt agent or build one from scratch around your workflow.',
+    );
+    expect(claim?.category).toBe('product');
+    expect(claim?.approval_status).toBe('approved');
+    expect(claim?.allowed_surfaces).toEqual(['home.hero']);
+    expect(claim?.statement).not.toContain('—');
+    expect(() =>
+      resolveApprovedClaims(
+        claimRegistry,
+        homepageHeroCapabilityClaimIds,
+        'product.agents',
+        new Date('2026-09-08T12:00:00Z'),
+      ),
+    ).toThrow(/not approved for product\.agents/);
   });
 });
