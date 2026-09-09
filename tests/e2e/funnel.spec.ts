@@ -248,8 +248,7 @@ test('reduced motion preserves the complete static product story', async ({ page
   for (const visual of [
     '.platform-overview',
     '.product-workspace',
-    '.workflow-run',
-    '.adoption-gap',
+    '.knowledge-workspace',
     '.governance-console',
   ]) {
     await expect(page.locator(visual)).toBeVisible();
@@ -276,7 +275,6 @@ test('every revealable product visual becomes visible once motion runs', async (
 
   await page.goto('/product');
   await settleRevealMotion(page);
-  await expect(page.locator('.workflow-run-steps li')).toHaveCount(5);
   const fadedOnProduct = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-reveal], [data-reveal] *'))
       .filter((element) => Number(getComputedStyle(element).opacity) < 1)
@@ -338,10 +336,10 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   await expect(page.getByRole('link', { name: /Open the trust center/ })).toBeVisible();
 
   await page.goto('/product');
-  await expect(
-    page.getByRole('heading', { name: 'Quarterly business review', exact: true }),
-  ).toBeVisible();
-  await expect(page.getByText('Consolidate findings')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Monthly finance review' })).toBeVisible();
+  await expect(page.getByText('Custom MCP', { exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Explore product areas' })).toHaveCount(0);
+  await expect(page.locator('#workflows, .workflow-builder')).toHaveCount(0);
   await context.close();
 });
 
@@ -353,32 +351,179 @@ test('the product page carries the mechanism the homepage now links to', async (
     .click();
   await expect(page).toHaveURL(/\/product$/);
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Connect. Equip. Run. Govern.');
-  // The platform overview is the page's opening visual, and the four steps its heading names are
-  // the three stages plus the governance strip underneath them.
-  await expect(page.getByText('The enterprise AI platform', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Company knowledge and tools' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Specialized agents for teams' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Enterprise AI, grounded in your company.',
+  );
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    'Explore an enterprise AI platform for company context, major AI models with EU hosting, prebuilt and custom agents, chat, connected knowledge, and visual workflows.',
+  );
+
+  const platformOverview = page.locator('.platform-overview');
   await expect(
-    page.getByRole('heading', { name: 'Everyday work and repeatable workflows' }),
+    platformOverview.getByText('The enterprise AI platform', { exact: true }),
   ).toBeVisible();
-  await expect(page.locator('.agent-roster > li')).toHaveCount(3);
-  await expect(page.locator('.platform-governance li')).toHaveCount(4);
-  await expect(page.getByRole('heading', { name: 'Agents that know your company' })).toBeVisible();
-  await expect(page.getByText('Presentation Agent', { exact: true })).toBeVisible();
+  await expect(
+    platformOverview.getByText('Access major AI models with EU hosting in one place.', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(platformOverview.locator('.platform-hosting-mark')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+  await expect(platformOverview.locator('.platform-hosting-mark circle')).toHaveCount(0);
+  await expect(
+    platformOverview.getByRole('heading', { name: 'Your company context' }),
+  ).toBeVisible();
+  await expect(
+    platformOverview.getByRole('heading', { name: 'Agents built for the work' }),
+  ).toBeVisible();
+  await expect(platformOverview.getByRole('heading', { name: 'Get the work done' })).toBeVisible();
+  await expect(platformOverview.getByText('Prebuilt', { exact: true })).toBeVisible();
+  await expect(
+    platformOverview.getByText('Presentation Agent, Finance Agent, Legal Agent', { exact: true }),
+  ).toBeVisible();
+  await expect(platformOverview.getByText('From scratch', { exact: true })).toBeVisible();
+  await expect(platformOverview.getByText('Custom build', { exact: true })).toBeVisible();
+  await expect(
+    platformOverview.getByText(
+      'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(platformOverview.locator('figcaption')).toHaveText(
+    'Connect your company context to agents that get work done in one governed workspace. Start from a prebuilt agent or build one from scratch around your workflow. Prebuilt starting points include Presentation Agent, Finance Agent, and Legal Agent. Access major AI models with EU hosting in one place. Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+  );
+  await expect(platformOverview.locator('a, button, input, select, textarea')).toHaveCount(0);
+  expect(await page.locator('.product-intro').innerText()).not.toContain('—');
 
-  const gap = page.locator('.adoption-gap');
-  await expect(gap.getByText('A rollout that took hold')).toBeVisible();
-  await expect(gap.locator('.gap-stats > li')).toHaveCount(4);
-  await expect(gap.locator('.gap-col')).toHaveCount(12);
-  await expect(gap.getByText('from 21% in month one')).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Explore product areas' })).toHaveCount(0);
 
-  const adoptionFramework = page.getByRole('list', {
-    name: '90-day adoption observation framework',
-  });
-  await expect(adoptionFramework.getByText('30', { exact: true })).toBeVisible();
-  await expect(adoptionFramework.getByText('60', { exact: true })).toBeVisible();
-  await expect(adoptionFramework.getByText('90', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-product-surface] h2')).toHaveText([
+    'Start with the work in front of you.',
+    'Connect the context your teams already use.',
+  ]);
+  await expect(page.getByText('Company context on', { exact: true })).toBeVisible();
+  await expect(page.getByText('Finance knowledge', { exact: true }).first()).toBeVisible();
+  await expect(page.locator('.chat-workspace figcaption')).toHaveText(
+    'Use chat for everyday questions, drafting, and agent-led tasks with the relevant company knowledge attached. A finance agent prepares a monthly review in chat from the company context selected for the task.',
+  );
+  await expect(page.locator('.knowledge-workspace figcaption')).toHaveText(
+    'Create knowledge bases for the work that matters, then connect them to existing systems through MCP connectors. Existing systems connect to a finance knowledge base that can support chat, agents, and workflows.',
+  );
+  const knowledge = page.locator('.knowledge-workspace');
+  await expect(knowledge.getByText('Outlook', { exact: true })).toBeVisible();
+  await expect(knowledge.getByText('SharePoint', { exact: true })).toBeVisible();
+  await expect(knowledge.getByText('Salesforce', { exact: true })).toBeVisible();
+  await expect(knowledge.getByText('Custom MCP', { exact: true })).toBeVisible();
+  await expect(knowledge.locator('.knowledge-source-column li')).toHaveCount(4);
+  await expect(knowledge.locator('.knowledge-destination-column li')).toHaveCount(3);
+
+  await expect(page.locator('#workflows, .workflow-builder')).toHaveCount(0);
+
+  const governanceConsole = page.locator('.governance-console');
+  await expect(
+    governanceConsole
+      .getByRole('list', { name: 'Workspace governance controls' })
+      .getByRole('listitem'),
+  ).toHaveCount(4);
+  await expect(
+    governanceConsole
+      .getByRole('list', { name: 'Workspace governance controls' })
+      .getByRole('heading'),
+  ).toHaveText(['Knowledge access', 'Model choice', 'Human checkpoints', 'Adoption visibility']);
+  await expect(
+    governanceConsole.getByRole('list', { name: 'Example adoption signals' }).getByRole('listitem'),
+  ).toHaveCount(4);
+  await expect(
+    governanceConsole.getByRole('list', { name: 'Example adoption signals' }).locator('strong'),
+  ).toHaveText(['64%', '31', '11 of 14', '9%']);
+  await expect(governanceConsole.getByText('Governed workspace', { exact: true })).toBeVisible();
+  await expect(governanceConsole.getByText('Workspace analytics', { exact: true })).toBeVisible();
+  await expect(
+    governanceConsole.getByText('Access major AI models with EU hosting in one place.', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(governanceConsole.locator('.governance-eu-icon')).toHaveCount(0);
+  await expect(governanceConsole).not.toContainText('Illustrative');
+  await expect(governanceConsole.locator('.governance-chart-column')).toHaveCount(12);
+  await expect(governanceConsole.locator('figcaption')).toHaveText(
+    'Keep knowledge access, model choice, human checkpoints, and adoption visibility in one place. Access major AI models with EU hosting in one place. Example usage data is shown for interface context.',
+  );
+  await expect(governanceConsole.locator('a, button, input, select, textarea')).toHaveCount(0);
+  await expect(page.locator('.adoption-gap')).toHaveCount(0);
+  await expect(
+    page.getByRole('list', { name: '90-day adoption observation framework' }),
+  ).toHaveCount(0);
+});
+
+test('the product narrative reflows at its exact layout boundaries without overflow', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1101, height: 900 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/product');
+
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+      `product page must not overflow at ${viewport.width}px`,
+    ).toBe(true);
+
+    const overviewStages = await page
+      .locator('.platform-overview-flow > section')
+      .evaluateAll((stages) => stages.map((stage) => stage.getBoundingClientRect().top));
+    if (viewport.width <= 820) {
+      expect(overviewStages[1]).toBeGreaterThan(overviewStages[0]!);
+      expect(overviewStages[2]).toBeGreaterThan(overviewStages[1]!);
+    } else {
+      expect(Math.max(...overviewStages) - Math.min(...overviewStages)).toBeLessThanOrEqual(2);
+    }
+
+    if (viewport.width <= 1100) {
+      const knowledgeColumns = await page
+        .locator('.knowledge-source-column, .knowledge-base-card, .knowledge-destination-column')
+        .evaluateAll((columns) => columns.map((column) => column.getBoundingClientRect().top));
+      expect(knowledgeColumns[1]).toBeGreaterThan(knowledgeColumns[0]!);
+      expect(knowledgeColumns[2]).toBeGreaterThan(knowledgeColumns[1]!);
+    } else {
+      const knowledgeColumns = await page
+        .locator('.knowledge-source-column, .knowledge-base-card, .knowledge-destination-column')
+        .evaluateAll((columns) => columns.map((column) => column.getBoundingClientRect().top));
+      expect(Math.max(...knowledgeColumns) - Math.min(...knowledgeColumns)).toBeLessThanOrEqual(2);
+    }
+
+    const governancePanels = await page
+      .locator('.governance-control-panel, .governance-adoption-panel')
+      .evaluateAll((panels) =>
+        panels.map((panel) => {
+          const bounds = panel.getBoundingClientRect();
+          return { left: bounds.left, top: bounds.top };
+        }),
+      );
+    if (viewport.width <= 820) {
+      expect(governancePanels[1]!.top).toBeGreaterThan(governancePanels[0]!.top);
+    } else {
+      expect(Math.abs(governancePanels[1]!.top - governancePanels[0]!.top)).toBeLessThanOrEqual(2);
+      expect(governancePanels[1]!.left).toBeGreaterThan(governancePanels[0]!.left);
+    }
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/product');
+  await page.addStyleTag({ content: 'html { font-size: 200%; }' });
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+    'product page must reflow at 200 percent text size',
+  ).toBe(true);
 });
 
 test('the argument sections carry the contrast and a low-friction entry point', async ({
@@ -428,7 +573,6 @@ test('the business case publishes each figure with the qualifier it depends on',
 });
 
 const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
-const APPROVED_ADOPTION_FIGURES = ['64%', '31', '11 of 14', '9%'];
 
 test('the vision presents one professional, photography-led statement at every size', async ({
   page,
@@ -1599,6 +1743,9 @@ test('customer proof reflows without overflow and discloses without JavaScript',
 test('customer stories publish qualified evidence without internal review copy', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const logoLockupSizes: Array<{ width: number; height: number }> = [];
+
   for (const story of customerStoryDrafts) {
     await page.goto(`/customers/${story.slug}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(story.title);
@@ -1608,6 +1755,19 @@ test('customer stories publish qualified evidence without internal review copy',
       page.getByText(/approval pending|story draft|source and review status/i),
     ).toHaveCount(0);
     await expect(page.getByRole('link', { name: /TextCortex source/i })).toHaveCount(0);
+    const article = page.getByRole('region', { name: 'Customer story article' });
+    await expect(article).toBeVisible();
+    await expect(article).not.toContainText('TextCortex');
+    for (const section of story.sections) {
+      await expect(article.getByText(section.label, { exact: true })).toBeVisible();
+      await expect(article.getByRole('heading', { level: 2, name: section.heading })).toBeVisible();
+      for (const paragraph of section.paragraphs) {
+        await expect(article.getByText(paragraph, { exact: true })).toBeVisible();
+      }
+      for (const point of section.points ?? []) {
+        await expect(article.getByRole('listitem').filter({ hasText: point })).toBeVisible();
+      }
+    }
     for (const result of story.qualifiedResults) {
       await expect(page.getByText(result.value, { exact: true })).toBeVisible();
       await expect(page.getByText(result.label, { exact: true })).toBeVisible();
@@ -1621,7 +1781,30 @@ test('customer stories publish qualified evidence without internal review copy',
       'href',
       '/demo',
     );
+
+    const logoLockup = page.locator('.customer-story-logo-lockup');
+    const logoImage = logoLockup.getByRole('img', { name: story.company, exact: true });
+    await expect(logoLockup).toBeVisible();
+    await expect(logoImage).toBeVisible();
+    await expect
+      .poll(() =>
+        logoImage.evaluate(
+          (image) => image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0,
+        ),
+      )
+      .toBe(true);
+    const frameBox = await logoLockup.boundingBox();
+    const imageBox = await logoImage.boundingBox();
+    expect(frameBox).not.toBeNull();
+    expect(imageBox).not.toBeNull();
+    if (frameBox && imageBox) {
+      logoLockupSizes.push({ width: frameBox.width, height: frameBox.height });
+      expect(frameBox.width / frameBox.height).toBeCloseTo(3, 1);
+      expect(imageBox.width).toBeGreaterThan(frameBox.width * 0.8);
+    }
   }
+
+  expect(new Set(logoLockupSizes.map(({ width, height }) => `${width}:${height}`)).size).toBe(1);
 
   await page.goto('/customers/mahle');
   const mahleQuote = page.getByRole('region', { name: 'Customer quotation' });
@@ -1635,20 +1818,36 @@ test('customer stories publish qualified evidence without internal review copy',
     await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
   ).toBe(true);
 
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 900 },
+    { width: 1101, height: 900 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/customers/atares');
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+      `customer story must not overflow at ${viewport.width}px`,
+    ).toBe(true);
+
+    const copyBox = await page.locator('.customer-story-article-copy').first().boundingBox();
+    expect(copyBox?.width ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(850);
+
+    const logoLockupBox = await page.locator('.customer-story-logo-lockup').boundingBox();
+    expect(logoLockupBox).not.toBeNull();
+    if (logoLockupBox) {
+      expect(logoLockupBox.width).toBeGreaterThanOrEqual(280);
+      expect(logoLockupBox.width / logoLockupBox.height).toBeCloseTo(3, 1);
+    }
+  }
+
   const sitemap = await page.request.get('/sitemap.xml');
   expect(sitemap.ok()).toBe(true);
   const sitemapText = await sitemap.text();
   for (const story of customerStoryDrafts) {
     expect(sitemapText).toContain(`/customers/${story.slug}`);
   }
-});
-
-test('the adoption figures count up and settle exactly on /product', async ({ page }) => {
-  await page.goto('/product');
-  const counts = page.locator('.gap-value [data-figure]');
-  await expect(counts).toHaveCount(APPROVED_ADOPTION_FIGURES.length);
-  await page.locator('.adoption-gap').scrollIntoViewIfNeeded();
-  await expect.poll(() => counts.allTextContents()).toEqual(APPROVED_ADOPTION_FIGURES);
 });
 
 test('the business case figures count up, settle exactly, and replay on return', async ({

@@ -27,7 +27,7 @@ import { audiences, draftHomeCopy, operatingShift } from '../lib/content/site-co
 import {
   customerStoryDrafts,
   customerVoiceDrafts,
-  getCustomerStoryClaimIds,
+  getCustomerStoryPreviewClaimIds,
   homepageCustomerProofLogoOrder,
   resolveCustomerProofMode,
   selectCustomerStoriesForMode,
@@ -85,11 +85,11 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
 const contentMode = resolveCustomerProofMode();
 const customerStories = selectCustomerStoriesForMode(customerStoryDrafts, contentMode);
 for (const story of customerStories) {
-  const [narrativeClaimId, firstResultClaimId] = getCustomerStoryClaimIds(story);
-  const previewClaimIds = [narrativeClaimId, firstResultClaimId].filter(
-    (claimId): claimId is string => Boolean(claimId),
+  resolveApprovedClaims(
+    claimRegistry,
+    getCustomerStoryPreviewClaimIds(story),
+    'home.customer-proof',
   );
-  resolveApprovedClaims(claimRegistry, previewClaimIds, 'home.customer-proof');
 }
 const customerVoiceDraftById = new Map(customerVoiceDrafts.map((voice) => [voice.id, voice]));
 const approvedCustomerVoices = approvedQuotes.map((quote): CustomerVoice => ({

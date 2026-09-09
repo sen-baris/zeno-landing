@@ -128,11 +128,246 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
     approved_on: '2026-09-08',
-    allowed_surfaces: ['home.hero'],
+    allowed_surfaces: ['home.hero', 'product.agents', 'product.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-08',
     notes:
-      'Approval covers the homepage statement and representative prebuilt finance-agent visual. Do not imply instant deployment or no configuration. Presentation, finance, legal, and other catalog detail is reserved for a separately reviewed product-page treatment.',
+      'Approval covers the homepage statement and the compact product-page starting-point treatment. Do not imply instant deployment or no configuration.',
+  },
+  {
+    id: 'product-page-metadata',
+    statement:
+      'Explore an enterprise AI platform for company context, major AI models with EU hosting, prebuilt and custom agents, chat, connected knowledge, and visual workflows.',
+    category: 'product',
+    evidence:
+      'Capability scope and public wording approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.metadata'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Metadata may name only the approved core product surfaces. Do not add detailed flow nodes or connector operations without another review.',
+  },
+  {
+    id: 'product-enterprise-hero-title',
+    statement: 'Enterprise AI, grounded in your company.',
+    category: 'product',
+    evidence:
+      'Positioning and public wording approved by the workspace owner in the 2026-09-09 product hero direction.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Keep the title grounded in the company context. Do not broaden it into a performance or outcome promise.',
+  },
+  {
+    id: 'product-enterprise-platform-summary',
+    statement:
+      'Connect your company context to agents that get work done in one governed workspace.',
+    category: 'product',
+    evidence:
+      'Platform narrative and public wording approved by the workspace owner in the 2026-09-09 product hero direction.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'The overview may connect company context, agents, and work in one composition. It must not promise autonomous completion without human controls.',
+  },
+  {
+    id: 'product-major-models-eu-hosting',
+    statement: 'Access major AI models with EU hosting in one place.',
+    category: 'product',
+    evidence:
+      'Model access and hosting wording approved by the workspace owner in the 2026-09-09 product hero and governance directions.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.hero', 'product.governance'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Keep this as a concise access and hosting statement in the product hero or governed-workspace analytics visual. Do not name providers, make residency guarantees, or imply every model has identical hosting behavior.',
+  },
+  {
+    id: 'product-governed-workspace-scale',
+    statement:
+      'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+    category: 'product',
+    evidence:
+      'Governed workspace and enterprise-scale control wording approved by the workspace owner in the 2026-09-09 product hero direction.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'This is an administration and visibility statement, not a certification, compliance guarantee, or automatic governance claim.',
+  },
+  {
+    id: 'product-platform-journey',
+    statement:
+      'Start in chat. Ground the work in connected company knowledge. When the task becomes repeatable, move it into a visual workflow.',
+    category: 'product',
+    evidence:
+      'Capability scope and public wording approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'This is a product narrative, not a requirement that every task must move through all three surfaces.',
+  },
+  {
+    id: 'product-chat-workspace',
+    statement:
+      'Use chat for everyday questions, drafting, and agent-led tasks with the relevant company knowledge attached.',
+    category: 'product',
+    evidence:
+      'Capability approved by the workspace owner in the 2026-09-09 working session. The TextCortex enterprise agent handbook was reviewed as non-transferable research context.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.chat'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Keep the public treatment at the approved core capability level. The mockup is illustrative and must not imply unsupported autonomous actions.',
+  },
+  {
+    id: 'product-chat-workspace-caption',
+    statement:
+      'A finance agent prepares a monthly review in chat from the company context selected for the task.',
+    category: 'product',
+    evidence:
+      'Illustrative product narrative approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.chat'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'This sentence describes the illustrative finance example. It is not a customer result or a promise that work completes without review.',
+  },
+  {
+    id: 'product-connected-knowledge',
+    statement:
+      'Create knowledge bases for the work that matters, then connect them to existing systems through MCP connectors.',
+    category: 'product',
+    evidence:
+      'Capability approved by the workspace owner in the 2026-09-09 working session. https://help.textcortex.com/hc/en-us/articles/45958548687633-MCP-Connectors was reviewed as non-transferable research context.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.knowledge'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Do not add scheduling, connector write actions, permission behavior, or provider-specific guarantees in this treatment.',
+  },
+  {
+    id: 'product-connected-knowledge-caption',
+    statement:
+      'Existing systems connect to a finance knowledge base that can support chat, agents, and workflows.',
+    category: 'product',
+    evidence:
+      'Illustrative product narrative approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.knowledge'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'This sentence links the approved core surfaces only. It does not authorize additional connector operations or provider guarantees.',
+  },
+  {
+    id: 'product-node-workflows',
+    statement: 'Build more complex flows with a node-based workflow builder.',
+    category: 'product',
+    evidence:
+      'Capability approved by the workspace owner in the 2026-09-09 working session. https://help.textcortex.com/hc/en-us/articles/44626483776529-Introduction-to-TextCortex-Flows was reviewed as non-transferable research context.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.workflows'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'The visual may show a simple linear example. Do not publish conditions, loops, API steps, or scheduling in this pass.',
+  },
+  {
+    id: 'product-node-workflows-caption',
+    statement:
+      'A monthly reporting workflow connects an input, company knowledge, an agent, a review point, and an output.',
+    category: 'product',
+    evidence:
+      'Illustrative product narrative approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.workflows'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'The approved example is a linear workflow with one human review point. Do not infer branching, scheduling, or unsupported node types.',
+  },
+  {
+    id: 'product-prebuilt-agent-examples',
+    statement:
+      'Prebuilt starting points include Presentation Agent, Finance Agent, and Legal Agent.',
+    category: 'product',
+    evidence:
+      'Capability examples approved by the workspace owner across the 2026-09-08 and 2026-09-09 working sessions.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.agents', 'product.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Present these as starting points, not as instant or configuration-free deployments. Keep Custom build visually available beside them.',
+  },
+  {
+    id: 'product-governance-controls',
+    statement:
+      'Keep knowledge access, model choice, human checkpoints, and adoption visibility in one place.',
+    category: 'product',
+    evidence:
+      'Existing product-page governance scope retained and wording approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['product.governance'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'Keep this as one concise cross-platform control layer. Do not expand it into certification, compliance, or security guarantees.',
   },
   {
     id: 'certification-iso-27001',

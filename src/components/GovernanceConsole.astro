@@ -1,8 +1,16 @@
 ---
-import { euStarsPath } from '../lib/icons/eu-stars';
+import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
 
-// The four enterprise operating principles rendered as the administration surface they describe.
-// The marks are decorative; every principle stays readable as plain text without them.
+interface Props {
+  statement: string;
+  hostingStatement: string;
+}
+
+const { statement, hostingStatement } = Astro.props;
+const adoptionMetrics = Object.values(illustrativeAdoptionScenario.metrics);
+const adoptionWeeks = illustrativeAdoptionScenario.series.values;
+const adoptionPeak = Math.max(...adoptionWeeks);
+const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
 ---
 
 <figure class="governance-console" data-reveal aria-labelledby="governance-console-caption">
@@ -12,50 +20,119 @@ import { euStarsPath } from '../lib/icons/eu-stars';
         <span class="product-mark" aria-hidden="true">Z</span>
         <span>Administration</span>
       </div>
-      <span class="product-frame-status">Enterprise operating principles</span>
+      <span class="product-frame-status governance-workspace-status">Governed workspace</span>
     </div>
 
-    <ul class="governance-panels">
-      <li>
-        <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-          <rect x="3" y="8" width="24" height="4" rx="2"></rect>
-          <rect x="3" y="18" width="16" height="4" rx="2"></rect>
-          <rect x="3" y="28" width="9" height="4" rx="2"></rect>
-          <circle cx="33" cy="10" r="3.6"></circle>
-        </svg>
-        <h3>Knowledge access</h3>
-        <p>Control access to connected company context.</p>
-      </li>
-      <li>
-        <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-          <circle class="governance-mark-open" cx="7" cy="20" r="5.6"></circle>
-          <circle cx="20" cy="20" r="5.6"></circle>
-          <circle class="governance-mark-open" cx="33" cy="20" r="5.6"></circle>
-        </svg>
-        <h3>Model choice</h3>
-        <p>Offer options across approved providers.</p>
-      </li>
-      <li>
-        <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-          <path class="governance-mark-line" d="M2 20 H12.5"></path>
-          <path class="governance-mark-line" d="M27.5 20 H38"></path>
-          <rect class="governance-mark-line" x="13" y="13" width="14" height="14" rx="3.4"></rect>
-          <path class="governance-mark-line" d="m16.4 20.2 2.5 2.5 4.7-5"></path>
-        </svg>
-        <h3>Human checkpoints</h3>
-        <p>Keep review attached where judgment matters.</p>
-      </li>
-      <li>
-        <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-          <path class="governance-stars" d={euStarsPath}></path>
-        </svg>
-        <h3>EU operating focus</h3>
-        <p>Keep European enterprise needs in view.</p>
-      </li>
-    </ul>
+    <div class="governance-console-body">
+      <section class="governance-control-panel" aria-labelledby="governance-controls-title">
+        <div class="governance-panel-heading">
+          <p class="product-label" id="governance-controls-title">Workspace controls</p>
+          <span>Across the platform</span>
+        </div>
+        <ul class="governance-panels" aria-label="Workspace governance controls">
+          <li>
+            <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <rect x="3" y="8" width="24" height="4" rx="2"></rect>
+              <rect x="3" y="18" width="16" height="4" rx="2"></rect>
+              <rect x="3" y="28" width="9" height="4" rx="2"></rect>
+              <circle cx="33" cy="10" r="3.6"></circle>
+            </svg>
+            <div>
+              <h3>Knowledge access</h3>
+              <p>People and connected sources</p>
+            </div>
+            <span class="governance-control-state">Managed</span>
+          </li>
+          <li>
+            <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <circle class="governance-mark-open" cx="7" cy="20" r="5.6"></circle>
+              <circle cx="20" cy="20" r="5.6"></circle>
+              <circle class="governance-mark-open" cx="33" cy="20" r="5.6"></circle>
+            </svg>
+            <div>
+              <h3>Model choice</h3>
+              <p>Approved model options</p>
+            </div>
+            <span class="governance-control-state">Set</span>
+          </li>
+          <li>
+            <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <path class="governance-mark-line" d="M2 20 H12.5"></path>
+              <path class="governance-mark-line" d="M27.5 20 H38"></path>
+              <rect class="governance-mark-line" x="13" y="13" width="14" height="14" rx="3.4"
+              ></rect>
+              <path class="governance-mark-line" d="m16.4 20.2 2.5 2.1 4.3-4.5"></path>
+            </svg>
+            <div>
+              <h3>Human checkpoints</h3>
+              <p>Review before execution</p>
+            </div>
+            <span class="governance-control-state">Required</span>
+          </li>
+          <li>
+            <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <path class="governance-mark-line" d="M5 32V21M15 32V13M25 32V18M35 32V7"></path>
+              <path class="governance-mark-line" d="M4 32H36"></path>
+            </svg>
+            <div>
+              <h3>Adoption visibility</h3>
+              <p>Return use and idle seats</p>
+            </div>
+            <span class="governance-control-state">On</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="governance-adoption-panel" aria-labelledby="governance-adoption-title">
+        <div class="governance-panel-heading">
+          <p class="product-label" id="governance-adoption-title">Workspace analytics</p>
+          <span>Example usage data</span>
+        </div>
+
+        <div class="governance-hosting-strip">
+          <span class="product-label">Infrastructure</span>
+          <strong>{hostingStatement}</strong>
+        </div>
+
+        <ul class="governance-adoption-metrics" aria-label="Example adoption signals">
+          {
+            adoptionMetrics.map((metric) => (
+              <li>
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+                <small>{metric.delta}</small>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="governance-adoption-chart">
+          <div class="governance-chart-heading">
+            <p>{illustrativeAdoptionScenario.series.label}</p>
+            <span>{illustrativeAdoptionScenario.series.period}</span>
+          </div>
+          <div class="governance-chart-plot" aria-hidden="true">
+            {
+              adoptionWeeks.map((week, index) => (
+                <div
+                  class="governance-chart-column"
+                  style={`--column-height: ${Math.round((week / adoptionPeak) * 100)}%`}
+                >
+                  {labelledWeeks.has(index) && <span>{week}%</span>}
+                  <i />
+                </div>
+              ))
+            }
+          </div>
+          <div class="governance-chart-axis" aria-hidden="true">
+            <span>Week 1</span>
+            <span>Week 12</span>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
   <figcaption id="governance-console-caption">
-    The screen administrators use to set who sees what, which models are allowed, and where a person
-    has to sign off.
+    {statement}{' '}{hostingStatement} Example usage data is shown for interface context.
   </figcaption>
 </figure>

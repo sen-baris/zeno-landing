@@ -1,66 +1,95 @@
-<figure class="product-workspace" data-reveal aria-labelledby="workspace-caption">
+---
+interface Props {
+  statement: string;
+  caption: string;
+}
+
+const { statement, caption } = Astro.props;
+---
+
+<figure
+  class="product-workspace chat-workspace"
+  data-reveal
+  aria-labelledby="chat-workspace-caption"
+>
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
         <span class="product-mark" aria-hidden="true">Z</span>
-        <span>Presentation Agent</span>
+        <span>Chat</span>
       </div>
-      <span class="product-frame-status">Ready for review</span>
+      <span class="product-frame-status">Finance Agent</span>
     </div>
 
-    <div class="presentation-workspace">
-      <section class="presentation-brief" aria-labelledby="brief-title">
-        <p class="product-label">Brief</p>
-        <h3 id="brief-title">Create the quarterly business review.</h3>
-        <p>
-          Prepare an on-brand leadership deck using the latest company knowledge and reporting data.
-        </p>
+    <div class="chat-workspace-body">
+      <aside class="chat-agent-summary" aria-labelledby="chat-agent-title">
+        <div>
+          <p class="product-label">Selected agent</p>
+          <span class="chat-agent-mark" aria-hidden="true">F</span>
+          <h3 id="chat-agent-title">Finance Agent</h3>
+          <p>Monthly reporting</p>
+        </div>
         <dl>
           <div>
-            <dt>Audience</dt>
-            <dd>Leadership team</dd>
+            <dt>Knowledge</dt>
+            <dd>Finance team</dd>
           </div>
           <div>
-            <dt>Output</dt>
-            <dd>8-slide presentation</dd>
+            <dt>Context</dt>
+            <dd>3 connected sources</dd>
           </div>
         </dl>
-      </section>
+      </aside>
 
-      <section class="presentation-sources" aria-labelledby="sources-title">
-        <p class="product-label" id="sources-title">Approved sources</p>
-        <ul>
-          <li><span>01</span>Company knowledge</li>
-          <li><span>02</span>Brand template</li>
-          <li><span>03</span>Reporting data</li>
-        </ul>
-      </section>
-
-      <section class="generated-deck" aria-labelledby="deck-title">
-        <div class="deck-toolbar">
+      <section class="chat-thread" aria-labelledby="chat-thread-title">
+        <div class="chat-thread-heading">
           <div>
-            <p class="product-label">Generated deck</p>
-            <h3 id="deck-title">Quarterly business review</h3>
+            <p class="product-label">Conversation</p>
+            <h3 id="chat-thread-title">Monthly finance review</h3>
           </div>
-          <span>8 slides</span>
+          <span>Company context on</span>
         </div>
-        <div class="deck-canvas" aria-hidden="true">
-          <span class="slide-kicker">Q3 / Leadership review</span>
-          <strong>Progress,<br />priorities,<br />next quarter.</strong>
-          <div class="slide-detail">
-            <span>01</span>
-            <span>Company update</span>
-          </div>
-        </div>
-        <div class="deck-review">
-          <p><span aria-hidden="true">✓</span> Company sources and brand template applied</p>
-          <span class="review-action">Review presentation</span>
+
+        <ol class="chat-message-list">
+          <li data-speaker="person">
+            <span>You</span>
+            <p>
+              Prepare this month&apos;s finance review. Focus on the largest variances and the
+              questions leadership should discuss.
+            </p>
+          </li>
+          <li data-speaker="agent">
+            <span>Finance Agent</span>
+            <p>
+              I prepared a first review from the selected company context. The three areas that need
+              attention are ready for your review.
+            </p>
+            <div class="chat-result-card">
+              <div>
+                <span class="product-label">Draft</span>
+                <strong>Monthly finance review</strong>
+              </div>
+              <ul>
+                <li>Revenue overview</li>
+                <li>Variance summary</li>
+                <li>Questions for review</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+
+        <div class="chat-context-strip" aria-label="Connected context">
+          <span>Connected context</span>
+          <ul>
+            <li>Finance knowledge</li>
+            <li>Reporting data</li>
+            <li>Team guidance</li>
+          </ul>
         </div>
       </section>
     </div>
   </div>
-  <figcaption id="workspace-caption">
-    The agent works from your company knowledge and your slide template, then hands the deck back
-    for review.
+  <figcaption id="chat-workspace-caption" class="visually-hidden">
+    {statement}{' '}{caption}
   </figcaption>
 </figure>

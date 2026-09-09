@@ -57,13 +57,6 @@ export const companyVision = {
   ],
 } as const;
 
-export const workflowExamples = [
-  'Research and synthesis',
-  'Data collection and preparation',
-  'Consolidation and reporting',
-  'Visualization and decision support',
-] as const;
-
 /** The same operating picture before and after the work happens somewhere you can see it. */
 export const operatingShift = {
   today: [
@@ -79,21 +72,3 @@ export const operatingShift = {
     'You can switch model provider later',
   ],
 } as const;
-
-export const platformPillars = [
-  {
-    label: 'Specialized agents',
-    title: 'Agents that know your company',
-    body: 'They work from your documents, your data, and your templates.',
-  },
-  {
-    label: 'Recurring workflows',
-    title: 'Work that continues after the prompt',
-    body: 'Steps that run in order, on a schedule, with an owner and a review point.',
-  },
-  {
-    label: 'Adoption governance',
-    title: 'One screen for administrators',
-    body: 'Access, model choice, and usage figures in the same place.',
-  },
-] as const;

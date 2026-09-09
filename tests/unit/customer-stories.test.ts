@@ -9,6 +9,8 @@ import {
   customerStoryDrafts,
   customerVoiceDrafts,
   getCustomerStoryClaimIds,
+  getCustomerStoryPreviewClaimIds,
+  getCustomerStorySectionStatement,
   homepageCustomerProofLogoOrder,
   isVerbatimExcerpt,
   resolveCustomerProofMode,
@@ -34,6 +36,14 @@ describe('approved customer proof', () => {
       expect(new URL(story.sourceUrl).protocol).toBe('https:');
       expect(story.reviewedOn).toBe('2026-09-08');
       expect(story.qualifiedResults.length).toBeGreaterThanOrEqual(2);
+      expect(story.sections.map((section) => section.label)).toEqual([
+        'Customer context',
+        'The challenge',
+        'The approach',
+        'Workflows in practice',
+        'Results and operating impact',
+      ]);
+      expect(story.sections.every((section) => section.paragraphs.length >= 2)).toBe(true);
     }
   });
 
@@ -67,7 +77,7 @@ describe('approved customer proof', () => {
   });
 
   it('uses separate approved records for narratives, results, and quotations', () => {
-    const now = new Date('2026-09-08T12:00:00Z');
+    const now = new Date('2026-09-09T12:00:00Z');
     const anonymousVoiceIds = customerVoiceDrafts
       .filter((voice) => !voice.logoClaimId)
       .map((voice) => voice.id);
@@ -100,7 +110,7 @@ describe('approved customer proof', () => {
       resolveApprovedClaims(claimRegistry, claimIds, `customers.${story.slug}`, now);
       resolveApprovedClaims(
         claimRegistry,
-        [story.narrativeClaimId, story.qualifiedResults[0]!.claimId],
+        getCustomerStoryPreviewClaimIds(story),
         'home.customer-proof',
         now,
       );
@@ -111,7 +121,36 @@ describe('approved customer proof', () => {
         'solutions.customer-logos',
       ]);
       expect(logoClaim?.notes).toContain('Logo placement only');
+
+      for (const section of story.sections) {
+        const sectionClaim = claimRegistry.find((claim) => claim.id === section.claimId);
+        expect(sectionClaim?.statement, section.claimId).toBe(
+          getCustomerStorySectionStatement(section),
+        );
+        expect(sectionClaim?.evidence, section.claimId).toBe(story.sourceUrl);
+        expect(sectionClaim?.allowed_surfaces, section.claimId).toEqual([
+          `customers.${story.slug}`,
+        ]);
+      }
     }
+  });
+
+  it('keeps article prose neutral while preserving TextCortex in approved quotations', () => {
+    for (const story of customerStoryDrafts) {
+      const articleCopy = story.sections
+        .flatMap((section) => [
+          section.label,
+          section.heading,
+          ...section.paragraphs,
+          ...(section.points ?? []),
+        ])
+        .join(' ');
+      expect(articleCopy, story.slug).not.toMatch(/TextCortex/i);
+    }
+
+    expect(customerVoiceDrafts.some((voice) => voice.verbatimExcerpt.includes('TextCortex'))).toBe(
+      true,
+    );
   });
 
   it('uses the conservative source-body figures and their material qualifiers', () => {
@@ -135,8 +174,11 @@ describe('approved customer proof', () => {
       [
         b2venture?.title,
         b2venture?.summary,
-        b2venture?.challenge,
-        b2venture?.approach,
+        ...(b2venture?.sections ?? []).flatMap((section) => [
+          section.heading,
+          ...section.paragraphs,
+          ...(section.points ?? []),
+        ]),
         ...(b2venture?.qualifiedResults ?? []).flatMap((result) => [
           result.value,
           result.label,
@@ -161,8 +203,12 @@ describe('approved customer proof', () => {
         story.company,
         story.title,
         story.summary,
-        story.challenge,
-        story.approach,
+        ...story.sections.flatMap((section) => [
+          section.label,
+          section.heading,
+          ...section.paragraphs,
+          ...(section.points ?? []),
+        ]),
         ...story.qualifiedResults.flatMap((result) => [
           result.value,
           result.label,

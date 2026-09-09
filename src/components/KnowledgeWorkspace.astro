@@ -1,0 +1,84 @@
+---
+import { withBase } from '../lib/routing/base-path';
+
+interface Props {
+  statement: string;
+  caption: string;
+}
+
+const { statement, caption } = Astro.props;
+const connectors = [
+  { name: 'Outlook', logo: withBase('/connector-logos/outlook.svg') },
+  { name: 'SharePoint', logo: withBase('/connector-logos/sharepoint.svg') },
+  { name: 'Salesforce', logo: withBase('/connector-logos/salesforce.svg') },
+] as const;
+---
+
+<figure class="knowledge-workspace" data-reveal aria-labelledby="knowledge-workspace-caption">
+  <div class="product-frame">
+    <div class="product-frame-bar">
+      <div>
+        <span class="product-mark" aria-hidden="true">Z</span>
+        <span>Knowledge</span>
+      </div>
+      <span class="product-frame-status">Finance workspace</span>
+    </div>
+
+    <div class="knowledge-workspace-body">
+      <section class="knowledge-source-column" aria-labelledby="knowledge-sources-title">
+        <p class="product-label" id="knowledge-sources-title">Existing systems</p>
+        <ul>
+          {
+            connectors.map((connector) => (
+              <li>
+                <span class="knowledge-connector-mark">
+                  <img src={connector.logo} alt="" width="36" height="36" loading="lazy" />
+                </span>
+                <span>{connector.name}</span>
+              </li>
+            ))
+          }
+          <li>
+            <span class="knowledge-connector-mark knowledge-mcp-mark" aria-hidden="true">
+              <svg viewBox="0 0 28 28" focusable="false">
+                <circle cx="8" cy="9" r="3.5"></circle>
+                <circle cx="20" cy="19" r="3.5"></circle>
+                <path d="M10.8 11.2 17.2 16.8M17.2 11.2 10.8 16.8"></path>
+              </svg>
+            </span>
+            <span>Custom MCP</span>
+          </li>
+        </ul>
+      </section>
+
+      <span class="knowledge-flow-arrow" aria-hidden="true">→</span>
+
+      <section class="knowledge-base-card" aria-labelledby="knowledge-base-title">
+        <div class="knowledge-base-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="product-label">Knowledge base</p>
+        <h3 id="knowledge-base-title">Finance knowledge</h3>
+        <ul>
+          <li>Policies</li>
+          <li>Reporting</li>
+          <li>Team context</li>
+        </ul>
+      </section>
+
+      <span class="knowledge-flow-arrow" aria-hidden="true">→</span>
+
+      <section class="knowledge-destination-column" aria-labelledby="knowledge-destinations-title">
+        <p class="product-label" id="knowledge-destinations-title">Available to</p>
+        <ul>
+          <li><span>01</span><strong>Chat</strong></li>
+          <li><span>02</span><strong>Finance Agent</strong></li>
+          <li><span>03</span><strong>Reporting workflow</strong></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+  <figcaption id="knowledge-workspace-caption" class="visually-hidden">
+    {statement}{' '}{caption}
+  </figcaption>
+</figure>

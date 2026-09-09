@@ -82,7 +82,7 @@ describe('claims publication boundary', () => {
     );
   });
 
-  it('publishes the approved agent starting-point choice only in the homepage hero', () => {
+  it('publishes the approved agent starting-point choice on its homepage and product surfaces', () => {
     const [claim] = resolveApprovedClaims(
       claimRegistry,
       homepageHeroCapabilityClaimIds,
@@ -95,15 +95,31 @@ describe('claims publication boundary', () => {
     );
     expect(claim?.category).toBe('product');
     expect(claim?.approval_status).toBe('approved');
-    expect(claim?.allowed_surfaces).toEqual(['home.hero']);
+    expect(claim?.allowed_surfaces).toEqual(['home.hero', 'product.agents', 'product.hero']);
     expect(claim?.statement).not.toContain('—');
-    expect(() =>
+    expect(
       resolveApprovedClaims(
         claimRegistry,
         homepageHeroCapabilityClaimIds,
         'product.agents',
-        new Date('2026-09-08T12:00:00Z'),
+        new Date('2026-09-09T12:00:00Z'),
       ),
-    ).toThrow(/not approved for product\.agents/);
+    ).toEqual([claim]);
+    expect(
+      resolveApprovedClaims(
+        claimRegistry,
+        homepageHeroCapabilityClaimIds,
+        'product.hero',
+        new Date('2026-09-09T12:00:00Z'),
+      ),
+    ).toEqual([claim]);
+    expect(() =>
+      resolveApprovedClaims(
+        claimRegistry,
+        homepageHeroCapabilityClaimIds,
+        'product.workflows',
+        new Date('2026-09-09T12:00:00Z'),
+      ),
+    ).toThrow(/not approved for product\.workflows/);
   });
 });

@@ -1,146 +1,145 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AdoptionGap from '../components/AdoptionGap.astro';
-import PlatformOverview from '../components/PlatformOverview.astro';
 import GovernanceConsole from '../components/GovernanceConsole.astro';
+import KnowledgeWorkspace from '../components/KnowledgeWorkspace.astro';
+import PlatformOverview from '../components/PlatformOverview.astro';
 import ProductWorkspace from '../components/ProductWorkspace.astro';
-import WorkflowRun from '../components/WorkflowRun.astro';
+import { claimRegistry } from '../lib/claims/registry';
+import { resolveApprovedClaims } from '../lib/claims/public-claims';
+import { productPageContent, productSurfaces } from '../lib/content/product';
 import { withBase } from '../lib/routing/base-path';
-import { platformPillars, workflowExamples } from '../lib/content/site-content';
+
+const resolveProductClaim = (id: string, surface: string) =>
+  resolveApprovedClaims(claimRegistry, [id], surface)[0]!;
+
+const metadataClaim = resolveProductClaim(productPageContent.metadata.claimId, 'product.metadata');
+const introTitleClaim = resolveProductClaim(productPageContent.intro.titleClaimId, 'product.hero');
+const introClaim = resolveProductClaim(productPageContent.intro.claimId, 'product.hero');
+const modelHostingClaim = resolveProductClaim(
+  productPageContent.intro.modelHostingClaimId,
+  'product.hero',
+);
+const heroGovernanceClaim = resolveProductClaim(
+  productPageContent.intro.governanceClaimId,
+  'product.hero',
+);
+const resolvedSurfaces = productSurfaces.map((surface) => ({
+  ...surface,
+  statement: resolveProductClaim(surface.claimId, `product.${surface.id}`).statement,
+  caption: resolveProductClaim(surface.figureClaimId, `product.${surface.id}`).statement,
+}));
+const chatSurface = resolvedSurfaces[0]!;
+const knowledgeSurface = resolvedSurfaces[1]!;
+const agentStartingPointClaim = resolveProductClaim(
+  productPageContent.agentStartingPoint.claimId,
+  'product.hero',
+);
+const prebuiltExamplesClaim = resolveProductClaim(
+  productPageContent.agentStartingPoint.examplesClaimId,
+  'product.hero',
+);
+const governanceClaim = resolveProductClaim(
+  productPageContent.governance.claimId,
+  'product.governance',
+);
+const governanceHostingClaim = resolveProductClaim(
+  productPageContent.governance.hostingClaimId,
+  'product.governance',
+);
 ---
 
 <BaseLayout
   title="Product | Zeno"
-  description="How Zeno works: connected company knowledge, specialized agents, repeatable workflows that run on a schedule, and governance that stays visible as adoption grows."
+  description={metadataClaim.statement}
   canonicalPath="/product"
+  pageClass="product-page"
 >
-  <section class="page-intro section-rule">
-    <div class="shell narrow-shell">
-      <h1>Connect. Equip. Run. Govern.</h1>
-      <p>
-        Four steps from the systems your teams already use to work that runs on its own and still
-        gets checked by a person.
-      </p>
-    </div>
+  <section class="page-intro product-intro section-rule" aria-labelledby="product-page-title">
     <div class="shell">
-      <PlatformOverview />
-    </div>
-  </section>
-
-  <section class="operating-model section-rule" aria-labelledby="runs-title">
-    <div class="shell">
-      <header class="section-heading split-heading">
-        <div>
-          <p class="eyebrow">Agents</p>
-          <h2 id="runs-title">An agent built for one job.</h2>
+      <div class="product-intro-copy narrow-shell">
+        <p class="eyebrow">{productPageContent.intro.eyebrow}</p>
+        <div class="product-hero-copy">
+          <h1 id="product-page-title">{introTitleClaim.statement}</h1>
+          <div class="product-hero-summary">
+            <p>{introClaim.statement}</p>
+            <p>{agentStartingPointClaim.statement}</p>
+          </div>
         </div>
-        <p>
-          Give it the brief, the sources it may use, and the template it has to follow. It hands the
-          result back for review.
-        </p>
-      </header>
-      <ProductWorkspace />
-      <div class="workflow-examples" aria-label="Example workflows">
-        <p class="product-label">Where teams begin</p>
-        <ul>
-          {workflowExamples.map((workflow) => <li>{workflow}</li>)}
-        </ul>
       </div>
+      <PlatformOverview
+        platformStatement={introClaim.statement}
+        startingPointStatement={agentStartingPointClaim.statement}
+        examplesStatement={prebuiltExamplesClaim.statement}
+        agentExamples={productPageContent.agentStartingPoint.examples}
+        modelHostingStatement={modelHostingClaim.statement}
+        governanceStatement={heroGovernanceClaim.statement}
+      />
     </div>
   </section>
 
-  <section class="platform section-rule" aria-labelledby="runs-schedule-title">
+  <section
+    class="product-surface product-surface-paper section-rule"
+    id={chatSurface.id}
+    aria-labelledby="product-chat-title"
+    data-product-surface={chatSurface.id}
+  >
     <div class="shell">
       <header class="section-heading split-heading">
         <div>
-          <p class="eyebrow">Workflows</p>
-          <h2 id="runs-schedule-title">The report builds itself. You still sign it off.</h2>
+          <p class="eyebrow">{chatSurface.eyebrow}</p>
+          <h2 id="product-chat-title">{chatSurface.title}</h2>
         </div>
-        <p>
-          Every Monday it collects the data, prepares it, and drafts the summary. Then it stops and
-          waits for a person.
-        </p>
+        <p>{chatSurface.statement}</p>
       </header>
-      <WorkflowRun />
+      <ProductWorkspace statement={chatSurface.statement} caption={chatSurface.caption} />
     </div>
   </section>
 
-  <section class="platform section-rule" aria-labelledby="pillars-title">
+  <section
+    class="product-surface section-rule"
+    id={knowledgeSurface.id}
+    aria-labelledby="product-knowledge-title"
+    data-product-surface={knowledgeSurface.id}
+  >
     <div class="shell">
       <header class="section-heading split-heading">
         <div>
-          <p class="eyebrow">How it scales</p>
-          <h2 id="pillars-title">Start with one agent. Add the next when it has earned it.</h2>
+          <p class="eyebrow">{knowledgeSurface.eyebrow}</p>
+          <h2 id="product-knowledge-title">{knowledgeSurface.title}</h2>
         </div>
-        <p>The same three parts hold whether one team uses it or the whole company does.</p>
+        <p>{knowledgeSurface.statement}</p>
       </header>
-      <div class="platform-pillars">
-        {
-          platformPillars.map((pillar) => (
-            <article data-reveal>
-              <span class="pillar-label">{pillar.label}</span>
-              <h3>{pillar.title}</h3>
-              <p>{pillar.body}</p>
-            </article>
-          ))
-        }
-      </div>
+      <KnowledgeWorkspace
+        statement={knowledgeSurface.statement}
+        caption={knowledgeSurface.caption}
+      />
     </div>
   </section>
 
-  <section class="adoption-trust section-rule" aria-labelledby="adoption-title">
+  <section class="product-governance section-rule" aria-labelledby="product-governance-title">
     <div class="shell">
       <header class="section-heading split-heading">
         <div>
-          <p class="eyebrow">What to measure</p>
-          <h2 id="adoption-title">Adoption you can actually measure.</h2>
+          <p class="eyebrow">{productPageContent.governance.eyebrow}</p>
+          <h2 id="product-governance-title">{productPageContent.governance.title}</h2>
         </div>
-        <p>
-          What to watch at each stage, so you know whether it is taking hold before you widen it.
-        </p>
+        <p>{governanceClaim.statement}</p>
       </header>
-      <ol class="adoption-timeline" aria-label="90-day adoption observation framework">
-        <li data-reveal>
-          <span>30</span>
-          <div>
-            <small>days</small>
-            <h3>Find repeat use</h3>
-            <p>See which teams return after their first interaction.</p>
-          </div>
-        </li>
-        <li data-reveal>
-          <span>60</span>
-          <div>
-            <small>days</small>
-            <h3>Spread what works</h3>
-            <p>Follow reuse of shared agents and connected knowledge.</p>
-          </div>
-        </li>
-        <li data-reveal>
-          <span>90</span>
-          <div>
-            <small>days</small>
-            <h3>Scale with control</h3>
-            <p>See which recurring work is ready for governed execution.</p>
-          </div>
-        </li>
-      </ol>
-      <AdoptionGap />
-      <GovernanceConsole />
+      <GovernanceConsole
+        statement={governanceClaim.statement}
+        hostingStatement={governanceHostingClaim.statement}
+      />
     </div>
   </section>
 
   <section class="conversion" aria-labelledby="product-cta-title">
     <div class="shell conversion-grid">
       <div>
-        <p class="eyebrow">Start with one workflow</p>
-        <h2 id="product-cta-title">See it against your own work.</h2>
+        <p class="eyebrow">{productPageContent.conversion.eyebrow}</p>
+        <h2 id="product-cta-title">{productPageContent.conversion.title}</h2>
       </div>
       <div>
-        <p>
-          Bring a workflow your team runs every week and we will walk through how it would be set
-          up, what it would run on, and who would sign it off.
-        </p>
+        <p>{productPageContent.conversion.description}</p>
         <div class="button-row">
           <a class="button button-paper" href={withBase('/demo')}>Book a demo</a>
           <a class="button button-inverse" href={withBase('/ai-readiness')}>Assess AI readiness</a>

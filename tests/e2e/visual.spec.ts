@@ -60,6 +60,45 @@ for (const viewport of viewports) {
   });
 }
 
+for (const viewport of viewports) {
+  test(`product narrative at ${viewport.width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/product');
+
+    await expect(page).toHaveScreenshot(`product-${viewport.name}.png`, {
+      animations: 'disabled',
+      fullPage: true,
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
+
+test('desktop enterprise platform overview', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/product');
+  await expect(page.locator('.product-intro')).toHaveScreenshot(
+    'product-enterprise-overview-1440.png',
+    {
+      animations: 'disabled',
+      maxDiffPixelRatio: 0.01,
+    },
+  );
+});
+
+test('desktop governance and adoption overview', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/product');
+  const governance = page.locator('.product-governance');
+  await governance.scrollIntoViewIfNeeded();
+  await expect(governance).toHaveScreenshot('product-governance-overview-1440.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
 test('desktop hero adoption journey at each active stage', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
@@ -193,6 +232,13 @@ for (const shot of [
       fullPage: true,
       maxDiffPixelRatio: 0.01,
     });
+    await expect(page.locator('.customer-story-hero')).toHaveScreenshot(
+      `customer-atares-hero-${shot.width}.png`,
+      {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.01,
+      },
+    );
   });
 }
 

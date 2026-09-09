@@ -54,7 +54,9 @@ const voice =
       <div class="shell customer-story-hero-grid">
         <div class="customer-story-identity">
           <a class="customer-story-back" href={withBase('/#audience')}>← Customer proof</a>
-          <img src={withBase(logo.src)} alt={logo.name} width="130" height="130" />
+          <div class="customer-story-logo-lockup">
+            <img src={withBase(logo.src)} alt={logo.name} width="400" height="400" />
+          </div>
         </div>
         <div>
           <p class="eyebrow">Customer story</p>
@@ -81,18 +83,33 @@ const voice =
       </div>
     </section>
 
-    <section class="customer-story-body section-rule">
-      <div class="shell customer-story-body-grid">
-        <section aria-labelledby="challenge-title">
-          <p class="product-label">Challenge</p>
-          <h2 id="challenge-title">What was getting in the way.</h2>
-          <p>{story.challenge}</p>
-        </section>
-        <section aria-labelledby="approach-title">
-          <p class="product-label">Approach</p>
-          <h2 id="approach-title">What the team changed.</h2>
-          <p>{story.approach}</p>
-        </section>
+    <section class="customer-story-article section-rule" aria-label="Customer story article">
+      <div class="shell customer-story-article-list">
+        {
+          story.sections.map((section) => (
+            <section
+              class="customer-story-article-section"
+              aria-labelledby={`${section.claimId}-title`}
+            >
+              <header>
+                <p class="product-label">{section.label}</p>
+                <h2 id={`${section.claimId}-title`}>{section.heading}</h2>
+              </header>
+              <div class="customer-story-article-copy">
+                {section.paragraphs.map((paragraph) => (
+                  <p>{paragraph}</p>
+                ))}
+                {section.points && (
+                  <ul>
+                    {section.points.map((point) => (
+                      <li>{point}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          ))
+        }
       </div>
     </section>
 
