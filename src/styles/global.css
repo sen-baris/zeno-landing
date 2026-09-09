@@ -497,6 +497,18 @@ h2 {
   padding-top: clamp(32px, 5.5vw, 82px);
 }
 
+.hero-path-label {
+  display: inline-flex;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  padding: 7px 13px;
+  background: var(--wash);
+  color: var(--action);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
 .hero-subhead {
   max-width: 580px;
   font-size: clamp(1.18rem, 1.55vw, 1.48rem);
@@ -596,6 +608,11 @@ h2 {
   color: var(--muted);
   font-size: 0.92rem;
   line-height: 1.55;
+}
+
+.hj-story-title + p strong {
+  color: var(--action);
+  font-weight: 600;
 }
 
 .hj-progress {
@@ -1775,8 +1792,8 @@ h2 {
   min-height: 118px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px clamp(18px, 2vw, 26px);
+  gap: 12px;
+  padding: 18px clamp(14px, 1.5vw, 22px);
 }
 
 .customer-proof-trigger {
@@ -1807,9 +1824,10 @@ h2 {
 }
 
 .customer-proof-logo {
+  position: relative;
   display: grid;
-  width: 120px;
-  height: 80px;
+  width: 112px;
+  height: 68px;
   min-width: 0;
   overflow: hidden;
   flex: 0 1 auto;
@@ -1817,18 +1835,53 @@ h2 {
 }
 
 .customer-proof-grid .customer-proof-logo img {
-  width: 112px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--customer-logo-width, 130px);
   max-width: none;
   max-height: none;
+  flex: 0 0 auto;
+  transform: translate(
+    calc(-50% + var(--customer-logo-x, 0px)),
+    calc(-50% + var(--customer-logo-y, 0px))
+  );
 }
 
-.customer-proof-grid li[data-logo='customer-logo-bovensiepen'] .customer-proof-logo {
-  width: 72px;
-  height: 72px;
+/* The source marks sit on equal square SVG canvases but use very different amounts of that space.
+   These values normalize the visible artwork while keeping every logo's original proportions. */
+.customer-proof-grid li[data-logo='customer-logo-atares'] {
+  --customer-logo-width: 130px;
+  --customer-logo-x: 6px;
 }
 
-.customer-proof-grid li[data-logo='customer-logo-bovensiepen'] .customer-proof-logo img {
-  width: 72px;
+.customer-proof-grid li[data-logo='customer-logo-b2venture'] {
+  --customer-logo-width: 140px;
+  --customer-logo-y: 7px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-mahle'] {
+  --customer-logo-width: 154px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-kbc'] {
+  --customer-logo-width: 153px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-frommer-legal'] {
+  --customer-logo-width: 122px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-beeradvocaten'] {
+  --customer-logo-width: 116px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-bovensiepen'] {
+  --customer-logo-width: 92px;
+}
+
+.customer-proof-grid li[data-logo='customer-logo-tmg-consultants'] {
+  --customer-logo-width: 124px;
 }
 
 .customer-proof-control {
@@ -2336,11 +2389,19 @@ h2 {
 }
 
 .adoption-curve-cursor {
+  position: absolute;
+  z-index: 2;
+  top: var(--cursor-y);
+  left: var(--cursor-x);
   display: none;
-  fill: var(--action);
-  stroke: var(--paper);
-  stroke-width: 5;
-  vector-effect: non-scaling-stroke;
+  width: 24px;
+  height: 24px;
+  border: 5px solid var(--paper);
+  border-radius: 50%;
+  background: var(--action);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--action) 14%, transparent);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 .adoption-stages {

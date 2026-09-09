@@ -4,8 +4,8 @@ export const draftHomeCopy = {
   description:
     'Find the workflows worth automating, build AI agents with the people who use them, and support adoption on a governed workspace built for Europe.',
   headline: 'AI agents your teams actually use.',
-  subhead:
-    'We find the workflows worth automating, build the agents with your people, and stay through rollout and adoption.',
+  startingPathLabel: 'Start your way',
+  startingPathClaimId: 'home-supported-agent-starting-path',
 } as const;
 
 export const releaseContentStatus = {

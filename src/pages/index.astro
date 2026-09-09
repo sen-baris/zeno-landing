@@ -35,13 +35,19 @@ import {
 } from '../lib/content/customer-stories';
 
 const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
-const [agentStartingPointClaim] = resolveApprovedClaims(
+const approvedHeroCapabilityClaims = resolveApprovedClaims(
   claimRegistry,
   homepageHeroCapabilityClaimIds,
   'home.hero',
 );
+const heroCapabilityById = new Map(approvedHeroCapabilityClaims.map((claim) => [claim.id, claim]));
+const agentStartingPointClaim = heroCapabilityById.get('home-agent-starting-point');
 if (!agentStartingPointClaim) {
   throw new Error('The approved homepage agent starting-point claim is missing.');
+}
+const supportedStartingPathClaim = heroCapabilityById.get(draftHomeCopy.startingPathClaimId);
+if (!supportedStartingPathClaim) {
+  throw new Error('The approved homepage supported starting-path claim is missing.');
 }
 const approvedCertifications = resolveApprovedClaims(
   claimRegistry,
@@ -132,7 +138,8 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
           <h1>{draftHomeCopy.headline}</h1>
         </div>
         <div class="hero-message">
-          <p class="hero-subhead">{draftHomeCopy.subhead}</p>
+          <p class="hero-path-label">{draftHomeCopy.startingPathLabel}</p>
+          <p class="hero-subhead">{supportedStartingPathClaim.statement}</p>
           <div class="hero-action" role="group" aria-label="Hero call to action">
             <a class="button button-primary" href={withBase('/demo')}>Book a demo</a>
           </div>

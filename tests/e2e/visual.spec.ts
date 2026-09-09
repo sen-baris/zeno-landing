@@ -60,6 +60,17 @@ for (const viewport of viewports) {
   });
 }
 
+test('desktop homepage starting path message', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  await expect(page.locator('.hero-intro')).toHaveScreenshot('home-hero-intro-1440.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
 for (const viewport of viewports) {
   test(`product narrative at ${viewport.width}px`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });

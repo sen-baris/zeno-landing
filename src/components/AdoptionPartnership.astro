@@ -63,9 +63,12 @@ const stagePositions = {
           <path class="adoption-curve-area" d={`${curvePath} L1200 260 L0 260 Z`}></path>
           <path class="adoption-curve-line" data-adoption-curve-path d={curvePath}></path>
         </g>
-        <circle class="adoption-curve-cursor" data-adoption-curve-cursor cx="60" cy="224.5" r="7">
-        </circle>
       </svg>
+      <span
+        class="adoption-curve-cursor"
+        data-adoption-curve-cursor
+        style="--cursor-x: 5%; --cursor-y: 86.346%;"
+        aria-hidden="true"></span>
     </div>
 
     <div class="adoption-partner-band">
@@ -116,7 +119,7 @@ const stagePositions = {
     const scene = adoptionJourney.querySelector<HTMLElement>('.adoption-partnership-scene');
     const curve = adoptionJourney.querySelector<SVGPathElement>('[data-adoption-curve-path]');
     const clip = adoptionJourney.querySelector<SVGRectElement>('[data-adoption-curve-clip]');
-    const cursor = adoptionJourney.querySelector<SVGCircleElement>('[data-adoption-curve-cursor]');
+    const cursor = adoptionJourney.querySelector<HTMLElement>('[data-adoption-curve-cursor]');
     const stages = Array.from(
       adoptionJourney.querySelectorAll<HTMLElement>('[data-adoption-stage]'),
     );
@@ -181,8 +184,8 @@ const stagePositions = {
       }
 
       clip.setAttribute('width', progress === 1 ? '1200' : String(point.x));
-      cursor.setAttribute('cx', String(point.x));
-      cursor.setAttribute('cy', String(point.y));
+      cursor.style.setProperty('--cursor-x', `${(point.x / 1200) * 100}%`);
+      cursor.style.setProperty('--cursor-y', `${(point.y / 260) * 100}%`);
       show(currentIndex);
     };
 
@@ -195,8 +198,8 @@ const stagePositions = {
       adoptionJourney.dataset.adoptionJourney = 'static';
       adoptionJourney.dataset.stage = 'habit';
       clip?.setAttribute('width', '1200');
-      cursor?.setAttribute('cx', '60');
-      cursor?.setAttribute('cy', '224.5');
+      cursor?.style.setProperty('--cursor-x', '5%');
+      cursor?.style.setProperty('--cursor-y', '86.346%');
       for (const stage of stages) {
         stage.removeAttribute('data-current');
         stage.removeAttribute('data-reached');

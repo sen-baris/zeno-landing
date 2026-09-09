@@ -82,37 +82,35 @@ describe('claims publication boundary', () => {
     );
   });
 
-  it('publishes the approved agent starting-point choice on its homepage and product surfaces', () => {
-    const [claim] = resolveApprovedClaims(
+  it('publishes the concise agent starting-point choice only in the homepage hero', () => {
+    const claims = resolveApprovedClaims(
       claimRegistry,
       homepageHeroCapabilityClaimIds,
       'home.hero',
-      new Date('2026-09-08T12:00:00Z'),
+      new Date('2026-09-09T12:00:00Z'),
     );
+    const claimById = new Map(claims.map((claim) => [claim.id, claim]));
+    const startingPoint = claimById.get('home-agent-starting-point');
+    const supportedPath = claimById.get('home-supported-agent-starting-path');
 
-    expect(claim?.statement).toBe(
-      'Start from a prebuilt agent or build one from scratch around your workflow.',
+    expect(startingPoint?.statement).toBe('Start with a prebuilt agent or build your own.');
+    expect(supportedPath?.statement).toBe(
+      'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
     );
-    expect(claim?.category).toBe('product');
-    expect(claim?.approval_status).toBe('approved');
-    expect(claim?.allowed_surfaces).toEqual(['home.hero', 'product.agents', 'product.hero']);
-    expect(claim?.statement).not.toContain('—');
-    expect(
-      resolveApprovedClaims(
-        claimRegistry,
-        homepageHeroCapabilityClaimIds,
-        'product.agents',
-        new Date('2026-09-09T12:00:00Z'),
-      ),
-    ).toEqual([claim]);
-    expect(
+    for (const claim of claims) {
+      expect(claim.category).toBe('product');
+      expect(claim.approval_status).toBe('approved');
+      expect(claim.allowed_surfaces).toEqual(['home.hero']);
+      expect(claim.statement).not.toContain('\u2014');
+    }
+    expect(() =>
       resolveApprovedClaims(
         claimRegistry,
         homepageHeroCapabilityClaimIds,
         'product.hero',
         new Date('2026-09-09T12:00:00Z'),
       ),
-    ).toEqual([claim]);
+    ).toThrow(/not approved for product\.hero/);
     expect(() =>
       resolveApprovedClaims(
         claimRegistry,

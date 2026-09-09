@@ -297,7 +297,7 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
   await expect(hero.locator('.hj-story')).toContainText('Outlook, SharePoint, and Salesforce');
   await expect(hero.locator('.hj-story')).toContainText(
-    'Start from a prebuilt agent or build one from scratch around your workflow.',
+    'Start with a prebuilt agent or build your own.',
   );
   await expect(hero.getByText('Prebuilt agent', { exact: true })).toBeVisible();
   await expect(hero.getByText('Custom built', { exact: true })).toBeVisible();
@@ -657,8 +657,15 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'AI agents your teams actually use.',
   );
+  await expect(page.locator('.hero-path-label')).toHaveText('Start your way');
+  await expect(page.locator('.hero-path-label')).toHaveCSS('border-radius', '999px');
+  await expect(page.locator('.hero-path-label')).toHaveCSS(
+    'background-color',
+    'rgb(242, 232, 236)',
+  );
+  await expect(page.locator('.hero-path-label')).toHaveCSS('color', 'rgb(107, 45, 74)');
   await expect(page.locator('.hero-subhead')).toHaveText(
-    'We find the workflows worth automating, build the agents with your people, and stay through rollout and adoption.',
+    'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
   );
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
@@ -684,9 +691,11 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   ]);
   await expect(hero.locator('.hj-story-title + p')).toHaveText([
     'We start with the monthly finance report: repeated, important, and still assembled by hand.',
-    'Start from a prebuilt agent or build one from scratch around your workflow. We connect it to your systems; your team reviews and the owner approves.',
+    'Start with a prebuilt agent or build your own. Connect your systems, review, and approve.',
     'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
   ]);
+  const buildNarrative = hero.locator('[data-story-step="build"] > p').nth(1);
+  await expect(buildNarrative.locator('strong')).toHaveText('prebuilt agent');
   await expect(hero.locator('.hj-progress-node')).toHaveCount(3);
   await expect(hero.locator('.hj-progress-segment')).toHaveCount(2);
   await expect(hero.locator('button, [role="button"], [aria-pressed]')).toHaveCount(0);
@@ -857,6 +866,12 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   expect(find.narrativeOpacity).toEqual([1, 0, 0]);
 
   const build = await reachStage('build');
+  await expect(buildNarrative).toBeVisible();
+  const buildNarrativeLines = await buildNarrative.evaluate((element) => {
+    const lineHeight = Number.parseFloat(getComputedStyle(element).lineHeight);
+    return element.getBoundingClientRect().height / lineHeight;
+  });
+  expect(buildNarrativeLines).toBeLessThanOrEqual(2.01);
   expect(build.progress[0]).toBeGreaterThan(0.95);
   expect(build.progress[1]).toBeGreaterThan(0.4);
   expect(build.progress[1]).toBeLessThan(0.6);
@@ -1152,6 +1167,37 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
 
   const launch = await reachAdoptionStage('launch', 0.08);
   const returning = await reachAdoptionStage('return', 0.5);
+  const movingCursor = story.locator('[data-adoption-curve-cursor]');
+  const cursorGeometry = await movingCursor.evaluate((element) => {
+    const cursorBox = element.getBoundingClientRect();
+    const svg = document.querySelector<SVGSVGElement>('.adoption-curve');
+    const path = svg?.querySelector<SVGPathElement>('[data-adoption-curve-path]');
+    const clip = svg?.querySelector<SVGRectElement>('[data-adoption-curve-clip]');
+    if (!svg || !path || !clip) throw new Error('Adoption curve should be laid out');
+    const svgBox = svg.getBoundingClientRect();
+    const targetX = Number(clip.getAttribute('width'));
+    const totalLength = path.getTotalLength();
+    let low = 0;
+    let high = totalLength;
+    for (let index = 0; index < 24; index += 1) {
+      const middle = (low + high) / 2;
+      if (path.getPointAtLength(middle).x < targetX) low = middle;
+      else high = middle;
+    }
+    const point = path.getPointAtLength((low + high) / 2);
+
+    return {
+      height: cursorBox.height,
+      width: cursorBox.width,
+      xOffset:
+        cursorBox.left + cursorBox.width / 2 - (svgBox.left + (point.x / 1200) * svgBox.width),
+      yOffset:
+        cursorBox.top + cursorBox.height / 2 - (svgBox.top + (point.y / 260) * svgBox.height),
+    };
+  });
+  expect(Math.abs(cursorGeometry.width - cursorGeometry.height)).toBeLessThanOrEqual(0.25);
+  expect(Math.abs(cursorGeometry.xOffset)).toBeLessThanOrEqual(1);
+  expect(Math.abs(cursorGeometry.yOffset)).toBeLessThanOrEqual(1);
   const habit = await reachAdoptionStage('habit', 0.88);
   expect(launch.clipWidth).toBeGreaterThan(60);
   expect(returning.clipWidth).toBeGreaterThan(538);
@@ -1545,13 +1591,91 @@ test('the customer quote is published from its approved record', async ({ page }
   await expect(page.getByText(/Built for AI, innovation, IT, data/)).toHaveCount(0);
 });
 
-test('customer proof opens one accessible preview at a time', async ({ page }) => {
+test('customer proof opens one accessible preview at a time', async ({ browserName, page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
+  await expect(page.getByText('Customer stories', { exact: true })).toBeVisible();
+  await expect(page.getByText('Customer proof', { exact: true })).toHaveCount(0);
   const proof = page.locator('#audience');
   const logos = proof.getByRole('list', { name: 'Customer logos' });
 
   await expect(logos.getByRole('img')).toHaveCount(8);
+  if (browserName === 'chromium') {
+    // Chromium is the visual-baseline engine. WebKit applies different SVG-to-canvas raster
+    // bounds, so transparent-pixel measurements stay beside the Chromium snapshots while the
+    // layout and interaction assertions below continue to run in every browser.
+    const opticalLogoGeometry = await logos
+      .locator('.customer-proof-logo')
+      .evaluateAll(async (frames) =>
+        Promise.all(
+          frames.map(async (frame) => {
+            const image = frame.querySelector<HTMLImageElement>('img');
+            const logo = frame.closest<HTMLElement>('[data-logo]')?.dataset.logo;
+            if (!image || !logo) throw new Error('Customer logo should have an image and identity');
+            await image.decode();
+
+            const canvas = document.createElement('canvas');
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            if (!context) throw new Error('Customer logo geometry needs a canvas context');
+            context.drawImage(image, 0, 0);
+            const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+            let minX = canvas.width;
+            let minY = canvas.height;
+            let maxX = -1;
+            let maxY = -1;
+            for (let y = 0; y < canvas.height; y += 1) {
+              for (let x = 0; x < canvas.width; x += 1) {
+                if ((pixels[(y * canvas.width + x) * 4 + 3] ?? 0) <= 8) continue;
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+              }
+            }
+            if (maxX < minX || maxY < minY) throw new Error(`${logo} has no visible artwork`);
+
+            const frameBox = frame.getBoundingClientRect();
+            const imageBox = image.getBoundingClientRect();
+            const scaleX = imageBox.width / canvas.width;
+            const scaleY = imageBox.height / canvas.height;
+            const artworkCenterX = imageBox.left + ((minX + maxX + 1) / 2) * scaleX;
+            const artworkCenterY = imageBox.top + ((minY + maxY + 1) / 2) * scaleY;
+
+            return {
+              logo,
+              artworkWidth: (maxX - minX + 1) * scaleX,
+              xOffset: artworkCenterX - (frameBox.left + frameBox.width / 2),
+              yOffset: artworkCenterY - (frameBox.top + frameBox.height / 2),
+            };
+          }),
+        ),
+      );
+    for (const geometry of opticalLogoGeometry) {
+      expect(
+        Math.abs(geometry.xOffset),
+        `${geometry.logo} is optically centered`,
+      ).toBeLessThanOrEqual(1.5);
+      expect(
+        Math.abs(geometry.yOffset),
+        `${geometry.logo} is optically centered`,
+      ).toBeLessThanOrEqual(1.5);
+      if (geometry.logo === 'customer-logo-bovensiepen') {
+        expect(geometry.artworkWidth).toBeGreaterThanOrEqual(55);
+        expect(geometry.artworkWidth).toBeLessThanOrEqual(62);
+      } else {
+        expect(
+          geometry.artworkWidth,
+          `${geometry.logo} has a consistent visible width`,
+        ).toBeGreaterThanOrEqual(101);
+        expect(
+          geometry.artworkWidth,
+          `${geometry.logo} has a consistent visible width`,
+        ).toBeLessThanOrEqual(107);
+      }
+    }
+  }
   expect(
     await logos
       .getByRole('img')
@@ -1569,9 +1693,9 @@ test('customer proof opens one accessible preview at a time', async ({ page }) =
   await expect(
     proof.locator('.customer-proof-control').filter({ hasText: /^Case study/ }),
   ).toHaveCount(4);
-  await expect(
-    proof.locator('.customer-proof-control').filter({ hasText: /^Customer quote/ }),
-  ).toHaveCount(1);
+  await expect(proof.locator('.customer-proof-control').filter({ hasText: /^Quote/ })).toHaveCount(
+    1,
+  );
   await expect(proof.getByText(/approval pending|source and review status/i)).toHaveCount(0);
 
   const atares = proof.locator('[data-logo="customer-logo-atares"] details');
@@ -1705,6 +1829,16 @@ test('customer proof reflows without overflow and discloses without JavaScript',
       `customer proof must not overflow at ${viewport.width}px`,
     ).toBe(true);
 
+    if (viewport.width >= 1101) {
+      const logoFrameWidths = await page
+        .locator('.customer-proof-logo')
+        .evaluateAll((frames) => frames.map((frame) => frame.getBoundingClientRect().width));
+      expect(
+        logoFrameWidths.every((width) => Math.abs(width - 112) <= 0.25),
+        `desktop logo frames must not shrink at ${viewport.width}px`,
+      ).toBe(true);
+    }
+
     if (viewport.width === 390) {
       const summaryBox = await details.locator('summary').boundingBox();
       const panelBox = await details.locator('.customer-proof-panel').boundingBox();
@@ -1748,6 +1882,10 @@ test('customer stories publish qualified evidence without internal review copy',
 
   for (const story of customerStoryDrafts) {
     await page.goto(`/customers/${story.slug}`);
+    await expect(
+      page.getByRole('link', { name: '← Customer stories', exact: true }),
+    ).toHaveAttribute('href', '/#audience');
+    await expect(page.getByText('Customer proof', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(story.title);
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(page.getByText('Customer story', { exact: true })).toBeVisible();

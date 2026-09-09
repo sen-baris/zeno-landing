@@ -128,11 +128,44 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
     approved_on: '2026-09-08',
-    allowed_surfaces: ['home.hero', 'product.agents', 'product.hero'],
+    allowed_surfaces: ['product.agents', 'product.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-08',
     notes:
-      'Approval covers the homepage statement and the compact product-page starting-point treatment. Do not imply instant deployment or no configuration.',
+      'Approval covers the compact product-page starting-point treatment. Do not imply instant deployment or no configuration.',
+  },
+  {
+    id: 'home-agent-starting-point',
+    statement: 'Start with a prebuilt agent or build your own.',
+    category: 'product',
+    evidence:
+      'Capability and concise homepage wording approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['home.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'The prebuilt path is a starting point, not an instant or configuration-free deployment.',
+  },
+  {
+    id: 'home-supported-agent-starting-path',
+    statement:
+      'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
+    category: 'product',
+    evidence:
+      'Starting-path capability and public wording approved by the workspace owner in the 2026-09-09 working session.',
+    verified_on: '2026-09-09',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-09',
+    allowed_surfaces: ['home.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-09',
+    notes:
+      'The starting point can vary, but Zeno remains involved in grounding the agent and supporting adoption. Do not describe Zeno as optional or imply configuration-free deployment.',
   },
   {
     id: 'product-page-metadata',
@@ -760,7 +793,10 @@ export const claimRegistry: readonly ClaimRecord[] = [
 
 export const homepageProofClaimIds: readonly string[] = [];
 
-export const homepageHeroCapabilityClaimIds: readonly string[] = ['product-agent-starting-point'];
+export const homepageHeroCapabilityClaimIds: readonly string[] = [
+  'home-agent-starting-point',
+  'home-supported-agent-starting-path',
+];
 
 export const homepageTestimonialClaimIds: readonly string[] = [
   'customer-voice-global-energy-enterprise',
