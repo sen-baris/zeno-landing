@@ -253,18 +253,37 @@ for (const shot of [
   });
 }
 
-/* Two industry pages, not one: they share a template but no longer share their screens, and
-   between these two all four surfaces are covered. Private equity carries the result and the
-   automation, M&A the workflow and the assistant. The wide and narrow pair also catches the
-   changeover where the rows stop alternating and stack. */
+/* Every industry carries different context, proof, and a different leading product scene. The
+   desktop set protects those distinctions, while M&A and legal cover the dense mobile metric and
+   quote variants. */
 for (const shot of [
+  {
+    name: 'solutions-manufacturing-1440',
+    path: '/solutions/manufacturing',
+    width: 1440,
+    height: 1000,
+  },
+  {
+    name: 'solutions-management-consulting-1440',
+    path: '/solutions/management-consulting',
+    width: 1440,
+    height: 1000,
+  },
+  {
+    name: 'solutions-m-and-a-1440',
+    path: '/solutions/m-and-a',
+    width: 1440,
+    height: 1000,
+  },
   {
     name: 'solutions-private-equity-1440',
     path: '/solutions/private-equity',
     width: 1440,
     height: 1000,
   },
+  { name: 'solutions-legal-1440', path: '/solutions/legal', width: 1440, height: 1000 },
   { name: 'solutions-m-and-a-390', path: '/solutions/m-and-a', width: 390, height: 844 },
+  { name: 'solutions-legal-390', path: '/solutions/legal', width: 390, height: 844 },
 ]) {
   test(`${shot.name}`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -283,5 +302,14 @@ for (const shot of [
       fullPage: true,
       maxDiffPixelRatio: 0.01,
     });
+    if (shot.width >= 1101) {
+      await expect(page.locator('.solution-workspace-frame')).toHaveScreenshot(
+        `${shot.name}-workspace.png`,
+        {
+          animations: 'disabled',
+          maxDiffPixelRatio: 0.01,
+        },
+      );
+    }
   });
 }

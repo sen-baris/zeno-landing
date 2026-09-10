@@ -1,0 +1,80 @@
+---
+import type { SolutionJourneyStep, SolutionWorkspace } from '../lib/content/solutions';
+
+interface Props {
+  journey: readonly SolutionJourneyStep[];
+  workspace: SolutionWorkspace;
+  startingPointStatement: string;
+  hostingStatement: string;
+}
+
+const { journey, workspace, startingPointStatement, hostingStatement } = Astro.props;
+---
+
+<div class="solution-product-story">
+  <ol class="solution-journey" aria-label="How the product supports this work">
+    {
+      journey.map((step, index) => (
+        <li data-step={step.id}>
+          <span class="solution-journey-number">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h2>{step.title}</h2>
+            <p>{step.id === 'agent' ? startingPointStatement : step.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <figure class="solution-workspace" data-reveal>
+    <div class="solution-workspace-frame product-frame" aria-hidden="true">
+      <div class="product-frame-bar solution-workspace-bar">
+        <div>
+          <span class="product-mark">Z</span>
+          <span>Governed workspace</span>
+        </div>
+        <span class="product-frame-status">{workspace.agent}</span>
+      </div>
+
+      <div class="solution-workspace-grid">
+        <section class="solution-workspace-context">
+          <p class="product-label">Company context</p>
+          <ul>
+            {workspace.contextSources.map((source) => <li>{source}</li>)}
+          </ul>
+        </section>
+
+        <span class="solution-workspace-arrow" aria-hidden="true">→</span>
+
+        <section class="solution-workspace-agent">
+          <p class="solution-starting-point">Prebuilt or custom</p>
+          <p class="product-label">Agent</p>
+          <h3>{workspace.agent}</h3>
+          <p>{workspace.task}</p>
+        </section>
+
+        <span class="solution-workspace-arrow" aria-hidden="true">→</span>
+
+        <section class="solution-workspace-result">
+          <p class="product-label">Reviewable work</p>
+          <h3>{workspace.resultTitle}</h3>
+          <ul>
+            {workspace.resultItems.map((item) => <li>{item}</li>)}
+          </ul>
+          <p class="solution-workspace-review">
+            <span>Review</span>
+            <strong>{workspace.reviewer}</strong>
+          </p>
+        </section>
+      </div>
+
+      <div class="solution-workspace-controls">
+        <span>Knowledge access</span>
+        <span>Model choice</span>
+        <span>Human review</span>
+        <strong>{hostingStatement}</strong>
+      </div>
+    </div>
+    <figcaption>{workspace.caption}</figcaption>
+  </figure>
+</div>

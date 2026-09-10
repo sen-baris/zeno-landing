@@ -5496,16 +5496,22 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 }
 
 /* Solutions pages
-   One template, five industries. Everything here reuses the product frame, the business-case figure
-   band and the customer rail, so an industry page cannot drift away from the rest of the site. */
-/* The site's own sections all breathe on the same measure. These four were written without it,
-   which is why every eyebrow sat on the rule above it and the figure note touched the next
-   section by a single pixel. */
-.solution-figures,
+   One product story, five industry-specific scenes. The wide workspace is static Astro markup and
+   the concise caption beside it carries the same meaning if the visual presentation disappears. */
+.solution-product,
+.solution-customer,
 .solution-work,
 .solution-walls,
 .solution-questions {
-  padding-block: clamp(90px, 10vw, 150px);
+  padding-block: clamp(78px, 8vw, 120px);
+}
+
+.solution-intro {
+  padding-block: clamp(72px, 7vw, 108px);
+}
+
+.solution-intro .narrow-shell > h1 + p {
+  margin-top: 28px;
 }
 
 /* The index is a list of rows that reads better edge to edge, so it takes a shorter measure and
@@ -5515,15 +5521,340 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 }
 
 .solution-intro-actions {
-  margin-top: 32px;
+  margin-top: 28px;
   align-items: center;
 }
 
-.solution-figures-note {
-  max-width: 640px;
-  margin-top: 26px;
+.solution-product {
+  padding-block: clamp(64px, 6vw, 90px) clamp(42px, 4.5vw, 68px);
+  background: var(--paper);
+}
+
+.solution-product-story {
+  display: grid;
+  gap: clamp(36px, 4vw, 54px);
+}
+
+.solution-journey {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.solution-journey li {
+  display: grid;
+  min-width: 0;
+  border-top: 1px solid var(--rule);
+  padding: 20px clamp(18px, 2.4vw, 34px) 0 0;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.solution-journey li + li {
+  border-left: 1px solid var(--rule);
+  padding-left: clamp(18px, 2.4vw, 34px);
+}
+
+.solution-journey-number {
+  padding-top: 3px;
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 590;
+  letter-spacing: 0.07em;
+}
+
+.solution-journey h2 {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.solution-journey p {
+  max-width: 360px;
+  margin-top: 9px;
   color: var(--muted);
   font-size: 0.82rem;
+  line-height: 1.52;
+}
+
+.solution-workspace {
+  margin: 0;
+}
+
+.solution-workspace-frame {
+  background: color-mix(in srgb, var(--wash) 46%, var(--paper));
+}
+
+.solution-workspace-bar {
+  background: var(--paper);
+}
+
+.solution-workspace-grid {
+  display: grid;
+  min-height: clamp(430px, 38vw, 560px);
+  align-items: stretch;
+  padding: clamp(24px, 3.6vw, 54px);
+  grid-template-columns: minmax(190px, 0.8fr) 38px minmax(260px, 1fr) 38px minmax(220px, 0.9fr);
+  gap: clamp(12px, 1.8vw, 26px);
+}
+
+.solution-workspace-grid section {
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  padding: clamp(22px, 2.5vw, 34px);
+  background: var(--paper);
+}
+
+.solution-workspace-grid h3 {
+  margin-top: 15px;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.4vw, 2.2rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+
+.solution-workspace-arrow {
+  align-self: center;
+  color: var(--action);
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.solution-workspace-context ul,
+.solution-workspace-result ul {
+  display: grid;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.solution-workspace-context li,
+.solution-workspace-result li {
+  border-top: 1px solid var(--rule);
+  padding: 13px 0;
+  font-size: 0.82rem;
+}
+
+.solution-workspace-context li::before {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 10px 1px 0;
+  border-radius: 50%;
+  background: var(--evidence);
+  content: '';
+}
+
+.solution-workspace-agent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--action) !important;
+  color: var(--paper);
+}
+
+.solution-workspace-agent > p:last-child {
+  max-width: 340px;
+  margin-top: 24px;
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+  font-size: 0.88rem;
+}
+
+.solution-starting-point {
+  width: fit-content;
+  margin-bottom: 34px;
+  border: 1px solid color-mix(in srgb, var(--paper) 34%, transparent);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 590;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.solution-workspace-agent .product-label {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+}
+
+.solution-workspace-result li::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin: 0 9px -2px 0;
+  border: 1px solid color-mix(in srgb, var(--action) 35%, transparent);
+  border-radius: 50%;
+  color: var(--action);
+  content: '';
+}
+
+.solution-workspace-result li:first-child::before,
+.solution-workspace-result li:last-child::before {
+  background: var(--wash);
+  box-shadow: inset 0 0 0 4px var(--paper);
+}
+
+.solution-workspace-review {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+  margin-top: 18px;
+  padding-top: 16px;
+  gap: 16px;
+  font-size: 0.76rem;
+}
+
+.solution-workspace-review span {
+  color: var(--muted);
+}
+
+.solution-workspace-controls {
+  display: grid;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  padding: 17px clamp(22px, 3vw, 42px);
+  background: var(--paper);
+  grid-template-columns: repeat(3, auto) minmax(280px, 1fr);
+  gap: clamp(18px, 3vw, 44px);
+  color: var(--muted);
+  font-size: 0.73rem;
+}
+
+.solution-workspace-controls strong {
+  justify-self: end;
+  color: var(--action);
+  font-weight: 580;
+}
+
+.solution-workspace figcaption {
+  max-width: 760px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.solution-customer {
+  padding-block: clamp(42px, 4.5vw, 68px) clamp(68px, 7vw, 104px);
+  background: var(--canvas);
+}
+
+.solution-customer-card {
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.solution-customer-heading {
+  display: grid;
+  align-items: center;
+  padding: clamp(30px, 4vw, 58px);
+  grid-template-columns: minmax(180px, 0.48fr) minmax(0, 1.52fr);
+  gap: clamp(40px, 7vw, 110px);
+}
+
+.solution-customer-heading > div:first-child {
+  align-self: start;
+}
+
+.solution-customer-heading img {
+  display: block;
+  width: min(150px, 80%);
+  height: 150px;
+  margin-block: -38px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.solution-customer-heading h2,
+.solution-customer-heading blockquote p {
+  max-width: 770px;
+  font-family: var(--display);
+  font-size: clamp(1.75rem, 3.4vw, 3.15rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+}
+
+.solution-customer-heading > div:last-child > p {
+  max-width: 650px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.solution-customer-heading .text-link {
+  display: inline-block;
+  margin-top: 22px;
+}
+
+.solution-customer-heading figure,
+.solution-customer-heading blockquote {
+  margin: 0;
+}
+
+.solution-customer-heading figcaption {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.solution-customer-results {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(var(--solution-proof-columns, 3), minmax(0, 1fr));
+  list-style: none;
+}
+
+.solution-customer-results li {
+  min-width: 0;
+  border-top: 1px solid var(--rule);
+  padding: clamp(24px, 3vw, 38px);
+}
+
+.solution-customer-results li + li {
+  border-left: 1px solid var(--rule);
+}
+
+.solution-customer-results[data-result-count='2'] {
+  --solution-proof-columns: 2;
+}
+
+.solution-customer-results strong,
+.solution-customer-results span,
+.solution-customer-results small {
+  display: block;
+}
+
+.solution-customer-results strong {
+  font-family: var(--display);
+  font-size: clamp(1.65rem, 3vw, 2.7rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.solution-customer-results span {
+  margin-top: 9px;
+  font-size: 0.82rem;
+}
+
+.solution-customer-results small {
+  max-width: 300px;
+  margin-top: 13px;
+  color: var(--muted);
+  font-size: 0.67rem;
+  line-height: 1.45;
 }
 
 /* The shared split heading divides 1.2fr / 0.8fr, which puts its paragraph 159px right of the
@@ -5647,45 +5978,71 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   text-transform: uppercase;
 }
 
-/* The rule belongs to the row, not to each cell. A column gap left two hairlines at the same y
-   with a hole between them, so the gutter is carried as cell padding instead and the rule runs
-   the width of the shell. */
-.solution-wall-list {
-  display: grid;
-  margin: clamp(34px, 4vw, 52px) 0 0;
-  padding: 0;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 0;
-  list-style: none;
+.solution-control-panel {
+  overflow: hidden;
+  margin-top: clamp(38px, 5vw, 62px);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
 }
 
-.solution-wall-list li {
+.solution-control-panel > header {
   display: flex;
-  align-items: flex-start;
+  min-height: 78px;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  padding: 14px clamp(20px, 3vw, 34px);
+  gap: 14px;
+}
+
+.solution-control-panel > header .product-mark {
+  width: 32px;
+  height: 32px;
+  font-size: 0.95rem;
+}
+
+.solution-control-panel > header p:last-child {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-weight: 560;
+}
+
+.solution-control-panel dl {
+  display: grid;
+  margin: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.solution-control-panel dl > div {
+  display: grid;
+  min-width: 0;
+  padding: clamp(22px, 2.8vw, 34px);
+  grid-template-columns: minmax(130px, 0.55fr) minmax(0, 1fr);
+  gap: 22px;
+}
+
+.solution-control-panel dl > div:nth-child(even) {
+  border-left: 1px solid var(--rule);
+}
+
+.solution-control-panel dl > div:nth-child(n + 3) {
   border-top: 1px solid var(--rule);
-  padding-top: 16px;
-  gap: 11px;
-  font-size: 0.92rem;
 }
 
-.solution-wall-list > li:nth-child(odd) {
-  padding-right: clamp(15px, 2.5vw, 36px);
+.solution-control-panel dt {
+  color: var(--action);
+  font-family: var(--mono);
+  font-size: 0.67rem;
+  font-weight: 590;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
-.solution-wall-list > li:nth-child(even) {
-  padding-left: clamp(15px, 2.5vw, 36px);
-}
-
-.solution-wall-list svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-  margin-top: 2px;
-  fill: none;
-  stroke: var(--action);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.6;
+.solution-control-panel dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.52;
 }
 
 .solution-question-list {
@@ -6112,6 +6469,29 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
    Declared here rather than in the earlier 1100px block because a media query adds no specificity,
    and the base .solution-case rules are further down the file than that block is. */
 @media (max-width: 1100px) {
+  .solution-workspace-grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .solution-workspace-arrow {
+    line-height: 1;
+    transform: rotate(90deg);
+  }
+
+  .solution-workspace-agent {
+    min-height: 270px;
+  }
+
+  .solution-workspace-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .solution-workspace-controls strong {
+    justify-self: start;
+  }
+
   .solution-case,
   .solution-case:nth-of-type(even) {
     grid-template-columns: minmax(0, 1fr);
@@ -6130,18 +6510,71 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 }
 
 @media (max-width: 820px) {
-  .solution-wall-list,
   .solution-question-list,
   .solution-agent-rest {
     grid-template-columns: 1fr;
+  }
+
+  .solution-journey {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-journey li,
+  .solution-journey li + li {
+    border-left: 0;
+    padding: 18px 0 0;
+  }
+
+  .solution-journey li + li {
+    margin-top: 24px;
+  }
+
+  .solution-workspace-grid {
+    padding: 18px;
+  }
+
+  .solution-workspace-controls {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .solution-customer-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+
+  .solution-customer-heading img {
+    width: min(170px, 58%);
+  }
+
+  .solution-customer-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .solution-customer-results li + li {
+    border-left: 0;
+  }
+
+  .solution-control-panel dl {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-control-panel dl > div {
+    grid-template-columns: minmax(115px, 0.5fr) minmax(0, 1fr);
+  }
+
+  .solution-control-panel dl > div:nth-child(even) {
+    border-left: 0;
+  }
+
+  .solution-control-panel dl > div + div {
+    border-top: 1px solid var(--rule);
   }
 
   .solution-agent-rest > li + li {
     margin-top: 26px;
   }
 
-  .solution-wall-list > li:nth-child(odd),
-  .solution-wall-list > li:nth-child(even),
   .solution-question-list > div:nth-child(odd),
   .solution-question-list > div:nth-child(even),
   .solution-agent-rest > li:nth-child(odd),

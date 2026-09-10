@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { assessmentQuestions } from '../../src/lib/assessment/questions';
-import { customerStoryDrafts } from '../../src/lib/content/customer-stories';
+import { customerStoryDrafts, customerVoiceDrafts } from '../../src/lib/content/customer-stories';
 import { solutions } from '../../src/lib/content/solutions';
 
 async function completeAssessment(page: Page) {
@@ -1310,17 +1310,34 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
 });
 test('every solutions page is written for its own industry', async ({ page }) => {
   const seenAgents = new Set<string>();
-  const seenHeadings = new Set<string>();
 
   for (const solution of solutions) {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`/solutions/${solution.slug}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(solution.headline);
 
-    // A heading that reads the same on two industries is boilerplate, not targeting.
-    for (const heading of await page.locator('main h2:not(.visually-hidden)').allTextContents()) {
-      expect(seenHeadings.has(heading), `"${heading}" is used on more than one page`).toBe(false);
-      seenHeadings.add(heading);
-    }
+    const journey = page.locator('.solution-journey > li');
+    await expect(journey).toHaveCount(3);
+    await expect(journey.locator('h2')).toHaveText([
+      'Company context',
+      'Agent starting point',
+      'Reviewable work',
+    ]);
+    await expect(journey.nth(1)).toContainText(
+      'Start from a prebuilt agent or build one from scratch around your workflow.',
+    );
+
+    const workspace = page.locator('.solution-workspace');
+    await expect(workspace.locator('.solution-workspace-frame')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+    await expect(workspace.locator('figcaption')).toHaveText(solution.workspace.caption);
+    await expect(workspace).toContainText(solution.workspace.agent);
+    await expect(workspace).toContainText(solution.workspace.task);
+    await expect(workspace).toContainText(solution.workspace.resultTitle);
+    await expect(workspace).toContainText(solution.workspace.reviewer);
+    await expect(workspace).toContainText('Access major AI models with EU hosting in one place.');
 
     // The agents are the substance of these pages. Each page carries its own, and no agent name is
     // reused: one that fits two industries is written too generally to be worth naming.
@@ -1367,56 +1384,75 @@ test('every solutions page is written for its own industry', async ({ page }) =>
       await expect(caption).toContainText(agent.from);
     }
 
-    // The figures are planning ranges, so each one publishes its qualifier next to the number. A
-    // figure without it reads as a measured result.
-    const qualifiers = await page.locator('.business-case-qualifier').allTextContents();
-    expect(qualifiers).toHaveLength(solution.figureClaimIds.length);
-    for (const qualifier of qualifiers) {
-      expect(qualifier, `${solution.slug} figure qualifier`).toContain('not a measured result');
-    }
-    await expect(page.locator('.solution-figures-note')).toContainText('not results anyone has');
-
-    await expect(page.locator('.solution-wall-list li')).toHaveCount(solution.walls.length);
+    await expect(page.locator('.solution-control-panel dt')).toHaveCount(solution.controls.length);
+    await expect(page.locator('.solution-control-panel dd')).toHaveText(
+      solution.controls.map((control) => control.value),
+    );
     await expect(page.locator('.solution-question-list dt')).toHaveCount(solution.questions.length);
-    await expect(page.locator('.customer-logo-list img')).toHaveCount(8);
-    await expect(page.locator('.customer-logo-list details')).toHaveCount(0);
-    await expect(page.getByText('Case study', { exact: true })).toHaveCount(0);
+
+    const proof = page.locator('.solution-customer-card');
+    const proofConfig = solution.customerProof;
+    await expect(proof).toHaveAttribute('data-proof-kind', proofConfig.kind);
+    if (proofConfig.kind === 'story') {
+      const story = customerStoryDrafts.find(
+        (candidate) => candidate.slug === proofConfig.storySlug,
+      );
+      if (!story) throw new Error(`Missing test customer story ${proofConfig.storySlug}`);
+      await expect(proof.getByRole('heading', { level: 2 })).toHaveText(story.title);
+      await expect(proof.getByRole('img')).toHaveAttribute('alt', story.company);
+      await expect(proof.locator('.solution-customer-results > li')).toHaveCount(
+        proofConfig.resultClaimIds.length,
+      );
+      for (const claimId of proofConfig.resultClaimIds) {
+        const result = story.qualifiedResults.find((candidate) => candidate.claimId === claimId);
+        if (!result) throw new Error(`Missing test customer result ${claimId}`);
+        await expect(proof).toContainText(result.value);
+        await expect(proof).toContainText(result.label);
+        await expect(proof).toContainText(result.qualifier);
+      }
+      await expect(proof.getByRole('link', { name: 'Read customer story' })).toHaveAttribute(
+        'href',
+        `/customers/${story.slug}`,
+      );
+    } else {
+      const voice = customerVoiceDrafts.find((candidate) => candidate.id === proofConfig.voiceId);
+      if (!voice) throw new Error(`Missing test customer voice ${proofConfig.voiceId}`);
+      await expect(proof.getByRole('img')).toHaveAttribute('alt', voice.company);
+      await expect(proof).toContainText(voice.verbatimExcerpt);
+      await expect(proof).toContainText(voice.attribution);
+      await expect(proof.locator('.solution-customer-results')).toHaveCount(0);
+      await expect(proof.getByRole('link')).toHaveCount(0);
+    }
+
+    await expect(page.getByText('What to plan for', { exact: true })).toHaveCount(0);
+    await expect(page.locator('.business-case-figures, .customer-logo-list')).toHaveCount(0);
 
     const layout = await page.evaluate(() => {
       const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
       const heading = box('.page-intro h1');
       const lede = document.querySelector('.page-intro h1 + p')!.getBoundingClientRect();
-      const cells = [...document.querySelectorAll('.business-case-figures > li')].map((cell) =>
-        cell.getBoundingClientRect(),
-      );
-      const wall = [...document.querySelectorAll('.solution-wall-list > li')].map((item) =>
-        item.getBoundingClientRect(),
-      );
+      const sections = [
+        '.solution-intro',
+        '.solution-product',
+        '.solution-customer',
+        '.solution-work',
+        '.solution-walls',
+        '.solution-questions',
+      ].map((selector) => box(selector).top);
+      const workspaceColumns = getComputedStyle(
+        document.querySelector('.solution-workspace-grid')!,
+      ).gridTemplateColumns.split(' ').length;
       return {
         ledeGap: lede.top - heading.bottom,
         ledeWidth: lede.width,
-        figureRows: new Set(cells.map((cell) => Math.round(cell.top))).size,
-        figureWidths: new Set(cells.map((cell) => Math.round(cell.width))).size,
-        // The rule under a two-column row belongs to the row: a column gap splits it into two
-        // hairlines with a hole between them.
-        wallSeam: Math.round(wall[1]!.left - wall[0]!.right),
+        sections,
+        workspaceColumns,
         caseCopyFirst: [...document.querySelectorAll('.solution-case')].every((row) => {
           const copy = row.querySelector('.solution-case-copy')!;
           const visual = row.querySelector('.solution-case-visual')!;
           // DOCUMENT_POSITION_FOLLOWING: the screen comes after the caption in the source.
           return (copy.compareDocumentPosition(visual) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
         }),
-        headingColumn: Math.round(
-          document.querySelector('.split-heading > p')!.getBoundingClientRect().left,
-        ),
-        // The item's own left edge carries the rule; its content sits inside the half-gutter, and
-        // that is the line the heading above has to meet.
-        wallColumn: Math.round(
-          document
-            .querySelectorAll('.solution-wall-list > li')[1]!
-            .querySelector('svg')!
-            .getBoundingClientRect().left,
-        ),
       };
     });
 
@@ -1425,18 +1461,14 @@ test('every solutions page is written for its own industry', async ({ page }) =>
     expect(layout.ledeGap, `${solution.slug} lede spacing`).toBeGreaterThan(24);
     expect(layout.ledeWidth, `${solution.slug} lede measure`).toBeLessThanOrEqual(700);
 
-    // Three figures in a grid sized for four leaves the last one spanning the empty track.
-    expect(layout.figureRows, `${solution.slug} figures sit on one row`).toBe(1);
-    expect(layout.figureWidths, `${solution.slug} figures share one width`).toBe(1);
+    expect(layout.sections, `${solution.slug} shared narrative order`).toEqual(
+      [...layout.sections].sort((a, b) => a - b),
+    );
+    expect(layout.workspaceColumns, `${solution.slug} workspace columns`).toBe(5);
 
     // The rows alternate sides on a wide viewport, and the copy is first in the source both ways,
     // so the arrangement is never a reading order.
     expect(layout.caseCopyFirst, `${solution.slug} copy precedes its screen`).toBe(true);
-
-    expect(layout.wallSeam, `${solution.slug} wall rule is continuous`).toBe(0);
-    expect(layout.headingColumn, `${solution.slug} heading aligns with its list`).toBe(
-      layout.wallColumn,
-    );
   }
 });
 
@@ -1487,6 +1519,65 @@ test('the use-case rows stack and stop alternating before the mobile breakpoint'
       ),
       `no horizontal overflow at ${width}px`,
     ).toBe(false);
+  }
+});
+
+test('the solution product story reflows without losing its meaning', async ({ page, browser }) => {
+  const layouts = [
+    { width: 1440, workspaceColumns: 5, journeyColumns: 3 },
+    { width: 1101, workspaceColumns: 5, journeyColumns: 3 },
+    { width: 1100, workspaceColumns: 1, journeyColumns: 3 },
+    { width: 768, workspaceColumns: 1, journeyColumns: 1 },
+    { width: 390, workspaceColumns: 1, journeyColumns: 1 },
+  ];
+
+  await page.goto('/solutions/m-and-a');
+  for (const layout of layouts) {
+    await page.setViewportSize({ width: layout.width, height: 900 });
+    const geometry = await page.evaluate(() => ({
+      workspaceColumns: getComputedStyle(
+        document.querySelector('.solution-workspace-grid')!,
+      ).gridTemplateColumns.split(' ').length,
+      journeyColumns: getComputedStyle(
+        document.querySelector('.solution-journey')!,
+      ).gridTemplateColumns.split(' ').length,
+      overflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    }));
+    expect(geometry.workspaceColumns, `workspace at ${layout.width}px`).toBe(
+      layout.workspaceColumns,
+    );
+    expect(geometry.journeyColumns, `journey at ${layout.width}px`).toBe(layout.journeyColumns);
+    expect(geometry.overflows, `horizontal overflow at ${layout.width}px`).toBe(false);
+  }
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  await expect(page.locator('.solution-workspace')).toBeVisible();
+  await expect(page.locator('.solution-customer-card')).toBeVisible();
+  await expect(page.locator('.solution-control-panel')).toBeVisible();
+  const customerLink = page.getByRole('link', { name: 'Read customer story' });
+  await customerLink.focus();
+  await expect(customerLink).toBeFocused();
+
+  const plainContext = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await plainContext.newPage();
+  await plain.goto('/solutions/m-and-a');
+  await expect(plain.getByText('Company context', { exact: true }).first()).toBeVisible();
+  await expect(plain.getByText('Prebuilt or custom', { exact: true })).toBeVisible();
+  await expect(plain.getByText('About 20 hours', { exact: true })).toBeVisible();
+  await expect(plain.getByText('Governed workspace', { exact: true }).first()).toBeVisible();
+  await plainContext.close();
+});
+
+test('the solutions overview remains the same route-level index', async ({ page }) => {
+  await page.goto('/solutions');
+  await expect(page.locator('.solution-index-list a')).toHaveCount(solutions.length);
+  await expect(page.locator('.solution-workspace, .solution-customer-card')).toHaveCount(0);
+  for (const solution of solutions) {
+    await expect(page.getByRole('link', { name: new RegExp(solution.navLabel) })).toHaveAttribute(
+      'href',
+      `/solutions/${solution.slug}`,
+    );
   }
 });
 

@@ -116,10 +116,9 @@ describe('approved customer proof', () => {
       );
 
       const logoClaim = claimRegistry.find((claim) => claim.id === story.logoClaimId);
-      expect(logoClaim?.allowed_surfaces).toEqual([
-        'home.customer-logos',
-        'solutions.customer-logos',
-      ]);
+      expect(logoClaim?.allowed_surfaces).toEqual(
+        expect.arrayContaining(['home.customer-logos', 'solutions.customer-logos']),
+      );
       expect(logoClaim?.notes).toContain('Logo placement only');
 
       for (const section of story.sections) {

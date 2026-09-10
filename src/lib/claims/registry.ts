@@ -14,7 +14,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos'],
+    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos', 'solutions.legal'],
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
@@ -28,7 +28,11 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos'],
+    allowed_surfaces: [
+      'home.customer-logos',
+      'solutions.customer-logos',
+      'solutions.management-consulting',
+    ],
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
@@ -42,7 +46,11 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos'],
+    allowed_surfaces: [
+      'home.customer-logos',
+      'solutions.customer-logos',
+      'solutions.manufacturing',
+    ],
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
@@ -56,7 +64,11 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos'],
+    allowed_surfaces: [
+      'home.customer-logos',
+      'solutions.customer-logos',
+      'solutions.private-equity',
+    ],
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
@@ -70,7 +82,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos'],
+    allowed_surfaces: ['home.customer-logos', 'solutions.customer-logos', 'solutions.m-and-a'],
     attribution: 'Logo supplied by the Zeno team.',
     reverify_on: '2027-02-27',
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
@@ -128,11 +140,19 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
     approved_on: '2026-09-08',
-    allowed_surfaces: ['product.agents', 'product.hero'],
+    allowed_surfaces: [
+      'product.agents',
+      'product.hero',
+      'solutions.manufacturing',
+      'solutions.management-consulting',
+      'solutions.m-and-a',
+      'solutions.private-equity',
+      'solutions.legal',
+    ],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-08',
     notes:
-      'Approval covers the compact product-page starting-point treatment. Do not imply instant deployment or no configuration.',
+      'Approval covers the compact product-page and solution-page starting-point treatments. Do not imply instant deployment or no configuration.',
   },
   {
     id: 'home-agent-starting-point',
@@ -227,7 +247,15 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
     approved_on: '2026-09-09',
-    allowed_surfaces: ['product.hero', 'product.governance'],
+    allowed_surfaces: [
+      'product.hero',
+      'product.governance',
+      'solutions.manufacturing',
+      'solutions.management-consulting',
+      'solutions.m-and-a',
+      'solutions.private-equity',
+      'solutions.legal',
+    ],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
     notes:
@@ -403,6 +431,91 @@ export const claimRegistry: readonly ClaimRecord[] = [
       'Keep this as one concise cross-platform control layer. Do not expand it into certification, compliance, or security guarantees.',
   },
   {
+    id: 'solution-workspace-manufacturing',
+    statement:
+      'Customer drawings and internal standards provide context for a Specification Agent that prepares a cited comparison for engineering review.',
+    category: 'product',
+    evidence:
+      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, solution-page direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['solutions.manufacturing'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'This is a synthetic product example. It is not a customer result and must retain engineering review.',
+  },
+  {
+    id: 'solution-workspace-management-consulting',
+    statement:
+      'A client brief, firm credentials, and comparable engagements provide context for a Proposal Agent that prepares a partner-ready outline.',
+    category: 'product',
+    evidence:
+      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, solution-page direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['solutions.management-consulting'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'This is a synthetic product example. It is not a customer result and must retain partner review.',
+  },
+  {
+    id: 'solution-workspace-m-and-a',
+    statement:
+      'Mandate criteria, deal history, and licensed market sources provide context for a Longlist Agent that prepares a qualified target list for adviser review.',
+    category: 'product',
+    evidence:
+      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, solution-page direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['solutions.m-and-a'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'This is a synthetic product example. It is not a customer result and must retain adviser review.',
+  },
+  {
+    id: 'solution-workspace-private-equity',
+    statement:
+      'A pitch deck, diligence files, and the fund mandate provide context for an IC Memo Agent that prepares a reviewable draft with open questions marked.',
+    category: 'product',
+    evidence:
+      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, solution-page direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['solutions.private-equity'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'This is a synthetic product example. It is not a customer result and must retain deal-partner review.',
+  },
+  {
+    id: 'solution-workspace-legal',
+    statement:
+      'A firm playbook, supplier agreement, and precedent bank provide context for a Review Agent that prepares a clause-level comparison for lawyer review.',
+    category: 'product',
+    evidence:
+      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, solution-page direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['solutions.legal'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'This is a synthetic product example. It is not a customer result and must retain lawyer review.',
+  },
+  {
     id: 'certification-iso-27001',
     statement: 'Information security management certified against ISO 27001.',
     category: 'certification',
@@ -549,246 +662,6 @@ export const claimRegistry: readonly ClaimRecord[] = [
     notes:
       'Published as an excerpt, never a paraphrase: the sentence is verbatim and the brand name was not substituted. The speaker is unnamed by choice; naming them, or quoting the dropped sentence, needs their own written permission. The original names Text Cortex rather than Zeno, the same operating-entity question the certification records carry.',
   },
-  {
-    id: 'solution-manufacturing-first-draft',
-    statement: '40–60% less time on a first-draft 8D report.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the manufacturing solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.manufacturing'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once manufacturing results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-manufacturing-first-agent',
-    statement: '4–8 weeks from first workshop to one agent in daily use.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the manufacturing solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.manufacturing'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once manufacturing results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-manufacturing-teams',
-    statement: '2–4 document types worth automating in the first year.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the manufacturing solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.manufacturing'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once manufacturing results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-consulting-first-draft',
-    statement: '40–60% less time on a first-draft proposal.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the management consulting solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.management-consulting'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once management consulting results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-consulting-first-agent',
-    statement: '4–8 weeks from first workshop to one agent in daily use.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the management consulting solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.management-consulting'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once management consulting results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-consulting-teams',
-    statement: '2–4 deliverable types worth automating in the first year.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the management consulting solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.management-consulting'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once management consulting results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-manda-first-draft',
-    statement: '40–60% less time on a first-draft information memorandum.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the m&a advisory solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.m-and-a'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once m&a advisory results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-manda-first-agent',
-    statement: '4–8 weeks from first workshop to one agent on a live process.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the m&a advisory solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.m-and-a'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once m&a advisory results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-manda-teams',
-    statement: '2–4 process documents worth automating in the first year.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the m&a advisory solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.m-and-a'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once m&a advisory results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-pe-first-draft',
-    statement: '40–60% less time on a first-draft investment committee memo.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the private equity solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.private-equity'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once private equity results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-pe-first-agent',
-    statement: '4–8 weeks from first workshop to one agent in daily use.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the private equity solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.private-equity'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once private equity results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-pe-teams',
-    statement: '2–4 reporting cycles worth automating in the first year.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the private equity solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.private-equity'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once private equity results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-legal-first-draft',
-    statement: '40–60% less time on a first-pass contract review.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the legal solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.legal'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once legal results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-legal-first-agent',
-    statement: '4–8 weeks from first workshop to one agent in daily use.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the legal solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.legal'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once legal results exist and the customer has agreed to publication.',
-  },
-  {
-    id: 'solution-legal-teams',
-    statement: '2–4 matter types worth automating in the first year.',
-    category: 'metric',
-    evidence:
-      'Planning range set by the workspace owner on 2026-09-03 for the legal solutions page. It is what a team should budget for, not a measured Zeno result, and no customer produced it.',
-    verified_on: '2026-09-03',
-    approval_status: 'approved',
-    approved_by: 'Baris — working-session direction',
-    approved_on: '2026-09-03',
-    allowed_surfaces: ['solutions.legal'],
-    attribution: 'a range to plan for, not a measured result',
-    reverify_on: '2027-03-03',
-    notes:
-      'The qualifier must stay visible beneath the figure, and the range must not be narrowed to a single number. Replace with measured figures once legal results exist and the customer has agreed to publication.',
-  },
 ];
 
 export const homepageProofClaimIds: readonly string[] = [];
@@ -840,34 +713,4 @@ export const homepageCustomerLogoClaimIds: readonly string[] = [
   'customer-logo-beeradvocaten',
   'customer-logo-bovensiepen',
   'customer-logo-tmg-consultants',
-];
-
-export const manufacturingFigureClaimIds: readonly string[] = [
-  'solution-manufacturing-first-draft',
-  'solution-manufacturing-first-agent',
-  'solution-manufacturing-teams',
-];
-
-export const consultingFigureClaimIds: readonly string[] = [
-  'solution-consulting-first-draft',
-  'solution-consulting-first-agent',
-  'solution-consulting-teams',
-];
-
-export const mandaFigureClaimIds: readonly string[] = [
-  'solution-manda-first-draft',
-  'solution-manda-first-agent',
-  'solution-manda-teams',
-];
-
-export const peFigureClaimIds: readonly string[] = [
-  'solution-pe-first-draft',
-  'solution-pe-first-agent',
-  'solution-pe-teams',
-];
-
-export const legalFigureClaimIds: readonly string[] = [
-  'solution-legal-first-draft',
-  'solution-legal-first-agent',
-  'solution-legal-teams',
 ];

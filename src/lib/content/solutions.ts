@@ -21,6 +21,46 @@ export interface SolutionQuestion {
   answer: string;
 }
 
+export type SolutionJourneyStepId = 'context' | 'agent' | 'review';
+
+export interface SolutionJourneyStep {
+  id: SolutionJourneyStepId;
+  title: string;
+  description: string;
+}
+
+export interface SolutionWorkspace {
+  claimId: string;
+  caption: string;
+  contextSources: readonly string[];
+  agent: string;
+  task: string;
+  resultTitle: string;
+  resultItems: readonly string[];
+  reviewer: string;
+}
+
+export interface SolutionControl {
+  label: string;
+  value: string;
+}
+
+export type SolutionStorySlug = 'atares' | 'b2venture' | 'mahle' | 'kbc';
+
+export type SolutionCustomerProof =
+  | {
+      kind: 'story';
+      storySlug: SolutionStorySlug;
+      label: string;
+      resultClaimIds: readonly string[];
+    }
+  | {
+      kind: 'quote';
+      voiceId: 'customer-voice-frommer-legal';
+      logoClaimId: 'customer-logo-frommer-legal';
+      label: string;
+    };
+
 export interface Solution {
   slug: string;
   /** Short enough for the header dropdown. */
@@ -31,6 +71,10 @@ export interface Solution {
   /** One line for the index page. */
   summary: string;
   metaDescription: string;
+  startingPointClaimId: 'product-agent-starting-point';
+  journey: readonly SolutionJourneyStep[];
+  workspace: SolutionWorkspace;
+  customerProof: SolutionCustomerProof;
   /** Named for what this industry produces. Two pages sharing a heading means neither is targeted. */
   workTitle: string;
   workBody: string;
@@ -38,18 +82,14 @@ export interface Solution {
   /** The confidentiality boundary this industry actually works inside. */
   wallsTitle: string;
   wallsBody: string;
-  walls: readonly string[];
-  figureClaimIds: readonly string[];
+  controls: readonly SolutionControl[];
   questionsTitle: string;
   questions: readonly SolutionQuestion[];
-  /**
-   * The same approved logos as everywhere else, ordered so the ones this reader recognises lead,
-   * and a line naming who the rail is being shown to.
-   */
-  logoIntro: string;
-  logoLead: readonly string[];
   closing: string;
 }
+
+const startingPointStatement =
+  'Start from a prebuilt agent or build one from scratch around your workflow.';
 
 /**
  * One page per industry we sell into. The product is the same on all five; the work is not, and
@@ -70,6 +110,45 @@ export const solutions: readonly Solution[] = [
     summary: 'Quality reporting, supplier answers and spec checks, drafted from your own records.',
     metaDescription:
       'Zeno for manufacturing: agents that draft 8D and CAPA reports, compare customer specifications against your standard, and answer supplier quality questions, on a workspace IT governs.',
+    startingPointClaimId: 'product-agent-starting-point',
+    journey: [
+      {
+        id: 'context',
+        title: 'Company context',
+        description: 'Connect the drawings, standards, and quality records the work depends on.',
+      },
+      {
+        id: 'agent',
+        title: 'Agent starting point',
+        description: startingPointStatement,
+      },
+      {
+        id: 'review',
+        title: 'Reviewable work',
+        description: 'The comparison returns to the engineer with every finding attached.',
+      },
+    ],
+    workspace: {
+      claimId: 'solution-workspace-manufacturing',
+      caption:
+        'Customer drawings and internal standards provide context for a Specification Agent that prepares a cited comparison for engineering review.',
+      contextSources: ['Customer drawing', 'Internal standards', 'Revision history'],
+      agent: 'Specification Agent',
+      task: 'Compare the latest customer drawing with our internal standard.',
+      resultTitle: 'Requirements comparison',
+      resultItems: [
+        'Hole position tolerance needs review',
+        'Material specification differs',
+        'Surface finish matches',
+      ],
+      reviewer: 'Engineering owner',
+    },
+    customerProof: {
+      kind: 'story',
+      storySlug: 'mahle',
+      label: 'Manufacturing customer story',
+      resultClaimIds: ['customer-result-mahle-activation', 'customer-result-mahle-time'],
+    },
     workTitle: 'An agent per document, not one assistant for the plant.',
     workBody:
       'Each one is given the document it drafts, the records it may read, and the engineer who signs it off.',
@@ -122,20 +201,25 @@ export const solutions: readonly Solution[] = [
     wallsTitle: 'What an agent on a plant floor must never do.',
     wallsBody:
       'Manufacturing runs on documents that belong to somebody else. A customer drawing under NDA, a supplier price, a part under export control. The workspace treats those as the boundary they are.',
-    walls: [
-      'A customer programme is a wall. An agent working one programme cannot read another.',
-      'Export-controlled drawings stay inside the group cleared to see them.',
-      'Supplier pricing is visible to purchasing, not to the whole plant.',
-      'Every quality document goes back to the engineer who signs it.',
-    ],
-    figureClaimIds: [
-      'solution-manufacturing-first-draft',
-      'solution-manufacturing-first-agent',
-      'solution-manufacturing-teams',
+    controls: [
+      {
+        label: 'Programme access',
+        value: 'An agent working one customer programme cannot read another.',
+      },
+      {
+        label: 'Controlled drawings',
+        value: 'Export-controlled material stays inside the group cleared to see it.',
+      },
+      {
+        label: 'Commercial access',
+        value: 'Supplier pricing remains visible to purchasing, not the whole plant.',
+      },
+      {
+        label: 'Human checkpoint',
+        value: 'Every quality document returns to the engineer who signs it.',
+      },
     ],
     questionsTitle: 'What quality and plant IT ask first.',
-    logoIntro: 'Built for quality, operations and plant IT leaders bringing AI into everyday work.',
-    logoLead: ['customer-logo-mahle', 'customer-logo-bovensiepen', 'customer-logo-tmg-consultants'],
     questions: [
       {
         question: 'Does it work from our drawings, or from a general model?',
@@ -170,6 +254,50 @@ export const solutions: readonly Solution[] = [
     summary: 'Proposals, synthesis and client packs, with a wall between every engagement.',
     metaDescription:
       'Zeno for management consultancies: agents that draft proposals from your credentials, synthesise interviews with sources, and build the weekly client pack, with client separation enforced.',
+    startingPointClaimId: 'product-agent-starting-point',
+    journey: [
+      {
+        id: 'context',
+        title: 'Company context',
+        description: 'Connect the brief, credentials, and relevant past engagement knowledge.',
+      },
+      {
+        id: 'agent',
+        title: 'Agent starting point',
+        description: startingPointStatement,
+      },
+      {
+        id: 'review',
+        title: 'Reviewable work',
+        description:
+          'The proposal arrives with its supporting context and waits for partner review.',
+      },
+    ],
+    workspace: {
+      claimId: 'solution-workspace-management-consulting',
+      caption:
+        'A client brief, firm credentials, and comparable engagements provide context for a Proposal Agent that prepares a partner-ready outline.',
+      contextSources: ['Client brief', 'Credentials library', 'Past engagements'],
+      agent: 'Proposal Agent',
+      task: 'Prepare the first proposal outline from the brief and our relevant experience.',
+      resultTitle: 'Proposal outline',
+      resultItems: [
+        'Comparable credentials identified',
+        'Scope and staffing drafted',
+        'Fees reserved for partner input',
+      ],
+      reviewer: 'Engagement partner',
+    },
+    customerProof: {
+      kind: 'story',
+      storySlug: 'kbc',
+      label: 'Management consulting customer story',
+      resultClaimIds: [
+        'customer-result-kbc-search-time',
+        'customer-result-kbc-proposals',
+        'customer-result-kbc-weekly-usage',
+      ],
+    },
     workTitle: 'An agent per deliverable, not one assistant for the firm.',
     workBody:
       'Each one is given the deliverable it drafts, the engagement files it may read, and the partner who signs it off.',
@@ -222,20 +350,25 @@ export const solutions: readonly Solution[] = [
     wallsTitle: 'One client never sees another.',
     wallsBody:
       'A consultancy sells judgement and confidentiality in the same breath. An assistant that quietly carried one client’s numbers into another client’s deck would end the relationship, and possibly the firm.',
-    walls: [
-      'An engagement is a wall. The agent on it reads that engagement and nothing else.',
-      'Credentials and methodology are firm-wide. Client material never is.',
-      'What leaves for a client is reviewed by the partner whose name is on it.',
-      'Anyone can see which engagements an agent was given, and when.',
-    ],
-    figureClaimIds: [
-      'solution-consulting-first-draft',
-      'solution-consulting-first-agent',
-      'solution-consulting-teams',
+    controls: [
+      {
+        label: 'Engagement access',
+        value: 'The agent reads the active engagement and nothing else.',
+      },
+      {
+        label: 'Firm knowledge',
+        value: 'Credentials and methodology can be shared while client material stays separate.',
+      },
+      {
+        label: 'Human checkpoint',
+        value: 'Client work is reviewed by the partner whose name is on it.',
+      },
+      {
+        label: 'Activity record',
+        value: 'The workspace shows which engagements an agent received and when.',
+      },
     ],
     questionsTitle: 'What partners ask first.',
-    logoIntro: 'Built for partners, knowledge and IT leaders bringing AI into everyday work.',
-    logoLead: ['customer-logo-kbc', 'customer-logo-tmg-consultants', 'customer-logo-atares'],
     questions: [
       {
         question: 'How do you keep one client’s material out of another’s deck?',
@@ -270,6 +403,50 @@ export const solutions: readonly Solution[] = [
     summary: 'Longlists, IMs and buyer Q&A, drafted from the data room and kept to the deal team.',
     metaDescription:
       'Zeno for M&A advisers: agents that screen targets against the mandate, draft the teaser and information memorandum from the data room, and answer buyer questions with citations.',
+    startingPointClaimId: 'product-agent-starting-point',
+    journey: [
+      {
+        id: 'context',
+        title: 'Company context',
+        description: 'Connect the mandate, your deal history, and the market sources you license.',
+      },
+      {
+        id: 'agent',
+        title: 'Agent starting point',
+        description: startingPointStatement,
+      },
+      {
+        id: 'review',
+        title: 'Reviewable work',
+        description:
+          'The longlist arrives with a fit rationale and open questions for the deal team.',
+      },
+    ],
+    workspace: {
+      claimId: 'solution-workspace-m-and-a',
+      caption:
+        'Mandate criteria, deal history, and licensed market sources provide context for a Longlist Agent that prepares a qualified target list for adviser review.',
+      contextSources: ['Mandate criteria', 'Deal history', 'Licensed market sources'],
+      agent: 'Longlist Agent',
+      task: 'Build a preliminary target list against the mandate criteria.',
+      resultTitle: 'Qualified target list',
+      resultItems: [
+        'Fit rationale beside every target',
+        'Open questions clearly marked',
+        'List ready for the adviser to narrow',
+      ],
+      reviewer: 'Deal lead',
+    },
+    customerProof: {
+      kind: 'story',
+      storySlug: 'atares',
+      label: 'M&A customer story',
+      resultClaimIds: [
+        'customer-result-atares-weekly-time',
+        'customer-result-atares-knowledge-bases',
+        'customer-result-atares-agents',
+      ],
+    },
     workTitle: 'An agent per stage of the process.',
     workBody:
       'Each one is given the document it drafts, the data room it may read, and the banker who signs it off.',
@@ -322,20 +499,25 @@ export const solutions: readonly Solution[] = [
     wallsTitle: 'Deal team means deal team.',
     wallsBody:
       'A live process has an insider list, and the list is the point. The workspace enforces it the way the compliance team already does on paper.',
-    walls: [
-      'A process is a wall. Off the deal team means no access, not reduced access.',
-      'One data room per process. Nothing crosses between live mandates.',
-      'Anything going to a buyer is reviewed by the MD running the process.',
-      'Who read what, and when, is on the record for the file.',
-    ],
-    figureClaimIds: [
-      'solution-manda-first-draft',
-      'solution-manda-first-agent',
-      'solution-manda-teams',
+    controls: [
+      {
+        label: 'Deal-team access',
+        value: 'Off the deal team means no access, not reduced access.',
+      },
+      {
+        label: 'Process separation',
+        value: 'Each live mandate keeps its own data room and context.',
+      },
+      {
+        label: 'Human checkpoint',
+        value: 'Anything going to a buyer is reviewed by the MD running the process.',
+      },
+      {
+        label: 'Activity record',
+        value: 'Who read what, and when, remains on the record for the file.',
+      },
     ],
     questionsTitle: 'What deal teams ask first.',
-    logoIntro: 'Built for deal teams and the IT and compliance leaders who support them.',
-    logoLead: ['customer-logo-atares', 'customer-logo-b2venture', 'customer-logo-kbc'],
     questions: [
       {
         question: 'Can it answer a buyer directly?',
@@ -370,6 +552,49 @@ export const solutions: readonly Solution[] = [
     summary: 'Screens, IC memos, portfolio packs and LP updates, drafted from your own file.',
     metaDescription:
       'Zeno for private equity: agents that screen deals against the fund mandate, draft the IC memo from diligence, build the quarterly portfolio pack and prepare the LP update, with MNPI handling.',
+    startingPointClaimId: 'product-agent-starting-point',
+    journey: [
+      {
+        id: 'context',
+        title: 'Company context',
+        description: 'Connect the fund mandate, pitch deck, model, and diligence already on file.',
+      },
+      {
+        id: 'agent',
+        title: 'Agent starting point',
+        description: startingPointStatement,
+      },
+      {
+        id: 'review',
+        title: 'Reviewable work',
+        description: 'The memo arrives with supporting diligence and unresolved questions marked.',
+      },
+    ],
+    workspace: {
+      claimId: 'solution-workspace-private-equity',
+      caption:
+        'A pitch deck, diligence files, and the fund mandate provide context for an IC Memo Agent that prepares a reviewable draft with open questions marked.',
+      contextSources: ['Pitch deck', 'Diligence files', 'Fund mandate'],
+      agent: 'IC Memo Agent',
+      task: 'Prepare the first committee memo and mark every unresolved diligence question.',
+      resultTitle: 'Investment committee memo',
+      resultItems: [
+        'Market section supported by diligence',
+        'Revenue quality needs review',
+        'Customer concentration remains open',
+      ],
+      reviewer: 'Deal partner',
+    },
+    customerProof: {
+      kind: 'story',
+      storySlug: 'b2venture',
+      label: 'Venture capital investment-team example',
+      resultClaimIds: [
+        'customer-result-b2venture-activation',
+        'customer-result-b2venture-usage',
+        'customer-result-b2venture-memo-time',
+      ],
+    },
     workTitle: 'An agent per stage, from first screen to LP update.',
     workBody:
       'Each one is given the document it drafts, the diligence and reporting it may read, and the partner who signs it off.',
@@ -424,16 +649,25 @@ export const solutions: readonly Solution[] = [
     wallsTitle: 'Material non-public information, handled as such.',
     wallsBody:
       'A fund holds information it is not free to act on, and holds it across deals that must not touch. The workspace treats a deal and a fund as separate rooms, because the regulator does.',
-    walls: [
-      'A deal is a wall. So is a fund. Neither leaks into the other.',
-      'MNPI is reachable only by the people already cleared to hold it.',
-      'Nothing goes to an LP or a committee without a partner releasing it.',
-      'Access, model and sign-off are on one screen for compliance to read.',
+    controls: [
+      {
+        label: 'Deal and fund access',
+        value: 'Each deal and fund keeps a separate knowledge boundary.',
+      },
+      {
+        label: 'MNPI access',
+        value: 'Material non-public information is available only to people cleared to hold it.',
+      },
+      {
+        label: 'Human checkpoint',
+        value: 'Nothing reaches an LP or committee without a partner releasing it.',
+      },
+      {
+        label: 'Control record',
+        value: 'Access, model choice, and sign-off remain visible together.',
+      },
     ],
-    figureClaimIds: ['solution-pe-first-draft', 'solution-pe-first-agent', 'solution-pe-teams'],
     questionsTitle: 'What investment teams ask first.',
-    logoIntro: 'Built for investment teams and the operations and IT leaders behind them.',
-    logoLead: ['customer-logo-b2venture', 'customer-logo-atares', 'customer-logo-kbc'],
     questions: [
       {
         question: 'How is MNPI kept where it belongs?',
@@ -468,6 +702,45 @@ export const solutions: readonly Solution[] = [
     summary: 'Contract review, precedent search and matter summaries, inside the matter.',
     metaDescription:
       'Zeno for law firms and in-house legal teams: agents that review contracts against your playbook, find the closest precedent in your own know-how, and summarise a matter, with privilege respected.',
+    startingPointClaimId: 'product-agent-starting-point',
+    journey: [
+      {
+        id: 'context',
+        title: 'Company context',
+        description: 'Connect the agreement, firm playbook, and precedent bank for the matter.',
+      },
+      {
+        id: 'agent',
+        title: 'Agent starting point',
+        description: startingPointStatement,
+      },
+      {
+        id: 'review',
+        title: 'Reviewable work',
+        description: 'The review returns with each departure and supporting clause attached.',
+      },
+    ],
+    workspace: {
+      claimId: 'solution-workspace-legal',
+      caption:
+        'A firm playbook, supplier agreement, and precedent bank provide context for a Review Agent that prepares a clause-level comparison for lawyer review.',
+      contextSources: ['Firm playbook', 'Supplier agreement', 'Precedent bank'],
+      agent: 'Review Agent',
+      task: 'Review the supplier agreement against our approved positions.',
+      resultTitle: 'Playbook comparison',
+      resultItems: [
+        'Liability position is off playbook',
+        'Termination clause needs review',
+        'Governing law matches',
+      ],
+      reviewer: 'Responsible lawyer',
+    },
+    customerProof: {
+      kind: 'quote',
+      voiceId: 'customer-voice-frommer-legal',
+      logoClaimId: 'customer-logo-frommer-legal',
+      label: 'Legal customer story',
+    },
     workTitle: 'An agent per task on the matter, not one assistant for the firm.',
     workBody:
       'Each one is given the task it does, the matter it may read, and the lawyer who signs off what it produces.',
@@ -522,20 +795,25 @@ export const solutions: readonly Solution[] = [
     wallsTitle: 'Privilege is not a setting you add later.',
     wallsBody:
       'A matter is confidential to the people on it, and an information barrier is a professional obligation rather than a preference. The workspace starts there instead of arriving at it.',
-    walls: [
-      'A matter is a wall. Access follows the matter, not the person’s seniority.',
-      'Information barriers hold, including for the agents working either side.',
-      'Nothing reaches a client without the responsible lawyer releasing it.',
-      'Privileged material never leaves the region you hold it in.',
-    ],
-    figureClaimIds: [
-      'solution-legal-first-draft',
-      'solution-legal-first-agent',
-      'solution-legal-teams',
+    controls: [
+      {
+        label: 'Matter access',
+        value: 'Access follows the matter, not the person’s seniority.',
+      },
+      {
+        label: 'Information barriers',
+        value: 'Agents respect the same barriers as the people working either side.',
+      },
+      {
+        label: 'Human checkpoint',
+        value: 'Nothing reaches a client without the responsible lawyer releasing it.',
+      },
+      {
+        label: 'Regional control',
+        value: 'Privileged material remains in the region where the firm holds it.',
+      },
     ],
     questionsTitle: 'What partners and risk ask first.',
-    logoIntro: 'Built for partners, innovation and risk leaders bringing AI into everyday work.',
-    logoLead: ['customer-logo-frommer-legal', 'customer-logo-beeradvocaten', 'customer-logo-kbc'],
     questions: [
       {
         question: 'Does anything we put in leave the firm?',
@@ -574,6 +852,17 @@ for (const solution of solutions) {
       `/solutions/${solution.slug} features ${featured.length} agents with a product surface. ` +
         `Exactly two carry one.`,
     );
+  }
+  if (
+    solution.journey.length !== 3 ||
+    solution.journey.map((step) => step.id).join(',') !== 'context,agent,review'
+  ) {
+    throw new Error(
+      `/solutions/${solution.slug} must follow context, agent, and review in that order.`,
+    );
+  }
+  if (solution.controls.length !== 4) {
+    throw new Error(`/solutions/${solution.slug} must show exactly four workspace controls.`);
   }
 }
 

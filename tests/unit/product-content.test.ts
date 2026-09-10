@@ -39,7 +39,9 @@ describe('product page content', () => {
     expect(title?.statement).toBe(productPageContent.intro.title);
     expect(intro?.statement).toBe(productPageContent.intro.description);
     expect(hosting?.statement).toBe('Access major AI models with EU hosting in one place.');
-    expect(hosting?.allowed_surfaces).toEqual(['product.hero', 'product.governance']);
+    expect(hosting?.allowed_surfaces).toEqual(
+      expect.arrayContaining(['product.hero', 'product.governance']),
+    );
     expect(heroGovernance?.statement).toBe(
       'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
     );
