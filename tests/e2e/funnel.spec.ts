@@ -33,6 +33,11 @@ async function settleRevealMotion(page: Page) {
       await frame();
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // WebKit can register the hero's stage transition one frame after the final scroll event. Give
+    // it two frames before collecting active animations so the settled-state check observes that
+    // transition rather than a partially faded current panel.
+    await frame();
+    await frame();
   });
   await expect.poll(() => page.locator('[data-reveal]:not([data-revealed])').count()).toBe(0);
   await settleAnimations(page);
@@ -51,18 +56,67 @@ async function settleAnimations(page: Page) {
 }
 
 async function completeDemoForm(page: Page) {
+  await page.getByLabel('Full name').fill('Alex Example');
   await page.getByLabel('Work email').fill('alex@example.test');
   await page.getByLabel('Company').fill('Example Test Company');
-  await page.getByLabel('Role').fill('Innovation lead');
-  await page.getByLabel('Organization size').selectOption('1000-4999');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByLabel('Priority workflow').selectOption('consolidation-reporting');
-  await page.getByLabel('Desired start window').selectOption('0-3-months');
-  await page.getByRole('checkbox', { name: /Final privacy wording/i }).check();
+  await page.getByLabel('Phone number (optional)').fill('+49 30 1234567');
+  await page
+    .getByRole('checkbox', {
+      name: 'I agree that Zeno may use these details to respond to my request.',
+    })
+    .check();
 }
 
+test('demo request starts in the first viewport across supported layouts', async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 900 },
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/demo');
+    const form = page.locator('.demo-form');
+    await expect(form).toHaveAttribute('data-hydrated', 'true');
+    const bounds = await form.boundingBox();
+
+    expect(bounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(viewport.height);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Bring us one workflow.' }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+      `demo must not overflow at ${viewport.width}px`,
+    ).toBe(true);
+  }
+});
+
+test('demo planning context stays optional and the no-JavaScript form is understandable', async ({
+  browser,
+  page,
+}) => {
+  await page.goto('/demo');
+  const form = page.locator('.demo-form');
+  await expect(form).toHaveAttribute('data-hydrated', 'true');
+  await expect(form.getByLabel('Full name')).toBeVisible();
+  await expect(form.getByLabel('Phone number (optional)')).toBeVisible();
+  await expect(form.getByLabel('Priority workflow')).toHaveCount(0);
+  await expect(page.getByLabel('Role')).toBeHidden();
+  await page.getByText('Add planning context (optional)').click();
+  await expect(page.getByLabel('Role')).toBeVisible();
+
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const noJavaScriptPage = await context.newPage();
+  await noJavaScriptPage.goto('/demo');
+  const disabledForm = noJavaScriptPage.locator('.demo-form');
+  await expect(disabledForm).toHaveAttribute('data-hydrated', 'false');
+  await expect(disabledForm.locator('fieldset')).toHaveAttribute('disabled', '');
+  await expect(disabledForm.getByText(/enable JavaScript and reload/i)).toBeVisible();
+  await context.close();
+});
+
 test('homepage to assessment result to prefilled demo', async ({ page }) => {
-  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Loads the assessment or demo island, waits for it to hydrate, and drives the form.
   // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
   // browsers running the rest of the suite alongside it.
   test.slow();
@@ -79,17 +133,15 @@ test('homepage to assessment result to prefilled demo', async ({ page }) => {
   await page.getByRole('link', { name: 'Discuss this workflow' }).click();
   await expect(page).toHaveURL(/\/demo$/);
   await expect(page.getByText('Assessment context added.')).toBeVisible();
+  await page.getByLabel('Full name').fill('Alex Example');
   await page.getByLabel('Work email').fill('alex@example.test');
   await page.getByLabel('Company').fill('Example Test Company');
-  await page.getByLabel('Role').fill('Innovation lead');
-  await page.getByLabel('Organization size').selectOption('1000-4999');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByLabel('Priority workflow')).toHaveValue('research-synthesis');
+  await expect(page.getByLabel('Priority workflow')).toHaveCount(0);
   expect(new URL(page.url()).search).toBe('');
 });
 
 test('homepage to successful native demo submission', async ({ page }) => {
-  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Loads the assessment or demo island, waits for it to hydrate, and drives the form.
   // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
   // browsers running the rest of the suite alongside it.
   test.slow();
@@ -109,7 +161,7 @@ test('homepage to successful native demo submission', async ({ page }) => {
 });
 
 test('demo server failure is understandable and retry succeeds', async ({ page }) => {
-  // Loads the assessment or demo island, waits for it to hydrate, and drives a multi-step form.
+  // Loads the demo island, waits for it to hydrate, and drives the form.
   // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
   // browsers running the rest of the suite alongside it.
   test.slow();
@@ -149,6 +201,7 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
   for (const path of [
     '/',
     '/product',
+    '/pricing',
     '/solutions',
     '/solutions/manufacturing',
     '/customers/atares',
@@ -2077,6 +2130,7 @@ test('customer stories publish qualified evidence without internal review copy',
   for (const story of customerStoryDrafts) {
     expect(sitemapText).toContain(`/customers/${story.slug}`);
   }
+  expect(sitemapText).toContain('/pricing');
 });
 
 test('the business case figures count up, settle exactly, and replay on return', async ({
@@ -2190,11 +2244,11 @@ test('the header stays put, and an anchor never lands underneath it', async ({ p
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page
     .getByRole('navigation', { name: 'Primary navigation' })
-    .getByRole('link', { name: 'Why Zeno' })
+    .getByRole('link', { name: 'Trust' })
     .click();
   const headerHeight = Math.round((await header.boundingBox())?.height ?? 0);
   await expect
-    .poll(async () => Math.round((await page.locator('#why').boundingBox())?.y ?? -1))
+    .poll(async () => Math.round((await page.locator('#trust').boundingBox())?.y ?? -1))
     .toBeGreaterThanOrEqual(headerHeight);
 });
 
@@ -2222,11 +2276,15 @@ test('internal navigation resolves to real pages or homepage sections', async ({
     }
   }
 
-  // External destinations are not fetched, so the suite stays deterministic offline. They are
-  // still held to the safety contract every outbound link on the site must meet.
-  expect(external.length, 'the trust centre is the only outbound homepage link').toBeGreaterThan(0);
+  // External destinations are not fetched, so the suite stays deterministic offline. The app
+  // login intentionally stays in the current tab; supporting evidence links open a separate tab.
+  expect(external.length, 'the homepage publishes approved outbound links').toBeGreaterThan(0);
   for (const link of external) {
     expect(new URL(link.resolved).protocol, link.href).toBe('https:');
+    if (link.resolved === 'https://app.textcortex.com/user/login') {
+      expect(link.target, link.href).toBeNull();
+      continue;
+    }
     expect(link.target, link.href).toBe('_blank');
     expect(link.rel ?? '', link.href).toContain('noopener');
   }
@@ -2255,8 +2313,8 @@ test('mobile same-page navigation closes after an anchor is selected', async ({ 
   const menu = page.locator('.mobile-menu');
   await page.getByLabel(/Menu.*open navigation/i).click();
   await expect(menu).toHaveAttribute('open', '');
-  await menu.getByRole('link', { name: 'Why Zeno' }).click();
-  await expect(page).toHaveURL(/#why$/);
+  await menu.getByRole('link', { name: 'Trust' }).click();
+  await expect(page).toHaveURL(/#trust$/);
   await expect(menu).not.toHaveAttribute('open', '');
 });
 

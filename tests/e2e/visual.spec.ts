@@ -85,6 +85,108 @@ for (const viewport of viewports) {
   });
 }
 
+for (const viewport of viewports) {
+  test(`enterprise pricing at ${viewport.width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/pricing');
+    const calculator = page.locator('.business-case-calculator');
+    await calculator.scrollIntoViewIfNeeded();
+    await expect(calculator).toHaveAttribute('data-hydrated', 'true');
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+
+    await expect(page).toHaveScreenshot(`pricing-${viewport.name}.png`, {
+      animations: 'disabled',
+      fullPage: true,
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
+
+test('desktop pricing navigation alignment', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await expect(page.locator('.business-case-calculator')).toHaveAttribute('data-hydrated', 'true');
+  await page.locator('.nav-menu > summary').focus();
+
+  await expect(page.locator('.site-header')).toHaveScreenshot('pricing-navigation-1440.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
+test('mobile pricing navigation actions', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/pricing');
+  await expect(page.locator('.business-case-calculator')).toHaveAttribute('data-hydrated', 'true');
+  await page.locator('.mobile-menu > summary').click();
+  await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible();
+
+  await expect(page).toHaveScreenshot('pricing-navigation-mobile-390.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
+test('desktop completed business-case calculator', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/pricing');
+  const calculator = page.locator('.business-case-calculator');
+  await calculator.scrollIntoViewIfNeeded();
+  await expect(calculator).toHaveAttribute('data-hydrated', 'true');
+  await page.getByRole('radio', { name: '11 to 25' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: '2 hours' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: '€50' }).check();
+  await page.getByRole('button', { name: 'See estimate' }).click();
+  await expect(page.getByText('€82,800', { exact: true })).toBeVisible();
+
+  await expect(calculator).toHaveScreenshot('pricing-calculator-complete-1440.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
+test('mobile completed business-case calculator', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/pricing');
+  const calculator = page.locator('.business-case-calculator');
+  await calculator.scrollIntoViewIfNeeded();
+  await expect(calculator).toHaveAttribute('data-hydrated', 'true');
+  await page.getByRole('radio', { name: '11 to 25' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: '2 hours' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: '€50' }).check();
+  await page.getByRole('button', { name: 'See estimate' }).click();
+  await expect(page.getByText('€82,800', { exact: true })).toBeVisible();
+
+  await expect(calculator).toHaveScreenshot('pricing-calculator-complete-390.png', {
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.01,
+  });
+});
+
+for (const viewport of viewports) {
+  test(`demo request at ${viewport.width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/demo');
+    await expect(page.locator('.demo-form')).toHaveAttribute('data-hydrated', 'true');
+
+    await expect(page).toHaveScreenshot(`demo-${viewport.name}.png`, {
+      animations: 'disabled',
+      fullPage: true,
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
+
 test('desktop enterprise platform overview', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 1000 });

@@ -1,6 +1,8 @@
 import type { ClaimRecord } from './types';
 import { customerProofClaims } from './customer-proof-claims';
 
+export const appLoginClaimId = 'navigation-app-sign-in';
+
 // Every entry requires explicit Zeno approval. Public TextCortex evidence remains research
 // context and must never be inserted here by default. The customer-logo records below reflect
 // the workspace owner's direct instruction on 2026-08-27 to use the supplied SVG assets.
@@ -130,6 +132,232 @@ export const claimRegistry: readonly ClaimRecord[] = [
     notes: 'Logo placement only; no outcome, testimonial, or metric is implied.',
   },
   ...customerProofClaims,
+  {
+    id: appLoginClaimId,
+    statement: 'Sign in',
+    category: 'product',
+    evidence:
+      'Current TextCortex application destination approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['navigation.sign-in'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'Open the current application login in the same browser tab. Do not describe this destination as a Zeno-owned application until the brand transition is complete.',
+    public_url: 'https://app.textcortex.com/user/login',
+  },
+  {
+    id: 'pricing-page-metadata',
+    statement:
+      'Estimate the yearly value of time one recurring workflow could give back, then scope a custom enterprise rollout with Zeno.',
+    category: 'product',
+    evidence:
+      'ROI-led business-case page approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.metadata'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'The page is enterprise-first. Do not publish a price or imply a self-serve checkout exists.',
+  },
+  {
+    id: 'pricing-enterprise-title',
+    statement: 'What could one workflow give back?',
+    category: 'product',
+    evidence:
+      'ROI-led business-case framing approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes: 'Do not add a public enterprise price without a separate commercial approval.',
+  },
+  {
+    id: 'pricing-enterprise-summary',
+    statement:
+      'Estimate the time your team could recover and what that time is worth, then scope an enterprise rollout around the result.',
+    category: 'product',
+    evidence:
+      'ROI-led business-case framing approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'This describes the scoping conversation. It is not a fixed pricing formula or a service-level commitment.',
+  },
+  {
+    id: 'pricing-enterprise-offer',
+    statement: 'Custom enterprise pricing',
+    category: 'product',
+    evidence:
+      'Custom enterprise pricing treatment approved by the workspace owner in the 2026-09-10 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.enterprise'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes: 'Do not attach a public amount or billing cadence to this label.',
+  },
+  {
+    id: 'pricing-enterprise-close-title',
+    statement: 'Pricing follows the rollout.',
+    category: 'product',
+    evidence:
+      'Compact enterprise scoping close approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.enterprise'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes: 'Do not imply a fixed formula, published price, or self-serve checkout.',
+  },
+  {
+    id: 'pricing-enterprise-close-summary',
+    statement:
+      'Scope the platform around the teams, workflows, connected systems, and controls you need.',
+    category: 'product',
+    evidence:
+      'Compact enterprise scoping close approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.enterprise'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes: 'This describes proposal scoping, not a fixed pricing formula.',
+  },
+  {
+    id: 'demo-meeting-preparation',
+    statement:
+      'Tell us what you want to improve. We will prepare the conversation around your team, systems, and controls.',
+    category: 'product',
+    evidence:
+      'Above-the-fold demo funnel wording approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['demo.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'This promises preparation for a conversation, not acceptance or a specific response time.',
+  },
+  {
+    id: 'demo-response-data-use',
+    statement: 'I agree that Zeno may use these details to respond to my request.',
+    category: 'privacy',
+    evidence:
+      'Demo data-use acknowledgement approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['demo.form'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'Keep required and adjacent to the submission control. Do not reuse as marketing consent.',
+  },
+  {
+    id: 'pricing-calculator-title',
+    statement: 'Build the estimate in three steps.',
+    category: 'product',
+    evidence:
+      'Visitor-driven business-case calculator approved by the workspace owner in the 2026-09-10 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes: 'The calculator must use only visitor-supplied performance assumptions.',
+  },
+  {
+    id: 'pricing-calculator-method',
+    statement:
+      'Choose a team-size range or exact amount, then select weekly hours returned and hourly value. Team ranges use the displayed rounded midpoint. Add an annual budget only to compare it with the estimated yearly value of recovered time.',
+    category: 'product',
+    evidence:
+      'Visitor-driven business-case calculation method approved by the workspace owner in the 2026-09-10 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'Do not preselect a team-size range, weekly hours, hourly value, annual budget, or other performance assumptions. ROI is annual capacity value minus annual budget, divided by annual budget.',
+  },
+  {
+    id: 'pricing-calculator-pilot',
+    statement: 'A focused pilot gives you a value to validate before a wider rollout.',
+    category: 'product',
+    evidence:
+      'Pilot-led business-case direction approved by the workspace owner in the 2026-09-14 working session.',
+    verified_on: '2026-09-14',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-14',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      "Recommend 20 percent of the entered team, rounded to the nearest person, with a five-person floor, 20-person cap, and no cohort larger than the entered team. Calculate annual pilot hours and capacity value only from the visitor's entered weekly hours, hourly value, and working weeks. Present the result as an estimate to validate, never as guaranteed return or savings.",
+  },
+  {
+    id: 'pricing-calculator-disclaimer',
+    statement:
+      'Estimates are for planning only and are based entirely on the values you enter. They do not guarantee time savings, financial benefit, or final Zeno pricing.',
+    category: 'legal',
+    evidence:
+      'Estimate boundaries and public wording approved by the workspace owner in the 2026-09-10 working session.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'Keep this adjacent to calculator results. Do not shorten it into a performance guarantee.',
+  },
+  {
+    id: 'pricing-calculator-local-data',
+    statement: 'Nothing entered here is sent or saved.',
+    category: 'privacy',
+    evidence:
+      'Local-only calculator behavior approved by the workspace owner in the 2026-09-10 working session and enforced by the component implementation.',
+    verified_on: '2026-09-10',
+    approval_status: 'approved',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-10',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-10',
+    notes:
+      'Do not add storage, analytics, network submission, or URL serialization for calculator values without reapproval.',
+  },
   {
     id: 'product-agent-starting-point',
     statement: 'Start from a prebuilt agent or build one from scratch around your workflow.',

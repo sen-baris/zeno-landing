@@ -1,70 +1,70 @@
-import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactElement, SyntheticEvent } from 'react';
 import { trackConsentedEvent } from '../../lib/analytics/consented-events';
-import { workflowOptions } from '../../lib/assessment/questions';
 import { loadAssessmentContext } from '../../lib/assessment/storage';
 import type { StoredAssessmentContext } from '../../lib/assessment/storage';
-import type { WorkflowCategory } from '../../lib/assessment/types';
 import { createLeadSubmissionAdapter, LeadSubmissionError } from '../../lib/leads/adapter';
 import { withBase } from '../../lib/routing/base-path';
 import type { LeadSubmissionAdapter } from '../../lib/leads/types';
 import {
-  validateDemoStep,
+  validateDemoForm,
   type DemoFormErrors,
   type DemoFormValues,
 } from '../../lib/leads/validation';
 
 interface Props {
   adapter?: LeadSubmissionAdapter;
+  privacyAcknowledgement: string;
 }
 
 const initialValues: DemoFormValues = {
+  fullName: '',
   workEmail: '',
   company: '',
+  phoneNumber: '',
   role: '',
   sizeBand: '',
-  priorityWorkflow: '',
   desiredStart: '',
   systemsContext: '',
   privacyAcknowledged: false,
   marketing: false,
 };
 
-export default function DemoForm({ adapter: suppliedAdapter }: Props) {
+const subscribeToHydration = () => () => undefined;
+
+export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdapter }: Props) {
+  const hydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
   const adapter = useMemo(
     () => suppliedAdapter ?? createLeadSubmissionAdapter(),
     [suppliedAdapter],
   );
-  const [step, setStep] = useState<1 | 2>(1);
   const [errors, setErrors] = useState<DemoFormErrors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
-  const [initialAssessment] = useState<StoredAssessmentContext | null>(() =>
-    loadAssessmentContext(),
-  );
-  const assessmentRef = useRef<StoredAssessmentContext | null>(initialAssessment);
+  const [assessment, setAssessment] = useState<StoredAssessmentContext | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const stepHeadingRef = useRef<HTMLHeadingElement | null>(null);
-  const didNavigateRef = useRef(false);
-
-  const [values, setValues] = useState<DemoFormValues>(() => ({
-    ...initialValues,
-    ...(initialAssessment ? { priorityWorkflow: initialAssessment.workflow } : {}),
-  }));
-  const hasAssessment = initialAssessment !== null;
+  const [values, setValues] = useState<DemoFormValues>(initialValues);
 
   useEffect(() => {
+    const storedAssessment = loadAssessmentContext();
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setAssessment(storedAssessment);
+    });
     trackConsentedEvent({
       name: 'demo_started',
-      source: initialAssessment ? 'assessment' : 'direct',
+      source: storedAssessment ? 'assessment' : 'direct',
     });
     return () => {
+      cancelled = true;
       abortRef.current?.abort();
     };
-  }, [initialAssessment]);
-  useEffect(() => {
-    if (didNavigateRef.current) stepHeadingRef.current?.focus();
-  }, [step]);
+  }, []);
 
   function updateValue<Key extends keyof DemoFormValues>(key: Key, value: DemoFormValues[Key]) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -80,16 +80,10 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
     event.preventDefault();
     if (status === 'submitting') return;
 
-    const nextErrors = validateDemoStep(step, values);
+    const nextErrors = validateDemoForm(values);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
       focusFirstError(nextErrors);
-      return;
-    }
-
-    if (step === 1) {
-      didNavigateRef.current = true;
-      setStep(2);
       return;
     }
 
@@ -99,24 +93,29 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
     setStatus('submitting');
     setMessage('');
     abortRef.current = new AbortController();
-    const assessment = assessmentRef.current;
+
+    const role = values.role.trim();
+    const phoneNumber = values.phoneNumber.trim();
+    const systemsContext = values.systemsContext.trim();
 
     try {
       const receipt = await adapter.submit(
         {
           source: assessment ? 'assessment-discussion' : 'demo',
-          contact: { workEmail: values.workEmail.trim() },
+          contact: {
+            fullName: values.fullName.trim(),
+            workEmail: values.workEmail.trim(),
+            ...(phoneNumber ? { phoneNumber } : {}),
+          },
           company: {
             name: values.company.trim(),
-            role: values.role.trim(),
-            sizeBand: values.sizeBand,
+            ...(role ? { role } : {}),
+            ...(values.sizeBand ? { sizeBand: values.sizeBand } : {}),
           },
           intent: {
-            priorityWorkflow: values.priorityWorkflow as WorkflowCategory,
-            desiredStart: values.desiredStart,
-            ...(values.systemsContext.trim()
-              ? { systemsContext: values.systemsContext.trim() }
-              : {}),
+            ...(assessment ? { priorityWorkflow: assessment.workflow } : {}),
+            ...(values.desiredStart ? { desiredStart: values.desiredStart } : {}),
+            ...(systemsContext ? { systemsContext } : {}),
           },
           ...(assessment
             ? {
@@ -129,7 +128,7 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
             : {}),
           consent: {
             privacyAcknowledged: values.privacyAcknowledged,
-            marketing: values.marketing,
+            marketing: false,
           },
           attribution: { landingPath: '/demo' },
         },
@@ -139,7 +138,7 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
       setMessage(
         receipt.submissionId.startsWith('preview-')
           ? 'Preview request confirmed. No information was sent.'
-          : 'Request confirmed. We have the workflow context needed for the next step.',
+          : 'Request confirmed. We have the details needed for the next step.',
       );
       trackConsentedEvent({
         name: 'demo_submitted',
@@ -160,9 +159,9 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
 
   if (status === 'success') {
     return (
-      <div className="demo-form demo-success" role="status">
+      <div className="demo-form demo-success" data-hydrated="true" role="status">
         <span className="evidence-badge">Submission confirmed</span>
-        <h2>Thank you. The workflow is in the ledger.</h2>
+        <h2>Thank you. Request confirmed.</h2>
         <p>{message}</p>
         <a className="button button-ink" href={withBase('/')}>
           Return home
@@ -172,66 +171,97 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
   }
 
   return (
-    <form className="demo-form" noValidate onSubmit={(event) => void submit(event)}>
-      <div className="demo-progress">
+    <form
+      className="demo-form"
+      data-hydrated={hydrated ? 'true' : 'false'}
+      noValidate
+      onSubmit={(event) => void submit(event)}
+    >
+      <header className="demo-form-heading">
         <div>
-          <span>Request / Step {step} of 2</span>
-          <strong>{step === 1 ? 'About you' : 'About the work'}</strong>
+          <p className="product-label">Meeting request</p>
+          <h2>Tell us how to reach you.</h2>
         </div>
-        <div
-          role="progressbar"
-          aria-label="Demo request progress"
-          aria-valuemin={1}
-          aria-valuemax={2}
-          aria-valuenow={step}
-        >
-          <span style={{ width: `${step * 50}%` }} />
-        </div>
-      </div>
+        <p>A few details to prepare</p>
+      </header>
 
-      {hasAssessment && (
+      {!hydrated && (
+        <p className="demo-hydration-note" role="status">
+          The form will be ready in a moment. If it does not, enable JavaScript and reload.
+        </p>
+      )}
+      {assessment && (
         <p className="prefill-note" role="status">
           Assessment context added. Your answers and contact details are not in the URL.
         </p>
       )}
 
-      {step === 1 ? (
-        <div className="form-step" aria-labelledby="demo-step-one">
-          <div className="form-section-heading">
-            <span>Contact</span>
-            <h2 id="demo-step-one" ref={stepHeadingRef} tabIndex={-1}>
-              Who should we prepare for?
-            </h2>
-          </div>
+      <fieldset disabled={!hydrated || status === 'submitting'}>
+        <legend className="visually-hidden">Demo request details</legend>
+        <div className="demo-required-grid">
+          <Field
+            id="fullName"
+            label="Full name"
+            error={errors.fullName}
+            input={
+              <input
+                id="demo-fullName"
+                type="text"
+                autoComplete="name"
+                value={values.fullName}
+                onChange={(event) => updateValue('fullName', event.target.value)}
+              />
+            }
+          />
+          <Field
+            id="workEmail"
+            label="Work email"
+            error={errors.workEmail}
+            input={
+              <input
+                id="demo-workEmail"
+                type="email"
+                autoComplete="email"
+                value={values.workEmail}
+                onChange={(event) => updateValue('workEmail', event.target.value)}
+              />
+            }
+          />
+          <Field
+            id="company"
+            label="Company"
+            error={errors.company}
+            input={
+              <input
+                id="demo-company"
+                type="text"
+                autoComplete="organization"
+                value={values.company}
+                onChange={(event) => updateValue('company', event.target.value)}
+              />
+            }
+          />
+          <Field
+            id="phoneNumber"
+            label="Phone number (optional)"
+            error={errors.phoneNumber}
+            input={
+              <input
+                id="demo-phoneNumber"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                maxLength={40}
+                value={values.phoneNumber}
+                onChange={(event) => updateValue('phoneNumber', event.target.value)}
+              />
+            }
+          />
+        </div>
+
+        <details className="demo-optional-details">
+          <summary>Add planning context (optional)</summary>
           <div className="field-grid two-columns">
-            <Field
-              id="workEmail"
-              label="Work email"
-              error={errors.workEmail}
-              input={
-                <input
-                  id="demo-workEmail"
-                  type="email"
-                  autoComplete="email"
-                  value={values.workEmail}
-                  onChange={(event) => updateValue('workEmail', event.target.value)}
-                />
-              }
-            />
-            <Field
-              id="company"
-              label="Company"
-              error={errors.company}
-              input={
-                <input
-                  id="demo-company"
-                  type="text"
-                  autoComplete="organization"
-                  value={values.company}
-                  onChange={(event) => updateValue('company', event.target.value)}
-                />
-              }
-            />
             <Field
               id="role"
               label="Role"
@@ -264,36 +294,6 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
                 </select>
               }
             />
-          </div>
-        </div>
-      ) : (
-        <div className="form-step" aria-labelledby="demo-step-two">
-          <div className="form-section-heading">
-            <span>Workflow</span>
-            <h2 id="demo-step-two" ref={stepHeadingRef} tabIndex={-1}>
-              What should move forward?
-            </h2>
-          </div>
-          <div className="field-grid">
-            <Field
-              id="priorityWorkflow"
-              label="Priority workflow"
-              error={errors.priorityWorkflow}
-              input={
-                <select
-                  id="demo-priorityWorkflow"
-                  value={values.priorityWorkflow}
-                  onChange={(event) => updateValue('priorityWorkflow', event.target.value)}
-                >
-                  <option value="">Choose a workflow</option>
-                  {workflowOptions.map((option) => (
-                    <option value={option.id} key={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              }
-            />
             <Field
               id="desiredStart"
               label="Desired start window"
@@ -312,106 +312,82 @@ export default function DemoForm({ adapter: suppliedAdapter }: Props) {
                 </select>
               }
             />
-            <label className="field">
-              <span>
-                Systems or context <small>Optional</small>
-              </span>
+            <label className="field demo-systems-context">
+              <span>Systems or context</span>
               <textarea
                 id="demo-systemsContext"
-                rows={4}
+                rows={3}
                 value={values.systemsContext}
                 onChange={(event) => updateValue('systemsContext', event.target.value)}
-                placeholder="For example: approved knowledge sources, reporting tools, or systems involved"
+                placeholder="Approved knowledge sources or systems involved"
               />
             </label>
           </div>
-          <div className="consent-group">
-            <label className="check-field">
-              <input
-                id="demo-privacyAcknowledged"
-                type="checkbox"
-                checked={values.privacyAcknowledged}
-                aria-invalid={Boolean(errors.privacyAcknowledged)}
-                aria-describedby={
-                  errors.privacyAcknowledged ? 'demo-privacyAcknowledged-error' : undefined
-                }
-                onChange={(event) => updateValue('privacyAcknowledged', event.target.checked)}
-              />
-              <span>
-                I acknowledge that Zeno will use these details to respond to this request. Final
-                privacy wording is pending legal approval.
-              </span>
-            </label>
-            {errors.privacyAcknowledged && (
-              <small className="field-error" id="demo-privacyAcknowledged-error">
-                {errors.privacyAcknowledged}
-              </small>
-            )}
-            <label className="check-field">
-              <input
-                type="checkbox"
-                checked={values.marketing}
-                onChange={(event) => updateValue('marketing', event.target.checked)}
-              />
-              <span>Send me occasional Zeno updates. Optional and unchecked by default.</span>
-            </label>
-          </div>
+        </details>
+
+        <div className="demo-consent-row">
+          <label className="check-field">
+            <input
+              id="demo-privacyAcknowledged"
+              type="checkbox"
+              checked={values.privacyAcknowledged}
+              aria-invalid={Boolean(errors.privacyAcknowledged)}
+              aria-describedby={
+                errors.privacyAcknowledged ? 'demo-privacyAcknowledged-error' : undefined
+              }
+              onChange={(event) => updateValue('privacyAcknowledged', event.target.checked)}
+            />
+            <span>{privacyAcknowledgement}</span>
+          </label>
+          {errors.privacyAcknowledged && (
+            <small className="field-error" id="demo-privacyAcknowledged-error">
+              {errors.privacyAcknowledged}
+            </small>
+          )}
         </div>
-      )}
 
-      {message && (
-        <p className="submission-message error" role="alert">
-          {message}
-        </p>
-      )}
-
-      <div className="demo-form-actions">
-        {step === 2 && (
-          <button
-            className="button button-ghost"
-            type="button"
-            onClick={() => {
-              didNavigateRef.current = true;
-              setStep(1);
-            }}
-          >
-            Back
-          </button>
+        {message && (
+          <p className="submission-message error" role="alert">
+            {message}
+          </p>
         )}
-        <button className="button button-primary" type="submit" disabled={status === 'submitting'}>
-          {step === 1
-            ? 'Continue'
-            : status === 'submitting'
+
+        <div className="demo-form-actions">
+          <button
+            className="button button-primary"
+            type="submit"
+            disabled={!hydrated || status === 'submitting'}
+          >
+            {status === 'submitting'
               ? 'Submitting…'
               : status === 'error'
                 ? 'Try again'
                 : 'Request a demo'}
-        </button>
-      </div>
+          </button>
+        </div>
+      </fieldset>
     </form>
   );
 }
 
 interface FieldProps {
-  id: keyof DemoFormValues;
-  label: string;
   error: string | undefined;
+  id: keyof DemoFormValues;
   input: ReactElement;
+  label: string;
 }
 
-function Field({ id, label, error, input }: FieldProps) {
+function Field({ error, id, input, label }: FieldProps) {
   const errorId = `demo-${id}-error`;
   const formControl = input as ReactElement<Record<string, unknown>>;
   return (
     <label className="field">
       <span>{label}</span>
-      {input &&
-        /* Cloning keeps the form control's accessible error contract next to its single owner. */
-        cloneElement(formControl, {
-          'aria-label': label,
-          'aria-invalid': Boolean(error),
-          'aria-describedby': error ? errorId : undefined,
-        })}
+      {cloneElement(formControl, {
+        'aria-label': label,
+        'aria-invalid': Boolean(error),
+        'aria-describedby': error ? errorId : undefined,
+      })}
       {error && (
         <small className="field-error" id={errorId}>
           {error}

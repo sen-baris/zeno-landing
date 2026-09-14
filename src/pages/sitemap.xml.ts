@@ -16,6 +16,7 @@ const customerStoryPaths = selectCustomerStoriesForMode(
 const paths = [
   '/',
   '/product',
+  '/pricing',
   '/solutions',
   ...solutions.map((solution) => `/solutions/${solution.slug}`),
   '/ai-readiness',

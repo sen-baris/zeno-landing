@@ -30,7 +30,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      'ASTRO_DEV_BACKGROUND=0 PUBLIC_LEAD_ADAPTER=gateway PUBLIC_LEAD_ENDPOINT=/api/leads astro dev --host 127.0.0.1',
+      'ASTRO_DEV_BACKGROUND=0 NODE_ENV=development PUBLIC_LEAD_ADAPTER=gateway PUBLIC_LEAD_ENDPOINT=/api/leads astro dev --host 127.0.0.1 --mode development --force',
     url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,
   },

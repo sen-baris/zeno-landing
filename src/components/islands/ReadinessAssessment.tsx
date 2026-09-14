@@ -25,6 +25,7 @@ export default function ReadinessAssessment({ adapter: suppliedAdapter }: Props)
   const [workflow, setWorkflow] = useState<WorkflowCategory | ''>('');
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const answersRef = useRef<Record<string, number>>({});
   const [questionError, setQuestionError] = useState('');
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [showEmailForm, setShowEmailForm] = useState(false);
@@ -64,12 +65,14 @@ export default function ReadinessAssessment({ adapter: suppliedAdapter }: Props)
   }
 
   function selectAnswer(questionId: string, value: number) {
-    setAnswers((current) => ({ ...current, [questionId]: value }));
+    const nextAnswers = { ...answersRef.current, [questionId]: value };
+    answersRef.current = nextAnswers;
+    setAnswers(nextAnswers);
     setQuestionError('');
   }
 
   function goForward() {
-    if (!currentQuestion || currentAnswer === undefined) {
+    if (!currentQuestion || answersRef.current[currentQuestion.id] === undefined) {
       setQuestionError('Choose the answer that best matches this workflow.');
       return;
     }
@@ -81,7 +84,7 @@ export default function ReadinessAssessment({ adapter: suppliedAdapter }: Props)
     }
 
     if (!workflow) return;
-    const completed = calculateAssessment(answers, workflow);
+    const completed = calculateAssessment(answersRef.current, workflow);
     setResult(completed);
     saveAssessmentContext({
       impactScore: completed.impactScore,

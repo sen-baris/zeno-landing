@@ -8,7 +8,7 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "NODE_ENV=development astro dev --mode development --force",
     "build": "CONTENT_MODE=preview astro build",
     "build:release": "CONTENT_MODE=production tsx tools/check_release_readiness.ts && CONTENT_MODE=production astro build",
     "preview": "astro preview",

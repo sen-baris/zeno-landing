@@ -23,6 +23,21 @@ describe('lead submission adapter', () => {
     });
   });
 
+  it('calls the browser UUID method through its Crypto owner', async () => {
+    const randomUUID = vi.fn(function (this: Crypto) {
+      if (this !== crypto) throw new TypeError('Illegal invocation');
+      return '00000000-0000-4000-8000-000000000000';
+    });
+    vi.stubGlobal('crypto', { randomUUID });
+    const adapter = createLeadSubmissionAdapter({ mode: 'synthetic', syntheticDelayMs: 0 });
+
+    await expect(adapter.submit(submission)).resolves.toEqual({
+      submissionId: 'preview-00000000-0000-4000-8000-000000000000',
+    });
+    expect(randomUUID).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
+  });
+
   it('stops a synthetic request when aborted', async () => {
     const adapter = createLeadSubmissionAdapter({ mode: 'synthetic', syntheticDelayMs: 50 });
     const controller = new AbortController();

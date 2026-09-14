@@ -52,11 +52,12 @@ export function createLeadSubmissionAdapter(
     (import.meta.env.DEV ? 'synthetic' : 'gateway');
 
   if (mode === 'synthetic') {
+    const createId = configuration.createId ?? (() => crypto.randomUUID());
     return {
       async submit(_submission, signal) {
         await waitForDelay(configuration.syntheticDelayMs ?? 240, signal);
         return {
-          submissionId: `preview-${(configuration.createId ?? crypto.randomUUID)()}`,
+          submissionId: `preview-${createId()}`,
         };
       },
     };

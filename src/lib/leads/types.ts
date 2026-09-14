@@ -5,6 +5,8 @@ export type LeadSource = 'demo' | 'assessment-email' | 'assessment-discussion';
 export interface LeadSubmission {
   source: LeadSource;
   contact: {
+    fullName?: string;
+    phoneNumber?: string;
     workEmail: string;
   };
   company: {
