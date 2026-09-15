@@ -23,7 +23,7 @@ describe('deployment base path', () => {
       const base = '/zeno-landing/';
       expect(withBase('/', base)).toBe('/zeno-landing/');
       expect(withBase('/demo', base)).toBe('/zeno-landing/demo');
-      expect(withBase('/ai-readiness', base)).toBe('/zeno-landing/ai-readiness');
+      expect(withBase('/pricing', base)).toBe('/zeno-landing/pricing');
       expect(withBase('/#trust', base)).toBe('/zeno-landing/#trust');
       expect(withBase('/customer-logos/kbc.svg', base)).toBe(
         '/zeno-landing/customer-logos/kbc.svg',

@@ -88,8 +88,7 @@ export interface Solution {
   closing: string;
 }
 
-const startingPointStatement =
-  'Start from a prebuilt agent or build one from scratch around your workflow.';
+const startingPointStatement = 'Choose a prebuilt agent or build one around your workflow.';
 
 /**
  * One page per industry we sell into. The product is the same on all five; the work is not, and
@@ -106,16 +105,16 @@ export const solutions: readonly Solution[] = [
     eyebrow: 'Manufacturing',
     headline: 'The paperwork around the part.',
     subhead:
-      'Quality reports, supplier answers and spec checks drafted from your own engineering record, then signed by the engineer who owns them.',
-    summary: 'Quality reporting, supplier answers and spec checks, drafted from your own records.',
+      'Draft quality reports and check specifications against your engineering records. The responsible engineer reviews the result.',
+    summary: 'Quality reports and specification checks grounded in engineering records.',
     metaDescription:
-      'Zeno for manufacturing: agents that draft 8D and CAPA reports, compare customer specifications against your standard, and answer supplier quality questions, on a workspace IT governs.',
+      'Zeno for manufacturing. Draft 8D and CAPA reports, compare specifications and answer supplier quality questions in a governed workspace.',
     startingPointClaimId: 'product-agent-starting-point',
     journey: [
       {
         id: 'context',
         title: 'Company context',
-        description: 'Connect the drawings, standards, and quality records the work depends on.',
+        description: 'Connect the drawings, standards and quality records behind the task.',
       },
       {
         id: 'agent',
@@ -131,7 +130,7 @@ export const solutions: readonly Solution[] = [
     workspace: {
       claimId: 'solution-workspace-manufacturing',
       caption:
-        'Customer drawings and internal standards provide context for a Specification Agent that prepares a cited comparison for engineering review.',
+        'The Specification Agent compares customer drawings with internal standards. It cites each finding for engineering review.',
       contextSources: ['Customer drawing', 'Internal standards', 'Revision history'],
       agent: 'Specification Agent',
       task: 'Compare the latest customer drawing with our internal standard.',
@@ -150,29 +149,28 @@ export const solutions: readonly Solution[] = [
       resultClaimIds: ['customer-result-mahle-activation', 'customer-result-mahle-time'],
     },
     workTitle: 'An agent per document, not one assistant for the plant.',
-    workBody:
-      'Each one is given the document it drafts, the records it may read, and the engineer who signs it off.',
+    workBody: 'Give each agent a document, approved records and a named engineer for review.',
     agents: [
       {
         name: 'Supplier Quality Agent',
         glyph: 'draft',
-        does: 'Drafts the 8D from the complaint, the containment already taken and how the same failure was closed out before.',
-        from: 'Complaint records, past 8D and CAPA files, the supplier file',
+        does: 'Drafts an 8D report from the complaint and relevant quality records.',
+        from: 'Complaint records, past 8D and CAPA files and supplier files',
         surface: {
           kind: 'workflow',
           workflow: 'Draft an 8D from a customer complaint',
           files: ['Complaint_record.pdf', 'Containment_note.pdf', 'CAPA_history.xlsx'],
           field: { label: 'Plant', value: 'Assembly, line 2' },
           prompt:
-            'Draft the 8D against our template. Use the containment already recorded, and cite the past CAPA where this failure mode was closed out before.',
+            'Draft an 8D from the complaint and containment note. Cite relevant past CAPA records for engineer review.',
           reply: 'Reading the complaint and the past CAPA files',
         },
       },
       {
         name: 'Specification Agent',
         glyph: 'number',
-        does: 'Reads a customer drawing against your standard and lists only where the two differ, with the clause beside each one.',
-        from: 'Customer drawings and specs, your internal standards library',
+        does: 'Compares a customer drawing with your standard and cites each difference.',
+        from: 'Customer drawings, specifications and internal standards',
         surface: {
           kind: 'result',
           document: 'Customer drawing vs internal standard',
@@ -188,19 +186,19 @@ export const solutions: readonly Solution[] = [
       {
         name: 'Quotation Agent',
         glyph: 'finance',
-        does: 'Assembles the RFQ response from your cost template and what you quoted the last time the part looked like this.',
-        from: 'RFQ pack, cost templates, prior quotations',
+        does: 'Drafts an RFQ response from cost templates and relevant past quotations.',
+        from: 'RFQ packs, cost templates and prior quotations',
       },
       {
         name: 'Shift Report Agent',
         glyph: 'operations',
-        does: 'Turns the line data and the shift notes into the report the morning meeting actually reads.',
-        from: 'Line and downtime data, shift handover notes',
+        does: 'Turns line data and shift notes into a report for the morning meeting.',
+        from: 'Line data, downtime records and shift notes',
       },
     ],
     wallsTitle: 'What an agent on a plant floor must never do.',
     wallsBody:
-      'Manufacturing runs on documents that belong to somebody else. A customer drawing under NDA, a supplier price, a part under export control. The workspace treats those as the boundary they are.',
+      'Customer drawings, supplier prices and export-controlled parts need different access rules. Keep those boundaries with the work.',
     controls: [
       {
         label: 'Programme access',
@@ -224,22 +222,22 @@ export const solutions: readonly Solution[] = [
       {
         question: 'Does it work from our drawings, or from a general model?',
         answer:
-          'From yours. The agent reads the standards library, the supplier file and the past reports you connect, and every figure it uses points back to the document it came from.',
+          'From the records you connect. The agent uses your standards, supplier files and past reports. Its findings point back to those records.',
       },
       {
         question: 'Our customer drawings are under NDA. Where do they go?',
         answer:
-          'They stay in the systems they already live in, and the agent reaches them under the permissions those systems already enforce. Zeno runs in the EU and IT sets which models are allowed.',
+          'IT sets access to connected drawings and approves the models used in the workspace. EU hosting is available for the model layer.',
       },
       {
         question: 'Can it sign off a quality document?',
         answer:
-          'No, and it should not. Every 8D and CAPA comes back to a named engineer for review. The workspace records who signed and when.',
+          'No. Every 8D and CAPA goes to a named engineer for review. The workspace records the signoff.',
       },
       {
         question: 'How long before one plant is using it?',
         answer:
-          'One agent on one document type, in weeks rather than quarters. The next plant picks up the agent the first one built.',
+          'Begin with one document type at one plant. Expand after the engineering team validates the first result.',
       },
     ],
     closing: 'Start with the report your quality team writes most often.',
@@ -250,16 +248,16 @@ export const solutions: readonly Solution[] = [
     eyebrow: 'Management consulting',
     headline: 'The work between the meetings.',
     subhead:
-      'Proposals, interview synthesis and steering packs drafted from your own engagements, with a wall between every client.',
-    summary: 'Proposals, synthesis and client packs, with a wall between every engagement.',
+      'Draft proposals and client packs from your firm’s own work. Keep each engagement separate.',
+    summary: 'Proposals and client packs grounded in firm knowledge.',
     metaDescription:
-      'Zeno for management consultancies: agents that draft proposals from your credentials, synthesise interviews with sources, and build the weekly client pack, with client separation enforced.',
+      'Zeno for management consulting. Draft proposals, synthesize interviews and build client packs with engagement-level access.',
     startingPointClaimId: 'product-agent-starting-point',
     journey: [
       {
         id: 'context',
         title: 'Company context',
-        description: 'Connect the brief, credentials, and relevant past engagement knowledge.',
+        description: 'Connect the brief, firm credentials and relevant past work.',
       },
       {
         id: 'agent',
@@ -276,7 +274,7 @@ export const solutions: readonly Solution[] = [
     workspace: {
       claimId: 'solution-workspace-management-consulting',
       caption:
-        'A client brief, firm credentials, and comparable engagements provide context for a Proposal Agent that prepares a partner-ready outline.',
+        'The Proposal Agent drafts from a client brief and relevant firm experience. A partner reviews the outline.',
       contextSources: ['Client brief', 'Credentials library', 'Past engagements'],
       agent: 'Proposal Agent',
       task: 'Prepare the first proposal outline from the brief and our relevant experience.',
@@ -299,34 +297,33 @@ export const solutions: readonly Solution[] = [
       ],
     },
     workTitle: 'An agent per deliverable, not one assistant for the firm.',
-    workBody:
-      'Each one is given the deliverable it drafts, the engagement files it may read, and the partner who signs it off.',
+    workBody: 'Give each agent a deliverable, engagement-level access and a partner for review.',
     agents: [
       {
         name: 'Proposal Agent',
         glyph: 'draft',
-        does: 'Drafts against the brief using your credentials, your methodology and the engagements that actually resemble this one.',
-        from: 'The brief, credentials library, comparable past engagements',
+        does: 'Drafts a proposal from the brief and relevant firm experience.',
+        from: 'Client brief, firm credentials and comparable engagements',
         surface: {
           kind: 'workflow',
           workflow: 'Draft a proposal from the brief',
           files: ['Client_brief.pdf', 'Scoping_notes.docx', 'Rate_card.xlsx'],
           field: { label: 'Engagement', value: 'New client, no prior work' },
           prompt:
-            'Draft the proposal on our template. Pull comparable scopes and staffing from past engagements, and leave the fee section for the partner.',
+            'Draft a proposal outline from the brief and relevant engagements. Leave fees for partner review.',
           reply: 'Pulling comparable scopes from past engagements',
         },
       },
       {
         name: 'Synthesis Agent',
         glyph: 'ask',
-        does: 'Turns a fortnight of interviews into findings, each one carrying the quote it rests on.',
-        from: 'Interview transcripts and notes from this engagement only',
+        does: 'Summarizes interviews into findings with supporting quotations.',
+        from: 'Transcripts and notes from the active engagement',
         surface: {
           kind: 'assistant',
           ask: 'What did the operations interviews say about the handover between planning and delivery?',
           answer:
-            'Four of the eleven interviews raised the handover directly. Two describe the plan arriving after the delivery team has already committed capacity, and one names a workaround the team built themselves.',
+            'Four interviews describe a planning handover problem. Two say delivery had committed capacity before the plan arrived. One describes a team workaround.',
           cites: [
             'Interview_07_Operations_lead.docx',
             'Interview_09_Planning_manager.docx',
@@ -337,19 +334,19 @@ export const solutions: readonly Solution[] = [
       {
         name: 'Steering Pack Agent',
         glyph: 'schedule',
-        does: 'Builds the weekly pack from the workstream trackers, and marks what changed since the last one.',
-        from: 'Workstream trackers, last week’s pack, the plan on file',
+        does: 'Builds the weekly pack and marks what changed.',
+        from: 'Workstream trackers, prior pack and project plan',
       },
       {
         name: 'Benchmark Agent',
         glyph: 'number',
-        does: 'Pulls the comparable figures out of studies your firm has already run, rather than off the open web.',
+        does: 'Finds comparable figures in your firm’s own studies.',
         from: 'Your own past studies and benchmark sets',
       },
     ],
     wallsTitle: 'One client never sees another.',
     wallsBody:
-      'A consultancy sells judgement and confidentiality in the same breath. An assistant that quietly carried one client’s numbers into another client’s deck would end the relationship, and possibly the firm.',
+      'Client trust depends on separation. An agent working on one engagement must not draw from another client’s material.',
     controls: [
       {
         label: 'Engagement access',
@@ -373,22 +370,22 @@ export const solutions: readonly Solution[] = [
       {
         question: 'How do you keep one client’s material out of another’s deck?',
         answer:
-          'Access is set per engagement, and the agent only ever reads what the person using it may read. There is no shared pool of client material behind it.',
+          'Set access per engagement. The agent reads only material available to the person using it. Client files are not pooled.',
       },
       {
         question: 'Will it invent a benchmark?',
         answer:
-          'It works from studies your firm has already run, and every figure carries the study it came from. If the number is not in your own work, it says so.',
+          'It uses your firm’s studies and cites the source of each figure. If a number is missing, it marks the gap.',
       },
       {
         question: 'What does it connect to?',
         answer:
-          'The systems the engagement already runs in: SharePoint, Outlook, Teams, Slack and the trackers your team keeps. Connected once, then governed centrally.',
+          'Connect the systems your engagement uses, such as SharePoint and Outlook. IT governs access in the workspace.',
       },
       {
         question: 'Do partners have to change how they work?',
         answer:
-          'No. The draft arrives in the document and the deck they already use, and it waits for their review before it goes anywhere.',
+          'No. The agent prepares a draft for partner review in the team’s existing document workflow.',
       },
     ],
     closing: 'Start with the proposal your team writes every week.',
@@ -399,16 +396,16 @@ export const solutions: readonly Solution[] = [
     eyebrow: 'M&A advisory',
     headline: 'Run the process, not the photocopier.',
     subhead:
-      'Longlists, teasers, information memoranda and buyer questions, drafted from the data room and kept inside the deal team.',
-    summary: 'Longlists, IMs and buyer Q&A, drafted from the data room and kept to the deal team.',
+      'Prepare longlists, teasers and buyer answers from the deal file. Keep the work inside the deal team.',
+    summary: 'Longlists and buyer answers grounded in the deal file.',
     metaDescription:
-      'Zeno for M&A advisers: agents that screen targets against the mandate, draft the teaser and information memorandum from the data room, and answer buyer questions with citations.',
+      'Zeno for M&A advisers. Screen targets against the mandate, draft deal documents and prepare cited buyer answers for review.',
     startingPointClaimId: 'product-agent-starting-point',
     journey: [
       {
         id: 'context',
         title: 'Company context',
-        description: 'Connect the mandate, your deal history, and the market sources you license.',
+        description: 'Connect the mandate, deal history and licensed market sources.',
       },
       {
         id: 'agent',
@@ -425,7 +422,7 @@ export const solutions: readonly Solution[] = [
     workspace: {
       claimId: 'solution-workspace-m-and-a',
       caption:
-        'Mandate criteria, deal history, and licensed market sources provide context for a Longlist Agent that prepares a qualified target list for adviser review.',
+        'The Longlist Agent screens licensed market sources against the mandate. Advisers review the target list and its fit notes.',
       contextSources: ['Mandate criteria', 'Deal history', 'Licensed market sources'],
       agent: 'Longlist Agent',
       task: 'Build a preliminary target list against the mandate criteria.',
@@ -448,40 +445,39 @@ export const solutions: readonly Solution[] = [
       ],
     },
     workTitle: 'An agent per stage of the process.',
-    workBody:
-      'Each one is given the document it drafts, the data room it may read, and the banker who signs it off.',
+    workBody: 'Give each agent a deal task, scoped data-room access and an adviser for review.',
     agents: [
       {
         name: 'Longlist Agent',
         glyph: 'ask',
-        does: 'Builds the longlist against the mandate criteria and says why each name is on it, so the cut is a conversation rather than a guess.',
-        from: 'Mandate criteria, your own deal history, market sources you licence',
+        does: 'Builds a target list against the mandate and explains each fit.',
+        from: 'Mandate criteria, deal history and licensed market sources',
       },
       {
         name: 'Teaser Agent',
         glyph: 'draft',
-        does: 'Drafts the teaser and the information memorandum from the data room and what management told you.',
-        from: 'The data room, management inputs, your house IM format',
+        does: 'Drafts deal documents from the data room and management inputs.',
+        from: 'Data room, management inputs and firm templates',
         surface: {
           kind: 'workflow',
           workflow: 'Draft a teaser from the management pack',
           files: ['Management_pack.pdf', 'Financial_summary.xlsx', 'Positioning_note.docx'],
           field: { label: 'Disclosure', value: 'Anonymised, pre-NDA' },
           prompt:
-            'Draft the one-page teaser on our template. Keep the company unidentifiable, and flag anything that would name it.',
+            'Draft a one-page teaser from the management pack. Flag details that identify the company.',
           reply: 'Checking the pack for anything that would name the company',
         },
       },
       {
         name: 'Buyer Q&A Agent',
         glyph: 'legal',
-        does: 'Answers buyer questions from the data room with the document cited, and routes anything it cannot answer to the person who can.',
-        from: 'The data room for that process, the Q&A log so far',
+        does: 'Drafts cited buyer answers and flags questions the deal team must resolve.',
+        from: 'Deal data room and buyer Q&A log',
         surface: {
           kind: 'assistant',
           ask: 'Buyer question: are any customer contracts terminable on a change of control?',
           answer:
-            'Three of the uploaded customer agreements contain a change of control clause. Two are terminable on notice. The third is not in the data room, so this one goes to the deal team rather than back to the buyer.',
+            'Two uploaded agreements allow termination on notice after a change of control. One agreement is missing, so the deal team must confirm it before replying.',
           cites: [
             'Customer_agreement_A.pdf',
             'Customer_agreement_C.pdf',
@@ -498,7 +494,7 @@ export const solutions: readonly Solution[] = [
     ],
     wallsTitle: 'Deal team means deal team.',
     wallsBody:
-      'A live process has an insider list, and the list is the point. The workspace enforces it the way the compliance team already does on paper.',
+      'A live deal has a defined insider list. Keep agent access inside that same team boundary.',
     controls: [
       {
         label: 'Deal-team access',
@@ -522,22 +518,22 @@ export const solutions: readonly Solution[] = [
       {
         question: 'Can it answer a buyer directly?',
         answer:
-          'It drafts the answer with the document cited and hands it to the deal team. Nothing reaches a buyer without a person releasing it.',
+          'It drafts a cited answer for deal-team review. A person releases the final response.',
       },
       {
         question: 'What happens to the data room when the deal closes?',
         answer:
-          'Access ends with the process. The agent’s reach is set from the same list compliance already maintains, so it closes when the list does.',
+          'The deal team controls access to its data room. Close agent access when the mandate closes.',
       },
       {
         question: 'Where does our material sit?',
         answer:
-          'In the EU, on approved models chosen by IT, in the systems the process already runs in. The trust centre carries the certifications.',
+          'IT chooses approved models with EU hosting. Connected deal material remains subject to its access rules. Certification details are in the trust centre.',
       },
       {
         question: 'Is this only useful on large processes?',
         answer:
-          'The mid-market benefits more. The same document set has to be produced with a smaller team, which is exactly where a first draft is worth the most.',
+          'Start with one document type. The adviser reviews the first draft before the team expands the workflow.',
       },
     ],
     closing: 'Start with the buyer questions on your next live process.',
@@ -548,16 +544,16 @@ export const solutions: readonly Solution[] = [
     eyebrow: 'Private equity',
     headline: 'From screen to IC, with the file behind it.',
     subhead:
-      'Deal screens, investment committee memos, portfolio packs and LP updates, drafted from your own diligence and reporting.',
-    summary: 'Screens, IC memos, portfolio packs and LP updates, drafted from your own file.',
+      'Draft deal screens, committee memos and portfolio updates from your diligence and reporting.',
+    summary: 'Investment memos and portfolio updates grounded in your fund records.',
     metaDescription:
-      'Zeno for private equity: agents that screen deals against the fund mandate, draft the IC memo from diligence, build the quarterly portfolio pack and prepare the LP update, with MNPI handling.',
+      'Zeno for private equity. Screen deals, draft investment memos and prepare portfolio updates with deal-level access and human review.',
     startingPointClaimId: 'product-agent-starting-point',
     journey: [
       {
         id: 'context',
         title: 'Company context',
-        description: 'Connect the fund mandate, pitch deck, model, and diligence already on file.',
+        description: 'Connect the fund mandate, pitch deck and diligence on file.',
       },
       {
         id: 'agent',
@@ -573,7 +569,7 @@ export const solutions: readonly Solution[] = [
     workspace: {
       claimId: 'solution-workspace-private-equity',
       caption:
-        'A pitch deck, diligence files, and the fund mandate provide context for an IC Memo Agent that prepares a reviewable draft with open questions marked.',
+        'The IC Memo Agent drafts from the pitch deck, fund mandate and diligence. A deal partner reviews open questions.',
       contextSources: ['Pitch deck', 'Diligence files', 'Fund mandate'],
       agent: 'IC Memo Agent',
       task: 'Prepare the first committee memo and mark every unresolved diligence question.',
@@ -596,20 +592,19 @@ export const solutions: readonly Solution[] = [
       ],
     },
     workTitle: 'An agent per stage, from first screen to LP update.',
-    workBody:
-      'Each one is given the document it drafts, the diligence and reporting it may read, and the partner who signs it off.',
+    workBody: 'Give each agent a fund task, scoped diligence access and a partner for review.',
     agents: [
       {
         name: 'Deal Screen Agent',
         glyph: 'ask',
-        does: 'Takes the first pass against the fund mandate and says plainly why something fails it.',
-        from: 'Fund mandate, the teaser or IM, your own screening history',
+        does: 'Screens opportunities against the fund mandate and explains mismatches.',
+        from: 'Fund mandate, deal teaser and screening history',
       },
       {
         name: 'IC Memo Agent',
         glyph: 'draft',
-        does: 'Drafts the committee memo from the diligence actually done, and marks the questions still open.',
-        from: 'Diligence reports, the model, the data room, prior memos',
+        does: 'Drafts a committee memo from completed diligence and marks open questions.',
+        from: 'Diligence reports, financial model, data room and prior memos',
         surface: {
           kind: 'result',
           document: 'Investment committee memo, first draft',
@@ -625,8 +620,8 @@ export const solutions: readonly Solution[] = [
       {
         name: 'Portfolio Agent',
         glyph: 'number',
-        does: 'Builds the quarterly pack from what the portfolio companies submitted, and flags what did not arrive.',
-        from: 'Portfolio company submissions, the reporting template',
+        does: 'Builds a quarterly pack and flags missing company reports.',
+        from: 'Portfolio submissions and reporting template',
         surface: {
           kind: 'automation',
           run: 'Quarterly portfolio pack',
@@ -642,13 +637,13 @@ export const solutions: readonly Solution[] = [
       {
         name: 'LP Update Agent',
         glyph: 'schedule',
-        does: 'Drafts the investor letter from the portfolio record, in the language the last four letters used.',
-        from: 'Portfolio reporting, prior LP letters, fund performance data',
+        does: 'Drafts an investor letter from portfolio records and prior updates.',
+        from: 'Portfolio reporting, prior LP letters and fund data',
       },
     ],
     wallsTitle: 'Material non-public information, handled as such.',
     wallsBody:
-      'A fund holds information it is not free to act on, and holds it across deals that must not touch. The workspace treats a deal and a fund as separate rooms, because the regulator does.',
+      'Funds handle material non-public information across separate deals. Keep each deal and fund in its own knowledge boundary.',
     controls: [
       {
         label: 'Deal and fund access',
@@ -672,22 +667,22 @@ export const solutions: readonly Solution[] = [
       {
         question: 'How is MNPI kept where it belongs?',
         answer:
-          'Access is set per deal and per fund, and an agent only ever reads what the person running it may read. Nothing is pooled across the firm.',
+          'Set access per deal and fund. The agent reads only material available to the person using it.',
       },
       {
         question: 'Can it write the IC memo on its own?',
         answer:
-          'It drafts from the diligence on file and marks what is still open. The deal partner writes the recommendation and signs it.',
+          'It drafts from diligence and marks gaps. The deal partner owns the recommendation and signoff.',
       },
       {
         question: 'What about portfolio companies on different systems?',
         answer:
-          'The pack is built from what they submit, in the formats they submit it. What is missing is flagged rather than filled in.',
+          'Build the pack from submitted reports. Flag missing information instead of filling it in.',
       },
       {
         question: 'Which models does it run on?',
         answer:
-          'The ones IT approved, hosted in the EU, and switchable later without rebuilding the agents above them.',
+          'IT selects approved models with EU hosting. Model choice remains separate from the agent workflow.',
       },
     ],
     closing: 'Start with the quarterly pack nobody enjoys assembling.',
@@ -698,16 +693,16 @@ export const solutions: readonly Solution[] = [
     eyebrow: 'Law firms and in-house teams',
     headline: 'The first draft, against your own playbook.',
     subhead:
-      'Contract review, precedent search and matter summaries drawn from your firm’s own know-how, inside the matter that owns them.',
-    summary: 'Contract review, precedent search and matter summaries, inside the matter.',
+      'Review contracts and find precedents from your firm’s own knowledge. Keep the work inside its matter.',
+    summary: 'Contract review and precedent search within the right matter.',
     metaDescription:
-      'Zeno for law firms and in-house legal teams: agents that review contracts against your playbook, find the closest precedent in your own know-how, and summarise a matter, with privilege respected.',
+      'Zeno for legal teams. Review contracts against your playbook, find firm precedents and summarize matters with scoped access.',
     startingPointClaimId: 'product-agent-starting-point',
     journey: [
       {
         id: 'context',
         title: 'Company context',
-        description: 'Connect the agreement, firm playbook, and precedent bank for the matter.',
+        description: 'Connect the agreement, playbook and matter-specific precedents.',
       },
       {
         id: 'agent',
@@ -723,7 +718,7 @@ export const solutions: readonly Solution[] = [
     workspace: {
       claimId: 'solution-workspace-legal',
       caption:
-        'A firm playbook, supplier agreement, and precedent bank provide context for a Review Agent that prepares a clause-level comparison for lawyer review.',
+        'The Review Agent compares a supplier agreement with the firm playbook. A lawyer reviews each cited departure.',
       contextSources: ['Firm playbook', 'Supplier agreement', 'Precedent bank'],
       agent: 'Review Agent',
       task: 'Review the supplier agreement against our approved positions.',
@@ -742,14 +737,13 @@ export const solutions: readonly Solution[] = [
       label: 'Legal customer story',
     },
     workTitle: 'An agent per task on the matter, not one assistant for the firm.',
-    workBody:
-      'Each one is given the task it does, the matter it may read, and the lawyer who signs off what it produces.',
+    workBody: 'Give each agent a matter task, scoped access and a responsible lawyer for review.',
     agents: [
       {
         name: 'Review Agent',
         glyph: 'legal',
-        does: 'Reviews against your playbook and reports only the departures from it, with the clause beside each one.',
-        from: 'The playbook, the contract, positions taken on past matters',
+        does: 'Finds departures from your playbook and cites the clauses.',
+        from: 'Firm playbook, contract and approved precedents',
         surface: {
           kind: 'result',
           document: 'Supplier agreement against the firm playbook',
@@ -765,20 +759,20 @@ export const solutions: readonly Solution[] = [
       {
         name: 'Precedent Agent',
         glyph: 'ask',
-        does: 'Finds the closest drafting your firm has already done, and says which matter it came from.',
+        does: 'Finds relevant firm drafting and identifies its source matter.',
         from: 'Your know-how and precedent bank',
       },
       {
         name: 'Matter Agent',
         glyph: 'draft',
-        does: 'Brings a fee earner up to speed on a matter in one page: what happened, where it stands, what is next.',
-        from: 'The matter file and correspondence, for that matter only',
+        does: 'Summarizes a matter’s history, current status and next steps.',
+        from: 'Matter file and correspondence for that matter',
       },
       {
         name: 'Client Update Agent',
         glyph: 'schedule',
-        does: 'Drafts the update from the matter record, in the form the client already receives it.',
-        from: 'Matter record, prior updates to that client',
+        does: 'Drafts a client update from the matter record.',
+        from: 'Matter record and prior client updates',
         surface: {
           kind: 'automation',
           run: 'Matter update to the client',
@@ -794,7 +788,7 @@ export const solutions: readonly Solution[] = [
     ],
     wallsTitle: 'Privilege is not a setting you add later.',
     wallsBody:
-      'A matter is confidential to the people on it, and an information barrier is a professional obligation rather than a preference. The workspace starts there instead of arriving at it.',
+      'Matters have defined teams and information barriers. Agent access follows those boundaries.',
     controls: [
       {
         label: 'Matter access',
@@ -816,24 +810,24 @@ export const solutions: readonly Solution[] = [
     questionsTitle: 'What partners and risk ask first.',
     questions: [
       {
-        question: 'Does anything we put in leave the firm?',
+        question: 'How is firm material controlled?',
         answer:
-          'No. It stays in the systems it already lives in, reached under the permissions those systems enforce, on models IT approved and hosted in the EU.',
+          'IT controls connected access and selects approved models with EU hosting. The agent reads only material available within the matter.',
       },
       {
         question: 'Can it replace a lawyer’s review?',
         answer:
-          'No. It narrows the contract to the points that need judgement and cites the clause for each. The lawyer decides and signs.',
+          'No. It marks playbook departures and cites each clause. The lawyer decides and signs.',
       },
       {
         question: 'How does it respect an information barrier?',
         answer:
-          'The same way your document system does. Access is set per matter, and an agent cannot read across a barrier its user cannot read across.',
+          'Set access per matter. The agent cannot read across a barrier that blocks its user.',
       },
       {
         question: 'We already have a legal AI tool. Why this?',
         answer:
-          'Because the rest of the firm has work too. The same governed workspace covers finance, marketing and operations, on one set of rules and one set of usage figures.',
+          'The same governed workspace also supports work beyond legal. IT can manage access, model choice and usage in one place.',
       },
     ],
     closing: 'Start with the contract type that comes through most often.',

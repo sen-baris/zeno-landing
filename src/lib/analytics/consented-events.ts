@@ -1,20 +1,10 @@
-import type { AssessmentQuadrant } from '../assessment/types';
-
 const CONSENT_KEY = 'zeno-analytics-consent';
 
 export type AnalyticsEvent =
-  | { name: 'assessment_started' }
-  | {
-      name: 'assessment_completed';
-      impactScore: number;
-      readinessScore: number;
-      quadrant: AssessmentQuadrant;
-    }
-  | { name: 'result_cta_selected'; action: 'email-plan' | 'discuss-workflow' }
-  | { name: 'demo_started'; source: 'direct' | 'assessment' }
-  | { name: 'demo_submitted'; source: 'direct' | 'assessment' }
-  | { name: 'submission_failed'; surface: 'demo' | 'assessment'; code: string }
-  | { name: 'submission_retried'; surface: 'demo' | 'assessment' };
+  | { name: 'demo_started' }
+  | { name: 'demo_submitted' }
+  | { name: 'submission_failed'; surface: 'demo'; code: string }
+  | { name: 'submission_retried'; surface: 'demo' };
 
 export function hasAnalyticsConsent(storage: Storage = window.localStorage): boolean {
   return storage.getItem(CONSENT_KEY) === 'granted';

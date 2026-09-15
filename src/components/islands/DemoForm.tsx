@@ -1,8 +1,6 @@
 import { cloneElement, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactElement, SyntheticEvent } from 'react';
 import { trackConsentedEvent } from '../../lib/analytics/consented-events';
-import { loadAssessmentContext } from '../../lib/assessment/storage';
-import type { StoredAssessmentContext } from '../../lib/assessment/storage';
 import { createLeadSubmissionAdapter, LeadSubmissionError } from '../../lib/leads/adapter';
 import { withBase } from '../../lib/routing/base-path';
 import type { LeadSubmissionAdapter } from '../../lib/leads/types';
@@ -45,23 +43,12 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
   const [errors, setErrors] = useState<DemoFormErrors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
-  const [assessment, setAssessment] = useState<StoredAssessmentContext | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const [values, setValues] = useState<DemoFormValues>(initialValues);
 
   useEffect(() => {
-    const storedAssessment = loadAssessmentContext();
-    let cancelled = false;
-    queueMicrotask(() => {
-      if (cancelled) return;
-      setAssessment(storedAssessment);
-    });
-    trackConsentedEvent({
-      name: 'demo_started',
-      source: storedAssessment ? 'assessment' : 'direct',
-    });
+    trackConsentedEvent({ name: 'demo_started' });
     return () => {
-      cancelled = true;
       abortRef.current?.abort();
     };
   }, []);
@@ -101,7 +88,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
     try {
       const receipt = await adapter.submit(
         {
-          source: assessment ? 'assessment-discussion' : 'demo',
+          source: 'demo',
           contact: {
             fullName: values.fullName.trim(),
             workEmail: values.workEmail.trim(),
@@ -113,19 +100,9 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
             ...(values.sizeBand ? { sizeBand: values.sizeBand } : {}),
           },
           intent: {
-            ...(assessment ? { priorityWorkflow: assessment.workflow } : {}),
             ...(values.desiredStart ? { desiredStart: values.desiredStart } : {}),
             ...(systemsContext ? { systemsContext } : {}),
           },
-          ...(assessment
-            ? {
-                assessment: {
-                  impactScore: assessment.impactScore,
-                  readinessScore: assessment.readinessScore,
-                  quadrant: assessment.quadrant,
-                },
-              }
-            : {}),
           consent: {
             privacyAcknowledged: values.privacyAcknowledged,
             marketing: false,
@@ -140,10 +117,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
           ? 'Preview request confirmed. No information was sent.'
           : 'Request confirmed. We have the details needed for the next step.',
       );
-      trackConsentedEvent({
-        name: 'demo_submitted',
-        source: assessment ? 'assessment' : 'direct',
-      });
+      trackConsentedEvent({ name: 'demo_submitted' });
     } catch (error) {
       if (abortRef.current.signal.aborted) return;
       const code = error instanceof LeadSubmissionError ? error.code : 'unexpected';
@@ -190,12 +164,6 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
           The form will be ready in a moment. If it does not, enable JavaScript and reload.
         </p>
       )}
-      {assessment && (
-        <p className="prefill-note" role="status">
-          Assessment context added. Your answers and contact details are not in the URL.
-        </p>
-      )}
-
       <fieldset disabled={!hydrated || status === 'submitting'}>
         <legend className="visually-hidden">Demo request details</legend>
         <div className="demo-required-grid">

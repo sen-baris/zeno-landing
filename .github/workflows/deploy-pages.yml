@@ -2,7 +2,8 @@ name: Deploy preview to GitHub Pages
 
 # Publishes the built site to the repository's GitHub Pages project site so the team can review it.
 # This is a shared preview, not a launch: the build stays in preview content mode and is marked
-# noindex, so the fail-closed production release gate is untouched.
+# noindex. Its demo form issues a synthetic receipt and sends no lead data. The fail-closed
+# production release gate stays untouched.
 
 on:
   push:
@@ -50,6 +51,7 @@ jobs:
           PUBLIC_SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
           PUBLIC_SITE_BASE: ${{ steps.pages.outputs.base_path }}
           PUBLIC_PREVIEW_DEPLOY: 'true'
+          PUBLIC_LEAD_ADAPTER: 'synthetic'
         run: pnpm build
 
       - uses: actions/upload-pages-artifact@v3

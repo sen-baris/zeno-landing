@@ -152,14 +152,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-page-metadata',
     statement:
-      'Estimate the yearly value of time one recurring workflow could give back, then scope a custom enterprise rollout with Zeno.',
+      'Estimate the yearly value of recovered time for one workflow. Then scope a custom enterprise rollout with Zeno.',
     category: 'product',
     evidence:
-      'ROI-led business-case page approved by the workspace owner in the 2026-09-14 working session.',
-    verified_on: '2026-09-14',
+      'Business-case scope approved on 2026-09-14. Shorter metadata wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.metadata'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -184,14 +184,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-enterprise-summary',
     statement:
-      'Estimate the time your team could recover and what that time is worth, then scope an enterprise rollout around the result.',
+      'Enter your own time assumptions. See the estimated yearly value and use it to scope an enterprise rollout.',
     category: 'product',
     evidence:
-      'ROI-led business-case framing approved by the workspace owner in the 2026-09-14 working session.',
-    verified_on: '2026-09-14',
+      'Business-case framing approved on 2026-09-14. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -231,14 +231,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-enterprise-close-summary',
     statement:
-      'Scope the platform around the teams, workflows, connected systems, and controls you need.',
+      'Scope the platform around your teams and workflows. Add connected systems and controls as needed.',
     category: 'product',
     evidence:
-      'Compact enterprise scoping close approved by the workspace owner in the 2026-09-14 working session.',
-    verified_on: '2026-09-14',
+      'Enterprise scoping approved on 2026-09-14. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.enterprise'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -247,14 +247,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'demo-meeting-preparation',
     statement:
-      'Tell us what you want to improve. We will prepare the conversation around your team, systems, and controls.',
+      'Tell us what you want to improve. We will prepare a conversation about your team, systems and controls.',
     category: 'product',
     evidence:
-      'Above-the-fold demo funnel wording approved by the workspace owner in the 2026-09-14 working session.',
-    verified_on: '2026-09-14',
+      'Demo preparation scope approved on 2026-09-14. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['demo.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -295,14 +295,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-calculator-method',
     statement:
-      'Choose a team-size range or exact amount, then select weekly hours returned and hourly value. Team ranges use the displayed rounded midpoint. Add an annual budget only to compare it with the estimated yearly value of recovered time.',
+      'Choose a team range or exact number. Enter weekly hours returned and the value of one hour. Ranges use the rounded midpoint shown. Add an annual budget only if you want to compare it with the estimated yearly value of recovered time.',
     category: 'product',
     evidence:
-      'Visitor-driven business-case calculation method approved by the workspace owner in the 2026-09-10 working session.',
-    verified_on: '2026-09-14',
+      'Calculation method approved on 2026-09-10. Plain-language wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.calculator'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -360,14 +360,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'product-agent-starting-point',
-    statement: 'Start from a prebuilt agent or build one from scratch around your workflow.',
+    statement: 'Choose a prebuilt agent or build one around your workflow.',
     category: 'product',
     evidence:
-      'Capability and public wording approved by the workspace owner in the 2026-09-08 working session.',
-    verified_on: '2026-09-08',
+      'Capability approved by the workspace owner on 2026-09-08. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-08',
+    approved_on: '2026-09-15',
     allowed_surfaces: [
       'product.agents',
       'product.hero',
@@ -401,14 +401,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'home-supported-agent-starting-path',
     statement:
-      'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
+      'Choose a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
     category: 'product',
     evidence:
-      'Starting-path capability and public wording approved by the workspace owner in the 2026-09-09 working session.',
-    verified_on: '2026-09-09',
+      'Starting-path capability approved on 2026-09-09. Exact revised public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['home.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -418,14 +418,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'product-page-metadata',
     statement:
-      'Explore an enterprise AI platform for company context, major AI models with EU hosting, prebuilt and custom agents, chat, connected knowledge, and visual workflows.',
+      'Explore Chat, connected knowledge and visual workflows in a governed enterprise AI platform. Use prebuilt or custom agents and access major AI models with EU hosting.',
     category: 'product',
     evidence:
-      'Capability scope and public wording approved by the workspace owner in the 2026-09-09 working session.',
-    verified_on: '2026-09-09',
+      'Capability scope approved on 2026-09-09. Revised metadata wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['product.metadata'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -492,14 +492,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'product-governed-workspace-scale',
     statement:
-      'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+      'Manage knowledge access and model choice as usage scales. Keep human checkpoints and adoption visible.',
     category: 'product',
     evidence:
-      'Governed workspace and enterprise-scale control wording approved by the workspace owner in the 2026-09-09 product hero direction.',
-    verified_on: '2026-09-09',
+      'Governance scope approved on 2026-09-09. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['product.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -526,14 +526,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'product-chat-workspace',
     statement:
-      'Use chat for everyday questions, drafting, and agent-led tasks with the relevant company knowledge attached.',
+      'Use chat for questions and drafting. Bring in agents with relevant company knowledge.',
     category: 'product',
     evidence:
-      'Capability approved by the workspace owner in the 2026-09-09 working session. The TextCortex enterprise agent handbook was reviewed as non-transferable research context.',
-    verified_on: '2026-09-09',
+      'Capability approved on 2026-09-09. Shorter public wording approved in the 2026-09-15 sitewide copy direction. The TextCortex enterprise agent handbook was non-transferable research context.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['product.chat'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -559,15 +559,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'product-connected-knowledge',
-    statement:
-      'Create knowledge bases for the work that matters, then connect them to existing systems through MCP connectors.',
+    statement: 'Connect existing systems to knowledge bases through MCP connectors.',
     category: 'product',
     evidence:
-      'Capability approved by the workspace owner in the 2026-09-09 working session. https://help.textcortex.com/hc/en-us/articles/45958548687633-MCP-Connectors was reviewed as non-transferable research context.',
-    verified_on: '2026-09-09',
+      'Capability approved on 2026-09-09. Shorter public wording approved in the 2026-09-15 sitewide copy direction. https://help.textcortex.com/hc/en-us/articles/45958548687633-MCP-Connectors was non-transferable research context.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['product.knowledge'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -644,14 +643,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'product-governance-controls',
     statement:
-      'Keep knowledge access, model choice, human checkpoints, and adoption visibility in one place.',
+      'Manage knowledge access and model choice in one place. Keep human checkpoints and adoption visible.',
     category: 'product',
     evidence:
-      'Existing product-page governance scope retained and wording approved by the workspace owner in the 2026-09-09 working session.',
-    verified_on: '2026-09-09',
+      'Governance scope approved on 2026-09-09. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['product.governance'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
@@ -661,14 +660,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'solution-workspace-manufacturing',
     statement:
-      'Customer drawings and internal standards provide context for a Specification Agent that prepares a cited comparison for engineering review.',
+      'The Specification Agent compares customer drawings with internal standards. It cites each finding for engineering review.',
     category: 'product',
     evidence:
-      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
-    verified_on: '2026-09-10',
+      'Industry workspace approved on 2026-09-10. Revised wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, solution-page direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['solutions.manufacturing'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',
@@ -678,14 +677,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'solution-workspace-management-consulting',
     statement:
-      'A client brief, firm credentials, and comparable engagements provide context for a Proposal Agent that prepares a partner-ready outline.',
+      'The Proposal Agent drafts from a client brief and relevant firm experience. A partner reviews the outline.',
     category: 'product',
     evidence:
-      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
-    verified_on: '2026-09-10',
+      'Industry workspace approved on 2026-09-10. Revised wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, solution-page direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['solutions.management-consulting'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',
@@ -695,14 +694,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'solution-workspace-m-and-a',
     statement:
-      'Mandate criteria, deal history, and licensed market sources provide context for a Longlist Agent that prepares a qualified target list for adviser review.',
+      'The Longlist Agent screens licensed market sources against the mandate. Advisers review the target list and its fit notes.',
     category: 'product',
     evidence:
-      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
-    verified_on: '2026-09-10',
+      'Industry workspace approved on 2026-09-10. Revised wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, solution-page direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['solutions.m-and-a'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',
@@ -712,14 +711,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'solution-workspace-private-equity',
     statement:
-      'A pitch deck, diligence files, and the fund mandate provide context for an IC Memo Agent that prepares a reviewable draft with open questions marked.',
+      'The IC Memo Agent drafts from the pitch deck, fund mandate and diligence. A deal partner reviews open questions.',
     category: 'product',
     evidence:
-      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
-    verified_on: '2026-09-10',
+      'Industry workspace approved on 2026-09-10. Revised wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, solution-page direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['solutions.private-equity'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',
@@ -729,14 +728,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'solution-workspace-legal',
     statement:
-      'A firm playbook, supplier agreement, and precedent bank provide context for a Review Agent that prepares a clause-level comparison for lawyer review.',
+      'The Review Agent compares a supplier agreement with the firm playbook. A lawyer reviews each cited departure.',
     category: 'product',
     evidence:
-      'Industry workspace narrative approved by the workspace owner in the 2026-09-10 solution-page direction.',
-    verified_on: '2026-09-10',
+      'Industry workspace approved on 2026-09-10. Revised wording approved in the 2026-09-15 sitewide copy direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, solution-page direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['solutions.legal'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',

@@ -10,9 +10,9 @@ const privacyStatement = 'Nothing entered here is sent or saved.';
 const calculatorProps = {
   disclaimer,
   method:
-    'Choose a team-size range or exact amount, then select weekly hours returned and hourly value. Team ranges use the displayed rounded midpoint. Add an annual budget only to compare it with the estimated yearly value of recovered time.',
+    'Choose a team range or exact number. Enter weekly hours returned and the value of one hour. Ranges use the rounded midpoint shown. Add an annual budget only if you want to compare it with the estimated yearly value of recovered time.',
   pilotMethod:
-    'For a focused pilot, start with 20 percent of the team, rounded to the nearest person, with a minimum of five and maximum of 20 people. The pilot never exceeds the team size entered.',
+    'Pilot size uses 20 percent of the team, rounded to a whole person. Use at least five people when the team allows it and no more than 20. The pilot never exceeds the team entered.',
   pilotStatement: 'A focused pilot gives you a value to validate before a wider rollout.',
   privacyStatement,
   title: 'Build the estimate in three steps.',
@@ -127,7 +127,7 @@ describe('BusinessCaseCalculator', () => {
     expect(screen.getByText('Estimated ROI against this budget')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Estimated yearly value of recovered time minus annual budget, divided by annual budget.',
+        'Estimated ROI = (yearly time value minus annual budget) divided by annual budget.',
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText(/payback/i)).not.toBeInTheDocument();

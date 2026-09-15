@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import DemoForm from '../../src/components/islands/DemoForm';
-import { saveAssessmentContext } from '../../src/lib/assessment/storage';
 import { LeadSubmissionError } from '../../src/lib/leads/adapter';
 import type { LeadSubmission, LeadSubmissionAdapter } from '../../src/lib/leads/types';
 
@@ -114,17 +113,16 @@ describe('compact demo form', () => {
     expect(submit.mock.calls[0]?.[0].intent).not.toHaveProperty('desiredStart');
   });
 
-  it('prefills only non-PII assessment context without changing the URL', async () => {
-    saveAssessmentContext({
-      impactScore: 75,
-      readinessScore: 50,
-      quadrant: 'prepare-foundation',
-      workflow: 'data-preparation',
-    });
+  it('does not use old assessment session data in a demo request', async () => {
+    window.sessionStorage.setItem(
+      'zeno-assessment-context',
+      JSON.stringify({ impactScore: 75, readinessScore: 50, quadrant: 'prepare-foundation' }),
+    );
     const user = userEvent.setup();
     const { adapter, submit } = mockAdapter();
     render(<DemoForm adapter={adapter} privacyAcknowledgement={privacyAcknowledgement} />);
-    expect(await screen.findByRole('status')).toHaveTextContent('Assessment context added');
+    await waitFor(() => expect(screen.getByLabelText('Work email')).toBeEnabled());
+    expect(screen.queryByText(/assessment context added/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Priority workflow')).not.toBeInTheDocument();
     expect(window.location.search).toBe('');
     await user.type(screen.getByLabelText('Full name'), 'Alex Example');
@@ -134,14 +132,10 @@ describe('compact demo form', () => {
     await user.click(screen.getByRole('button', { name: 'Request a demo' }));
     await waitFor(() => expect(submit).toHaveBeenCalledOnce());
     expect(submit.mock.calls[0]?.[0]).toMatchObject({
-      source: 'assessment-discussion',
-      intent: { priorityWorkflow: 'data-preparation' },
-      assessment: {
-        impactScore: 75,
-        readinessScore: 50,
-        quadrant: 'prepare-foundation',
-      },
+      source: 'demo',
+      intent: {},
     });
+    expect(submit.mock.calls[0]?.[0]).not.toHaveProperty('assessment');
     expect(submit.mock.calls[0]?.[0].contact).not.toHaveProperty('phoneNumber');
   });
 

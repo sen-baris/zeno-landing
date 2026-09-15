@@ -87,7 +87,7 @@ describe('claims publication boundary', () => {
       claimRegistry,
       homepageHeroCapabilityClaimIds,
       'home.hero',
-      new Date('2026-09-09T12:00:00Z'),
+      new Date('2026-09-15T12:00:00Z'),
     );
     const claimById = new Map(claims.map((claim) => [claim.id, claim]));
     const startingPoint = claimById.get('home-agent-starting-point');
@@ -95,7 +95,7 @@ describe('claims publication boundary', () => {
 
     expect(startingPoint?.statement).toBe('Start with a prebuilt agent or build your own.');
     expect(supportedPath?.statement).toBe(
-      'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
+      'Choose a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
     );
     for (const claim of claims) {
       expect(claim.category).toBe('product');
@@ -108,7 +108,7 @@ describe('claims publication boundary', () => {
         claimRegistry,
         homepageHeroCapabilityClaimIds,
         'product.hero',
-        new Date('2026-09-09T12:00:00Z'),
+        new Date('2026-09-15T12:00:00Z'),
       ),
     ).toThrow(/not approved for product\.hero/);
     expect(() =>
@@ -116,7 +116,7 @@ describe('claims publication boundary', () => {
         claimRegistry,
         homepageHeroCapabilityClaimIds,
         'product.workflows',
-        new Date('2026-09-09T12:00:00Z'),
+        new Date('2026-09-15T12:00:00Z'),
       ),
     ).toThrow(/not approved for product\.workflows/);
   });

@@ -6,7 +6,7 @@ describe('consented analytics events', () => {
     const listener = vi.fn();
     window.addEventListener('zeno:analytics', listener);
     expect(hasAnalyticsConsent()).toBe(false);
-    expect(trackConsentedEvent({ name: 'assessment_started' })).toBe(false);
+    expect(trackConsentedEvent({ name: 'demo_started' })).toBe(false);
     expect(listener).not.toHaveBeenCalled();
     window.removeEventListener('zeno:analytics', listener);
   });
@@ -15,11 +15,10 @@ describe('consented analytics events', () => {
     window.localStorage.setItem('zeno-analytics-consent', 'granted');
     const listener = vi.fn();
     window.addEventListener('zeno:analytics', listener);
-    expect(trackConsentedEvent({ name: 'demo_started', source: 'assessment' })).toBe(true);
+    expect(trackConsentedEvent({ name: 'demo_started' })).toBe(true);
     expect(listener).toHaveBeenCalledOnce();
     expect((listener.mock.calls[0]?.[0] as CustomEvent).detail).toEqual({
       name: 'demo_started',
-      source: 'assessment',
     });
     window.removeEventListener('zeno:analytics', listener);
   });

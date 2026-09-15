@@ -25,9 +25,9 @@ const storySteps = [
     id: 'find',
     number: '01',
     title: 'We find the workflow with you',
-    body: 'We start with the monthly finance report: repeated, important, and still assembled by hand.',
+    body: 'The monthly finance report is important and still assembled by hand.',
     accessibleDetail:
-      'Finance report is selected from a shortlist of Finance report, Supplier contract, and Project updates. It runs every month, is assembled by hand, and is owned by Finance.',
+      'The Finance report is selected from three candidate workflows. It runs every month, is assembled by hand and is owned by Finance.',
   },
   {
     id: 'build',
@@ -36,18 +36,18 @@ const storySteps = [
     emphasis: {
       before: buildStartingPointParts[0],
       text: buildEmphasis,
-      after: `${buildStartingPointParts[1]} Connect your systems, review, and approve.`,
+      after: `${buildStartingPointParts[1]} We connect your systems. Your team reviews and approves.`,
     },
     accessibleDetail:
-      'The Finance report agent can start from the prebuilt finance agent shown here or from a custom build. It connects to Outlook, SharePoint, and Salesforce and prepares a monthly finance report draft. It is configured with Zeno and the customer team, with human approval required. Its governed workspace includes source permissions, IT-approved models, human approval, and a Built for Europe marker.',
+      'The Finance report agent begins from a prebuilt finance agent or a custom build. Zeno and the team connect Outlook, SharePoint and Salesforce. The agent prepares a draft for human review and approval. The workspace shows source permissions, approved models and EU hosting.',
   },
   {
     id: 'adopt',
     number: '03',
     title: 'We stay through adoption',
-    body: 'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
+    body: 'After launch, we track return use and improve before expanding.',
     accessibleDetail:
-      'The Finance report agent shows healthy adoption: weekly activity rises after launch, more teams return, and fewer seats remain inactive.',
+      'The Finance report agent shows rising weekly activity. More teams return and fewer seats remain inactive after launch.',
   },
 ] as const;
 
@@ -293,8 +293,8 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
   </div>
 
   <figcaption id="hero-journey-caption" class="visually-hidden">
-    One Finance report agent moves from workflow selection, through a prebuilt or custom starting
-    point, collaborative setup and human approval, into adoption measurement and improvement.
+    The Finance report agent moves from workflow selection to a prebuilt or custom starting point.
+    Zeno and the team connect company systems, review the draft and improve adoption after launch.
   </figcaption>
 </figure>
 

@@ -2,7 +2,7 @@ export const draftHomeCopy = {
   status: 'draft',
   title: 'AI agents your teams actually use | Zeno',
   description:
-    'Find the workflows worth automating, build AI agents with the people who use them, and support adoption on a governed workspace built for Europe.',
+    'Find valuable workflows and build agents with the people who use them. Grow adoption in a governed workspace built for Europe.',
   headline: 'AI agents your teams actually use.',
   startingPathLabel: 'Start your way',
   startingPathClaimId: 'home-supported-agent-starting-path',
@@ -25,7 +25,7 @@ export const adoptionPartnership = {
   eyebrow: 'After launch',
   title: 'Adoption is built together.',
   intro:
-    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+    'We stay with you after launch. We improve what teams use and turn it into the next workflow.',
   partnerLabel: 'Zeno + your team',
   stages: [
     {
@@ -52,23 +52,23 @@ export const companyVision = {
   eyebrow: 'Our vision',
   title: 'AI should strengthen human expertise.',
   paragraphs: [
-    'Enterprise AI should give people more capacity for judgment, creativity, and decision-making. It should not add another layer of tools to manage.',
-    'That future depends on technology grounded in real work, governed with care, and shaped with the people who use it. Our ambition is to make AI a trusted part of how organisations operate, while keeping human expertise at the centre.',
+    'Enterprise AI makes more room for judgment, creativity and decisions. It does not need to add another tool to manage.',
+    'That future starts with technology grounded in real work and shaped with the people who use it. Governance matters. Our ambition is to make AI a trusted part of everyday operations while keeping human expertise at the centre.',
   ],
 } as const;
 
 /** The same operating picture before and after the work happens somewhere you can see it. */
 export const operatingShift = {
   today: [
-    'Two or three AI tools in pilot, none of them finished',
+    'Several AI pilots, no clear next step',
     'The monthly report is still built by hand',
-    'Nobody can answer what the AI spend bought',
-    'You are stuck with whichever provider was bought first',
+    'No clear view of what the AI spend delivers',
+    'One model provider becomes hard to replace',
   ],
   withZeno: [
-    'One place to work, and you can see who is in it',
-    'Agents do the repetitive part, people make the calls',
-    'Every workflow has a number attached to it',
-    'You can switch model provider later',
+    'One workspace with visible usage',
+    'Agents handle repeated work. People make the calls',
+    'A business case for each workflow',
+    'Model choice remains open',
   ],
 } as const;

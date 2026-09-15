@@ -19,7 +19,6 @@ const paths = [
   '/pricing',
   '/solutions',
   ...solutions.map((solution) => `/solutions/${solution.slug}`),
-  '/ai-readiness',
   '/demo',
   ...customerStoryPaths,
 ];

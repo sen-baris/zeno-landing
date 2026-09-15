@@ -1,22 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { assessmentQuestions } from '../../src/lib/assessment/questions';
 import { customerStoryDrafts, customerVoiceDrafts } from '../../src/lib/content/customer-stories';
 import { solutions } from '../../src/lib/content/solutions';
-
-async function completeAssessment(page: Page) {
-  await page.getByRole('radio', { name: /Research and synthesis/i }).check();
-  await page.getByRole('button', { name: 'Begin assessment' }).click();
-  for (const [index, question] of assessmentQuestions.entries()) {
-    await page.getByRole('radio', { name: question.options[4]?.label ?? '' }).check();
-    await page
-      .getByRole('button', {
-        name: index === assessmentQuestions.length - 1 ? 'See my result' : 'Next question',
-      })
-      .click();
-  }
-}
 
 /**
  * Scrolls the page so every reveal target has been observed, then waits for the entrance motion to
@@ -115,24 +101,17 @@ test('demo planning context stays optional and the no-JavaScript form is underst
   await context.close();
 });
 
-test('homepage to assessment result to prefilled demo', async ({ page }) => {
-  // Loads the assessment or demo island, waits for it to hydrate, and drives the form.
-  // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
-  // browsers running the rest of the suite alongside it.
-  test.slow();
-
+test('homepage readiness CTA opens the business case, then the demo', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'AI agents your teams actually use.',
   );
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
-  await expect(page).toHaveURL(/\/ai-readiness$/);
-  await completeAssessment(page);
-  await expect(page.getByRole('heading', { name: 'Launch candidate' })).toBeVisible();
-  await expect(page.getByText('Launch research and synthesis.')).toBeVisible();
-  await page.getByRole('link', { name: 'Discuss this workflow' }).click();
+  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.getByRole('heading', { name: 'How many people do this work?' })).toBeVisible();
+  await page.getByRole('link', { name: 'Book a demo' }).first().click();
   await expect(page).toHaveURL(/\/demo$/);
-  await expect(page.getByText('Assessment context added.')).toBeVisible();
+  await expect(page.getByText('Assessment context added.')).toHaveCount(0);
   await page.getByLabel('Full name').fill('Alex Example');
   await page.getByLabel('Work email').fill('alex@example.test');
   await page.getByLabel('Company').fill('Example Test Company');
@@ -140,8 +119,70 @@ test('homepage to assessment result to prefilled demo', async ({ page }) => {
   expect(new URL(page.url()).search).toBe('');
 });
 
+test('readiness CTAs now open the business case on every public surface', async ({ page }) => {
+  for (const path of [
+    '/',
+    '/product',
+    '/solutions/manufacturing',
+    '/solutions/management-consulting',
+    '/solutions/m-and-a',
+    '/solutions/private-equity',
+    '/solutions/legal',
+    '/404',
+  ]) {
+    await page.goto(path);
+    await expect(page.getByRole('link', { name: 'Assess AI readiness' }).first()).toHaveAttribute(
+      'href',
+      '/pricing',
+    );
+  }
+});
+
+test('error pages keep their recovery guidance direct', async ({ page }) => {
+  await page.goto('/500');
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'This page did not load.' }),
+  ).toBeVisible();
+  await expect(page.getByText('Return home and try again.')).toBeVisible();
+  await expect(page.getByText('Nothing was submitted.')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Go home' })).toHaveAttribute('href', '/');
+
+  await page.goto('/404');
+  await expect(page.getByRole('link', { name: 'Assess AI readiness' })).toHaveAttribute(
+    'href',
+    '/pricing',
+  );
+});
+
+test('the retired assessment URL redirects to the business case without a form', async ({
+  browser,
+  page,
+}) => {
+  const legacyHtml = await page.request.get('/ai-readiness');
+  expect(legacyHtml.ok()).toBe(true);
+  const markup = await legacyHtml.text();
+  expect(markup).toContain('noindex, nofollow');
+  expect(markup).toContain('href="https://heyzeno.com/pricing"');
+  expect(markup).toContain('Open the business case');
+  expect(markup).not.toContain('ReadinessAssessment');
+  expect(markup).not.toContain('<form');
+
+  await page.goto('/ai-readiness');
+  await expect(page).toHaveURL(/\/pricing$/);
+
+  const noJavaScript = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await noJavaScript.newPage();
+  await plain.goto(new URL('/ai-readiness', test.info().project.use.baseURL).toString());
+  await expect(plain).toHaveURL(/\/pricing$/);
+  await expect(plain.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
+  await noJavaScript.close();
+
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(await sitemap.text()).not.toContain('/ai-readiness');
+});
+
 test('homepage to successful native demo submission', async ({ page }) => {
-  // Loads the assessment or demo island, waits for it to hydrate, and drives the form.
+  // Loads the demo island, waits for it to hydrate, and drives the form.
   // Genuinely slow work, and the default half-minute leaves nothing for the contention of three
   // browsers running the rest of the suite alongside it.
   test.slow();
@@ -191,9 +232,8 @@ test('demo server failure is understandable and retry succeeds', async ({ page }
 test('homepage and interactive routes have no automatically detectable WCAG A/AA violations', async ({
   page,
 }) => {
-  // Four full axe passes, each preceded by a page load and a settle. It runs close to twenty
-  // seconds on an idle machine, so the default half-minute leaves nothing for the contention of
-  // three browsers running the rest of the suite alongside it.
+  // Representative page templates each receive a full axe pass after load and settle. This is
+  // slow enough to need a longer timeout when three browser engines share a test host.
   test.slow();
 
   // The index and one industry page, not all six: the five industry pages are one template with
@@ -205,7 +245,6 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
     '/solutions',
     '/solutions/manufacturing',
     '/customers/atares',
-    '/ai-readiness',
     '/demo',
   ]) {
     await page.goto(path);
@@ -219,23 +258,23 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
   }
 });
 
-test('homepage presents the why, how, and what hierarchy with a focused product view', async ({
-  page,
-}) => {
+test('homepage ends its editorial story with Vision before conversion', async ({ page }) => {
   await page.goto('/');
   const sectionHeadings = await page.locator('h2').allTextContents();
   const whyIndex = sectionHeadings.indexOf('Adoption is built together.');
   const proofIndex = sectionHeadings.indexOf('What enterprises are seeing.');
   const visionIndex = sectionHeadings.indexOf('AI should strengthen human expertise.');
   const shiftIndex = sectionHeadings.indexOf('The same quarter, two ways.');
+  const trustIndex = sectionHeadings.indexOf('Scale without giving up control.');
+  const conversionIndex = sectionHeadings.indexOf('Make the case for one workflow.');
 
-  // One line through the page: proof, then the work that turns launch into adoption, then the
-  // people who work on it, then the before and after. The mechanism lives on /product, so the
-  // homepage does not explain it twice.
+  // Vision closes the editorial story; conversion stays last so the meeting path remains clear.
   expect(proofIndex).toBeGreaterThanOrEqual(0);
   expect(whyIndex).toBeGreaterThan(proofIndex);
-  expect(visionIndex).toBeGreaterThan(whyIndex);
-  expect(shiftIndex).toBeGreaterThan(visionIndex);
+  expect(shiftIndex).toBeGreaterThan(whyIndex);
+  expect(trustIndex).toBeGreaterThan(shiftIndex);
+  expect(visionIndex).toBeGreaterThan(trustIndex);
+  expect(conversionIndex).toBeGreaterThan(visionIndex);
   expect(sectionHeadings, 'the mechanism belongs on /product').not.toContain(
     'Connect. Equip. Run. Govern.',
   );
@@ -348,15 +387,15 @@ test('the product visuals survive a page with no JavaScript', async ({ browser }
   // names and qualitative adoption state that the supporting visual hides from assistive technology.
   await expect(hero.locator('.hj-panel')).toHaveCount(3);
   for (const panel of await hero.locator('.hj-panel').all()) await expect(panel).toBeVisible();
-  await expect(hero.locator('.hj-story')).toContainText('Outlook, SharePoint, and Salesforce');
+  await expect(hero.locator('.hj-story')).toContainText('Outlook, SharePoint and Salesforce');
   await expect(hero.locator('.hj-story')).toContainText(
     'Start with a prebuilt agent or build your own.',
   );
   await expect(hero.getByText('Prebuilt agent', { exact: true })).toBeVisible();
   await expect(hero.getByText('Custom built', { exact: true })).toBeVisible();
-  await expect(hero.locator('.hj-story')).toContainText('source permissions, IT-approved models');
+  await expect(hero.locator('.hj-story')).toContainText('source permissions, approved models');
   await expect(hero.locator('.hj-story')).toContainText(
-    'weekly activity rises after launch, more teams return, and fewer seats remain inactive',
+    'More teams return and fewer seats remain inactive after launch',
   );
   await expect(hero.locator('.hj-story')).not.toContainText('percent');
   await expect(hero.locator('[role="button"]')).toHaveCount(0);
@@ -409,7 +448,7 @@ test('the product page carries the mechanism the homepage now links to', async (
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
-    'Explore an enterprise AI platform for company context, major AI models with EU hosting, prebuilt and custom agents, chat, connected knowledge, and visual workflows.',
+    'Explore Chat, connected knowledge and visual workflows in a governed enterprise AI platform. Use prebuilt or custom agents and access major AI models with EU hosting.',
   );
 
   const platformOverview = page.locator('.platform-overview');
@@ -441,12 +480,12 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(platformOverview.getByText('Custom build', { exact: true })).toBeVisible();
   await expect(
     platformOverview.getByText(
-      'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+      'Manage knowledge access and model choice as usage scales. Keep human checkpoints and adoption visible.',
       { exact: true },
     ),
   ).toBeVisible();
   await expect(platformOverview.locator('figcaption')).toHaveText(
-    'Connect your company context to agents that get work done in one governed workspace. Start from a prebuilt agent or build one from scratch around your workflow. Prebuilt starting points include Presentation Agent, Finance Agent, and Legal Agent. Access major AI models with EU hosting in one place. Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+    'Connect your company context to agents that get work done in one governed workspace. Choose a prebuilt agent or build one around your workflow. Prebuilt starting points include Presentation Agent, Finance Agent, and Legal Agent. Access major AI models with EU hosting in one place. Manage knowledge access and model choice as usage scales. Keep human checkpoints and adoption visible.',
   );
   await expect(platformOverview.locator('a, button, input, select, textarea')).toHaveCount(0);
   expect(await page.locator('.product-intro').innerText()).not.toContain('—');
@@ -460,10 +499,10 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(page.getByText('Company context on', { exact: true })).toBeVisible();
   await expect(page.getByText('Finance knowledge', { exact: true }).first()).toBeVisible();
   await expect(page.locator('.chat-workspace figcaption')).toHaveText(
-    'Use chat for everyday questions, drafting, and agent-led tasks with the relevant company knowledge attached. A finance agent prepares a monthly review in chat from the company context selected for the task.',
+    'Use chat for questions and drafting. Bring in agents with relevant company knowledge. A finance agent prepares a monthly review in chat from the company context selected for the task.',
   );
   await expect(page.locator('.knowledge-workspace figcaption')).toHaveText(
-    'Create knowledge bases for the work that matters, then connect them to existing systems through MCP connectors. Existing systems connect to a finance knowledge base that can support chat, agents, and workflows.',
+    'Connect existing systems to knowledge bases through MCP connectors. Existing systems connect to a finance knowledge base that can support chat, agents, and workflows.',
   );
   const knowledge = page.locator('.knowledge-workspace');
   await expect(knowledge.getByText('Outlook', { exact: true })).toBeVisible();
@@ -503,7 +542,7 @@ test('the product page carries the mechanism the homepage now links to', async (
   await expect(governanceConsole).not.toContainText('Illustrative');
   await expect(governanceConsole.locator('.governance-chart-column')).toHaveCount(12);
   await expect(governanceConsole.locator('figcaption')).toHaveText(
-    'Keep knowledge access, model choice, human checkpoints, and adoption visibility in one place. Access major AI models with EU hosting in one place. Example usage data is shown for interface context.',
+    'Manage knowledge access and model choice in one place. Keep human checkpoints and adoption visible. Access major AI models with EU hosting in one place. Example usage data is shown for interface context.',
   );
   await expect(governanceConsole.locator('a, button, input, select, textarea')).toHaveCount(0);
   await expect(page.locator('.adoption-gap')).toHaveCount(0);
@@ -591,10 +630,12 @@ test('the argument sections carry the contrast and a low-friction entry point', 
   await expect(shift.locator('.shift-today li')).toHaveCount(4);
   await expect(shift.locator('.shift-zeno li')).toHaveCount(4);
 
-  // The assessment is the self-serve entry point, so its cost to the visitor is stated up front.
-  await expect(page.locator('.conversion-micro')).toHaveText(
-    '9 questions · one workflow · no contact details',
-  );
+  // The business case gives visitors a low-friction path before any contact details.
+  await expect(
+    page
+      .getByRole('region', { name: 'Make the case for one workflow.' })
+      .getByText(/The business case needs no contact details/),
+  ).toBeVisible();
 });
 
 test('the business case publishes each figure with the qualifier it depends on', async ({
@@ -636,8 +677,8 @@ test('the vision presents one professional, photography-led statement at every s
   const vision = page.getByRole('region', { name: 'AI should strengthen human expertise.' });
   await expect(vision.getByText('Our vision', { exact: true })).toBeVisible();
   await expect(vision.locator('.vision-statement > p')).toHaveText([
-    'Enterprise AI should give people more capacity for judgment, creativity, and decision-making. It should not add another layer of tools to manage.',
-    'That future depends on technology grounded in real work, governed with care, and shaped with the people who use it. Our ambition is to make AI a trusted part of how organisations operate, while keeping human expertise at the centre.',
+    'Enterprise AI makes more room for judgment, creativity and decisions. It does not need to add another tool to manage.',
+    'That future starts with technology grounded in real work and shaped with the people who use it. Governance matters. Our ambition is to make AI a trusted part of everyday operations while keeping human expertise at the centre.',
   ]);
   expect(await page.locator('body').innerText()).not.toContain('—');
 
@@ -718,7 +759,7 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
   );
   await expect(page.locator('.hero-path-label')).toHaveCSS('color', 'rgb(107, 45, 74)');
   await expect(page.locator('.hero-subhead')).toHaveText(
-    'Start with a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
+    'Choose a prebuilt agent or shape your own. We ground it in your company context and stay through adoption.',
   );
   const heroAction = page.getByRole('group', { name: 'Hero call to action' });
   await expect(heroAction.getByRole('link')).toHaveCount(1);
@@ -729,9 +770,9 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
 
   // The next section continues the story after launch instead of replaying the three hero stages.
   const why = page.getByRole('region', { name: 'Adoption is built together.' });
-  await expect(why.getByText('After launch')).toBeVisible();
+  await expect(why.getByText('After launch', { exact: true })).toBeVisible();
   await expect(why.locator('.split-heading > p')).toHaveText(
-    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+    'We stay with you after launch. We improve what teams use and turn it into the next workflow.',
   );
 
   const hero = page.locator('.hero-journey');
@@ -743,9 +784,9 @@ test('the hero scroll-locks one scene from first workflow to healthy adoption', 
     'We stay through adoption',
   ]);
   await expect(hero.locator('.hj-story-title + p')).toHaveText([
-    'We start with the monthly finance report: repeated, important, and still assembled by hand.',
-    'Start with a prebuilt agent or build your own. Connect your systems, review, and approve.',
-    'After launch, we watch who returns, where use stalls, and what to improve before expanding.',
+    'The monthly finance report is important and still assembled by hand.',
+    'Start with a prebuilt agent or build your own. We connect your systems. Your team reviews and approves.',
+    'After launch, we track return use and improve before expanding.',
   ]);
   const buildNarrative = hero.locator('[data-story-step="build"] > p').nth(1);
   await expect(buildNarrative.locator('strong')).toHaveText('prebuilt agent');
@@ -1062,7 +1103,7 @@ test('the adoption chapter shows how Zeno and the customer build platform habits
   const section = page.getByRole('region', { name: 'Adoption is built together.' });
   await expect(section.getByText('After launch', { exact: true })).toBeVisible();
   await expect(section.locator('.split-heading > p')).toHaveText(
-    'We stay in the rollout after the first agent goes live. Together, we watch where teams return, remove friction, and turn what works into the next workflow.',
+    'We stay with you after launch. We improve what teams use and turn it into the next workflow.',
   );
 
   const story = section.locator('.adoption-partnership-story');
@@ -1377,7 +1418,7 @@ test('every solutions page is written for its own industry', async ({ page }) =>
       'Reviewable work',
     ]);
     await expect(journey.nth(1)).toContainText(
-      'Start from a prebuilt agent or build one from scratch around your workflow.',
+      'Choose a prebuilt agent or build one around your workflow.',
     );
 
     const workspace = page.locator('.solution-workspace');
@@ -2318,12 +2359,13 @@ test('mobile same-page navigation closes after an anchor is selected', async ({ 
   await expect(menu).not.toHaveAttribute('open', '');
 });
 
-test('interactive routes explain the JavaScript fallback', async ({ browser }) => {
+test('the two conversion forms explain their JavaScript fallback', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  for (const path of ['/ai-readiness', '/demo']) {
-    await page.goto(`http://127.0.0.1:4321${path}`);
-    await expect(page.getByRole('status')).toContainText('enable JavaScript and reload');
-  }
+  await page.goto(new URL('/demo', test.info().project.use.baseURL).toString());
+  await expect(page.getByRole('status')).toContainText('enable JavaScript and reload');
+  await page.goto(new URL('/pricing', test.info().project.use.baseURL).toString());
+  await expect(page.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Book a demo' }).first()).toBeVisible();
   await context.close();
 });

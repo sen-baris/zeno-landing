@@ -553,7 +553,7 @@ export default function BusinessCaseCalculator({
                   <p>Estimated ROI against this budget</p>
                   <strong>{formatBusinessCaseNumber(completeResults.roiPercent!, 1)}%</strong>
                   <small>
-                    Estimated yearly value of recovered time minus annual budget, divided by annual
+                    Estimated ROI = (yearly time value minus annual budget) divided by annual
                     budget.
                   </small>
                 </div>

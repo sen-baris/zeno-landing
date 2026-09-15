@@ -135,15 +135,15 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     reviewedOn: '2026-09-08',
     title: 'How atares saves time on research and target discovery.',
     summary:
-      'atares uses connected knowledge and task-specific agents to accelerate research while advisers retain responsibility for the final work.',
+      'atares uses connected knowledge and task-specific agents for research. Advisers own the final work.',
     sections: [
       {
         claimId: 'customer-story-atares-context',
         label: 'Customer context',
         heading: 'An M&A team built around specialist judgment.',
         paragraphs: [
-          'atares advises technology-focused mid-market companies on acquisitions, sales, and growth financing. Its work depends on assembling reliable market context quickly while keeping experienced advisers responsible for every conclusion.',
-          'Each mandate can move from a broad market question to a detailed view of companies, comparable businesses, and potential counterparties. The team wanted to make that first research pass faster without treating an AI-generated draft as finished advisory work.',
+          'atares advises technology-focused mid-market companies on acquisitions, sales and growth financing. Its advisers need reliable market context and remain responsible for the conclusions.',
+          'A mandate can start with broad research and narrow to potential counterparties. The team wanted a faster first pass, not a finished AI-written recommendation.',
         ],
       },
       {
@@ -151,11 +151,11 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The challenge',
         heading: 'Research was spread across tools and repeated by hand.',
         paragraphs: [
-          'Market and company research required advisers to move between internal material and current external information. Relevant institutional knowledge was distributed across Microsoft 365, including OneDrive Business, SharePoint, Outlook, and Teams, as well as Confluence.',
-          'The same pressure appeared around target discovery, preliminary analysis, and the content that supports a mandate. Time spent collecting, comparing, and formatting information reduced the time available for client work, negotiation, and judgment.',
+          'Research pulled advisers across market sources and company records. Relevant knowledge sat across OneDrive Business, SharePoint, Outlook, Teams and Confluence.',
+          'Target discovery and early analysis added more manual collection. Formatting that material left less time for clients and judgment.',
         ],
         points: [
-          'Researching markets, companies, and competitive landscapes',
+          'Market and company research',
           'Building preliminary target and buyer longlists',
           'Preparing indicative analysis for adviser review',
           'Drafting outreach and supporting content around active sectors',
@@ -166,8 +166,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The approach',
         heading: 'Connected knowledge became the starting point for focused agents.',
         paragraphs: [
-          'atares organized recurring work in a shared enterprise workspace with four active knowledge bases and seven active agents. The knowledge layer connects the team’s existing systems so agents can work from internal deal experience alongside current market information.',
-          'Each agent is configured for a defined research task rather than acting as a general-purpose assistant. The setup gives the team a repeatable way to begin research while retaining control over access, scope, and the final output.',
+          'atares built four active knowledge bases and seven active agents in a shared workspace. Connected systems bring internal deal experience together with current market information.',
+          'Each agent has a defined research job. Advisers control its scope, access and final output.',
         ],
       },
       {
@@ -175,8 +175,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Workflows in practice',
         heading: 'A faster route from an initial question to an adviser-ready draft.',
         paragraphs: [
-          'For a buy-side search, the team can begin with specific target criteria. An agent brings together internal knowledge, prior deal material, and live web research to produce a preliminary longlist with company summaries and fit notes. Advisers then validate and narrow the list.',
-          'The same pattern supports early scenario analysis, indicative valuation work based on standard sector references, and drafts of teaser copy or outreach messages. The platform accelerates the first pass across these workflows, but the team decides what is reliable and relevant enough to use.',
+          'For a buy-side search, an agent screens companies against target criteria. It combines internal material with live research to draft a preliminary longlist and fit notes. Advisers validate and narrow it.',
+          'Agents also support early scenarios, indicative valuation drafts based on sector references, teaser copy and outreach. The team decides what is reliable enough to use.',
         ],
       },
       {
@@ -185,7 +185,7 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         heading: 'More time for the work that requires an adviser.',
         paragraphs: [
           'Across the described research workflows, atares reports approximately 20 hours saved by the team each week. This is a team total, not a per-user figure.',
-          'The practical gain comes from reducing repeated collection and drafting work across several daily research tasks. Nothing leaves the team without human signoff. Agents create a stronger starting point, while advisers remain accountable for the final work product.',
+          'The time comes from less repeated collection and drafting across daily research tasks. Advisers review every output before it leaves the team.',
         ],
       },
     ],
@@ -223,15 +223,15 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     reviewedOn: '2026-09-08',
     title: 'How b2venture made AI part of the investment workflow.',
     summary:
-      'b2venture introduced focused agents for research and investment work, then measured how consistently the team used them.',
+      'b2venture uses focused agents for research and investment work. The team tracks regular use.',
     sections: [
       {
         claimId: 'customer-story-b2venture-context',
         label: 'Customer context',
         heading: 'Investment work needs speed and analytical depth.',
         paragraphs: [
-          'b2venture is a European investment firm focused on early opportunities. Evaluating those opportunities requires the team to absorb market information, review company material, and turn its analysis into clear investment documents.',
-          'The work moves quickly, but a faster process is useful only when it preserves the rigor behind an investment decision. The team therefore focused on repeatable tasks where structured AI support could create time without replacing investor judgment.',
+          'b2venture is a European investment firm focused on early opportunities. Its team reviews companies and markets before turning its analysis into investment documents.',
+          'Speed does not replace investor judgment. The team focused agents on repeatable work while keeping decisions with investment professionals.',
         ],
       },
       {
@@ -239,8 +239,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The challenge',
         heading: 'Memos and market research consumed the same scarce hours.',
         paragraphs: [
-          'Associates and investment managers were spending substantial time gathering information and preparing comprehensive investment memos. Drafting and refining a memo typically accounted for 5 to 10 hours per investment opportunity.',
-          'The team also needed to research emerging markets and startups, compare companies, review pitch decks, and maintain consistent communication. Information across those tasks had to remain connected to a shared knowledge base instead of becoming isolated in individual documents and tools.',
+          'Associates and managers spent substantial time gathering information for investment memos. Drafting and refining a memo typically took 5 to 10 hours per investment opportunity.',
+          'The same team researched markets and startups, reviewed pitch decks and prepared communication. It needed connected knowledge instead of isolated documents.',
         ],
       },
       {
@@ -248,8 +248,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The approach',
         heading: 'Specialized agents were matched to specialized tasks.',
         paragraphs: [
-          'Rather than asking one general agent to cover every part of the investment process, b2venture created more than 10 specialized agents. Each one is configured for a distinct job and the knowledge needed to perform it.',
-          'The set includes support for investment memo writing, tax reporting, term-sheet preparation, startup advice, and assessments based on founder call transcripts. This gives each workflow a clearer purpose and a more consistent starting point.',
+          'b2venture created more than 10 specialized agents instead of one general assistant. Each agent has a distinct job and relevant knowledge.',
+          'They support memos, founder-call notes and document review. Each workflow has a defined starting point.',
         ],
       },
       {
@@ -257,14 +257,14 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Workflows in practice',
         heading: 'Research and documents work from one connected knowledge layer.',
         paragraphs: [
-          'The team connected material in Notion and Google Drive so agents can work across financial models, pitch decks, and other investment documents. That shared context supports market research, emerging-trend and startup identification, competitive analysis, and pitch-deck review.',
-          'For day-to-day communication, the workflow also helps draft and refine email while maintaining the firm’s intended voice. Across each use case, the agent prepares and organizes material so the investment team can concentrate on analysis and decisions.',
+          'Connected Notion and Google Drive material gives agents access to models, pitch decks and investment documents. Teams use that context for market research, startup analysis and pitch-deck review.',
+          'Agents also prepare email drafts in the firm’s voice. Investment professionals review the material and make the decisions.',
         ],
         points: [
           'Investment memo preparation and refinement',
-          'Market, trend, startup, and competitive research',
+          'Market and startup research',
           'Pitch-deck analysis and improvement',
-          'Task-specific reporting, document, and communication support',
+          'Reporting and communication drafts',
         ],
       },
       {
@@ -272,8 +272,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Results and operating impact',
         heading: 'Adoption turned the workflow into a regular part of investment work.',
         paragraphs: [
-          'The described rollout reached over 70 percent team activation, and usage doubled across four months. Those figures show that the system moved beyond occasional experimentation and into recurring work.',
-          'The original memo process provides the clearest baseline: associates and managers had been spending 5 to 10 hours per investment opportunity on drafting and refinement. Specialized agents now give the team a faster first pass while analytical responsibility remains with the investment professionals.',
+          'The rollout reached over 70 percent team activation. Usage doubled over four months as agents became part of recurring work.',
+          'Memo drafting had previously taken 5 to 10 hours per investment opportunity. Agents now prepare a first pass while investment professionals retain analytical responsibility.',
         ],
       },
     ],
@@ -316,8 +316,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Customer context',
         heading: 'Decades of technical knowledge need to remain usable.',
         paragraphs: [
-          'MAHLE operates across a large industrial organization with technical expertise accumulated over many years. That knowledge supports research, engineering, and problem solving, but only when employees can reach the right information at the moment they need it.',
-          'The goal was not simply to add another search interface. MAHLE wanted a knowledge environment that could connect existing sources, interpret context across documents, and support focused agents for specific tasks.',
+          'MAHLE has accumulated technical expertise over many years. That knowledge supports research, engineering and problem solving when employees can find it.',
+          'MAHLE wanted connected sources and task-specific agents, not another search box.',
         ],
       },
       {
@@ -325,8 +325,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The challenge',
         heading: 'Relevant answers were distributed across repositories and pages.',
         paragraphs: [
-          'Locating precise information across multiple document repositories required employees to know where to look and how different pieces of documentation related to one another. Traditional search could locate files, but it did not always synthesize the relevant parts into a useful response.',
-          'That gap was especially visible in technical work. Teams needed to compare documents and versions, retrieve established knowledge, and investigate possible solutions without losing the context contained in the original sources.',
+          'Employees had to know which repository held an answer. File search located documents but left the synthesis to them.',
+          'Technical teams also needed to compare versions, retrieve past solutions and keep source context visible.',
         ],
       },
       {
@@ -334,8 +334,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The approach',
         heading: 'MARVIN connected technical knowledge to a dedicated agent.',
         paragraphs: [
-          'MAHLE introduced MARVIN, short for MAHLE Assisted Research, Verification, Insight and Navigation. The personalized agent sits within a broader knowledge platform configured around the company’s requirements.',
-          'Sources including Microsoft SharePoint and Teams synchronize into the knowledge environment so the agent can work from current material. This creates one governed route into information that previously required employees to search across separate locations.',
+          'MAHLE introduced MARVIN, short for MAHLE Assisted Research, Verification, Insight and Navigation. The agent sits in a knowledge platform configured for the company.',
+          'SharePoint and Teams sources synchronize into that platform. Employees can reach current material through one governed workspace.',
         ],
       },
       {
@@ -343,8 +343,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Workflows in practice',
         heading: 'Teams can compare, retrieve, and reason across technical material.',
         paragraphs: [
-          'Some teams use MARVIN to compare different documents or different versions of the same document. Others use it during problem-solving work to identify relevant information in technical documentation.',
-          'The connected knowledge layer also supports information retrieval, summarization, and the preparation of new reports or plans from existing material. Employees can begin from a synthesized response while retaining access to the knowledge behind it.',
+          'Teams use MARVIN to compare documents and versions. They also use it to find relevant technical information during problem solving.',
+          'The connected knowledge supports retrieval, summarization and drafts of reports or plans. Employees can inspect the sources behind a response.',
         ],
         points: [
           'Finding information across connected company sources',
@@ -358,8 +358,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Results and operating impact',
         heading: 'Useful knowledge access encouraged early adoption.',
         paragraphs: [
-          'The rollout reached over 71 percent activation in less than one month. In the described workflows, MAHLE reports more than five working hours saved per user each week on information retrieval and summarization.',
-          'The combination of connected sources and a recognizable internal agent gave teams a practical way to reuse accumulated expertise. The result is faster access to technical context without separating the AI experience from the company knowledge it is meant to support.',
+          'The rollout reached over 71 percent activation in less than one month. MAHLE reports more than five hours saved per user each week on retrieval and summarization in the described workflows.',
+          'Connected sources and a familiar internal agent made technical knowledge easier to reuse.',
         ],
       },
     ],
@@ -397,8 +397,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Customer context',
         heading: 'Consulting quality depends on knowledge moving between people.',
         paragraphs: [
-          'KBC is an international management consultancy whose work spans strategy and operational delivery. Its consultants rely on active peer collaboration to bring the right experience into client projects, proposals, and internal problem solving.',
-          'As the organization’s knowledge grew, the team needed a way to make that collective expertise easier to find and reuse. The aim was to support the existing culture of collaboration without asking employees to maintain another manual repository.',
+          'KBC is an international management consultancy working across strategy and operations. Its consultants share experience across projects, proposals and internal problem solving.',
+          'As its knowledge grew, KBC needed a faster way to find and reuse that expertise without maintaining another manual repository.',
         ],
       },
       {
@@ -406,8 +406,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The challenge',
         heading: 'Informal knowledge exchange was valuable but difficult to scale.',
         paragraphs: [
-          'Employees often found expertise through personal networks, email, or phone calls. That approach could produce the right answer, but searching, collecting, and preparing the information took time and risked leaving relevant knowledge out of the result.',
-          'Earlier manual knowledge databases did not solve the problem. Maintaining them required sustained effort, and their search limitations reduced regular use. KBC wanted a secure company-wide system that could include existing sources, return comprehensive answers, and remain intuitive for employees.',
+          'Employees often found expertise through colleagues, email or phone calls. The answers were useful, but finding and preparing them took time.',
+          'Manual knowledge databases required steady maintenance and offered limited search. KBC wanted one secure system for existing sources and everyday use.',
         ],
       },
       {
@@ -415,8 +415,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'The approach',
         heading: 'A shared knowledge layer connected sources and employee workflows.',
         paragraphs: [
-          'The platform brings together information from sources including company-wide SharePoint, meeting transcripts hosted in Azure, and selected external research. It can contextualize that material before employees use it for search, analysis, or drafting.',
-          'KBC combined the technology with structured onboarding support from AICX. The rollout helped employees understand where the system was useful and how to apply it in their daily work instead of leaving adoption to chance.',
+          'The platform connects company-wide SharePoint, Azure meeting transcripts and selected external research. Employees use that context for search, analysis and drafting.',
+          'KBC paired the technology with onboarding support from AICX. Employees learned where it helped and how to use it in daily work.',
         ],
       },
       {
@@ -424,13 +424,13 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Workflows in practice',
         heading: 'Search became one part of a broader knowledge workflow.',
         paragraphs: [
-          'Consultants use the connected knowledge to prepare proposal concepts, conduct market and competitive analysis, and support coding and data analysis. Faster access to existing material also helps teams assemble presentation content, benchmarks, comparisons, reports, and meeting notes.',
-          'KBC employees created specialized workflows around the shared platform. These include the company-wide assistant Schorsch, an onboarding assistant for consultants joining projects, and automated capture of document summaries and keywords.',
+          'Consultants use connected knowledge to prepare proposals and analyze markets. They also assemble presentations, benchmarks, reports and meeting notes from existing material.',
+          'KBC built specialized workflows around the platform. Schorsch serves as a company-wide assistant. Other workflows support onboarding and capture document summaries and keywords.',
         ],
         points: [
           'Internal expertise and company knowledge search',
           'Proposal concepts and presentation preparation',
-          'Market, competitive, coding, and data analysis',
+          'Market and data analysis',
           'Onboarding and document metadata workflows',
         ],
       },
@@ -439,8 +439,8 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
         label: 'Results and operating impact',
         heading: 'Knowledge moved from a search problem into everyday work.',
         paragraphs: [
-          'For internal expertise search, the reported time fell from minutes to seconds. Proposal creation became 10 to 12 percent more efficient across the described workflow.',
-          'After 18 months, over 75 percent of employees were active each week. That continued use shows how connected knowledge, practical workflows, and deliberate onboarding worked together to make the system part of regular consulting work.',
+          'Internal expertise search fell from minutes to seconds in the reported workflow. Proposal creation became 10 to 12 percent more efficient in the described workflow.',
+          'After 18 months, over 75 percent of employees used the platform each week. Connected knowledge and onboarding helped make it part of regular work.',
         ],
       },
     ],

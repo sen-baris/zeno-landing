@@ -1,31 +1,30 @@
 ---
-import ReadinessAssessment from '../components/islands/ReadinessAssessment';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/global.css';
+import { withBase } from '../lib/routing/base-path';
+
+const destination = withBase('/pricing');
+const canonical = new URL(destination, Astro.site);
 ---
 
-<BaseLayout
-  title="AI Readiness Assessment | Zeno"
-  description="Score one enterprise workflow across impact and readiness, then receive a practical starting point."
-  canonicalPath="/ai-readiness"
-  pageClass="assessment-page"
->
-  <section class="page-intro section-rule">
-    <div class="shell narrow-shell">
-      <p class="eyebrow">AI Readiness Assessment</p>
-      <h1>Find the right first workflow.</h1>
-      <p>
-        Nine questions separate attractive ideas from workable starting points. You’ll see your
-        result before we ask for contact details.
-      </p>
-    </div>
-  </section>
-  <section class="interactive-section">
-    <div class="shell narrow-shell">
-      <ReadinessAssessment client:only="react">
-        <div class="island-fallback" slot="fallback" role="status">
-          Loading the assessment. If it does not start, enable JavaScript and reload.
-        </div>
-      </ReadinessAssessment>
-    </div>
-  </section>
-</BaseLayout>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Continue to the Zeno business case." />
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0;url=${destination}`} />
+    <title>Continue to the business case | Zeno</title>
+    <script is:inline define:vars={{ destination }}>
+      window.location.replace(destination);
+    </script>
+  </head>
+  <body>
+    <main class="shell narrow-shell error-page">
+      <h1>Continue to the business case.</h1>
+      <p>The business-case calculator is now the place to estimate one workflow.</p>
+      <a class="button button-ink" href={destination}>Open the business case</a>
+    </main>
+  </body>
+</html>

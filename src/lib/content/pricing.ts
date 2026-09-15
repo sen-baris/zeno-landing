@@ -59,8 +59,7 @@ export const businessCaseQuestions: readonly BusinessCaseQuestion[] = [
   {
     field: 'people',
     heading: 'How many people do this work?',
-    description:
-      'Choose a range, or enter the exact number of people expected to use this workflow.',
+    description: 'Choose a range or enter the exact number of people on this workflow.',
     min: 1,
     max: 100_000,
     step: 1,
@@ -68,7 +67,7 @@ export const businessCaseQuestions: readonly BusinessCaseQuestion[] = [
   {
     field: 'hoursReturnedPerWeek',
     heading: 'How many hours could each person get back each week?',
-    description: 'Choose an exact weekly estimate, or enter your own.',
+    description: 'Choose a weekly estimate or enter your own.',
     min: 0.1,
     max: 168,
     step: 0.1,
@@ -76,7 +75,7 @@ export const businessCaseQuestions: readonly BusinessCaseQuestion[] = [
   {
     field: 'hourlyValue',
     heading: 'What is one hour of their time worth?',
-    description: 'Choose a blended salary and overhead cost, or enter your own.',
+    description: 'Choose a cost that includes salary and overhead, or enter your own.',
     min: 1,
     max: 100_000,
     step: 1,
@@ -101,9 +100,9 @@ export const pricingPageContent = {
     privacyClaimId: 'pricing-calculator-local-data',
     fallbackTitle: 'Estimate the value manually.',
     fallbackMethod:
-      'Multiply the number of people by weekly hours returned and working weeks to estimate time back. Multiply those hours by the value of one hour to estimate what the recovered time is worth.',
+      'Multiply people by weekly hours returned and working weeks to estimate time back. Then multiply annual hours by the value of one hour.',
     fallbackPilotMethod:
-      'For a focused pilot, start with 20 percent of the team, rounded to the nearest person, with a minimum of five and maximum of 20 people. The pilot never exceeds the team size entered.',
+      'Pilot size uses 20 percent of the team, rounded to a whole person. Use at least five people when the team allows it and no more than 20. The pilot never exceeds the team entered.',
     fallbackAction: 'Book a demo',
     questions: businessCaseQuestions,
   },
@@ -112,8 +111,8 @@ export const pricingPageContent = {
     offerClaimId: 'pricing-enterprise-offer',
     titleClaimId: 'pricing-enterprise-close-title',
     summaryClaimId: 'pricing-enterprise-close-summary',
-    action: 'Assess AI readiness',
-    actionHref: '/ai-readiness',
+    action: 'Book a demo',
+    actionHref: '/demo',
     scopePrompts: [
       { number: '01', label: 'People', question: 'Which teams should start?' },
       { number: '02', label: 'Workflows', question: 'Which work matters first?' },

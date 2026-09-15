@@ -313,11 +313,12 @@ test('the calculator has a complete no-JavaScript fallback', async ({ browser })
 
   await expect(page.getByRole('region', { name: 'Business case calculator' })).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
-  await expect(
-    page.getByText(/Multiply the number of people by weekly hours returned/),
-  ).toBeVisible();
-  await expect(page.getByText(/For a focused pilot, start with 20 percent/)).toBeVisible();
-  await expect(page.getByText(disclaimer, { exact: true })).toBeVisible();
+  const fallback = page.locator('.pricing-calculator-fallback');
+  await expect(fallback).toContainText(
+    'Multiply people by weekly hours returned and working weeks to estimate time back.',
+  );
+  await expect(fallback).toContainText('Pilot size uses 20 percent of the team');
+  await expect(fallback).toContainText(disclaimer);
   await expect(page.getByRole('link', { name: 'Book a demo' }).last()).toHaveAttribute(
     'href',
     '/demo',
@@ -337,10 +338,7 @@ test('the compact enterprise close contains no public price and the page remains
   await expect(close.getByText('Custom enterprise pricing', { exact: true })).toBeVisible();
   await expect(close.getByRole('listitem')).toHaveCount(4);
   await expect(close).not.toContainText(/(?:€|£|\$)\s*\d/);
-  await expect(close.getByRole('link', { name: 'Assess AI readiness' })).toHaveAttribute(
-    'href',
-    '/ai-readiness',
-  );
+  await expect(close.getByRole('link', { name: 'Book a demo' })).toHaveAttribute('href', '/demo');
 
   await expect(page).toHaveTitle('Business case and enterprise pricing | Zeno');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/pricing$/);
@@ -352,6 +350,7 @@ test('the compact enterprise close contains no public price and the page remains
   const sitemap = await page.request.get('/sitemap.xml');
   expect(sitemap.ok()).toBe(true);
   expect(await sitemap.text()).toContain('<loc>https://heyzeno.com/pricing</loc>');
+  expect(await sitemap.text()).not.toContain('/ai-readiness');
 });
 
 test('business-case and demo conversion reflow at 200 percent text size', async ({ page }) => {

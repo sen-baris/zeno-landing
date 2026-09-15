@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { claimRegistry } from '../../src/lib/claims/registry';
 import { resolveApprovedClaims } from '../../src/lib/claims/public-claims';
 
-const now = new Date('2026-09-14T12:00:00Z');
+const now = new Date('2026-09-15T12:00:00Z');
 
 describe('demo page content', () => {
   it('resolves the approved meeting and data-use statements on their exact surfaces', () => {
@@ -20,7 +20,7 @@ describe('demo page content', () => {
     );
 
     expect(preparation?.statement).toBe(
-      'Tell us what you want to improve. We will prepare the conversation around your team, systems, and controls.',
+      'Tell us what you want to improve. We will prepare a conversation about your team, systems and controls.',
     );
     expect(acknowledgement?.statement).toBe(
       'I agree that Zeno may use these details to respond to my request.',

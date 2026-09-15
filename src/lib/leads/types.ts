@@ -1,6 +1,4 @@
-import type { AssessmentQuadrant, WorkflowCategory } from '../assessment/types';
-
-export type LeadSource = 'demo' | 'assessment-email' | 'assessment-discussion';
+export type LeadSource = 'demo';
 
 export interface LeadSubmission {
   source: LeadSource;
@@ -15,14 +13,8 @@ export interface LeadSubmission {
     sizeBand?: string;
   };
   intent: {
-    priorityWorkflow?: WorkflowCategory;
     desiredStart?: string;
     systemsContext?: string;
-  };
-  assessment?: {
-    impactScore: number;
-    readinessScore: number;
-    quadrant: AssessmentQuadrant;
   };
   consent: {
     privacyAcknowledged: boolean;

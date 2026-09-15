@@ -182,8 +182,6 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
     </div>
   </section>
 
-  <VisionStatement />
-
   <section class="operating-shift section-rule" id="shift" aria-labelledby="shift-title">
     <div class="shell">
       <header class="section-heading split-heading">
@@ -191,9 +189,7 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
           <p class="eyebrow">Before and after</p>
           <h2 id="shift-title">The same quarter, two ways.</h2>
         </div>
-        <p>
-          No new team and no new process. The same work, somewhere you can actually see it happen.
-        </p>
+        <p>The same team and the same work. Now the progress is visible.</p>
       </header>
       <div class="shift-compare" data-reveal>
         <section class="shift-column shift-today" aria-labelledby="shift-today-title">
@@ -219,10 +215,7 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
           <p class="eyebrow">Trust and control</p>
           <h2 id="trust-title">Scale without giving up control.</h2>
         </div>
-        <p>
-          Who can see what, which models are allowed, and where a person has to sign off. Set once,
-          visible to IT.
-        </p>
+        <p>IT sees who has access, which models are allowed and where human signoff is required.</p>
       </header>
       {
         approvedDeployment.map((claim) => (
@@ -240,22 +233,23 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
     </div>
   </section>
 
+  <VisionStatement />
+
   <section class="conversion" aria-labelledby="conversion-title">
     <div class="shell conversion-grid">
       <div>
-        <p class="eyebrow">Not ready for a demo?</p>
-        <h2 id="conversion-title">Find where AI can become useful first.</h2>
+        <p class="eyebrow">Start with the numbers</p>
+        <h2 id="conversion-title">Make the case for one workflow.</h2>
       </div>
       <div>
         <p>
-          Nine questions about one workflow. You get a score and a suggested next step. We ask for
-          your email afterwards, not before.
+          Use your own numbers to estimate recovered time and yearly value. See a focused pilot. The
+          business case needs no contact details.
         </p>
         <div class="button-row">
-          <a class="button button-paper" href={withBase('/ai-readiness')}>Assess AI readiness</a>
+          <a class="button button-paper" href={withBase('/pricing')}>Assess AI readiness</a>
           <a class="button button-inverse" href={withBase('/demo')}>Book a demo</a>
         </div>
-        <p class="conversion-micro">9 questions · one workflow · no contact details</p>
       </div>
     </div>
   </section>

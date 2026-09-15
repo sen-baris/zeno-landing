@@ -7,7 +7,7 @@ import {
   productSurfaces,
 } from '../../src/lib/content/product';
 
-const now = new Date('2026-09-09T12:00:00Z');
+const now = new Date('2026-09-15T12:00:00Z');
 
 describe('product page content', () => {
   it('keeps the two detailed product surfaces in narrative order with unique identifiers', () => {
@@ -43,7 +43,7 @@ describe('product page content', () => {
       expect.arrayContaining(['product.hero', 'product.governance']),
     );
     expect(heroGovernance?.statement).toBe(
-      'Keep knowledge access, model choice, human checkpoints, and adoption visibility together as usage scales.',
+      'Manage knowledge access and model choice as usage scales. Keep human checkpoints and adoption visible.',
     );
 
     for (const surface of productSurfaces) {

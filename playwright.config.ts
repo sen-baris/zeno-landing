@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const playwrightPort = Number(process.env.E2E_PORT ?? 4321);
+const playwrightBaseUrl = `http://127.0.0.1:${playwrightPort}`;
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -7,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'html',
   use: {
-    baseURL: 'http://127.0.0.1:4321',
+    baseURL: playwrightBaseUrl,
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -29,9 +32,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command:
-      'ASTRO_DEV_BACKGROUND=0 NODE_ENV=development PUBLIC_LEAD_ADAPTER=gateway PUBLIC_LEAD_ENDPOINT=/api/leads astro dev --host 127.0.0.1 --mode development --force',
-    url: 'http://127.0.0.1:4321',
+    command: `ASTRO_DEV_BACKGROUND=0 NODE_ENV=development PUBLIC_LEAD_ADAPTER=gateway PUBLIC_LEAD_ENDPOINT=/api/leads astro dev --host 127.0.0.1 --port ${playwrightPort} --mode development --force`,
+    url: playwrightBaseUrl,
     reuseExistingServer: !process.env.CI,
   },
 });

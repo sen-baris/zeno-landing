@@ -10,7 +10,7 @@ import {
   pricingPageContent,
 } from '../../src/lib/content/pricing';
 
-const now = new Date('2026-09-14T12:00:00Z');
+const now = new Date('2026-09-15T12:00:00Z');
 
 function collectStrings(value: unknown): string[] {
   if (typeof value === 'string') return [value];
@@ -60,27 +60,27 @@ describe('pricing page content', () => {
       now,
     );
 
-    expect(metadata?.statement).toContain('yearly value of time');
+    expect(metadata?.statement).toContain('yearly value of recovered time');
     expect(title?.statement).toBe('What could one workflow give back?');
     expect(summary?.statement).toBe(
-      'Estimate the time your team could recover and what that time is worth, then scope an enterprise rollout around the result.',
+      'Enter your own time assumptions. See the estimated yearly value and use it to scope an enterprise rollout.',
     );
     expect(enterpriseClaims.map((claim) => claim.statement)).toEqual([
       'Custom enterprise pricing',
       'Pricing follows the rollout.',
-      'Scope the platform around the teams, workflows, connected systems, and controls you need.',
+      'Scope the platform around your teams and workflows. Add connected systems and controls as needed.',
     ]);
     expect(calculatorClaims.at(-2)?.category).toBe('legal');
     expect(calculatorClaims.at(-1)?.category).toBe('privacy');
     expect(calculatorClaims.at(1)?.statement).toBe(
-      'Choose a team-size range or exact amount, then select weekly hours returned and hourly value. Team ranges use the displayed rounded midpoint. Add an annual budget only to compare it with the estimated yearly value of recovered time.',
+      'Choose a team range or exact number. Enter weekly hours returned and the value of one hour. Ranges use the rounded midpoint shown. Add an annual budget only if you want to compare it with the estimated yearly value of recovered time.',
     );
     expect(calculatorClaims.at(2)?.statement).toBe(
       'A focused pilot gives you a value to validate before a wider rollout.',
     );
     expect(pricingPageContent.enterprise).toMatchObject({
-      action: 'Assess AI readiness',
-      actionHref: '/ai-readiness',
+      action: 'Book a demo',
+      actionHref: '/demo',
     });
   });
 

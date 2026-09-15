@@ -5,14 +5,14 @@ import { withBase } from '../lib/routing/base-path';
 
 <BaseLayout
   title="Something went wrong | Zeno"
-  description="Zeno could not complete the requested page."
+  description="The requested Zeno page failed to load."
   canonicalPath="/500"
 >
   <section class="error-page section-rule">
     <div class="shell narrow-shell">
       <p class="eyebrow">Error / 500</p>
-      <h1>The workflow stopped unexpectedly.</h1>
-      <p>Nothing was submitted. Return home and try again.</p>
+      <h1>This page did not load.</h1>
+      <p>Return home and try again.</p>
       <a class="button button-ink" href={withBase('/')}>Go home</a>
     </div>
   </section>

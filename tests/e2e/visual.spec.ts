@@ -320,6 +320,14 @@ test('desktop vision keeps the photograph with its statement', async ({ page }) 
   await expectSectionScreenshot(page, vision, 'home-vision-1440.png');
 });
 
+test('mobile vision and final business-case action stay readable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expectSectionScreenshot(page, page.locator('#vision'), 'home-vision-390.png');
+  await expectSectionScreenshot(page, page.locator('.conversion'), 'home-conversion-390.png');
+});
+
 test('mobile customer proof opens inline beneath its logo', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
