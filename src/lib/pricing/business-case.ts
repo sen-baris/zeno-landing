@@ -1,36 +1,46 @@
 export const supportedBusinessCaseCurrencies = ['EUR', 'USD', 'GBP'] as const;
 
+export const businessCaseWorkTypeIds = [
+  'report-generation',
+  'financial-analysis',
+  'presentation-creation',
+  'email-triage',
+  'document-review',
+  'other-work',
+] as const;
+
 export type BusinessCaseCurrency = (typeof supportedBusinessCaseCurrencies)[number];
+export type BusinessCaseWorkTypeId = (typeof businessCaseWorkTypeIds)[number];
 
 export interface BusinessCaseDraft {
+  workTypeIds: BusinessCaseWorkTypeId[];
   people: string;
-  hoursReturnedPerWeek: string;
-  hourlyValue: string;
+  weeklyHoursSpent: string;
+  recoveryPercent: string;
+  hourlyPlanningValue: string;
   workingWeeks: string;
-  annualBudget: string;
   currency: BusinessCaseCurrency;
 }
 
 export interface BusinessCaseInputs {
+  workTypeIds: readonly BusinessCaseWorkTypeId[];
   people: number;
-  hoursReturnedPerWeek: number;
-  hourlyValue: number;
+  weeklyHoursSpent: number;
+  recoveryPercent: number;
+  hourlyPlanningValue: number;
   workingWeeks: number;
-  annualBudget?: number | undefined;
   currency: BusinessCaseCurrency;
 }
 
 export interface BusinessCaseResults {
   annualHoursReturned: number;
-  annualCapacityValue: number;
-  annualBudget?: number | undefined;
-  roiPercent?: number | undefined;
+  annualTimeValue: number;
   currency: BusinessCaseCurrency;
 }
 
 export interface BusinessCasePilotEstimate {
-  annualCapacityValue: number;
   annualHoursReturned: number;
+  annualTimeValue: number;
   people: number;
 }
 
@@ -40,19 +50,20 @@ export const businessCasePilotRule = {
   teamShare: 0.2,
 } as const;
 
-export type BusinessCaseNumericField = Exclude<keyof BusinessCaseDraft, 'currency'>;
-export type BusinessCaseErrors = Partial<Record<BusinessCaseNumericField, string>>;
+export type BusinessCaseNumericField = Exclude<keyof BusinessCaseDraft, 'currency' | 'workTypeIds'>;
+export type BusinessCaseErrors = Partial<Record<BusinessCaseNumericField | 'workTypeIds', string>>;
 
 export type BusinessCaseValidation =
   | { ok: true; values: BusinessCaseInputs; errors: BusinessCaseErrors }
   | { ok: false; errors: BusinessCaseErrors };
 
 export const defaultBusinessCaseDraft: BusinessCaseDraft = {
+  workTypeIds: [],
   people: '',
-  hoursReturnedPerWeek: '',
-  hourlyValue: '',
+  weeklyHoursSpent: '',
+  recoveryPercent: '25',
+  hourlyPlanningValue: '50',
   workingWeeks: '46',
-  annualBudget: '',
   currency: 'EUR',
 };
 
@@ -61,7 +72,6 @@ interface FieldRule {
   minimum: number;
   maximum: number;
   integer?: boolean;
-  optional?: boolean;
 }
 
 const fieldRules: Record<BusinessCaseNumericField, FieldRule> = {
@@ -71,13 +81,18 @@ const fieldRules: Record<BusinessCaseNumericField, FieldRule> = {
     maximum: 100_000,
     integer: true,
   },
-  hoursReturnedPerWeek: {
-    label: 'Hours returned per person each week',
-    minimum: 0.1,
-    maximum: 168,
+  weeklyHoursSpent: {
+    label: 'Weekly time spent per person',
+    minimum: 0.5,
+    maximum: 80,
   },
-  hourlyValue: {
-    label: 'Hourly value',
+  recoveryPercent: {
+    label: 'Time-recovery scenario',
+    minimum: 0,
+    maximum: 100,
+  },
+  hourlyPlanningValue: {
+    label: 'Planning value per hour',
     minimum: 1,
     maximum: 100_000,
   },
@@ -86,12 +101,6 @@ const fieldRules: Record<BusinessCaseNumericField, FieldRule> = {
     minimum: 1,
     maximum: 52,
     integer: true,
-  },
-  annualBudget: {
-    label: 'Annual budget to compare',
-    minimum: 1,
-    maximum: 1_000_000_000_000,
-    optional: true,
   },
 };
 
@@ -104,14 +113,21 @@ function parseField(value: string): number | undefined {
 export function validateBusinessCaseDraft(draft: BusinessCaseDraft): BusinessCaseValidation {
   const errors: BusinessCaseErrors = {};
   const parsed: Partial<Record<BusinessCaseNumericField, number>> = {};
+  const selectedIds = new Set(draft.workTypeIds);
+  if (draft.workTypeIds.length === 0) {
+    errors.workTypeIds = 'Choose at least one work type.';
+  } else if (
+    selectedIds.size !== draft.workTypeIds.length ||
+    draft.workTypeIds.some((id) => !businessCaseWorkTypeIds.includes(id))
+  ) {
+    errors.workTypeIds = 'Choose valid work types without repeats.';
+  }
 
   for (const field of Object.keys(fieldRules) as BusinessCaseNumericField[]) {
     const rule = fieldRules[field];
-    const rawValue = draft[field];
-    const value = parseField(rawValue);
-
+    const value = parseField(draft[field]);
     if (value === undefined) {
-      if (!rule.optional) errors[field] = `${rule.label} is required.`;
+      errors[field] = `${rule.label} is required.`;
       continue;
     }
     if (value < rule.minimum || value > rule.maximum) {
@@ -132,33 +148,23 @@ export function validateBusinessCaseDraft(draft: BusinessCaseDraft): BusinessCas
     ok: true,
     errors,
     values: {
+      workTypeIds: [...draft.workTypeIds],
       people: parsed.people!,
-      hoursReturnedPerWeek: parsed.hoursReturnedPerWeek!,
-      hourlyValue: parsed.hourlyValue!,
+      weeklyHoursSpent: parsed.weeklyHoursSpent!,
+      recoveryPercent: parsed.recoveryPercent!,
+      hourlyPlanningValue: parsed.hourlyPlanningValue!,
       workingWeeks: parsed.workingWeeks!,
-      annualBudget: parsed.annualBudget,
       currency: draft.currency,
     },
   };
 }
 
 export function calculateBusinessCase(inputs: BusinessCaseInputs): BusinessCaseResults {
-  const annualHoursReturned = inputs.people * inputs.hoursReturnedPerWeek * inputs.workingWeeks;
-  const annualCapacityValue = annualHoursReturned * inputs.hourlyValue;
-
-  if (inputs.annualBudget === undefined) {
-    return {
-      annualHoursReturned,
-      annualCapacityValue,
-      currency: inputs.currency,
-    };
-  }
-
+  const annualHoursReturned =
+    inputs.people * inputs.weeklyHoursSpent * (inputs.recoveryPercent / 100) * inputs.workingWeeks;
   return {
     annualHoursReturned,
-    annualCapacityValue,
-    annualBudget: inputs.annualBudget,
-    roiPercent: ((annualCapacityValue - inputs.annualBudget) / inputs.annualBudget) * 100,
+    annualTimeValue: annualHoursReturned * inputs.hourlyPlanningValue,
     currency: inputs.currency,
   };
 }
@@ -166,7 +172,7 @@ export function calculateBusinessCase(inputs: BusinessCaseInputs): BusinessCaseR
 export function calculateBusinessCasePilot(
   inputs: Pick<
     BusinessCaseInputs,
-    'people' | 'hoursReturnedPerWeek' | 'hourlyValue' | 'workingWeeks'
+    'people' | 'weeklyHoursSpent' | 'recoveryPercent' | 'hourlyPlanningValue' | 'workingWeeks'
   >,
 ): BusinessCasePilotEstimate {
   const availablePeople = Number.isFinite(inputs.people)
@@ -178,11 +184,11 @@ export function calculateBusinessCasePilot(
     businessCasePilotRule.maximumPeople,
     Math.max(businessCasePilotRule.minimumPeople, proportionalPeople),
   );
-  const annualHoursReturned = people * inputs.hoursReturnedPerWeek * inputs.workingWeeks;
-
+  const annualHoursReturned =
+    people * inputs.weeklyHoursSpent * (inputs.recoveryPercent / 100) * inputs.workingWeeks;
   return {
-    annualCapacityValue: annualHoursReturned * inputs.hourlyValue,
     annualHoursReturned,
+    annualTimeValue: annualHoursReturned * inputs.hourlyPlanningValue,
     people,
   };
 }

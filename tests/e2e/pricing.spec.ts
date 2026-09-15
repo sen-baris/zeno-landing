@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 const disclaimer =
-  'Estimates are for planning only and are based entirely on the values you enter. They do not guarantee time savings, financial benefit, or final Zeno pricing.';
+  'These estimates are for planning only. They combine the time and team size you choose with the displayed recovery and hourly-value assumptions. They do not guarantee time savings, financial benefit, or final Zeno pricing.';
 
 async function openCalculator(page: Page) {
   const calculator = page.getByRole('region', { name: 'Business case calculator' });
@@ -10,17 +10,16 @@ async function openCalculator(page: Page) {
   return calculator;
 }
 
-async function completeBusinessCase(page: Page, includeBudget = true) {
-  await page.getByRole('radio', { name: '26 to 50' }).check();
+async function completeBusinessCase(page: Page) {
+  await page.getByRole('checkbox', { name: 'Report generation' }).check();
+  await page.getByRole('checkbox', { name: 'Presentation creation' }).check();
   await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '1 hour' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '€75' }).check();
+  await page.getByRole('radio', { name: 'About 4 hours' }).check();
+  await page.getByRole('button', { name: 'Continue' }).press('Enter');
+  await expect(page.getByRole('heading', { name: 'How many people do this work?' })).toBeVisible();
+  await page.getByText('11 to 25', { exact: true }).click();
+  await expect(page.getByRole('radio', { name: '11 to 25' })).toBeChecked();
   await page.getByRole('button', { name: 'See estimate' }).click();
-  if (includeBudget) {
-    await page.getByText('Compare with an annual budget').click();
-    await page.getByLabel('Annual budget to compare').fill('200000');
-  }
 }
 
 test('the calculator stays mounted after its development runtime hydrates', async ({ page }) => {
@@ -35,7 +34,7 @@ test('the calculator stays mounted after its development runtime hydrates', asyn
 
   await expect(calculator).toBeVisible();
   await expect(
-    calculator.getByRole('heading', { name: 'How many people do this work?' }),
+    calculator.getByRole('heading', { name: 'What work takes up your team’s time?' }),
   ).toBeVisible();
   expect(pageErrors).toEqual([]);
 });
@@ -150,11 +149,14 @@ test('the first viewport leads with the business case and the first guided quest
     await openCalculator(page);
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'What could one workflow give back?',
+      'What could your team get back?',
     );
     await expect(page.getByRole('link', { name: 'Book a demo' }).first()).toBeVisible();
-    const firstQuestion = page.getByRole('heading', { name: 'How many people do this work?' });
+    const firstQuestion = page.getByRole('heading', {
+      name: 'What work takes up your team’s time?',
+    });
     await expect(firstQuestion).toBeVisible();
+    await expect(page.getByText(/Planning example:/)).toHaveCount(0);
 
     const questionBox = await firstQuestion.boundingBox();
     expect(questionBox?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(viewport.height);
@@ -169,6 +171,19 @@ test('guided choices support keyboard selection and retained custom amounts', as
   await page.goto('/pricing');
   const calculator = await openCalculator(page);
 
+  const report = calculator.getByRole('checkbox', { name: 'Report generation' });
+  await report.focus();
+  await page.keyboard.press('Space');
+  await expect(report).toBeChecked();
+  await calculator.getByRole('checkbox', { name: 'Email triage' }).check();
+  await calculator.getByRole('button', { name: 'Continue' }).click();
+  await calculator.getByRole('radio', { name: 'Custom hours' }).check();
+  await calculator.getByLabel('Custom weekly hours').fill('3.5');
+  await calculator.getByRole('radio', { name: 'About 4 hours' }).check();
+  await calculator.getByRole('radio', { name: 'Custom hours' }).check();
+  await expect(calculator.getByLabel('Custom weekly hours')).toHaveValue('3.5');
+  await calculator.getByRole('button', { name: 'Continue' }).click();
+
   const firstRange = calculator.getByRole('radio', { name: '1 to 10', exact: true });
   await firstRange.focus();
   await page.keyboard.press('ArrowRight');
@@ -182,13 +197,6 @@ test('guided choices support keyboard selection and retained custom amounts', as
   await calculator.getByRole('radio', { name: '51 to 100' }).check();
   await calculator.getByRole('radio', { name: 'Custom amount' }).check();
   await expect(calculator.getByLabel('Exact number of people')).toHaveValue('73');
-
-  await calculator.getByRole('button', { name: 'Continue' }).click();
-  await calculator.getByRole('radio', { name: 'Custom hours' }).check();
-  await calculator.getByLabel('Custom weekly hours').fill('3.5');
-  await calculator.getByRole('radio', { name: '4 hours' }).check();
-  await calculator.getByRole('radio', { name: 'Custom hours' }).check();
-  await expect(calculator.getByLabel('Custom weekly hours')).toHaveValue('3.5');
 });
 
 test('the revised header reflows without horizontal overflow', async ({ page }) => {
@@ -226,62 +234,57 @@ test('the guided calculator follows the documented formulas and supports editing
   const calculator = await openCalculator(page);
   await completeBusinessCase(page);
 
-  await expect(calculator.getByText('1,748 hours', { exact: true })).toBeVisible();
-  await expect(calculator.getByText('€131,100', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('828 hours', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('€41,400', { exact: true })).toBeVisible();
   await expect(
-    calculator.getByRole('heading', { name: 'Test the case with 8 people.' }),
+    calculator.getByRole('heading', { name: 'Test the case with 5 people.' }),
   ).toBeVisible();
-  await expect(calculator.getByText('368 hours', { exact: true })).toBeVisible();
-  await expect(calculator.getByText('€27,600', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('230 hours', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('€11,500', { exact: true })).toHaveCount(0);
   await expect(calculator.getByRole('link', { name: 'Plan this pilot' })).toHaveAttribute(
     'href',
     '/demo',
   );
-  await expect(calculator.getByText('-34.4%', { exact: true })).toBeVisible();
-  await expect(calculator.getByText('Estimated ROI against this budget')).toBeVisible();
-  await expect(calculator.getByText(/payback/i)).toHaveCount(0);
+  await expect(calculator.getByText(/annual budget|estimated ROI/i)).toHaveCount(0);
   await expect(calculator.getByText(disclaimer, { exact: true })).toBeVisible();
-  await expect(calculator.getByText('Estimated net annual value')).toHaveCount(0);
-  await expect(calculator.getByText('Estimated return multiple')).toHaveCount(0);
 
   await calculator.getByRole('button', { name: 'Edit answers' }).click();
-  await expect(page.getByRole('radio', { name: '26 to 50' })).toBeChecked();
-  await expect(calculator.getByText('38 people', { exact: true })).toBeVisible();
+  await expect(calculator.getByRole('checkbox', { name: 'Report generation' })).toBeChecked();
+  await expect(calculator.getByRole('checkbox', { name: 'Presentation creation' })).toBeChecked();
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByRole('radio', { name: '1 hour' })).toBeChecked();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByLabel('Currency').selectOption('USD');
-  await expect(page.getByRole('radio', { name: 'US$75' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: 'About 4 hours' })).toBeChecked();
+  await page.getByRole('button', { name: 'Continue' }).press('Enter');
+  await expect(page.getByRole('heading', { name: 'How many people do this work?' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: '11 to 25' })).toBeChecked();
   await page.getByRole('button', { name: 'See estimate' }).click();
-  await expect(calculator.getByText('US$131,100', { exact: true })).toBeVisible();
+  await calculator.getByText('Calculation settings', { exact: true }).click();
+  await expect(calculator.getByText(/Planning example:/)).toHaveCount(0);
+  await page.getByLabel('Currency').selectOption('USD');
+  await expect(calculator.getByText('US$41,400', { exact: true })).toBeVisible();
 });
 
 test('the completed result explains recovered time in plain language', async ({ page }) => {
   await page.goto('/pricing');
   const calculator = await openCalculator(page);
 
-  await calculator.getByRole('radio', { name: '11 to 25' }).check();
-  await calculator.getByRole('button', { name: 'Continue' }).click();
-  await calculator.getByRole('radio', { name: '2 hours' }).check();
-  await calculator.getByRole('button', { name: 'Continue' }).click();
-  await calculator.getByRole('radio', { name: '€50' }).check();
-  await calculator.getByRole('button', { name: 'See estimate' }).click();
+  await completeBusinessCase(page);
 
   await expect(
     calculator.getByRole('heading', { name: 'What your team could get back' }),
   ).toBeVisible();
-  await expect(calculator.getByText('€82,800', { exact: true })).toBeVisible();
-  await expect(calculator.getByText('1,656 hours', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('€41,400', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('828 hours', { exact: true })).toBeVisible();
   await expect(
     calculator.getByText(
-      'Based on 18 people, 2 hours each week, €50 per hour, and 46 working weeks.',
+      'Based on 18 people, 4 combined hours per person each week, 25% time recovered, €50 per hour, and 46 working weeks.',
     ),
   ).toBeVisible();
   await expect(
     calculator.getByRole('heading', { name: 'Test the case with 5 people.' }),
   ).toBeVisible();
-  await expect(calculator.getByText('€23,000', { exact: true })).toBeVisible();
-  await expect(calculator.getByText('460 hours', { exact: true })).toBeVisible();
+  await expect(calculator.getByText('€11,500', { exact: true })).toHaveCount(0);
+  await expect(calculator).not.toContainText('This pilot group could validate about');
+  await expect(calculator.getByText('230 hours', { exact: true })).toBeVisible();
   await expect(calculator).not.toContainText(/annual capacity value/i);
 });
 
@@ -296,8 +299,8 @@ test('calculator assumptions remain entirely inside the current page', async ({ 
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
 
-  await completeBusinessCase(page, false);
-  await expect(page.getByText('€131,100', { exact: true })).toBeVisible();
+  await completeBusinessCase(page);
+  await expect(page.getByText('€41,400', { exact: true })).toBeVisible();
 
   expect(requests).toEqual([]);
   expect(page.url()).toBe(beforeUrl);
@@ -312,11 +315,14 @@ test('the calculator has a complete no-JavaScript fallback', async ({ browser })
   await page.goto('/pricing');
 
   await expect(page.getByRole('region', { name: 'Business case calculator' })).toBeHidden();
-  await expect(page.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Estimate the time value manually.' }),
+  ).toBeVisible();
   const fallback = page.locator('.pricing-calculator-fallback');
   await expect(fallback).toContainText(
-    'Multiply people by weekly hours returned and working weeks to estimate time back.',
+    'Multiply people by combined weekly hours spent, then by the share of time recovered and working weeks.',
   );
+  await expect(fallback).not.toContainText('Planning example:');
   await expect(fallback).toContainText('Pilot size uses 20 percent of the team');
   await expect(fallback).toContainText(disclaimer);
   await expect(page.getByRole('link', { name: 'Book a demo' }).last()).toHaveAttribute(
@@ -378,13 +384,8 @@ test('completed results reflow at representative widths and 200 percent text siz
     await page.setViewportSize(viewport);
     await page.goto('/pricing');
     const calculator = await openCalculator(page);
-    await calculator.getByRole('radio', { name: '11 to 25' }).check();
-    await calculator.getByRole('button', { name: 'Continue' }).click();
-    await calculator.getByRole('radio', { name: '2 hours' }).check();
-    await calculator.getByRole('button', { name: 'Continue' }).click();
-    await calculator.getByRole('radio', { name: '€50' }).check();
-    await calculator.getByRole('button', { name: 'See estimate' }).click();
-    await expect(calculator.getByText('€82,800', { exact: true })).toBeVisible();
+    await completeBusinessCase(page);
+    await expect(calculator.getByText('€41,400', { exact: true })).toBeVisible();
 
     await page.addStyleTag({ content: 'html { font-size: 200%; }' });
     expect(

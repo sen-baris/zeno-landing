@@ -9,10 +9,10 @@ import {
   type SyntheticEvent,
 } from 'react';
 import {
-  businessCaseHourlyValueOptions,
   businessCaseHoursOptions,
   businessCaseQuestions,
   businessCaseTeamSizeOptions,
+  businessCaseWorkTypeOptions,
 } from '../../lib/content/pricing';
 import {
   calculateBusinessCase,
@@ -24,12 +24,12 @@ import {
   validateBusinessCaseDraft,
   type BusinessCaseDraft,
   type BusinessCaseNumericField,
+  type BusinessCaseWorkTypeId,
 } from '../../lib/pricing/business-case';
 import { withBase } from '../../lib/routing/base-path';
 
 interface BusinessCaseCalculatorProps {
   disclaimer: string;
-  method: string;
   pilotMethod: string;
   pilotStatement: string;
   privacyStatement: string;
@@ -41,80 +41,57 @@ interface NumberFieldProps {
   disabled: boolean;
   error?: string | undefined;
   field: BusinessCaseNumericField;
+  inputRef?: Ref<HTMLInputElement> | undefined;
   label: string;
   max: number;
   min: number;
   onBlur: (event: FocusEvent<HTMLInputElement>) => void;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  optional?: boolean | undefined;
-  inputRef?: Ref<HTMLInputElement> | undefined;
   step: number;
   value: string;
 }
 
+type GuidedNumericField = 'weeklyHoursSpent' | 'people';
+type GuidedField = GuidedNumericField | 'workTypeIds';
+
 const subscribeToHydration = () => () => undefined;
-type GuidedField = (typeof businessCaseQuestions)[number]['field'];
-
-interface GuidedChoiceOption {
-  id: string;
-  label?: string | undefined;
-  value?: number | undefined;
-}
-
-const initialChoiceIds: Record<GuidedField, string> = {
+const initialChoiceIds: Record<GuidedNumericField, string> = {
+  weeklyHoursSpent: '',
   people: '',
-  hoursReturnedPerWeek: '',
-  hourlyValue: '',
 };
-
-const initialCustomValues: Record<GuidedField, string> = {
+const initialCustomValues: Record<GuidedNumericField, string> = {
+  weeklyHoursSpent: '',
   people: '',
-  hoursReturnedPerWeek: '',
-  hourlyValue: '',
 };
-
-function getChoiceOptions(field: GuidedField): readonly GuidedChoiceOption[] {
-  if (field === 'people') {
-    return businessCaseTeamSizeOptions.map((option) => ({
-      id: option.id,
-      label: option.label,
-      value: 'people' in option ? option.people : undefined,
-    }));
-  }
-  if (field === 'hoursReturnedPerWeek') return businessCaseHoursOptions;
-  return businessCaseHourlyValueOptions;
-}
 
 function NumberField({
   description,
   disabled,
   error,
   field,
+  inputRef,
   label,
   max,
   min,
   onBlur,
   onChange,
-  optional = false,
-  inputRef,
   step,
   value,
 }: NumberFieldProps) {
   const descriptionId = `business-case-${field}-description`;
   const errorId = `business-case-${field}-error`;
-  const describedBy = error ? `${descriptionId} ${errorId}` : descriptionId;
-
   return (
     <div className="business-case-field">
       <label className="business-case-field-label" htmlFor={`business-case-${field}`}>
-        <span>{label}</span>
-        {optional && <small>Optional</small>}
+        {label}
       </label>
       <input
         ref={inputRef}
         id={`business-case-${field}`}
         name={field}
         aria-label={label}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? `${descriptionId} ${errorId}` : descriptionId}
         type="number"
         inputMode="decimal"
         min={min}
@@ -122,8 +99,6 @@ function NumberField({
         step={step}
         value={value}
         disabled={disabled}
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={describedBy}
         onBlur={onBlur}
         onChange={onChange}
       />
@@ -141,7 +116,6 @@ function NumberField({
 
 export default function BusinessCaseCalculator({
   disclaimer,
-  method,
   pilotMethod,
   pilotStatement,
   privacyStatement,
@@ -154,28 +128,31 @@ export default function BusinessCaseCalculator({
   );
   const [draft, setDraft] = useState<BusinessCaseDraft>(defaultBusinessCaseDraft);
   const draftRef = useRef<BusinessCaseDraft>(defaultBusinessCaseDraft);
-  const [choiceIds, setChoiceIds] = useState<Record<GuidedField, string>>(initialChoiceIds);
-  const [customValues, setCustomValues] =
-    useState<Record<GuidedField, string>>(initialCustomValues);
+  const [choiceIds, setChoiceIds] = useState(initialChoiceIds);
+  const [customValues, setCustomValues] = useState(initialCustomValues);
   const [step, setStep] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [touched, setTouched] = useState<Partial<Record<BusinessCaseNumericField, boolean>>>({});
+  const [touched, setTouched] = useState<
+    Partial<Record<BusinessCaseNumericField | 'workTypeIds', boolean>>
+  >({});
   const questionHeadingRef = useRef<HTMLHeadingElement | null>(null);
-  const customInputRefs = useRef<Partial<Record<GuidedField, HTMLInputElement | null>>>({});
+  const customInputRefs = useRef<Partial<Record<GuidedNumericField, HTMLInputElement | null>>>({});
   const didNavigateRef = useRef(false);
-  const shouldFocusCustomFieldRef = useRef<GuidedField | null>(null);
+  const shouldFocusCustomFieldRef = useRef<GuidedNumericField | null>(null);
 
   const validation = validateBusinessCaseDraft(draft);
-  const baseValidation = validateBusinessCaseDraft({ ...draft, annualBudget: '' });
-  const baseInputs = baseValidation.ok ? baseValidation.values : undefined;
-  const baseResults = baseInputs ? calculateBusinessCase(baseInputs) : undefined;
-  const pilotEstimate = baseInputs ? calculateBusinessCasePilot(baseInputs) : undefined;
-  const completeResults = validation.ok ? calculateBusinessCase(validation.values) : undefined;
+  const inputs = validation.ok ? validation.values : undefined;
+  const results = inputs ? calculateBusinessCase(inputs) : undefined;
+  const pilotEstimate = inputs ? calculateBusinessCasePilot(inputs) : undefined;
+  const pilotVisible = pilotEstimate && results && results.annualTimeValue > 0;
   const activeQuestion = businessCaseQuestions[step]!;
-  const activeField = activeQuestion.field;
-  const activeChoiceOptions = getChoiceOptions(activeField);
+  const activeField: GuidedField = activeQuestion.field;
+  const activeNumericQuestion = activeQuestion.field === 'workTypeIds' ? undefined : activeQuestion;
+  const activeNumericField = activeField === 'workTypeIds' ? undefined : activeField;
+  const activeChoiceOptions =
+    activeNumericField === 'people' ? businessCaseTeamSizeOptions : businessCaseHoursOptions;
   const selectedChoiceOption = activeChoiceOptions.find(
-    (option) => option.id === choiceIds[activeField],
+    (option) => option.id === (activeNumericField ? choiceIds[activeNumericField] : ''),
   );
 
   useEffect(() => {
@@ -193,60 +170,65 @@ export default function BusinessCaseCalculator({
     const nextDraft = { ...draftRef.current, [field]: value };
     draftRef.current = nextDraft;
     setDraft(nextDraft);
-    setTouched((current) => ({ ...current, [field]: false }));
+    setTouched((current) => ({ ...current, [field]: showResult }));
   }
 
-  function changeField(field: BusinessCaseNumericField, event: ChangeEvent<HTMLInputElement>) {
-    setFieldValue(field, event.target.value);
+  function toggleWorkType(id: BusinessCaseWorkTypeId, checked: boolean) {
+    const currentIds = draftRef.current.workTypeIds;
+    const workTypeIds = checked
+      ? [...currentIds, id]
+      : currentIds.filter((selectedId) => selectedId !== id);
+    const nextDraft = { ...draftRef.current, workTypeIds };
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
+    setTouched((current) => ({ ...current, workTypeIds: false }));
   }
 
-  function selectChoice(field: GuidedField, option: GuidedChoiceOption) {
-    setChoiceIds((current) => ({ ...current, [field]: option.id }));
-    if (option.value !== undefined) {
-      setFieldValue(field, String(option.value));
-      return;
+  function selectChoice(field: GuidedNumericField, id: string, value?: number) {
+    setChoiceIds((current) => ({ ...current, [field]: id }));
+    if (value !== undefined) {
+      setFieldValue(field, String(value));
+    } else {
+      shouldFocusCustomFieldRef.current = field;
+      setFieldValue(field, customValues[field]);
     }
-
-    shouldFocusCustomFieldRef.current = field;
-    setFieldValue(field, customValues[field]);
   }
 
-  function changeCustomValue(field: GuidedField, event: ChangeEvent<HTMLInputElement>) {
+  function changeCustomValue(field: GuidedNumericField, event: ChangeEvent<HTMLInputElement>) {
     setCustomValues((current) => ({ ...current, [field]: event.target.value }));
-    changeField(field, event);
+    setFieldValue(field, event.target.value);
   }
 
   const touchField = (field: BusinessCaseNumericField) => () => {
     setTouched((current) => ({ ...current, [field]: true }));
   };
-  const visibleError = (field: BusinessCaseNumericField) =>
+  const visibleError = (field: BusinessCaseNumericField | 'workTypeIds') =>
     touched[field] ? validation.errors[field] : undefined;
-  const choiceGroupError = choiceIds[activeField] === '' ? visibleError(activeField) : undefined;
 
-  function focusField(field: BusinessCaseNumericField) {
+  function focusCurrentField(field: GuidedField) {
     const id =
-      field !== 'annualBudget' && field !== 'workingWeeks' && choiceIds[field] !== 'custom'
-        ? `business-case-${field}-choice-${getChoiceOptions(field)[0]?.id}`
-        : `business-case-${field}`;
+      field === 'workTypeIds'
+        ? `business-case-workTypeIds-${businessCaseWorkTypeOptions[0].id}`
+        : choiceIds[field] === 'custom'
+          ? `business-case-${field}`
+          : `business-case-${field}-choice-${activeChoiceOptions[0].id}`;
     document.getElementById(id)?.focus();
   }
 
   function advance(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    const field = activeQuestion.field;
     const currentValidation = validateBusinessCaseDraft(draftRef.current);
-    setTouched((current) => ({ ...current, [field]: true }));
-    if (currentValidation.errors[field]) {
-      focusField(field);
+    setTouched((current) => ({ ...current, [activeField]: true }));
+    if (currentValidation.errors[activeField]) {
+      focusCurrentField(activeField);
       return;
     }
-
     didNavigateRef.current = true;
     if (step < businessCaseQuestions.length - 1) {
       setStep((current) => current + 1);
-      return;
+    } else {
+      setShowResult(true);
     }
-    setShowResult(true);
   }
 
   function goBack() {
@@ -260,39 +242,9 @@ export default function BusinessCaseCalculator({
     setShowResult(false);
   }
 
-  const resultAnnouncement = baseResults
-    ? `Your team could get back ${formatBusinessCaseNumber(baseResults.annualHoursReturned, 1)} hours each year, worth an estimated ${formatBusinessCaseCurrency(baseResults.annualCapacityValue, baseResults.currency)} in recovered time.${pilotEstimate ? ` A pilot with ${formatBusinessCaseNumber(pilotEstimate.people)} people represents ${formatBusinessCaseNumber(pilotEstimate.annualHoursReturned, 1)} hours and about ${formatBusinessCaseCurrency(pilotEstimate.annualCapacityValue, baseResults.currency)} in yearly time value.` : ''}${completeResults?.annualBudget !== undefined ? ` Estimated ROI against the annual budget ${formatBusinessCaseNumber(completeResults.roiPercent!, 1)} percent.` : ''}`
-    : 'Check the calculation settings to restore the estimate.';
-
-  const choiceLegend =
-    activeField === 'people'
-      ? 'Choose a team size'
-      : activeField === 'hoursReturnedPerWeek'
-        ? 'Choose weekly hours returned'
-        : 'Choose an hourly value';
-  const customLabel =
-    activeField === 'people'
-      ? 'Exact number of people'
-      : activeField === 'hoursReturnedPerWeek'
-        ? 'Custom weekly hours'
-        : 'Custom hourly value';
-  const customDescription =
-    activeField === 'people'
-      ? 'Enter a whole number between 1 and 100,000.'
-      : activeField === 'hoursReturnedPerWeek'
-        ? 'Enter a number between 0.1 and 168.'
-        : 'Enter a value between 1 and 100,000.';
-  const choiceErrorMessage =
-    activeField === 'people'
-      ? 'Choose a team size or enter a custom amount.'
-      : activeField === 'hoursReturnedPerWeek'
-        ? 'Choose weekly hours or enter a custom amount.'
-        : 'Choose an hourly value or enter a custom amount.';
-
-  function choiceLabel(option: GuidedChoiceOption): string {
-    if (option.label) return option.label;
-    return formatBusinessCaseCurrency(option.value!, draft.currency);
-  }
+  const resultAnnouncement = results
+    ? `Potential yearly value of time recovered: ${formatBusinessCaseCurrency(results.annualTimeValue, results.currency)}. About ${formatBusinessCaseNumber(results.annualHoursReturned, 1)} hours for the team if ${inputs!.recoveryPercent}% of the selected time is recovered.${pilotVisible ? ` A ${pilotEstimate.people}-person pilot represents ${formatBusinessCaseNumber(pilotEstimate.annualHoursReturned, 1)} annualized hours.` : ''}`
+    : 'Check Calculation settings to restore the estimate.';
 
   return (
     <section
@@ -331,129 +283,163 @@ export default function BusinessCaseCalculator({
               {activeQuestion.heading}
             </h3>
             <div className="business-case-choice-step">
-              <fieldset
-                className="business-case-choice-group"
-                disabled={!hydrated}
-                aria-invalid={choiceGroupError ? 'true' : undefined}
-                aria-describedby={
-                  choiceGroupError
-                    ? `business-case-${activeField}-description business-case-${activeField}-error`
-                    : `business-case-${activeField}-description`
-                }
-              >
-                <legend>{choiceLegend}</legend>
-                <div className="business-case-choice-options">
-                  {activeChoiceOptions.map((option) => (
-                    <label className="business-case-choice-option" key={option.id}>
-                      <input
-                        id={`business-case-${activeField}-choice-${option.id}`}
-                        name={`${activeField}Choice`}
-                        type="radio"
-                        value={option.id}
-                        checked={choiceIds[activeField] === option.id}
-                        disabled={!hydrated}
-                        onChange={() => selectChoice(activeField, option)}
-                      />
-                      <span>{choiceLabel(option)}</span>
-                    </label>
-                  ))}
-                </div>
-                <small
-                  id={`business-case-${activeField}-description`}
-                  className="business-case-field-description"
+              {activeField === 'workTypeIds' ? (
+                <fieldset
+                  className="business-case-choice-group"
+                  aria-invalid={visibleError('workTypeIds') ? 'true' : undefined}
+                  aria-describedby={
+                    visibleError('workTypeIds')
+                      ? 'business-case-workTypeIds-description business-case-workTypeIds-error'
+                      : 'business-case-workTypeIds-description'
+                  }
                 >
-                  {activeQuestion.description}
-                </small>
-                {selectedChoiceOption?.value !== undefined && (
-                  <p className="business-case-choice-value" aria-live="polite">
-                    {activeField === 'people' ? (
-                      <>
-                        Estimate uses <strong>{selectedChoiceOption.value} people</strong>, the
-                        rounded midpoint of this range.
-                      </>
-                    ) : activeField === 'hoursReturnedPerWeek' ? (
-                      <>
-                        Estimate uses <strong>{selectedChoiceOption.label}</strong> per person each
-                        week.
-                      </>
-                    ) : (
-                      <>
-                        Estimate uses{' '}
-                        <strong>
-                          {formatBusinessCaseCurrency(selectedChoiceOption.value, draft.currency)}
-                        </strong>{' '}
-                        per hour.
-                      </>
-                    )}
-                  </p>
-                )}
-                {choiceGroupError && (
+                  <legend>Choose all that apply</legend>
+                  <div className="business-case-choice-options">
+                    {businessCaseWorkTypeOptions.map((option) => (
+                      <label className="business-case-choice-option" key={option.id}>
+                        <input
+                          id={`business-case-workTypeIds-${option.id}`}
+                          name="workTypeIds"
+                          type="checkbox"
+                          value={option.id}
+                          checked={draft.workTypeIds.includes(option.id)}
+                          disabled={!hydrated}
+                          onChange={(event) => toggleWorkType(option.id, event.target.checked)}
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
                   <small
-                    id={`business-case-${activeField}-error`}
-                    className="field-error"
-                    role="alert"
+                    id="business-case-workTypeIds-description"
+                    className="business-case-field-description"
                   >
-                    {choiceErrorMessage}
+                    {activeQuestion.description}
                   </small>
-                )}
-              </fieldset>
-
-              {choiceIds[activeField] === 'custom' && (
-                <NumberField
-                  inputRef={(node) => {
-                    customInputRefs.current[activeField] = node;
-                  }}
-                  field={activeField}
-                  label={customLabel}
-                  description={customDescription}
-                  min={activeQuestion.min}
-                  max={activeQuestion.max}
-                  step={activeQuestion.step}
-                  value={customValues[activeField]}
-                  disabled={!hydrated}
-                  error={visibleError(activeField)}
-                  onChange={(event) => changeCustomValue(activeField, event)}
-                  onBlur={touchField(activeField)}
-                />
+                  {visibleError('workTypeIds') && (
+                    <small
+                      id="business-case-workTypeIds-error"
+                      className="field-error"
+                      role="alert"
+                    >
+                      {visibleError('workTypeIds')}
+                    </small>
+                  )}
+                </fieldset>
+              ) : (
+                <>
+                  <fieldset
+                    className="business-case-choice-group"
+                    aria-invalid={visibleError(activeField) ? 'true' : undefined}
+                    aria-describedby={
+                      visibleError(activeField) && choiceIds[activeField] !== 'custom'
+                        ? `business-case-${activeField}-description business-case-${activeField}-error`
+                        : `business-case-${activeField}-description`
+                    }
+                  >
+                    <legend>
+                      {activeField === 'weeklyHoursSpent'
+                        ? 'Choose combined weekly time'
+                        : 'Choose a team size'}
+                    </legend>
+                    <div className="business-case-choice-options">
+                      {activeChoiceOptions.map((option) => (
+                        <label className="business-case-choice-option" key={option.id}>
+                          <input
+                            id={`business-case-${activeField}-choice-${option.id}`}
+                            name={`${activeField}Choice`}
+                            type="radio"
+                            value={option.id}
+                            checked={choiceIds[activeField] === option.id}
+                            disabled={!hydrated}
+                            onChange={() =>
+                              selectChoice(
+                                activeField,
+                                option.id,
+                                'people' in option
+                                  ? option.people
+                                  : 'value' in option
+                                    ? option.value
+                                    : undefined,
+                              )
+                            }
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <small
+                      id={`business-case-${activeField}-description`}
+                      className="business-case-field-description"
+                    >
+                      {activeQuestion.description}
+                    </small>
+                    {selectedChoiceOption &&
+                      'value' in selectedChoiceOption &&
+                      selectedChoiceOption.value !== undefined && (
+                        <p className="business-case-choice-value" aria-live="polite">
+                          Estimate uses <strong>{selectedChoiceOption.value} hours</strong> per
+                          person each week across the selected work.
+                        </p>
+                      )}
+                    {selectedChoiceOption &&
+                      'people' in selectedChoiceOption &&
+                      selectedChoiceOption.people !== undefined && (
+                        <p className="business-case-choice-value" aria-live="polite">
+                          Estimate uses <strong>{selectedChoiceOption.people} people</strong>, the
+                          rounded midpoint of this range.
+                        </p>
+                      )}
+                    {visibleError(activeField) && choiceIds[activeField] !== 'custom' && (
+                      <small
+                        id={`business-case-${activeField}-error`}
+                        className="field-error"
+                        role="alert"
+                      >
+                        {activeField === 'weeklyHoursSpent'
+                          ? 'Choose weekly time or enter a custom amount.'
+                          : 'Choose a team size or enter a custom amount.'}
+                      </small>
+                    )}
+                  </fieldset>
+                  {choiceIds[activeField] === 'custom' && (
+                    <NumberField
+                      inputRef={(node) => {
+                        customInputRefs.current[activeField] = node;
+                      }}
+                      field={activeField}
+                      label={
+                        activeField === 'people' ? 'Exact number of people' : 'Custom weekly hours'
+                      }
+                      description={
+                        activeField === 'people'
+                          ? 'Enter a whole number between 1 and 100,000.'
+                          : 'Enter a combined number between 0.5 and 80.'
+                      }
+                      min={activeNumericQuestion?.min ?? 0}
+                      max={activeNumericQuestion?.max ?? 0}
+                      step={activeNumericQuestion?.step ?? 1}
+                      value={customValues[activeField]}
+                      disabled={!hydrated}
+                      error={visibleError(activeField)}
+                      onChange={(event) => changeCustomValue(activeField, event)}
+                      onBlur={touchField(activeField)}
+                    />
+                  )}
+                </>
               )}
             </div>
-
-            {activeQuestion.field === 'hourlyValue' && (
-              <div className="business-case-currency-field">
-                <label htmlFor="business-case-currency">Currency</label>
-                <select
-                  id="business-case-currency"
-                  name="currency"
-                  value={draft.currency}
-                  disabled={!hydrated}
-                  onChange={(event) => {
-                    const nextDraft = {
-                      ...draftRef.current,
-                      currency: event.target.value as BusinessCaseDraft['currency'],
-                    };
-                    draftRef.current = nextDraft;
-                    setDraft(nextDraft);
-                  }}
-                >
-                  {supportedBusinessCaseCurrencies.map((currency) => (
-                    <option key={currency} value={currency}>
-                      {currency}
-                    </option>
-                  ))}
-                </select>
-                <small>Formatting only. No conversion.</small>
-              </div>
-            )}
-
-            <div className="business-case-actions">
-              {step > 0 && (
-                <button className="button button-ghost" type="button" onClick={goBack}>
-                  Back
+            <div className="business-case-question-footer">
+              <div className="business-case-actions">
+                {step > 0 && (
+                  <button className="button button-ghost" type="button" onClick={goBack}>
+                    Back
+                  </button>
+                )}
+                <button className="button button-primary" type="submit" disabled={!hydrated}>
+                  {step === businessCaseQuestions.length - 1 ? 'See estimate' : 'Continue'}
                 </button>
-              )}
-              <button className="button button-primary" type="submit" disabled={!hydrated}>
-                {step === businessCaseQuestions.length - 1 ? 'See estimate' : 'Continue'}
-              </button>
+              </div>
             </div>
           </fieldset>
         </form>
@@ -461,7 +447,7 @@ export default function BusinessCaseCalculator({
         <div className="business-case-results">
           <header className="business-case-results-heading">
             <div>
-              <p className="product-label">Based on your inputs</p>
+              <p className="product-label">Planning estimate</p>
               <h2 ref={questionHeadingRef} tabIndex={-1}>
                 What your team could get back
               </h2>
@@ -471,34 +457,41 @@ export default function BusinessCaseCalculator({
             </button>
           </header>
 
-          {baseResults && baseInputs ? (
+          {results && inputs ? (
             <section className="business-case-value-summary" aria-label="Full team estimate">
-              <p className="product-label">Estimated value of recovered time each year</p>
+              <p className="product-label">Potential yearly value of time recovered</p>
               <p className="business-case-value-figure">
-                {formatBusinessCaseCurrency(baseResults.annualCapacityValue, baseResults.currency)}
+                {formatBusinessCaseCurrency(results.annualTimeValue, results.currency)}
               </p>
               <p className="business-case-hours-summary">
-                Your team could get back{' '}
-                <strong>
-                  {formatBusinessCaseNumber(baseResults.annualHoursReturned, 1)} hours
-                </strong>{' '}
-                each year.
+                About{' '}
+                <strong>{formatBusinessCaseNumber(results.annualHoursReturned, 1)} hours</strong>{' '}
+                back across the team each year if{' '}
+                {formatBusinessCaseNumber(inputs.recoveryPercent, 1)}% of this time is recovered.
+              </p>
+              <p className="business-case-selected-work">
+                Selected work:{' '}
+                {businessCaseWorkTypeOptions
+                  .filter((option) => inputs.workTypeIds.includes(option.id))
+                  .map((option) => option.label)
+                  .join(', ')}
+                .
               </p>
               <p className="business-case-assumptions">
-                Based on {formatBusinessCaseNumber(baseInputs.people)} people,{' '}
-                {formatBusinessCaseNumber(baseInputs.hoursReturnedPerWeek, 1)}{' '}
-                {baseInputs.hoursReturnedPerWeek === 1 ? 'hour' : 'hours'} each week,{' '}
-                {formatBusinessCaseCurrency(baseInputs.hourlyValue, baseInputs.currency, 2)} per
-                hour, and {formatBusinessCaseNumber(baseInputs.workingWeeks)} working weeks.
+                Based on {formatBusinessCaseNumber(inputs.people)} people,{' '}
+                {formatBusinessCaseNumber(inputs.weeklyHoursSpent, 1)} combined hours per person
+                each week, {formatBusinessCaseNumber(inputs.recoveryPercent, 1)}% time recovered,{' '}
+                {formatBusinessCaseCurrency(inputs.hourlyPlanningValue, inputs.currency, 2)} per
+                hour, and {formatBusinessCaseNumber(inputs.workingWeeks)} working weeks.
               </p>
             </section>
           ) : (
             <p className="business-case-result-error" role="alert">
-              Check the working year to restore the estimate.
+              Check Calculation settings to restore the estimate.
             </p>
           )}
 
-          {pilotEstimate && baseResults && (
+          {pilotVisible && (
             <section className="business-case-pilot" aria-labelledby="business-case-pilot-title">
               <div className="business-case-pilot-copy">
                 <p className="product-label">A practical first step</p>
@@ -508,77 +501,96 @@ export default function BusinessCaseCalculator({
                 </h3>
                 <p>{pilotStatement}</p>
               </div>
-              <p className="business-case-pilot-value">
-                <span>This pilot group represents about</span>
-                <strong>
-                  {formatBusinessCaseCurrency(
-                    pilotEstimate.annualCapacityValue,
-                    baseResults.currency,
-                  )}
-                </strong>
-                <span>in yearly time value.</span>
-              </p>
               <p className="business-case-pilot-hours">
-                That is{' '}
+                That represents{' '}
                 <strong>
                   {formatBusinessCaseNumber(pilotEstimate.annualHoursReturned, 1)} hours
                 </strong>{' '}
-                each year, based on your inputs.
+                across a year if the same recovery scenario holds.
               </p>
               <a className="button button-paper" href={withBase('/demo')}>
                 Plan this pilot
               </a>
             </section>
           )}
+          {results?.annualTimeValue === 0 && (
+            <p className="business-case-zero-scenario">
+              At 0% time recovered, there is no modeled time value to validate. Adjust the scenario
+              in Calculation settings.
+            </p>
+          )}
 
           <div className="business-case-secondary-inputs">
             <details>
-              <summary>Compare with an annual budget</summary>
-              <NumberField
-                field="annualBudget"
-                label="Annual budget to compare"
-                description="Optional. This is your planning input, not Zeno pricing."
-                min={1}
-                max={1_000_000_000_000}
-                step={1}
-                optional
-                value={draft.annualBudget}
-                disabled={!hydrated}
-                error={visibleError('annualBudget')}
-                onChange={(event) => changeField('annualBudget', event)}
-                onBlur={touchField('annualBudget')}
-              />
-              {completeResults?.annualBudget !== undefined && (
-                <div className="business-case-budget-result" aria-live="polite">
-                  <p>Estimated ROI against this budget</p>
-                  <strong>{formatBusinessCaseNumber(completeResults.roiPercent!, 1)}%</strong>
-                  <small>
-                    Estimated ROI = (yearly time value minus annual budget) divided by annual
-                    budget.
-                  </small>
-                </div>
-              )}
-            </details>
-            <details>
               <summary>Calculation settings</summary>
-              <NumberField
-                field="workingWeeks"
-                label="Working weeks per year"
-                description="The estimate starts with a 46-week planning year."
-                min={1}
-                max={52}
-                step={1}
-                value={draft.workingWeeks}
-                disabled={!hydrated}
-                error={visibleError('workingWeeks')}
-                onChange={(event) => changeField('workingWeeks', event)}
-                onBlur={touchField('workingWeeks')}
-              />
-              <p className="business-case-method">{method}</p>
+              <div className="business-case-settings-grid">
+                <NumberField
+                  field="recoveryPercent"
+                  label="Time recovered (%)"
+                  description="Illustrative scenario, not measured Zeno savings."
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={draft.recoveryPercent}
+                  disabled={!hydrated}
+                  error={visibleError('recoveryPercent')}
+                  onChange={(event) => setFieldValue('recoveryPercent', event.target.value)}
+                  onBlur={touchField('recoveryPercent')}
+                />
+                <NumberField
+                  field="hourlyPlanningValue"
+                  label="Planning value per hour"
+                  description="Illustrative value, not a labor-cost benchmark."
+                  min={1}
+                  max={100_000}
+                  step={1}
+                  value={draft.hourlyPlanningValue}
+                  disabled={!hydrated}
+                  error={visibleError('hourlyPlanningValue')}
+                  onChange={(event) => setFieldValue('hourlyPlanningValue', event.target.value)}
+                  onBlur={touchField('hourlyPlanningValue')}
+                />
+                <NumberField
+                  field="workingWeeks"
+                  label="Working weeks per year"
+                  description="46 weeks by default."
+                  min={1}
+                  max={52}
+                  step={1}
+                  value={draft.workingWeeks}
+                  disabled={!hydrated}
+                  error={visibleError('workingWeeks')}
+                  onChange={(event) => setFieldValue('workingWeeks', event.target.value)}
+                  onBlur={touchField('workingWeeks')}
+                />
+                <div className="business-case-currency-field">
+                  <label htmlFor="business-case-currency">Currency</label>
+                  <select
+                    id="business-case-currency"
+                    name="currency"
+                    value={draft.currency}
+                    disabled={!hydrated}
+                    onChange={(event) => {
+                      const nextDraft = {
+                        ...draftRef.current,
+                        currency: event.target.value as BusinessCaseDraft['currency'],
+                      };
+                      draftRef.current = nextDraft;
+                      setDraft(nextDraft);
+                    }}
+                  >
+                    {supportedBusinessCaseCurrencies.map((currency) => (
+                      <option key={currency} value={currency}>
+                        {currency}
+                      </option>
+                    ))}
+                  </select>
+                  <small>Formatting only. No conversion.</small>
+                </div>
+              </div>
               <p className="business-case-method">{pilotMethod}</p>
             </details>
           </div>
-
           <p className="visually-hidden" aria-live="polite">
             {resultAnnouncement}
           </p>

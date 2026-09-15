@@ -152,10 +152,10 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-page-metadata',
     statement:
-      'Estimate the yearly value of recovered time for one workflow. Then scope a custom enterprise rollout with Zeno.',
+      'Choose the work taking your team’s time and estimate its potential yearly time value for a focused pilot or wider rollout.',
     category: 'product',
     evidence:
-      'Business-case scope approved on 2026-09-14. Shorter metadata wording approved in the 2026-09-15 sitewide copy direction.',
+      'Work-led business-case flow approved by Baris in the 2026-09-15 implementation direction.',
     verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
@@ -168,14 +168,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'pricing-enterprise-title',
-    statement: 'What could one workflow give back?',
+    statement: 'What could your team get back?',
     category: 'product',
     evidence:
-      'ROI-led business-case framing approved by the workspace owner in the 2026-09-14 working session.',
-    verified_on: '2026-09-14',
+      'Work-led business-case framing approved by Baris in the 2026-09-15 implementation direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.hero'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
@@ -184,10 +184,10 @@ export const claimRegistry: readonly ClaimRecord[] = [
   {
     id: 'pricing-enterprise-summary',
     statement:
-      'Enter your own time assumptions. See the estimated yearly value and use it to scope an enterprise rollout.',
+      'Choose the work taking your team’s time. Add a rough weekly total. See a planning estimate and a focused pilot.',
     category: 'product',
     evidence:
-      'Business-case framing approved on 2026-09-14. Shorter public wording approved in the 2026-09-15 sitewide copy direction.',
+      'Work-led business-case flow approved by Baris in the 2026-09-15 implementation direction.',
     verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
@@ -279,26 +279,10 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'pricing-calculator-title',
-    statement: 'Build the estimate in three steps.',
+    statement: 'Build an estimate in three choices.',
     category: 'product',
     evidence:
-      'Visitor-driven business-case calculator approved by the workspace owner in the 2026-09-10 working session.',
-    verified_on: '2026-09-14',
-    approval_status: 'approved',
-    approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-14',
-    allowed_surfaces: ['pricing.calculator'],
-    attribution: 'No public attribution required.',
-    reverify_on: '2027-03-14',
-    notes: 'The calculator must use only visitor-supplied performance assumptions.',
-  },
-  {
-    id: 'pricing-calculator-method',
-    statement:
-      'Choose a team range or exact number. Enter weekly hours returned and the value of one hour. Ranges use the rounded midpoint shown. Add an annual budget only if you want to compare it with the estimated yearly value of recovered time.',
-    category: 'product',
-    evidence:
-      'Calculation method approved on 2026-09-10. Plain-language wording approved in the 2026-09-15 sitewide copy direction.',
+      'Three-choice work-led calculator approved by Baris in the 2026-09-15 implementation direction.',
     verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
@@ -307,7 +291,24 @@ export const claimRegistry: readonly ClaimRecord[] = [
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
     notes:
-      'Do not preselect a team-size range, weekly hours, hourly value, annual budget, or other performance assumptions. ROI is annual capacity value minus annual budget, divided by annual budget.',
+      'No work type is assigned a typical duration or savings figure. The displayed 25 percent recovery scenario is illustrative and adjustable.',
+  },
+  {
+    id: 'pricing-calculator-method',
+    statement:
+      'Planning example: 25% of this time recovered over 46 weeks. Each hour uses 50 in the selected currency. Change these in Calculation settings.',
+    category: 'product',
+    evidence:
+      'Illustrative planning assumptions approved by Baris in the 2026-09-15 implementation direction.',
+    verified_on: '2026-09-15',
+    approval_status: 'superseded',
+    approved_by: 'Baris, working-session direction',
+    approved_on: '2026-09-15',
+    allowed_surfaces: ['pricing.calculator'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-14',
+    notes:
+      'Retired from public pricing content by the 2026-09-15 result-cleanup direction. Completed-result assumptions and the disclaimer remain visible. No work, time, or team choice is preselected. The 25 percent scenario and value of 50 are not measured Zeno outcomes or labor-cost benchmarks. Currency selection never converts the numeric assumption.',
   },
   {
     id: 'pricing-calculator-pilot',
@@ -323,19 +324,19 @@ export const claimRegistry: readonly ClaimRecord[] = [
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-14',
     notes:
-      "Recommend 20 percent of the entered team, rounded to the nearest person, with a five-person floor, 20-person cap, and no cohort larger than the entered team. Calculate annual pilot hours and capacity value only from the visitor's entered weekly hours, hourly value, and working weeks. Present the result as an estimate to validate, never as guaranteed return or savings.",
+      'Recommend 20 percent of the entered team, rounded to the nearest person, with a five-person floor, 20-person cap, and no cohort larger than the entered team. Calculate annual pilot hours and monetary value only from the entered assumptions. The monetary calculation is internal and no longer visitor-facing under the 2026-09-15 result-cleanup direction. Present the qualified hours as an estimate to validate, never as guaranteed return or savings.',
   },
   {
     id: 'pricing-calculator-disclaimer',
     statement:
-      'Estimates are for planning only and are based entirely on the values you enter. They do not guarantee time savings, financial benefit, or final Zeno pricing.',
+      'These estimates are for planning only. They combine the time and team size you choose with the displayed recovery and hourly-value assumptions. They do not guarantee time savings, financial benefit, or final Zeno pricing.',
     category: 'legal',
     evidence:
-      'Estimate boundaries and public wording approved by the workspace owner in the 2026-09-10 working session.',
-    verified_on: '2026-09-10',
+      'Updated illustrative estimate boundaries approved by Baris in the 2026-09-15 implementation direction.',
+    verified_on: '2026-09-15',
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-10',
+    approved_on: '2026-09-15',
     allowed_surfaces: ['pricing.calculator'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-10',

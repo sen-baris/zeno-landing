@@ -1,12 +1,22 @@
-import type { BusinessCaseNumericField } from '../pricing/business-case';
+import type { BusinessCaseWorkTypeId } from '../pricing/business-case';
 
-export interface BusinessCaseQuestion {
+interface BusinessCaseQuestionBase {
   description: string;
-  field: Extract<BusinessCaseNumericField, 'people' | 'hoursReturnedPerWeek' | 'hourlyValue'>;
   heading: string;
-  max: number;
-  min: number;
-  step: number;
+}
+
+export type BusinessCaseQuestion =
+  | (BusinessCaseQuestionBase & { field: 'workTypeIds' })
+  | (BusinessCaseQuestionBase & {
+      field: 'people' | 'weeklyHoursSpent';
+      max: number;
+      min: number;
+      step: number;
+    });
+
+export interface BusinessCaseWorkTypeOption {
+  id: BusinessCaseWorkTypeId;
+  label: string;
 }
 
 export interface BusinessCaseTeamSizeOption {
@@ -15,9 +25,9 @@ export interface BusinessCaseTeamSizeOption {
   people?: number | undefined;
 }
 
-export interface BusinessCaseValueOption {
+export interface BusinessCaseHoursOption {
   id: string;
-  label?: string | undefined;
+  label: string;
   value?: number | undefined;
 }
 
@@ -26,6 +36,15 @@ export interface PricingScopePrompt {
   number: string;
   question: string;
 }
+
+export const businessCaseWorkTypeOptions = [
+  { id: 'report-generation', label: 'Report generation' },
+  { id: 'financial-analysis', label: 'Financial analysis' },
+  { id: 'presentation-creation', label: 'Presentation creation' },
+  { id: 'email-triage', label: 'Email triage' },
+  { id: 'document-review', label: 'Document review' },
+  { id: 'other-work', label: 'Other recurring work' },
+] as const satisfies readonly BusinessCaseWorkTypeOption[];
 
 export const businessCaseTeamSizeOptions = [
   { id: '1-to-10', label: '1 to 10', people: 6 },
@@ -38,44 +57,32 @@ export const businessCaseTeamSizeOptions = [
 ] as const satisfies readonly BusinessCaseTeamSizeOption[];
 
 export const businessCaseHoursOptions = [
-  { id: '30-minutes', label: '30 minutes', value: 0.5 },
-  { id: '1-hour', label: '1 hour', value: 1 },
-  { id: '2-hours', label: '2 hours', value: 2 },
-  { id: '4-hours', label: '4 hours', value: 4 },
-  { id: '8-hours', label: '8 hours', value: 8 },
+  { id: '1-hour', label: 'About 1 hour', value: 1 },
+  { id: '2-hours', label: 'About 2 hours', value: 2 },
+  { id: '4-hours', label: 'About 4 hours', value: 4 },
+  { id: '8-hours', label: 'About 8 hours', value: 8 },
+  { id: '16-hours', label: 'About 16 hours', value: 16 },
   { id: 'custom', label: 'Custom hours' },
-] as const satisfies readonly BusinessCaseValueOption[];
-
-export const businessCaseHourlyValueOptions = [
-  { id: '25', value: 25 },
-  { id: '50', value: 50 },
-  { id: '75', value: 75 },
-  { id: '100', value: 100 },
-  { id: '150', value: 150 },
-  { id: 'custom', label: 'Custom value' },
-] as const satisfies readonly BusinessCaseValueOption[];
+] as const satisfies readonly BusinessCaseHoursOption[];
 
 export const businessCaseQuestions: readonly BusinessCaseQuestion[] = [
   {
+    field: 'workTypeIds',
+    heading: 'What work takes up your team’s time?',
+    description: 'Choose all that apply. Count the time across these tasks together.',
+  },
+  {
+    field: 'weeklyHoursSpent',
+    heading: 'About how many hours does one person spend on this work each week?',
+    description: 'Use one combined total for everything you selected.',
+    min: 0.5,
+    max: 80,
+    step: 0.5,
+  },
+  {
     field: 'people',
     heading: 'How many people do this work?',
-    description: 'Choose a range or enter the exact number of people on this workflow.',
-    min: 1,
-    max: 100_000,
-    step: 1,
-  },
-  {
-    field: 'hoursReturnedPerWeek',
-    heading: 'How many hours could each person get back each week?',
-    description: 'Choose a weekly estimate or enter your own.',
-    min: 0.1,
-    max: 168,
-    step: 0.1,
-  },
-  {
-    field: 'hourlyValue',
-    heading: 'What is one hour of their time worth?',
-    description: 'Choose a cost that includes salary and overhead, or enter your own.',
+    description: 'Choose a team range or enter the exact number.',
     min: 1,
     max: 100_000,
     step: 1,
@@ -94,13 +101,12 @@ export const pricingPageContent = {
   },
   calculator: {
     titleClaimId: 'pricing-calculator-title',
-    descriptionClaimId: 'pricing-calculator-method',
     pilotClaimId: 'pricing-calculator-pilot',
     disclaimerClaimId: 'pricing-calculator-disclaimer',
     privacyClaimId: 'pricing-calculator-local-data',
-    fallbackTitle: 'Estimate the value manually.',
+    fallbackTitle: 'Estimate the time value manually.',
     fallbackMethod:
-      'Multiply people by weekly hours returned and working weeks to estimate time back. Then multiply annual hours by the value of one hour.',
+      'Multiply people by combined weekly hours spent, then by the share of time recovered and working weeks. Multiply annual hours recovered by the planning value of one hour.',
     fallbackPilotMethod:
       'Pilot size uses 20 percent of the team, rounded to a whole person. Use at least five people when the team allows it and no more than 20. The pilot never exceeds the team entered.',
     fallbackAction: 'Book a demo',
@@ -127,7 +133,6 @@ export const pricingPageClaimIds = [
   pricingPageContent.hero.titleClaimId,
   pricingPageContent.hero.summaryClaimId,
   pricingPageContent.calculator.titleClaimId,
-  pricingPageContent.calculator.descriptionClaimId,
   pricingPageContent.calculator.pilotClaimId,
   pricingPageContent.calculator.disclaimerClaimId,
   pricingPageContent.calculator.privacyClaimId,

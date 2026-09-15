@@ -137,13 +137,14 @@ test('desktop completed business-case calculator', async ({ page }) => {
   const calculator = page.locator('.business-case-calculator');
   await calculator.scrollIntoViewIfNeeded();
   await expect(calculator).toHaveAttribute('data-hydrated', 'true');
+  await page.getByRole('checkbox', { name: 'Report generation' }).check();
+  await page.getByRole('checkbox', { name: 'Presentation creation' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: 'About 4 hours' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('radio', { name: '11 to 25' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '2 hours' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '€50' }).check();
   await page.getByRole('button', { name: 'See estimate' }).click();
-  await expect(page.getByText('€82,800', { exact: true })).toBeVisible();
+  await expect(page.getByText('€41,400', { exact: true })).toBeVisible();
 
   await expect(calculator).toHaveScreenshot('pricing-calculator-complete-1440.png', {
     animations: 'disabled',
@@ -158,13 +159,14 @@ test('mobile completed business-case calculator', async ({ page }) => {
   const calculator = page.locator('.business-case-calculator');
   await calculator.scrollIntoViewIfNeeded();
   await expect(calculator).toHaveAttribute('data-hydrated', 'true');
+  await page.getByRole('checkbox', { name: 'Report generation' }).check();
+  await page.getByRole('checkbox', { name: 'Presentation creation' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('radio', { name: 'About 4 hours' }).check();
+  await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('radio', { name: '11 to 25' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '2 hours' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('radio', { name: '€50' }).check();
   await page.getByRole('button', { name: 'See estimate' }).click();
-  await expect(page.getByText('€82,800', { exact: true })).toBeVisible();
+  await expect(page.getByText('€41,400', { exact: true })).toBeVisible();
 
   await expect(calculator).toHaveScreenshot('pricing-calculator-complete-390.png', {
     animations: 'disabled',

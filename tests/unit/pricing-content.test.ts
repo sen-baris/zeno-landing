@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { claimRegistry } from '../../src/lib/claims/registry';
 import { resolveApprovedClaims } from '../../src/lib/claims/public-claims';
 import {
-  businessCaseHourlyValueOptions,
   businessCaseHoursOptions,
   businessCaseQuestions,
   businessCaseTeamSizeOptions,
+  businessCaseWorkTypeOptions,
   pricingPageClaimIds,
   pricingPageContent,
 } from '../../src/lib/content/pricing';
@@ -51,7 +51,6 @@ describe('pricing page content', () => {
       claimRegistry,
       [
         pricingPageContent.calculator.titleClaimId,
-        pricingPageContent.calculator.descriptionClaimId,
         pricingPageContent.calculator.pilotClaimId,
         pricingPageContent.calculator.disclaimerClaimId,
         pricingPageContent.calculator.privacyClaimId,
@@ -60,10 +59,10 @@ describe('pricing page content', () => {
       now,
     );
 
-    expect(metadata?.statement).toContain('yearly value of recovered time');
-    expect(title?.statement).toBe('What could one workflow give back?');
+    expect(metadata?.statement).toContain('potential yearly time value');
+    expect(title?.statement).toBe('What could your team get back?');
     expect(summary?.statement).toBe(
-      'Enter your own time assumptions. See the estimated yearly value and use it to scope an enterprise rollout.',
+      'Choose the work taking your team’s time. Add a rough weekly total. See a planning estimate and a focused pilot.',
     );
     expect(enterpriseClaims.map((claim) => claim.statement)).toEqual([
       'Custom enterprise pricing',
@@ -72,10 +71,10 @@ describe('pricing page content', () => {
     ]);
     expect(calculatorClaims.at(-2)?.category).toBe('legal');
     expect(calculatorClaims.at(-1)?.category).toBe('privacy');
-    expect(calculatorClaims.at(1)?.statement).toBe(
-      'Choose a team range or exact number. Enter weekly hours returned and the value of one hour. Ranges use the rounded midpoint shown. Add an annual budget only if you want to compare it with the estimated yearly value of recovered time.',
+    expect(calculatorClaims.at(-2)?.statement).toBe(
+      'These estimates are for planning only. They combine the time and team size you choose with the displayed recovery and hourly-value assumptions. They do not guarantee time savings, financial benefit, or final Zeno pricing.',
     );
-    expect(calculatorClaims.at(2)?.statement).toBe(
+    expect(calculatorClaims.at(1)?.statement).toBe(
       'A focused pilot gives you a value to validate before a wider rollout.',
     );
     expect(pricingPageContent.enterprise).toMatchObject({
@@ -92,17 +91,39 @@ describe('pricing page content', () => {
     expect(publicStrings).not.toContain('—');
   });
 
+  it('retires the repeated planning-example claim from active pricing content', () => {
+    expect(pricingPageClaimIds).not.toContain('pricing-calculator-method');
+    expect(
+      claimRegistry.find((claim) => claim.id === 'pricing-calculator-method')?.approval_status,
+    ).toBe('superseded');
+  });
+
   it('defines the guided questions in calculation order', () => {
     expect(businessCaseQuestions.map((question) => question.field)).toEqual([
+      'workTypeIds',
+      'weeklyHoursSpent',
       'people',
-      'hoursReturnedPerWeek',
-      'hourlyValue',
     ]);
     expect(businessCaseQuestions.map((question) => question.heading)).toEqual([
+      'What work takes up your team’s time?',
+      'About how many hours does one person spend on this work each week?',
       'How many people do this work?',
-      'How many hours could each person get back each week?',
-      'What is one hour of their time worth?',
     ]);
+  });
+
+  it('keeps work types unique and never assigns each one an automatic time figure', () => {
+    expect(businessCaseWorkTypeOptions.map((option) => option.id)).toEqual([
+      'report-generation',
+      'financial-analysis',
+      'presentation-creation',
+      'email-triage',
+      'document-review',
+      'other-work',
+    ]);
+    expect(new Set(businessCaseWorkTypeOptions.map((option) => option.id)).size).toBe(
+      businessCaseWorkTypeOptions.length,
+    );
+    expect(businessCaseWorkTypeOptions.every((option) => !('hours' in option))).toBe(true);
   });
 
   it('maps every team-size range to its disclosed rounded midpoint', () => {
@@ -121,26 +142,18 @@ describe('pricing page content', () => {
     expect(collectStrings(businessCaseTeamSizeOptions).join('\n')).not.toContain('—');
   });
 
-  it('offers exact weekly-hour and hourly-value presets with a custom path', () => {
+  it('offers quick combined-time choices with a custom path', () => {
     expect(businessCaseHoursOptions).toEqual([
-      { id: '30-minutes', label: '30 minutes', value: 0.5 },
-      { id: '1-hour', label: '1 hour', value: 1 },
-      { id: '2-hours', label: '2 hours', value: 2 },
-      { id: '4-hours', label: '4 hours', value: 4 },
-      { id: '8-hours', label: '8 hours', value: 8 },
+      { id: '1-hour', label: 'About 1 hour', value: 1 },
+      { id: '2-hours', label: 'About 2 hours', value: 2 },
+      { id: '4-hours', label: 'About 4 hours', value: 4 },
+      { id: '8-hours', label: 'About 8 hours', value: 8 },
+      { id: '16-hours', label: 'About 16 hours', value: 16 },
       { id: 'custom', label: 'Custom hours' },
     ]);
-    expect(businessCaseHourlyValueOptions).toEqual([
-      { id: '25', value: 25 },
-      { id: '50', value: 50 },
-      { id: '75', value: 75 },
-      { id: '100', value: 100 },
-      { id: '150', value: 150 },
-      { id: 'custom', label: 'Custom value' },
-    ]);
-    for (const options of [businessCaseHoursOptions, businessCaseHourlyValueOptions]) {
-      expect(new Set(options.map((option) => option.id)).size).toBe(options.length);
-      expect(options.at(-1)?.id).toBe('custom');
-    }
+    expect(new Set(businessCaseHoursOptions.map((option) => option.id)).size).toBe(
+      businessCaseHoursOptions.length,
+    );
+    expect(businessCaseHoursOptions.at(-1)?.id).toBe('custom');
   });
 });

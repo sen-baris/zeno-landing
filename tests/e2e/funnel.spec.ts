@@ -108,7 +108,9 @@ test('homepage readiness CTA opens the business case, then the demo', async ({ p
   );
   await page.getByRole('link', { name: 'Assess AI readiness' }).first().click();
   await expect(page).toHaveURL(/\/pricing$/);
-  await expect(page.getByRole('heading', { name: 'How many people do this work?' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'What work takes up your team’s time?' }),
+  ).toBeVisible();
   await page.getByRole('link', { name: 'Book a demo' }).first().click();
   await expect(page).toHaveURL(/\/demo$/);
   await expect(page.getByText('Assessment context added.')).toHaveCount(0);
@@ -174,7 +176,9 @@ test('the retired assessment URL redirects to the business case without a form',
   const plain = await noJavaScript.newPage();
   await plain.goto(new URL('/ai-readiness', test.info().project.use.baseURL).toString());
   await expect(plain).toHaveURL(/\/pricing$/);
-  await expect(plain.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
+  await expect(
+    plain.getByRole('heading', { name: 'Estimate the time value manually.' }),
+  ).toBeVisible();
   await noJavaScript.close();
 
   const sitemap = await page.request.get('/sitemap.xml');
@@ -2365,7 +2369,9 @@ test('the two conversion forms explain their JavaScript fallback', async ({ brow
   await page.goto(new URL('/demo', test.info().project.use.baseURL).toString());
   await expect(page.getByRole('status')).toContainText('enable JavaScript and reload');
   await page.goto(new URL('/pricing', test.info().project.use.baseURL).toString());
-  await expect(page.getByRole('heading', { name: 'Estimate the value manually.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Estimate the time value manually.' }),
+  ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Book a demo' }).first()).toBeVisible();
   await context.close();
 });

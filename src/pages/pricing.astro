@@ -16,10 +16,6 @@ const calculatorTitleClaim = resolvePricingClaim(
   pricingPageContent.calculator.titleClaimId,
   'pricing.calculator',
 );
-const calculatorMethodClaim = resolvePricingClaim(
-  pricingPageContent.calculator.descriptionClaimId,
-  'pricing.calculator',
-);
 const calculatorPilotClaim = resolvePricingClaim(
   pricingPageContent.calculator.pilotClaimId,
   'pricing.calculator',
@@ -70,7 +66,6 @@ const enterpriseSummaryClaim = resolvePricingClaim(
         <BusinessCaseCalculator
           client:load
           title={calculatorTitleClaim.statement}
-          method={calculatorMethodClaim.statement}
           pilotStatement={calculatorPilotClaim.statement}
           pilotMethod={pricingPageContent.calculator.fallbackPilotMethod}
           disclaimer={calculatorDisclaimerClaim.statement}
