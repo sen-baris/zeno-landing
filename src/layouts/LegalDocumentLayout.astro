@@ -1,0 +1,27 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { resolveApprovedLegalDocument } from '../lib/content/legal-documents';
+
+const { frontmatter } = Astro.props;
+const document = resolveApprovedLegalDocument(frontmatter?.documentId);
+---
+
+<BaseLayout
+  title={document.pageTitle}
+  description={document.description}
+  canonicalPath={document.allowedRoute}
+  pageClass="legal-page"
+>
+  <header class="legal-hero section-rule">
+    <div class="shell legal-shell">
+      <h1>{document.heading}</h1>
+      {document.lastRevised && <p>{document.lastRevised}</p>}
+    </div>
+  </header>
+
+  <section class="legal-document" aria-label={document.heading}>
+    <article class="shell legal-shell legal-document-content">
+      <slot />
+    </article>
+  </section>
+</BaseLayout>

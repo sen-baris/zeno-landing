@@ -122,12 +122,12 @@ const assuranceReviewLabels = {
               {claim.public_url && (
                 <a
                   class="text-link"
-                  href={claim.public_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={kind === 'privacy' ? withBase('/privacy-policy') : claim.public_url}
+                  target={kind === 'privacy' ? undefined : '_blank'}
+                  rel={kind === 'privacy' ? undefined : 'noopener noreferrer'}
                 >
                   {assuranceReviewLabels[kind]}
-                  <span class="visually-hidden"> (opens in a new tab)</span>
+                  {kind !== 'privacy' && <span class="visually-hidden"> (opens in a new tab)</span>}
                 </a>
               )}
             </li>

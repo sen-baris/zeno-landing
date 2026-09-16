@@ -77,6 +77,22 @@ for (const viewport of [
   });
 }
 
+for (const viewport of [
+  { name: 'mobile-390', width: 390, height: 844 },
+  { name: 'desktop-1440', width: 1440, height: 1000 },
+] as const) {
+  test(`privacy policy first view at ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/privacy-policy');
+
+    await expect(page).toHaveScreenshot(`privacy-policy-${viewport.name}.png`, {
+      animations: 'disabled',
+      fullPage: false,
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
+
 test('desktop homepage starting path message', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });

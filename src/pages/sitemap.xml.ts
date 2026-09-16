@@ -7,6 +7,7 @@ import {
   resolveCustomerProofMode,
   selectCustomerStoriesForMode,
 } from '../lib/content/customer-stories';
+import { legalDocumentPaths } from '../lib/content/legal-documents';
 
 const customerStoryPaths = selectCustomerStoriesForMode(
   customerStoryDrafts,
@@ -18,6 +19,7 @@ const paths = [
   '/product',
   '/pricing',
   '/security',
+  ...legalDocumentPaths,
   '/solutions',
   ...solutions.map((solution) => `/solutions/${solution.slug}`),
   '/demo',

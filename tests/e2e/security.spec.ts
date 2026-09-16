@@ -69,7 +69,10 @@ test('the Security page publishes approved assurance and workspace controls', as
   await expect(page.getByText('Privacy framework', { exact: true })).toHaveCount(1);
   await expect(page.getByRole('link', { name: 'Review certification' })).toHaveCount(1);
   await expect(page.getByRole('link', { name: 'Review report' })).toHaveCount(2);
-  await expect(page.getByRole('link', { name: 'Review privacy policy' })).toHaveCount(1);
+  const privacyPolicy = page.getByRole('link', { name: 'Review privacy policy' });
+  await expect(privacyPolicy).toHaveCount(1);
+  await expect(privacyPolicy).toHaveAttribute('href', /\/privacy-policy$/);
+  await expect(privacyPolicy).not.toHaveAttribute('target', '_blank');
   await expect(page.getByRole('link', { name: 'Review evidence' })).toHaveCount(0);
 
   const workspace = page.getByRole('figure', { name: /Manage knowledge access/ });

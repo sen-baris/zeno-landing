@@ -8,3 +8,6 @@ node_modules
 playwright-report
 test-results
 pnpm-lock.yaml
+src/pages/privacy-policy.md
+src/pages/terms-of-service.md
+src/pages/imprint.md

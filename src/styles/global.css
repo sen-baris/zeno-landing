@@ -2962,6 +2962,110 @@ h2 {
   margin-block: 30px;
 }
 
+/* Legal documents */
+.legal-page {
+  background: var(--canvas);
+}
+
+.legal-shell {
+  width: min(100%, 76rem);
+}
+
+.legal-hero {
+  padding-block: clamp(84px, 10vw, 148px) clamp(58px, 7vw, 96px);
+  background: var(--paper);
+}
+
+.legal-hero h1 {
+  max-width: 12ch;
+  font-size: clamp(3.7rem, 7.2vw, 7.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.legal-hero p {
+  margin-top: 30px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.legal-document {
+  padding-block: clamp(64px, 8vw, 112px) clamp(96px, 12vw, 168px);
+}
+
+.legal-document-content {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.legal-document-content > :first-child {
+  margin-top: 0;
+}
+
+.legal-document-content h2 {
+  max-width: 26ch;
+  margin-top: clamp(64px, 8vw, 104px);
+  font-family: var(--display);
+  font-size: clamp(2.25rem, 4vw, 4.25rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.legal-document-content h3 {
+  max-width: 34ch;
+  margin-top: 52px;
+  font-family: var(--display);
+  font-size: clamp(1.65rem, 2.5vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.legal-document-content p,
+.legal-document-content li {
+  max-width: 70ch;
+  font-size: clamp(1rem, 1.2vw, 1.08rem);
+  line-height: 1.78;
+}
+
+.legal-document-content p {
+  margin-top: 22px;
+}
+
+.legal-document-content p > strong:only-child {
+  display: inline-block;
+  margin-top: 34px;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.legal-document-content ul,
+.legal-document-content ol {
+  max-width: 70ch;
+  margin: 24px 0 0;
+  padding-left: 1.4rem;
+}
+
+.legal-document-content li + li {
+  margin-top: 14px;
+}
+
+.legal-document-content a {
+  color: var(--action);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--action) 44%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.legal-document-content a:hover,
+.legal-document-content a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 /* Footer */
 .site-footer {
   border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
@@ -4782,6 +4886,14 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 
   .button-row .button {
     width: 100%;
+  }
+
+  .legal-hero h1 {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+  }
+
+  .legal-document-content h2 {
+    font-size: clamp(2.15rem, 11vw, 3.25rem);
   }
 
   .hero-action .button {
