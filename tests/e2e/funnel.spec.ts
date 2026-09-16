@@ -448,9 +448,7 @@ test('the product page carries the mechanism the homepage now links to', async (
     .click();
   await expect(page).toHaveURL(/\/product$/);
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Enterprise AI, grounded in your company.',
-  );
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('AI that knows your company.');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
     'Explore Chat, connected knowledge and visual workflows in a governed enterprise AI platform. Use prebuilt or custom agents and access major AI models with EU hosting.',

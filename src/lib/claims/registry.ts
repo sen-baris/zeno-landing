@@ -554,19 +554,19 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'product-enterprise-hero-title',
-    statement: 'Enterprise AI, grounded in your company.',
+    statement: 'AI that knows your company.',
     category: 'product',
     evidence:
-      'Positioning and public wording approved by the workspace owner in the 2026-09-09 product hero direction.',
-    verified_on: '2026-09-09',
+      'Shorter product hero wording approved by the workspace owner in the 2026-09-16 product heading direction.',
+    verified_on: '2026-09-16',
     approval_status: 'approved',
-    approved_by: 'Baris, working-session direction',
-    approved_on: '2026-09-09',
+    approved_by: 'Baris, product heading direction',
+    approved_on: '2026-09-16',
     allowed_surfaces: ['product.hero'],
     attribution: 'No public attribution required.',
-    reverify_on: '2027-03-09',
+    reverify_on: '2027-03-16',
     notes:
-      'Keep the title grounded in the company context. Do not broaden it into a performance or outcome promise.',
+      'Keep the title focused on company context. Do not broaden it into a performance or outcome promise.',
   },
   {
     id: 'product-enterprise-platform-summary',

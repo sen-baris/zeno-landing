@@ -18,7 +18,7 @@ export const productPageContent = {
   },
   intro: {
     eyebrow: 'Product',
-    title: 'Enterprise AI, grounded in your company.',
+    title: 'AI that knows your company.',
     titleClaimId: 'product-enterprise-hero-title',
     description:
       'Connect your company context to agents that get work done in one governed workspace.',

@@ -37,6 +37,7 @@ describe('product page content', () => {
 
     expect(metadata?.statement).toBe(productPageContent.metadata.description);
     expect(title?.statement).toBe(productPageContent.intro.title);
+    expect(title?.statement).toBe('AI that knows your company.');
     expect(intro?.statement).toBe(productPageContent.intro.description);
     expect(hosting?.statement).toBe('Access major AI models with EU hosting in one place.');
     expect(hosting?.allowed_surfaces).toEqual(
