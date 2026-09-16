@@ -31,6 +31,12 @@ test('the footer exposes all local legal routes', async ({ page }) => {
   await page.goto('/');
   const footer = page.getByRole('navigation', { name: 'Footer navigation' });
 
+  for (const groupName of ['Explore', 'Company', 'Legal']) {
+    await expect(
+      footer.getByRole('heading', { name: groupName, exact: true, level: 2 }),
+    ).toBeVisible();
+  }
+
   for (const legalDocument of documents) {
     const label =
       legalDocument.path === '/privacy-policy'

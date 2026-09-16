@@ -9,18 +9,36 @@ import { withBase } from '../lib/routing/base-path';
       <a class="wordmark wordmark-light" href={withBase('/')} aria-label="Zeno home">Zeno</a>
       <p>Enterprise AI for everyday work, from useful assistance to governed execution.</p>
     </div>
-    <nav aria-label="Footer navigation">
-      <a href={withBase('/#why')}>Why Zeno</a>
-      <a href={withBase('/product')}>Product</a>
-      <a href={withBase('/pricing')}>Business case</a>
-      <a href={withBase('/security')}>Security</a>
-      <a href={trustCenterUrl} target="_blank" rel="noopener noreferrer"
-        >Trust center<span class="visually-hidden"> (opens in a new tab)</span></a
-      >
-      <a href={withBase('/demo')}>Book a demo</a>
-      <a href={withBase('/privacy-policy')}>Privacy policy</a>
-      <a href={withBase('/terms-of-service')}>Terms of service</a>
-      <a href={withBase('/imprint')}>Imprint</a>
+    <nav class="footer-navigation" aria-label="Footer navigation">
+      <div class="footer-nav-group">
+        <h2 class="footer-nav-label">Explore</h2>
+        <ul>
+          <li><a href={withBase('/product')}>Product</a></li>
+          <li><a href={withBase('/solutions')}>Solutions</a></li>
+          <li><a href={withBase('/pricing')}>Business case</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-group">
+        <h2 class="footer-nav-label">Company</h2>
+        <ul>
+          <li><a href={withBase('/#why')}>Why Zeno</a></li>
+          <li><a href={withBase('/security')}>Security</a></li>
+          <li>
+            <a href={trustCenterUrl} target="_blank" rel="noopener noreferrer"
+              >Trust center<span class="visually-hidden"> (opens in a new tab)</span></a
+            >
+          </li>
+          <li><a href={withBase('/demo')}>Book a demo</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-group">
+        <h2 class="footer-nav-label">Legal</h2>
+        <ul>
+          <li><a href={withBase('/privacy-policy')}>Privacy policy</a></li>
+          <li><a href={withBase('/terms-of-service')}>Terms of service</a></li>
+          <li><a href={withBase('/imprint')}>Imprint</a></li>
+        </ul>
+      </div>
     </nav>
     <div class="footer-meta">
       <span>© {new Date().getFullYear()} Zeno</span>

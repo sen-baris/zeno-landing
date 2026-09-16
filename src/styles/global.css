@@ -3069,15 +3069,15 @@ h2 {
 /* Footer */
 .site-footer {
   border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
-  padding-block: 72px 30px;
+  padding-block: clamp(68px, 7vw, 92px) 30px;
   background: var(--ink);
   color: var(--paper);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
-  gap: 72px;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(520px, 1.4fr);
+  gap: 72px clamp(72px, 8vw, 144px);
 }
 
 .wordmark-light {
@@ -3085,19 +3085,36 @@ h2 {
 }
 
 .footer-grid > div:first-child p {
-  max-width: 420px;
+  max-width: 360px;
   margin-top: 22px;
   color: color-mix(in srgb, var(--paper) 62%, transparent);
 }
 
-.site-footer nav {
+.footer-navigation {
   display: grid;
-  justify-items: start;
-  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(36px, 4.5vw, 72px);
 }
 
-.site-footer nav a {
-  font-size: 0.86rem;
+.footer-nav-label {
+  margin-bottom: 18px;
+  color: color-mix(in srgb, var(--paper) 48%, transparent);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer-nav-group ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-navigation a {
+  font-size: 0.88rem;
 }
 
 .footer-meta {
@@ -4521,7 +4538,7 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
  */
 @media (hover: hover) and (pointer: fine) {
   /* Navigable: these respond because you can act on them. */
-  .site-footer nav a,
+  .footer-navigation a,
   .trust-center-link,
   .mobile-menu summary,
   .wordmark {
@@ -4535,7 +4552,7 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   }
 
   /* The footer sits on dark ink; brighten rather than reaching for the accent. */
-  .site-footer nav a:hover {
+  .footer-navigation a:hover {
     color: var(--paper);
     text-decoration: underline;
   }
@@ -4862,6 +4879,10 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     gap: 50px;
   }
 
+  .footer-navigation {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .footer-meta {
     grid-column: 1;
   }
@@ -5039,6 +5060,16 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     align-items: start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .footer-navigation {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .footer-nav-group + .footer-nav-group {
+    border-top: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
+    padding-top: 30px;
   }
 
   .page-intro {
