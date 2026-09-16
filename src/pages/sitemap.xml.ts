@@ -17,6 +17,7 @@ const paths = [
   '/',
   '/product',
   '/pricing',
+  '/security',
   '/solutions',
   ...solutions.map((solution) => `/solutions/${solution.slug}`),
   '/demo',

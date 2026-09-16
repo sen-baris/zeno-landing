@@ -4,8 +4,6 @@ import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { solutions } from '../lib/content/solutions';
 import { withBase } from '../lib/routing/base-path';
 
-const onHome = Astro.url.pathname === withBase('/');
-const anchor = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
 const appLoginClaim = resolveApprovedClaims(
   claimRegistry,
   [appLoginClaimId],
@@ -47,7 +45,7 @@ const appLoginUrl = appLoginClaim.public_url;
           </ul>
         </div>
       </details>
-      <a href={anchor('trust')}>Trust</a>
+      <a href={withBase('/security')}>Security</a>
       <a class="nav-business-case-cta" href={withBase('/pricing')}>Business case</a>
     </nav>
     <div class="header-actions">
@@ -68,7 +66,7 @@ const appLoginUrl = appLoginClaim.public_url;
             </a>
           ))
         }
-        <a href={anchor('trust')}>Trust</a>
+        <a href={withBase('/security')}>Security</a>
         <a class="mobile-nav-business-case" href={withBase('/pricing')}>Business case</a>
         <a href={appLoginUrl} data-sign-in-link>{appLoginClaim.statement}</a>
         <a href={withBase('/demo')}>Book a demo</a>

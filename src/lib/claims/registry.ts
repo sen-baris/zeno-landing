@@ -417,6 +417,125 @@ export const claimRegistry: readonly ClaimRecord[] = [
       'The starting point can vary, but Zeno remains involved in grounding the agent and supporting adoption. Do not describe Zeno as optional or imply configuration-free deployment.',
   },
   {
+    id: 'security-page-metadata',
+    statement:
+      'Review Zeno workspace controls, EU-hosted model access, ISO 27001 and SOC 2 assurance, GDPR data protection, and the public Text Cortex AI Trust Center.',
+    category: 'security',
+    evidence:
+      'Dedicated Security page scope and metadata approved by the workspace owner on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.metadata'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-16',
+    notes:
+      'Keep the metadata limited to the approved core. Do not add unsupported security controls or compliance frameworks.',
+  },
+  {
+    id: 'security-page-hero',
+    statement:
+      'Manage knowledge access, approved models and human checkpoints in one governed workspace. Review certifications, policies and subprocessors in the public Trust Center.',
+    category: 'security',
+    evidence:
+      'Dedicated Security page hero approved by the workspace owner on 2026-09-16. Governance scope matches the already approved product controls. Trust Center contents were verified at https://trust.textcortex.com/home on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.hero'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-16',
+    public_url: 'https://trust.textcortex.com/home',
+    notes:
+      'The sentence summarizes workspace governance and the public Trust Center. It is not a guarantee that every control applies to every deployment.',
+  },
+  {
+    id: 'security-gdpr-data-protection',
+    statement:
+      'Personal data is processed in line with the GDPR and applicable national data-protection rules.',
+    category: 'privacy',
+    evidence:
+      'Text Cortex AI Privacy Policy, last revised 2026-09-02: https://textcortex.com/privacy-policy. Dedicated Security page use approved by the workspace owner on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.assurance', 'security.faq'],
+    attribution: 'Held by Text Cortex AI, the operating company behind Zeno.',
+    reverify_on: '2027-03-16',
+    public_url: 'https://textcortex.com/privacy-policy',
+    notes:
+      'GDPR is a legal framework, not a certification. Preserve the operating-company attribution and do not turn this into an absolute legal guarantee.',
+  },
+  {
+    id: 'security-control-knowledge-access',
+    statement: 'Manage who can use connected company knowledge.',
+    category: 'security',
+    evidence:
+      'Workspace governance control approved by the workspace owner in the 2026-09-09 product direction and approved for the dedicated Security page on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.controls'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-16',
+    notes:
+      'Keep the claim at the workspace-access level. Do not infer connector-specific permission behavior.',
+  },
+  {
+    id: 'security-control-model-choice',
+    statement: 'Choose the approved model options available in the workspace.',
+    category: 'security',
+    evidence:
+      'Workspace governance control approved by the workspace owner in the 2026-09-09 product direction and approved for the dedicated Security page on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.controls'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-16',
+    notes:
+      'Do not imply that every model is available in every region or has identical hosting behavior.',
+  },
+  {
+    id: 'security-control-human-review',
+    statement: 'Keep review and approval inside the workflow.',
+    category: 'security',
+    evidence:
+      'Human-checkpoint control approved by the workspace owner in the 2026-09-09 product direction and approved for the dedicated Security page on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.controls'],
+    attribution: 'No public attribution required.',
+    reverify_on: '2027-03-16',
+    notes:
+      'Describe a configurable review path. Do not imply every action is automatically blocked or approved.',
+  },
+  {
+    id: 'security-trust-center-directory',
+    statement:
+      'The public Trust Center lists certifications, security and privacy policies, monitored controls, documents and reports, and subprocessors.',
+    category: 'security',
+    evidence:
+      'Public Text Cortex AI Trust Center inspected at https://trust.textcortex.com/home on 2026-09-16. Dedicated Security page use approved by the workspace owner on 2026-09-16.',
+    verified_on: '2026-09-16',
+    approval_status: 'approved',
+    approved_by: 'Baris, dedicated Security page direction',
+    approved_on: '2026-09-16',
+    allowed_surfaces: ['security.evidence', 'security.faq'],
+    attribution: 'Text Cortex AI Trust Center.',
+    reverify_on: '2026-12-16',
+    public_url: 'https://trust.textcortex.com/home',
+    notes:
+      'Do not publish volatile item counts. Some reports and documents require an access request.',
+  },
+  {
     id: 'product-page-metadata',
     statement:
       'Explore Chat, connected knowledge and visual workflows in a governed enterprise AI platform. Use prebuilt or custom agents and access major AI models with EU hosting.',
@@ -479,6 +598,8 @@ export const claimRegistry: readonly ClaimRecord[] = [
     allowed_surfaces: [
       'product.hero',
       'product.governance',
+      'security.controls',
+      'security.faq',
       'solutions.manufacturing',
       'solutions.management-consulting',
       'solutions.m-and-a',
@@ -652,7 +773,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris, working-session direction',
     approved_on: '2026-09-15',
-    allowed_surfaces: ['product.governance'],
+    allowed_surfaces: ['product.governance', 'security.controls', 'security.faq'],
     attribution: 'No public attribution required.',
     reverify_on: '2027-03-09',
     notes:
@@ -753,7 +874,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.trust'],
+    allowed_surfaces: ['home.trust', 'security.assurance', 'security.faq'],
     attribution: 'Held by Text Cortex AI, the operating company behind Zeno.',
     reverify_on: '2027-02-27',
     public_url: 'https://trust.textcortex.com/home',
@@ -770,7 +891,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.trust'],
+    allowed_surfaces: ['home.trust', 'security.assurance', 'security.faq'],
     attribution: 'Held by Text Cortex AI, the operating company behind Zeno.',
     reverify_on: '2027-02-27',
     public_url: 'https://trust.textcortex.com/home',
@@ -787,7 +908,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
-    allowed_surfaces: ['home.trust'],
+    allowed_surfaces: ['home.trust', 'security.assurance', 'security.faq'],
     attribution: 'Held by Text Cortex AI, the operating company behind Zeno.',
     reverify_on: '2027-02-27',
     public_url: 'https://trust.textcortex.com/home',
@@ -804,7 +925,7 @@ export const claimRegistry: readonly ClaimRecord[] = [
     approval_status: 'approved',
     approved_by: 'Baris \u2014 working-session direction',
     approved_on: '2026-09-06',
-    allowed_surfaces: ['home.trust'],
+    allowed_surfaces: ['home.trust', 'security.deployment', 'security.faq'],
     attribution: 'offered alongside the shared deployment, not in place of it',
     reverify_on: '2027-03-06',
     notes:

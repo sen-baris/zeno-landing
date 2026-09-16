@@ -246,6 +246,7 @@ test('homepage and interactive routes have no automatically detectable WCAG A/AA
     '/',
     '/product',
     '/pricing',
+    '/security',
     '/solutions',
     '/solutions/manufacturing',
     '/customers/atares',
@@ -2274,7 +2275,14 @@ test('the trust section publishes approved certifications and a verifiable trust
   await expect(trustCenter).toHaveAttribute('rel', /noopener/);
 });
 
-test('the header stays put, and an anchor never lands underneath it', async ({ page }) => {
+test('product visuals use clear labels without repeating a Z badge', async ({ page }) => {
+  for (const path of ['/product', '/solutions/manufacturing']) {
+    await page.goto(path);
+    await expect(page.locator('.product-mark'), `${path} decorative Z badges`).toHaveCount(0);
+  }
+});
+
+test('the header stays put and Security opens the dedicated page', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('.site-header');
   await expect(header).toHaveCSS('position', 'sticky');
@@ -2285,16 +2293,14 @@ test('the header stays put, and an anchor never lands underneath it', async ({ p
   expect(Math.round(box?.y ?? -1), 'the header must hold the top of the viewport').toBe(0);
   await expect(header.getByRole('link', { name: 'Book a demo' })).toBeVisible();
 
-  // scroll-padding-top has to clear it, or the section a reader asked for opens behind the bar.
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page
     .getByRole('navigation', { name: 'Primary navigation' })
-    .getByRole('link', { name: 'Trust' })
+    .getByRole('link', { name: 'Security' })
     .click();
-  const headerHeight = Math.round((await header.boundingBox())?.height ?? 0);
-  await expect
-    .poll(async () => Math.round((await page.locator('#trust').boundingBox())?.y ?? -1))
-    .toBeGreaterThanOrEqual(headerHeight);
+  await expect(page).toHaveURL(/\/security$/);
+  await expect(
+    page.getByRole('heading', { name: 'Scale AI without giving up control.' }),
+  ).toBeVisible();
 });
 
 test('internal navigation resolves to real pages or homepage sections', async ({ page }) => {
@@ -2352,14 +2358,14 @@ test('mobile reflow, 200 percent text zoom, and keyboard focus remain usable', a
   await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeVisible();
 });
 
-test('mobile same-page navigation closes after an anchor is selected', async ({ page }) => {
+test('mobile navigation closes after Security is selected', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const menu = page.locator('.mobile-menu');
   await page.getByLabel(/Menu.*open navigation/i).click();
   await expect(menu).toHaveAttribute('open', '');
-  await menu.getByRole('link', { name: 'Trust' }).click();
-  await expect(page).toHaveURL(/#trust$/);
+  await menu.getByRole('link', { name: 'Security' }).click();
+  await expect(page).toHaveURL(/\/security$/);
   await expect(menu).not.toHaveAttribute('open', '');
 });
 

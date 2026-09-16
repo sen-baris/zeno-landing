@@ -1,0 +1,55 @@
+---
+interface SecurityWorkspaceControl {
+  id: string;
+  label: string;
+  statement: string;
+}
+
+interface Props {
+  caption: string;
+  controls: readonly SecurityWorkspaceControl[];
+}
+
+const { caption, controls } = Astro.props;
+---
+
+<figure class="security-workspace" data-reveal aria-labelledby="security-workspace-caption">
+  <div class="product-frame">
+    <div class="product-frame-bar">
+      <div>
+        <span>Administration</span>
+      </div>
+      <span class="product-frame-status">Governed workspace</span>
+    </div>
+
+    <div class="security-workspace-body">
+      <div class="security-workspace-context" aria-hidden="true">
+        <span class="product-label">Company context</span>
+        <div class="security-context-core">
+          <svg viewBox="0 0 88 88" focusable="false">
+            <path d="M44 5 75 17v25c0 17-12.2 31.5-31 37.5C25.2 73.5 13 59 13 42V17Z"></path>
+            <path class="security-context-check" d="m30 43 9 9 19-21"></path>
+          </svg>
+          <strong>Protected workspace</strong>
+          <span>Knowledge, agents and models</span>
+        </div>
+      </div>
+
+      <ol class="security-workspace-controls" aria-label="Governed workspace controls">
+        {
+          controls.map((control, index) => (
+            <li data-security-control={control.id}>
+              <span class="security-control-index">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{control.label}</h3>
+                <p>{control.statement}</p>
+              </div>
+              <span class="security-control-state">Set</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+  <figcaption id="security-workspace-caption">{caption}</figcaption>
+</figure>

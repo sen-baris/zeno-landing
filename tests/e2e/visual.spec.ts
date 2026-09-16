@@ -60,6 +60,23 @@ for (const viewport of viewports) {
   });
 }
 
+for (const viewport of [
+  { name: 'mobile-390', width: 390, height: 844 },
+  { name: 'desktop-1440', width: 1440, height: 1000 },
+] as const) {
+  test(`security page at ${viewport.width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/security');
+
+    await expect(page).toHaveScreenshot(`security-${viewport.name}.png`, {
+      animations: 'disabled',
+      fullPage: true,
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
+
 test('desktop homepage starting path message', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
