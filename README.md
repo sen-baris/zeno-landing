@@ -9,6 +9,9 @@ public claims, customer proof, security content, legal text, forms, localization
 configuration. It is the practical handover for the current site and records the design and content
 decisions behind the implementation.
 
+The current GitHub Pages deployment is temporary demo infrastructure. Product-team migration tasks
+are tracked in the [handover checklist](./docs/product-team-handover-checklist.md).
+
 ## Routes
 
 - `/`: acquisition homepage

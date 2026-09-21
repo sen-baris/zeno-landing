@@ -20,7 +20,8 @@ site that exists today.
   form.
 - **Public truth:** factual statements come from approved claim records, not directly from page
   components.
-- **Current deployment:** GitHub Pages is a noindex review build with synthetic lead submission.
+- **Current deployment:** GitHub Pages is a temporary noindex demo build with synthetic lead
+  submission. Production hosting has not been selected in this repository.
 - **Current localization:** English is published. German is review-only until its exact claims are
   approved.
 
@@ -596,7 +597,7 @@ Coverage floors are 90 percent for statements, lines, and functions, and 85 perc
 
 ## Preview, production, and release
 
-### GitHub Pages preview
+### Temporary GitHub Pages demo preview
 
 Pushing to `main` runs `.github/workflows/deploy-pages.yml` and publishes a shared review build.
 
@@ -608,7 +609,9 @@ That workflow:
 - uses the synthetic lead adapter;
 - sends no lead data.
 
-This deployment is not a production launch.
+This deployment is not a production launch and must not determine the permanent hosting
+architecture. Use the [product team handover checklist](./product-team-handover-checklist.md) when
+moving the site to its production platform.
 
 ### Production release
 
@@ -718,11 +721,15 @@ new accepted direction replaces them.
 
 ## Known open work
 
+- The product team must select and own the production hosting platform.
+- The temporary GitHub Pages workflow must either remain an explicit noindex preview or be retired
+  after production cutover.
 - German factual claims require exact wording approval before publication.
 - German Privacy Policy, Terms of Service, and Imprint are not approved.
 - No CMS provider or public blog route has been selected.
 - No analytics provider is installed.
-- The production lead gateway still requires deployment configuration.
+- The production `/api/leads` gateway and Mailgun delivery integration still need implementation and
+  deployment configuration.
 - Production release remains blocked by the explicit content and domain gates in
   `tools/check_release_readiness.ts`.
 - The broader operating-company attribution for Zeno security claims still requires final legal

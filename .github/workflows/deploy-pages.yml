@@ -1,9 +1,9 @@
 name: Deploy preview to GitHub Pages
 
-# Publishes the built site to the repository's GitHub Pages project site so the team can review it.
-# This is a shared preview, not a launch: the build stays in preview content mode and is marked
-# noindex. Its demo form issues a synthetic receipt and sends no lead data. The fail-closed
-# production release gate stays untouched.
+# Publishes the built site to the repository's temporary GitHub Pages demo site so the team can
+# review it before product-team handover. This is not the permanent hosting architecture and is not
+# a launch: the build stays in preview content mode and is marked noindex. Its demo form issues a
+# synthetic receipt and sends no lead data. The fail-closed production release gate stays untouched.
 
 on:
   push:
