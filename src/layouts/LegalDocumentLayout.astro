@@ -1,15 +1,25 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import { resolveApprovedLegalDocument } from '../lib/content/legal-documents';
+import { createLocalizedSeo } from '../lib/i18n/seo';
+import type { StaticRouteKey } from '../lib/i18n/routes';
 
 const { frontmatter } = Astro.props;
 const document = resolveApprovedLegalDocument(frontmatter?.documentId);
+const legalRouteKeys: Record<string, StaticRouteKey> = {
+  'privacy-policy': 'privacy',
+  'terms-of-service': 'terms',
+  imprint: 'imprint',
+};
+const routeKey = legalRouteKeys[document.id];
+if (!routeKey) throw new Error(`Legal route "${document.id}" is not localized.`);
+const seo = createLocalizedSeo({ kind: 'static', key: routeKey }, 'en');
 ---
 
 <BaseLayout
   title={document.pageTitle}
   description={document.description}
-  canonicalPath={document.allowedRoute}
+  seo={seo}
   pageClass="legal-page"
 >
   <header class="legal-hero section-rule">

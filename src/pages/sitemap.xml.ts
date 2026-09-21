@@ -1,35 +1,21 @@
 import type { APIRoute } from 'astro';
+import { getAllLocalizedRouteEntries } from '../lib/i18n/routes';
 import { withBase } from '../lib/routing/base-path';
 
-import { solutions } from '../lib/content/solutions';
-import {
-  customerStoryDrafts,
-  resolveCustomerProofMode,
-  selectCustomerStoriesForMode,
-} from '../lib/content/customer-stories';
-import { legalDocumentPaths } from '../lib/content/legal-documents';
-
-const customerStoryPaths = selectCustomerStoriesForMode(
-  customerStoryDrafts,
-  resolveCustomerProofMode(),
-).map((story) => `/customers/${story.slug}`);
-
-const paths = [
-  '/',
-  '/product',
-  '/pricing',
-  '/security',
-  ...legalDocumentPaths,
-  '/solutions',
-  ...solutions.map((solution) => `/solutions/${solution.slug}`),
-  '/demo',
-  ...customerStoryPaths,
-];
+function escapeXml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
+}
 
 export const GET: APIRoute = ({ site }) => {
   const origin = site ?? new URL('https://heyzeno.com');
-  const urls = paths
-    .map((path) => `<url><loc>${new URL(withBase(path), origin).href}</loc></url>`)
+  const urls = getAllLocalizedRouteEntries()
+    .map(({ path }) => new URL(withBase(path), origin).href)
+    .map((url) => `<url><loc>${escapeXml(url)}</loc></url>`)
     .join('');
 
   return new Response(

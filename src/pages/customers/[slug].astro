@@ -11,6 +11,7 @@ import {
   selectCustomerStoriesForMode,
   type CustomerStoryDraft,
 } from '../../lib/content/customer-stories';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
 import { withBase } from '../../lib/routing/base-path';
 
 export function getStaticPaths() {
@@ -28,6 +29,7 @@ interface Props {
 
 const { story } = Astro.props;
 const storySurface = `customers.${story.slug}`;
+const seo = createLocalizedSeo({ kind: 'customer', slug: story.slug }, 'en');
 resolveApprovedClaims(claimRegistry, getCustomerStoryClaimIds(story), storySurface);
 const logo = customerLogoAssets.find((asset) => asset.claimId === story.logoClaimId);
 if (!logo) throw new Error(`Customer logo asset "${story.logoClaimId}" is missing.`);
@@ -46,7 +48,7 @@ const voice =
 <BaseLayout
   title={`${story.title} | Zeno`}
   description={story.summary}
-  canonicalPath={`/customers/${story.slug}`}
+  seo={seo}
   pageClass="customer-story-page"
 >
   <article class="customer-story">

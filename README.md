@@ -2,6 +2,13 @@
 
 Static-first enterprise AI website for the standalone Zeno brand.
 
+## Start here
+
+Read the [site maintainer guide](./docs/site-maintainer-guide.md) before changing page structure,
+public claims, customer proof, security content, legal text, forms, localization, or release
+configuration. It is the practical handover for the current site and records the design and content
+decisions behind the implementation.
+
 ## Routes
 
 - `/`: acquisition homepage
@@ -9,6 +16,9 @@ Static-first enterprise AI website for the standalone Zeno brand.
 - `/customers/*`: customer stories
 - `/pricing`: guided business-case calculator and enterprise pricing close
 - `/demo`: demo request form
+- `/security`: security, privacy, certification, and workspace-control overview
+- `/privacy-policy`, `/terms-of-service`, and `/imprint`: approved verbatim legal documents
+- `/de/*`: German review routes, excluded from production until localized claims are approved
 - `/ai-readiness`: noindex legacy redirect to `/pricing`, with a visible fallback link
 
 The business-case calculator runs locally in the browser. It does not save or submit visitor inputs.
@@ -45,6 +55,8 @@ pnpm build:release
 - Analytics events are non-PII and dispatch only after explicit consent. No analytics provider is installed.
 - The demo form validates meeting-request details and supports submission failure and retry.
 
-See [AGENTS.md](./AGENTS.md), [the dependency register](./docs/dependency-register.md), [the original V1 feature audit](./docs/audits/2026-08-27-zeno-v1-feature-audit.md), and [the narrative and product-visual revision audit](./docs/audits/2026-08-27-zeno-narrative-product-revision-audit.md) for the governing contracts and evidence.
+See [AGENTS.md](./AGENTS.md), [the site maintainer guide](./docs/site-maintainer-guide.md),
+[the dependency register](./docs/dependency-register.md), and [the audit archive](./docs/audits/) for
+the governing contracts, implementation decisions, and verification evidence.
 
 Do not publish without the repository release audit and the configured production lead gateway.

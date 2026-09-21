@@ -7,6 +7,7 @@ import ProductWorkspace from '../components/ProductWorkspace.astro';
 import { claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { productPageContent, productSurfaces } from '../lib/content/product';
+import { createLocalizedSeo } from '../lib/i18n/seo';
 import { withBase } from '../lib/routing/base-path';
 
 const resolveProductClaim = (id: string, surface: string) =>
@@ -46,12 +47,13 @@ const governanceHostingClaim = resolveProductClaim(
   productPageContent.governance.hostingClaimId,
   'product.governance',
 );
+const seo = createLocalizedSeo({ kind: 'static', key: 'product' }, 'en');
 ---
 
 <BaseLayout
   title="Product | Zeno"
   description={metadataClaim.statement}
-  canonicalPath="/product"
+  seo={seo}
   pageClass="product-page"
 >
   <section class="page-intro product-intro section-rule" aria-labelledby="product-page-title">

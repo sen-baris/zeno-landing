@@ -197,8 +197,9 @@ export function formatBusinessCaseCurrency(
   value: number,
   currency: BusinessCaseCurrency,
   maximumFractionDigits = 0,
+  locale = 'en-GB',
 ): string {
-  return new Intl.NumberFormat('en-GB', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
@@ -206,6 +207,10 @@ export function formatBusinessCaseCurrency(
   }).format(value);
 }
 
-export function formatBusinessCaseNumber(value: number, maximumFractionDigits = 0): string {
-  return new Intl.NumberFormat('en-GB', { maximumFractionDigits }).format(value);
+export function formatBusinessCaseNumber(
+  value: number,
+  maximumFractionDigits = 0,
+  locale = 'en-GB',
+): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits }).format(value);
 }

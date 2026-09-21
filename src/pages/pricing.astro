@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { pricingPageContent } from '../lib/content/pricing';
+import { createLocalizedSeo } from '../lib/i18n/seo';
 import { withBase } from '../lib/routing/base-path';
 
 const resolvePricingClaim = (id: string, surface: string) =>
@@ -40,12 +41,13 @@ const enterpriseSummaryClaim = resolvePricingClaim(
   pricingPageContent.enterprise.summaryClaimId,
   'pricing.enterprise',
 );
+const seo = createLocalizedSeo({ kind: 'static', key: 'pricing' }, 'en');
 ---
 
 <BaseLayout
   title="Business case and enterprise pricing | Zeno"
   description={metadataClaim.statement}
-  canonicalPath="/pricing"
+  seo={seo}
   pageClass="pricing-page"
 >
   <section class="pricing-hero section-rule" aria-labelledby="pricing-page-title">

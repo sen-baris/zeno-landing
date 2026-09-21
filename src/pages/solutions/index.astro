@@ -1,13 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { solutions } from '../../lib/content/solutions';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
 import { withBase } from '../../lib/routing/base-path';
+
+const seo = createLocalizedSeo({ kind: 'static', key: 'solutions' }, 'en');
 ---
 
 <BaseLayout
   title="Solutions | Zeno"
   description="Explore Zeno for manufacturing, management consulting, M&A advisory, private equity and legal. Each industry uses the same governed workspace with agents shaped for its work."
-  canonicalPath="/solutions"
+  seo={seo}
 >
   <section class="page-intro section-rule">
     <div class="shell narrow-shell">

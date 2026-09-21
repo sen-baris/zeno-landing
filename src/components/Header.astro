@@ -2,7 +2,33 @@
 import { appLoginClaimId, claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { solutions } from '../lib/content/solutions';
+import type { Locale } from '../lib/i18n/locales';
+import {
+  getLocalizedPath,
+  type LocalizedRouteLink,
+  type SolutionSlug,
+  type StaticRouteKey,
+} from '../lib/i18n/routes';
+import { sharedUiCopy, solutionNavigationLabels } from '../lib/i18n/ui';
 import { withBase } from '../lib/routing/base-path';
+
+interface Props {
+  locale: Locale;
+  switcherLinks: readonly LocalizedRouteLink[];
+}
+
+const { locale, switcherLinks } = Astro.props;
+const copy = sharedUiCopy[locale].header;
+const route = (key: StaticRouteKey) => {
+  const path = getLocalizedPath({ kind: 'static', key }, locale);
+  if (!path) throw new Error(`Navigation route "${key}" is unavailable for "${locale}".`);
+  return withBase(path);
+};
+const solutionRoute = (slug: string) => {
+  const path = getLocalizedPath({ kind: 'solution', slug: slug as SolutionSlug }, locale);
+  if (!path) throw new Error(`Solution route "${slug}" is unavailable for "${locale}".`);
+  return withBase(path);
+};
 
 const appLoginClaim = resolveApprovedClaims(
   claimRegistry,
@@ -15,9 +41,9 @@ const appLoginUrl = appLoginClaim.public_url;
 
 <header class="site-header">
   <div class="shell header-grid">
-    <a class="wordmark" href={withBase('/')} aria-label="Zeno home">Zeno</a>
-    <nav class="desktop-nav" aria-label="Primary navigation">
-      <a href={withBase('/product')}>Product</a>
+    <a class="wordmark" href={route('home')} aria-label={copy.homeLabel}>Zeno</a>
+    <nav class="desktop-nav" aria-label={copy.primaryNavigationLabel}>
+      <a href={route('product')}>{copy.product}</a>
       {
         /*
         A details element rather than a scripted menu: it opens on click and on Enter and announces
@@ -28,54 +54,90 @@ const appLoginUrl = appLoginClaim.public_url;
       */
       }
       <details class="nav-menu">
-        <summary><span>Solutions</span></summary>
+        <summary><span>{copy.solutions}</span></summary>
         <div class="nav-menu-panel">
-          <p class="product-label">By industry</p>
+          <p class="product-label">{copy.byIndustry}</p>
           <ul>
             {
               solutions.map((solution) => (
                 <li>
-                  <a href={withBase(`/solutions/${solution.slug}`)}>{solution.navLabel}</a>
+                  <a href={solutionRoute(solution.slug)}>
+                    {solutionNavigationLabels[locale][solution.slug]}
+                  </a>
                 </li>
               ))
             }
             <li class="nav-menu-all">
-              <a href={withBase('/solutions')}>All industries</a>
+              <a href={route('solutions')}>{copy.allIndustries}</a>
             </li>
           </ul>
         </div>
       </details>
-      <a href={withBase('/security')}>Security</a>
-      <a class="nav-business-case-cta" href={withBase('/pricing')}>
-        <span>Calculate business case</span>
+      <a href={route('security')}>{copy.security}</a>
+      <a class="nav-business-case-cta" href={route('pricing')}>
+        <span>{copy.businessCase}</span>
         <span class="nav-action-arrow" aria-hidden="true">→</span>
       </a>
     </nav>
     <div class="header-actions">
+      {
+        switcherLinks.length > 1 && (
+          <nav class="locale-switcher" aria-label={copy.languageLabel}>
+            {switcherLinks.map((link) => (
+              <a
+                href={withBase(link.path)}
+                lang={link.lang}
+                hreflang={link.lang}
+                aria-current={link.locale === locale ? 'page' : undefined}
+              >
+                {link.locale.toUpperCase()}
+              </a>
+            ))}
+          </nav>
+        )
+      }
       <a class="button button-small button-secondary" href={appLoginUrl} data-sign-in-link
-        >{appLoginClaim.statement}</a
+        >{locale === 'en' ? appLoginClaim.statement : copy.signIn}</a
       >
-      <a class="button button-small button-primary" href={withBase('/demo')}>Book a demo</a>
+      <a class="button button-small button-primary" href={route('demo')}>{copy.bookDemo}</a>
     </div>
     <details class="mobile-menu">
-      <summary aria-label="Menu, open navigation">Menu</summary>
-      <nav aria-label="Mobile navigation">
-        <a href={withBase('/product')}>Product</a>
-        <a href={withBase('/solutions')}>Solutions</a>
+      <summary aria-label={copy.menuOpenLabel}>{copy.menuLabel}</summary>
+      <nav aria-label={copy.mobileNavigationLabel}>
+        <a href={route('product')}>{copy.product}</a>
+        <a href={route('solutions')}>{copy.solutions}</a>
         {
           solutions.map((solution) => (
-            <a class="mobile-menu-nested" href={withBase(`/solutions/${solution.slug}`)}>
-              {solution.navLabel}
+            <a class="mobile-menu-nested" href={solutionRoute(solution.slug)}>
+              {solutionNavigationLabels[locale][solution.slug]}
             </a>
           ))
         }
-        <a href={withBase('/security')}>Security</a>
-        <a class="mobile-nav-business-case" href={withBase('/pricing')}>
-          <span>Calculate business case</span>
+        <a href={route('security')}>{copy.security}</a>
+        <a class="mobile-nav-business-case" href={route('pricing')}>
+          <span>{copy.businessCase}</span>
           <span class="nav-action-arrow" aria-hidden="true">→</span>
         </a>
-        <a href={appLoginUrl} data-sign-in-link>{appLoginClaim.statement}</a>
-        <a href={withBase('/demo')}>Book a demo</a>
+        {
+          switcherLinks.length > 1 && (
+            <div class="mobile-locale-switcher" aria-label={copy.languageLabel}>
+              {switcherLinks.map((link) => (
+                <a
+                  href={withBase(link.path)}
+                  lang={link.lang}
+                  hreflang={link.lang}
+                  aria-current={link.locale === locale ? 'page' : undefined}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )
+        }
+        <a href={appLoginUrl} data-sign-in-link>
+          {locale === 'en' ? appLoginClaim.statement : copy.signIn}
+        </a>
+        <a href={route('demo')}>{copy.bookDemo}</a>
       </nav>
     </details>
   </div>

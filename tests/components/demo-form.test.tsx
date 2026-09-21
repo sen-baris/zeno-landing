@@ -176,4 +176,30 @@ describe('compact demo form', () => {
     resolveSubmission?.({ submissionId: 'complete' });
     expect(await screen.findByRole('status')).toHaveTextContent('Request confirmed');
   });
+
+  it('localizes labels, validation, and attribution for the German route', async () => {
+    const user = userEvent.setup();
+    const { adapter, submit } = mockAdapter();
+    const acknowledgement =
+      'Ich stimme zu, dass Zeno diese Angaben verwenden darf, um auf meine Anfrage zu antworten.';
+    render(<DemoForm adapter={adapter} locale="de" privacyAcknowledgement={acknowledgement} />);
+
+    const submitButton = screen.getByRole('button', { name: 'Demo anfragen' });
+    await waitFor(() => expect(submitButton).toBeEnabled());
+    await user.click(submitButton);
+    expect(screen.getByText('Geben Sie Ihren vollständigen Namen ein.')).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Vollständiger Name'), 'Alex Beispiel');
+    await user.type(screen.getByLabelText('Geschäftliche E-Mail-Adresse'), 'alex@example.test');
+    await user.type(screen.getByLabelText('Unternehmen'), 'Beispiel GmbH');
+    await user.click(screen.getByRole('checkbox', { name: acknowledgement }));
+    await user.click(submitButton);
+
+    await waitFor(() => expect(submit).toHaveBeenCalledOnce());
+    expect(submit.mock.calls[0]?.[0]).toMatchObject({
+      company: { name: 'Beispiel GmbH' },
+      attribution: { landingPath: '/de/demo' },
+      consent: { privacyAcknowledged: true, marketing: false },
+    });
+  });
 });

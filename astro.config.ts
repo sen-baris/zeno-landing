@@ -10,6 +10,13 @@ const base = process.env.PUBLIC_SITE_BASE ?? '/';
 export default defineConfig({
   site,
   base,
+  i18n: {
+    locales: ['en', 'de'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   devToolbar: { enabled: false },
   // Sharp is present in the pnpm store but not linked into this project, and adding it would mean a
   // new dependency and an intake record for three decorative photographs. The team images are

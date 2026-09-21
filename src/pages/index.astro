@@ -33,6 +33,7 @@ import {
   selectCustomerStoriesForMode,
   type CustomerVoice,
 } from '../lib/content/customer-stories';
+import { createLocalizedSeo } from '../lib/i18n/seo';
 
 const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
 const approvedHeroCapabilityClaims = resolveApprovedClaims(
@@ -88,6 +89,7 @@ const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
   if (!logo) throw new Error(`Approved customer logo asset "${claim.id}" is missing.`);
   return logo;
 });
+const seo = createLocalizedSeo({ kind: 'static', key: 'home' }, 'en');
 const contentMode = resolveCustomerProofMode();
 const customerStories = selectCustomerStoriesForMode(customerStoryDrafts, contentMode);
 for (const story of customerStories) {
@@ -130,7 +132,7 @@ const homepageCustomerLogos = [...approvedCustomerLogos].sort(
 );
 ---
 
-<BaseLayout title={draftHomeCopy.title} description={draftHomeCopy.description} canonicalPath="/">
+<BaseLayout title={draftHomeCopy.title} description={draftHomeCopy.description} seo={seo}>
   <section class="hero section-rule">
     <div class="shell hero-layout">
       <div class="hero-intro">

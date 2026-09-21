@@ -1,12 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { createStandaloneSeo } from '../lib/i18n/seo';
 import { withBase } from '../lib/routing/base-path';
+
+const seo = createStandaloneSeo('en', '/500');
 ---
 
 <BaseLayout
   title="Something went wrong | Zeno"
   description="The requested Zeno page failed to load."
-  canonicalPath="/500"
+  seo={seo}
+  noIndex
 >
   <section class="error-page section-rule">
     <div class="shell narrow-shell">

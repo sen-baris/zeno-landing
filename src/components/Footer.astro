@@ -1,48 +1,69 @@
 ---
 import { trustCenterUrl } from '../lib/claims/registry';
+import type { Locale } from '../lib/i18n/locales';
+import { getLocalizedPath, type StaticRouteKey } from '../lib/i18n/routes';
+import { sharedUiCopy } from '../lib/i18n/ui';
 import { withBase } from '../lib/routing/base-path';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = sharedUiCopy[locale].footer;
+const route = (key: StaticRouteKey, targetLocale: Locale = locale) => {
+  const path = getLocalizedPath({ kind: 'static', key }, targetLocale);
+  if (!path) throw new Error(`Footer route "${key}" is unavailable for "${targetLocale}".`);
+  return withBase(path);
+};
 ---
 
 <footer class="site-footer">
   <div class="shell footer-grid">
     <div>
-      <a class="wordmark wordmark-light" href={withBase('/')} aria-label="Zeno home">Zeno</a>
-      <p>Enterprise AI for everyday work, from useful assistance to governed execution.</p>
+      <a class="wordmark wordmark-light" href={route('home')} aria-label="Zeno">Zeno</a>
+      <p>{copy.tagline}</p>
     </div>
-    <nav class="footer-navigation" aria-label="Footer navigation">
+    <nav class="footer-navigation" aria-label={copy.navigationLabel}>
       <div class="footer-nav-group">
-        <h2 class="footer-nav-label">Explore</h2>
+        <h2 class="footer-nav-label">{copy.explore}</h2>
         <ul>
-          <li><a href={withBase('/product')}>Product</a></li>
-          <li><a href={withBase('/solutions')}>Solutions</a></li>
-          <li><a href={withBase('/pricing')}>Business case</a></li>
+          <li><a href={route('product')}>{copy.product}</a></li>
+          <li><a href={route('solutions')}>{copy.solutions}</a></li>
+          <li><a href={route('pricing')}>{copy.businessCase}</a></li>
         </ul>
       </div>
       <div class="footer-nav-group">
-        <h2 class="footer-nav-label">Company</h2>
+        <h2 class="footer-nav-label">{copy.company}</h2>
         <ul>
-          <li><a href={withBase('/#why')}>Why Zeno</a></li>
-          <li><a href={withBase('/security')}>Security</a></li>
+          <li><a href={`${route('home')}#why`}>{copy.why}</a></li>
+          <li><a href={route('security')}>{copy.security}</a></li>
           <li>
             <a href={trustCenterUrl} target="_blank" rel="noopener noreferrer"
-              >Trust center<span class="visually-hidden"> (opens in a new tab)</span></a
+              >{copy.trustCenter}<span class="visually-hidden">{copy.trustCenterNewTab}</span></a
             >
           </li>
-          <li><a href={withBase('/demo')}>Book a demo</a></li>
+          <li><a href={route('demo')}>{copy.bookDemo}</a></li>
         </ul>
       </div>
       <div class="footer-nav-group">
-        <h2 class="footer-nav-label">Legal</h2>
+        <h2 class="footer-nav-label">{copy.legal}</h2>
         <ul>
-          <li><a href={withBase('/privacy-policy')}>Privacy policy</a></li>
-          <li><a href={withBase('/terms-of-service')}>Terms of service</a></li>
-          <li><a href={withBase('/imprint')}>Imprint</a></li>
+          <li>
+            <a href={route('privacy', 'en')} hreflang="en">{copy.privacy}{copy.englishDocument}</a>
+          </li>
+          <li>
+            <a href={route('terms', 'en')} hreflang="en">{copy.terms}{copy.englishDocument}</a>
+          </li>
+          <li>
+            <a href={route('imprint', 'en')} hreflang="en">{copy.imprint}{copy.englishDocument}</a>
+          </li>
         </ul>
       </div>
     </nav>
     <div class="footer-meta">
       <span>© {new Date().getFullYear()} Zeno</span>
-      <span>English / V1 preview</span>
+      <span>{copy.previewLabel}</span>
     </div>
   </div>
 </footer>

@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { securityPageContent } from '../lib/content/security';
+import { createLocalizedSeo } from '../lib/i18n/seo';
 import { withBase } from '../lib/routing/base-path';
 
 const resolveSecurityClaim = (id: string, surface: string) =>
@@ -65,12 +66,13 @@ const assuranceReviewLabels = {
   attestation: 'Review report',
   privacy: 'Review privacy policy',
 } as const;
+const seo = createLocalizedSeo({ kind: 'static', key: 'security' }, 'en');
 ---
 
 <BaseLayout
   title={securityPageContent.metadata.title}
   description={metadataClaim.statement}
-  canonicalPath="/security"
+  seo={seo}
   pageClass="security-page"
 >
   <section class="security-hero section-rule" aria-labelledby="security-page-title">

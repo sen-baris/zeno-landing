@@ -8,12 +8,9 @@ import {
   type Ref,
   type SyntheticEvent,
 } from 'react';
-import {
-  businessCaseHoursOptions,
-  businessCaseQuestions,
-  businessCaseTeamSizeOptions,
-  businessCaseWorkTypeOptions,
-} from '../../lib/content/pricing';
+import { businessCaseUiCopy, localizeBusinessCaseErrors } from '../../lib/i18n/forms';
+import { localeDefinitions, type Locale } from '../../lib/i18n/locales';
+import { getLocalizedPath } from '../../lib/i18n/routes';
 import {
   calculateBusinessCase,
   calculateBusinessCasePilot,
@@ -30,6 +27,7 @@ import { withBase } from '../../lib/routing/base-path';
 
 interface BusinessCaseCalculatorProps {
   disclaimer: string;
+  locale?: Locale;
   pilotMethod: string;
   pilotStatement: string;
   privacyStatement: string;
@@ -116,11 +114,25 @@ function NumberField({
 
 export default function BusinessCaseCalculator({
   disclaimer,
+  locale = 'en',
   pilotMethod,
   pilotStatement,
   privacyStatement,
   title,
 }: BusinessCaseCalculatorProps) {
+  const copy = businessCaseUiCopy[locale];
+  const questions = copy.questions;
+  const workTypeOptions = copy.workTypes;
+  const teamSizeOptions = copy.teamSizes;
+  const hoursOptions = copy.hours;
+  const numberLocale = localeDefinitions[locale].numberFormatLocale;
+  const formatCurrency = (
+    value: number,
+    currency: BusinessCaseDraft['currency'],
+    maximumFractionDigits = 0,
+  ) => formatBusinessCaseCurrency(value, currency, maximumFractionDigits, numberLocale);
+  const formatNumber = (value: number, maximumFractionDigits = 0) =>
+    formatBusinessCaseNumber(value, maximumFractionDigits, numberLocale);
   const hydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,
@@ -140,17 +152,20 @@ export default function BusinessCaseCalculator({
   const didNavigateRef = useRef(false);
   const shouldFocusCustomFieldRef = useRef<GuidedNumericField | null>(null);
 
-  const validation = validateBusinessCaseDraft(draft);
+  const rawValidation = validateBusinessCaseDraft(draft);
+  const validation = {
+    ...rawValidation,
+    errors: localizeBusinessCaseErrors(rawValidation.errors, locale),
+  };
   const inputs = validation.ok ? validation.values : undefined;
   const results = inputs ? calculateBusinessCase(inputs) : undefined;
   const pilotEstimate = inputs ? calculateBusinessCasePilot(inputs) : undefined;
   const pilotVisible = pilotEstimate && results && results.annualTimeValue > 0;
-  const activeQuestion = businessCaseQuestions[step]!;
+  const activeQuestion = questions[step]!;
   const activeField: GuidedField = activeQuestion.field;
   const activeNumericQuestion = activeQuestion.field === 'workTypeIds' ? undefined : activeQuestion;
   const activeNumericField = activeField === 'workTypeIds' ? undefined : activeField;
-  const activeChoiceOptions =
-    activeNumericField === 'people' ? businessCaseTeamSizeOptions : businessCaseHoursOptions;
+  const activeChoiceOptions = activeNumericField === 'people' ? teamSizeOptions : hoursOptions;
   const selectedChoiceOption = activeChoiceOptions.find(
     (option) => option.id === (activeNumericField ? choiceIds[activeNumericField] : ''),
   );
@@ -208,23 +223,27 @@ export default function BusinessCaseCalculator({
   function focusCurrentField(field: GuidedField) {
     const id =
       field === 'workTypeIds'
-        ? `business-case-workTypeIds-${businessCaseWorkTypeOptions[0].id}`
+        ? `business-case-workTypeIds-${workTypeOptions[0]!.id}`
         : choiceIds[field] === 'custom'
           ? `business-case-${field}`
-          : `business-case-${field}-choice-${activeChoiceOptions[0].id}`;
+          : `business-case-${field}-choice-${activeChoiceOptions[0]!.id}`;
     document.getElementById(id)?.focus();
   }
 
   function advance(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    const currentValidation = validateBusinessCaseDraft(draftRef.current);
+    const rawValidation = validateBusinessCaseDraft(draftRef.current);
+    const currentValidation = {
+      ...rawValidation,
+      errors: localizeBusinessCaseErrors(rawValidation.errors, locale),
+    };
     setTouched((current) => ({ ...current, [activeField]: true }));
     if (currentValidation.errors[activeField]) {
       focusCurrentField(activeField);
       return;
     }
     didNavigateRef.current = true;
-    if (step < businessCaseQuestions.length - 1) {
+    if (step < questions.length - 1) {
       setStep((current) => current + 1);
     } else {
       setShowResult(true);
@@ -243,42 +262,47 @@ export default function BusinessCaseCalculator({
   }
 
   const resultAnnouncement = results
-    ? `Potential yearly value of time recovered: ${formatBusinessCaseCurrency(results.annualTimeValue, results.currency)}. About ${formatBusinessCaseNumber(results.annualHoursReturned, 1)} hours for the team if ${inputs!.recoveryPercent}% of the selected time is recovered.${pilotVisible ? ` A ${pilotEstimate.people}-person pilot represents ${formatBusinessCaseNumber(pilotEstimate.annualHoursReturned, 1)} annualized hours.` : ''}`
-    : 'Check Calculation settings to restore the estimate.';
+    ? copy.resultAnnouncement(
+        formatCurrency(results.annualTimeValue, results.currency),
+        formatNumber(results.annualHoursReturned, 1),
+        formatNumber(inputs!.recoveryPercent, 1),
+        pilotVisible
+          ? `${copy.pilotHours.before} ${formatNumber(pilotEstimate.annualHoursReturned, 1)} ${copy.pilotHours.unit} ${copy.pilotHours.after}`
+          : undefined,
+      )
+    : copy.restoreEstimate;
 
   return (
     <section
       className="business-case-calculator"
       data-hydrated={hydrated ? 'true' : 'false'}
-      aria-label="Business case calculator"
+      aria-label={copy.calculatorLabel}
     >
       {!showResult ? (
         <form className="business-case-form" autoComplete="off" onSubmit={advance}>
           <header className="business-case-form-heading">
             <div>
-              <p className="product-label">Business case estimate</p>
+              <p className="product-label">{copy.estimateLabel}</p>
               <h2>{title}</h2>
             </div>
             <p>{privacyStatement}</p>
           </header>
 
           <div className="business-case-progress">
-            <span>
-              Step {step + 1} of {businessCaseQuestions.length}
-            </span>
+            <span>{copy.step(step + 1, questions.length)}</span>
             <div
               role="progressbar"
-              aria-label="Business case progress"
+              aria-label={copy.progressLabel}
               aria-valuemin={1}
-              aria-valuemax={businessCaseQuestions.length}
+              aria-valuemax={questions.length}
               aria-valuenow={step + 1}
             >
-              <span style={{ width: `${((step + 1) / businessCaseQuestions.length) * 100}%` }} />
+              <span style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
             </div>
           </div>
 
           <fieldset className="business-case-question" disabled={!hydrated}>
-            <legend className="visually-hidden">Business case question {step + 1}</legend>
+            <legend className="visually-hidden">{copy.questionLegend(step + 1)}</legend>
             <h3 ref={questionHeadingRef} tabIndex={-1}>
               {activeQuestion.heading}
             </h3>
@@ -293,9 +317,9 @@ export default function BusinessCaseCalculator({
                       : 'business-case-workTypeIds-description'
                   }
                 >
-                  <legend>Choose all that apply</legend>
+                  <legend>{copy.chooseAll}</legend>
                   <div className="business-case-choice-options">
-                    {businessCaseWorkTypeOptions.map((option) => (
+                    {workTypeOptions.map((option) => (
                       <label className="business-case-choice-option" key={option.id}>
                         <input
                           id={`business-case-workTypeIds-${option.id}`}
@@ -339,8 +363,8 @@ export default function BusinessCaseCalculator({
                   >
                     <legend>
                       {activeField === 'weeklyHoursSpent'
-                        ? 'Choose combined weekly time'
-                        : 'Choose a team size'}
+                        ? copy.chooseWeeklyTime
+                        : copy.chooseTeamSize}
                     </legend>
                     <div className="business-case-choice-options">
                       {activeChoiceOptions.map((option) => (
@@ -378,16 +402,22 @@ export default function BusinessCaseCalculator({
                       'value' in selectedChoiceOption &&
                       selectedChoiceOption.value !== undefined && (
                         <p className="business-case-choice-value" aria-live="polite">
-                          Estimate uses <strong>{selectedChoiceOption.value} hours</strong> per
-                          person each week across the selected work.
+                          {copy.selectedHours.before}{' '}
+                          <strong>
+                            {selectedChoiceOption.value} {copy.selectedHours.unit}
+                          </strong>{' '}
+                          {copy.selectedHours.after}
                         </p>
                       )}
                     {selectedChoiceOption &&
                       'people' in selectedChoiceOption &&
                       selectedChoiceOption.people !== undefined && (
                         <p className="business-case-choice-value" aria-live="polite">
-                          Estimate uses <strong>{selectedChoiceOption.people} people</strong>, the
-                          rounded midpoint of this range.
+                          {copy.selectedPeople.before}{' '}
+                          <strong>
+                            {selectedChoiceOption.people} {copy.selectedPeople.unit}
+                          </strong>
+                          , {copy.selectedPeople.after}
                         </p>
                       )}
                     {visibleError(activeField) && choiceIds[activeField] !== 'custom' && (
@@ -397,8 +427,8 @@ export default function BusinessCaseCalculator({
                         role="alert"
                       >
                         {activeField === 'weeklyHoursSpent'
-                          ? 'Choose weekly time or enter a custom amount.'
-                          : 'Choose a team size or enter a custom amount.'}
+                          ? copy.weeklyChoiceError
+                          : copy.peopleChoiceError}
                       </small>
                     )}
                   </fieldset>
@@ -408,13 +438,11 @@ export default function BusinessCaseCalculator({
                         customInputRefs.current[activeField] = node;
                       }}
                       field={activeField}
-                      label={
-                        activeField === 'people' ? 'Exact number of people' : 'Custom weekly hours'
-                      }
+                      label={activeField === 'people' ? copy.exactPeople : copy.customHours}
                       description={
                         activeField === 'people'
-                          ? 'Enter a whole number between 1 and 100,000.'
-                          : 'Enter a combined number between 0.5 and 80.'
+                          ? copy.exactPeopleDescription
+                          : copy.customHoursDescription
                       }
                       min={activeNumericQuestion?.min ?? 0}
                       max={activeNumericQuestion?.max ?? 0}
@@ -433,11 +461,11 @@ export default function BusinessCaseCalculator({
               <div className="business-case-actions">
                 {step > 0 && (
                   <button className="button button-ghost" type="button" onClick={goBack}>
-                    Back
+                    {copy.back}
                   </button>
                 )}
                 <button className="button button-primary" type="submit" disabled={!hydrated}>
-                  {step === businessCaseQuestions.length - 1 ? 'See estimate' : 'Continue'}
+                  {step === questions.length - 1 ? copy.seeEstimate : copy.continue}
                 </button>
               </div>
             </div>
@@ -447,87 +475,91 @@ export default function BusinessCaseCalculator({
         <div className="business-case-results">
           <header className="business-case-results-heading">
             <div>
-              <p className="product-label">Planning estimate</p>
+              <p className="product-label">{copy.planningEstimate}</p>
               <h2 ref={questionHeadingRef} tabIndex={-1}>
-                What your team could get back
+                {copy.resultTitle}
               </h2>
             </div>
             <button className="text-link" type="button" onClick={editEstimate}>
-              Edit answers
+              {copy.editAnswers}
             </button>
           </header>
 
           {results && inputs ? (
-            <section className="business-case-value-summary" aria-label="Full team estimate">
-              <p className="product-label">Potential yearly value of time recovered</p>
+            <section className="business-case-value-summary" aria-label={copy.fullTeamLabel}>
+              <p className="product-label">{copy.yearlyValueLabel}</p>
               <p className="business-case-value-figure">
-                {formatBusinessCaseCurrency(results.annualTimeValue, results.currency)}
+                {formatCurrency(results.annualTimeValue, results.currency)}
               </p>
               <p className="business-case-hours-summary">
-                About{' '}
-                <strong>{formatBusinessCaseNumber(results.annualHoursReturned, 1)} hours</strong>{' '}
-                back across the team each year if{' '}
-                {formatBusinessCaseNumber(inputs.recoveryPercent, 1)}% of this time is recovered.
+                {copy.hoursSummary.before}{' '}
+                <strong>
+                  {formatNumber(results.annualHoursReturned, 1)} {copy.hoursSummary.unit}
+                </strong>{' '}
+                {copy.hoursSummary.after(formatNumber(inputs.recoveryPercent, 1))}
               </p>
               <p className="business-case-selected-work">
-                Selected work:{' '}
-                {businessCaseWorkTypeOptions
+                {copy.selectedWorkLabel}:{' '}
+                {workTypeOptions
                   .filter((option) => inputs.workTypeIds.includes(option.id))
                   .map((option) => option.label)
                   .join(', ')}
                 .
               </p>
               <p className="business-case-assumptions">
-                Based on {formatBusinessCaseNumber(inputs.people)} people,{' '}
-                {formatBusinessCaseNumber(inputs.weeklyHoursSpent, 1)} combined hours per person
-                each week, {formatBusinessCaseNumber(inputs.recoveryPercent, 1)}% time recovered,{' '}
-                {formatBusinessCaseCurrency(inputs.hourlyPlanningValue, inputs.currency, 2)} per
-                hour, and {formatBusinessCaseNumber(inputs.workingWeeks)} working weeks.
+                {copy.assumptions(
+                  formatNumber(inputs.people),
+                  formatNumber(inputs.weeklyHoursSpent, 1),
+                  formatNumber(inputs.recoveryPercent, 1),
+                  formatCurrency(inputs.hourlyPlanningValue, inputs.currency, 2),
+                  formatNumber(inputs.workingWeeks),
+                )}
               </p>
             </section>
           ) : (
             <p className="business-case-result-error" role="alert">
-              Check Calculation settings to restore the estimate.
+              {copy.restoreEstimate}
             </p>
           )}
 
           {pilotVisible && (
             <section className="business-case-pilot" aria-labelledby="business-case-pilot-title">
               <div className="business-case-pilot-copy">
-                <p className="product-label">A practical first step</p>
+                <p className="product-label">{copy.pilotLabel}</p>
                 <h3 id="business-case-pilot-title">
-                  Test the case with {formatBusinessCaseNumber(pilotEstimate.people)}{' '}
-                  {pilotEstimate.people === 1 ? 'person' : 'people'}.
+                  {copy.pilotTitle(formatNumber(pilotEstimate.people), pilotEstimate.people === 1)}
                 </h3>
                 <p>{pilotStatement}</p>
               </div>
               <p className="business-case-pilot-hours">
-                That represents{' '}
+                {copy.pilotHours.before}{' '}
                 <strong>
-                  {formatBusinessCaseNumber(pilotEstimate.annualHoursReturned, 1)} hours
+                  {formatNumber(pilotEstimate.annualHoursReturned, 1)} {copy.pilotHours.unit}
                 </strong>{' '}
-                across a year if the same recovery scenario holds.
+                {copy.pilotHours.after}
               </p>
-              <a className="button button-paper" href={withBase('/demo')}>
-                Plan this pilot
+              <a
+                className="button button-paper"
+                href={withBase(
+                  getLocalizedPath({ kind: 'static', key: 'demo' }, locale) ?? '/demo',
+                )}
+              >
+                {copy.pilotAction}
               </a>
             </section>
           )}
           {results?.annualTimeValue === 0 && (
-            <p className="business-case-zero-scenario">
-              At 0% time recovered, there is no modeled time value to validate. Adjust the scenario
-              in Calculation settings.
-            </p>
+            <p className="business-case-zero-scenario">{copy.zeroScenario}</p>
           )}
 
           <div className="business-case-secondary-inputs">
             <details>
-              <summary>Calculation settings</summary>
+              <summary>{copy.settings}</summary>
               <div className="business-case-settings-grid">
                 <NumberField
                   field="recoveryPercent"
-                  label="Time recovered (%)"
-                  description="Illustrative scenario, not measured Zeno savings."
+                  label={copy.recoveryLabel}
+                  description={copy.recoveryDescription}
                   min={0}
                   max={100}
                   step={1}
@@ -539,8 +571,8 @@ export default function BusinessCaseCalculator({
                 />
                 <NumberField
                   field="hourlyPlanningValue"
-                  label="Planning value per hour"
-                  description="Illustrative value, not a labor-cost benchmark."
+                  label={copy.hourlyValueLabel}
+                  description={copy.hourlyValueDescription}
                   min={1}
                   max={100_000}
                   step={1}
@@ -552,8 +584,8 @@ export default function BusinessCaseCalculator({
                 />
                 <NumberField
                   field="workingWeeks"
-                  label="Working weeks per year"
-                  description="46 weeks by default."
+                  label={copy.workingWeeksLabel}
+                  description={copy.workingWeeksDescription}
                   min={1}
                   max={52}
                   step={1}
@@ -564,7 +596,7 @@ export default function BusinessCaseCalculator({
                   onBlur={touchField('workingWeeks')}
                 />
                 <div className="business-case-currency-field">
-                  <label htmlFor="business-case-currency">Currency</label>
+                  <label htmlFor="business-case-currency">{copy.currencyLabel}</label>
                   <select
                     id="business-case-currency"
                     name="currency"
@@ -585,7 +617,7 @@ export default function BusinessCaseCalculator({
                       </option>
                     ))}
                   </select>
-                  <small>Formatting only. No conversion.</small>
+                  <small>{copy.currencyDescription}</small>
                 </div>
               </div>
               <p className="business-case-method">{pilotMethod}</p>

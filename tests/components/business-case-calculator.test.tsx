@@ -203,4 +203,43 @@ describe('BusinessCaseCalculator', () => {
     expect(window.location.href).toBe(beforeUrl);
     vi.unstubAllGlobals();
   });
+
+  it('localizes the guided journey, number formatting, and pilot destination in German', async () => {
+    const user = userEvent.setup();
+    render(<BusinessCaseCalculator {...calculatorProps} locale="de" />);
+
+    const report = screen.getByRole('checkbox', { name: 'Berichte erstellen' });
+    await waitFor(() => expect(report).toBeEnabled());
+    expect(screen.getByText('Schritt 1 von 3')).toBeInTheDocument();
+    await user.click(report);
+    await user.click(screen.getByRole('button', { name: 'Weiter' }));
+    await user.click(screen.getByRole('radio', { name: 'Etwa 4 Stunden' }));
+    await user.click(screen.getByRole('button', { name: 'Weiter' }));
+    await user.click(screen.getByRole('radio', { name: '11 bis 25' }));
+    await user.click(screen.getByRole('button', { name: 'Schätzung anzeigen' }));
+
+    expect(
+      await screen.findByRole('heading', { name: 'Was Ihr Team zurückgewinnen könnte' }),
+    ).toBeInTheDocument();
+    expect(document.querySelector('.business-case-value-figure')).toHaveTextContent('41.400 €');
+    expect(document.querySelector('.business-case-hours-summary')).toHaveTextContent('828 Stunden');
+    expect(screen.getByRole('link', { name: 'Pilot planen' })).toHaveAttribute('href', '/de/demo');
+  });
+
+  it('returns complete German validation messages', async () => {
+    const user = userEvent.setup();
+    render(<BusinessCaseCalculator {...calculatorProps} locale="de" />);
+    const report = screen.getByRole('checkbox', { name: 'Berichte erstellen' });
+    await waitFor(() => expect(report).toBeEnabled());
+    await user.click(report);
+    await user.click(screen.getByRole('button', { name: 'Weiter' }));
+    await user.click(screen.getByRole('radio', { name: 'Genaue Stundenzahl' }));
+    await user.type(screen.getByLabelText('Eigene Wochenstunden'), '100');
+    await user.click(screen.getByRole('button', { name: 'Weiter' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Wöchentliche Zeit pro Person muss zwischen 0.5 und 80 liegen.',
+    );
+    expect(screen.getByRole('alert')).not.toHaveTextContent(/must be between| and /);
+  });
 });

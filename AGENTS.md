@@ -8,6 +8,8 @@ Public TextCortex pages may be used to understand the broad market context aroun
 
 The brand name, visual identity, final messaging, analytics provider, form or CRM destination, deployment platform, and approved claims will be supplied or approved separately. Do not invent them.
 
+Before maintaining the existing website, read [the site maintainer guide](docs/site-maintainer-guide.md). It records the current route ownership, narrative, interaction boundaries, localization status, conversion behavior, design decisions, and release constraints.
+
 ## Instruction scope and authority
 
 This file applies to the entire repository. A more deeply nested AGENTS.md may add local implementation detail, but it must not weaken the confidentiality, claims, accessibility, testing, audit, or release requirements here.

@@ -2,6 +2,9 @@ import { cloneElement, useEffect, useMemo, useRef, useState, useSyncExternalStor
 import type { ReactElement, SyntheticEvent } from 'react';
 import { trackConsentedEvent } from '../../lib/analytics/consented-events';
 import { createLeadSubmissionAdapter, LeadSubmissionError } from '../../lib/leads/adapter';
+import { demoFormUiCopy, localizeDemoErrors } from '../../lib/i18n/forms';
+import type { Locale } from '../../lib/i18n/locales';
+import { getLocalizedPath } from '../../lib/i18n/routes';
 import { withBase } from '../../lib/routing/base-path';
 import type { LeadSubmissionAdapter } from '../../lib/leads/types';
 import {
@@ -12,6 +15,7 @@ import {
 
 interface Props {
   adapter?: LeadSubmissionAdapter;
+  locale?: Locale;
   privacyAcknowledgement: string;
 }
 
@@ -30,7 +34,12 @@ const initialValues: DemoFormValues = {
 
 const subscribeToHydration = () => () => undefined;
 
-export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdapter }: Props) {
+export default function DemoForm({
+  privacyAcknowledgement,
+  locale = 'en',
+  adapter: suppliedAdapter,
+}: Props) {
+  const copy = demoFormUiCopy[locale];
   const hydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,
@@ -67,7 +76,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
     event.preventDefault();
     if (status === 'submitting') return;
 
-    const nextErrors = validateDemoForm(values);
+    const nextErrors = localizeDemoErrors(validateDemoForm(values), locale);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
       focusFirstError(nextErrors);
@@ -107,25 +116,23 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
             privacyAcknowledged: values.privacyAcknowledged,
             marketing: false,
           },
-          attribution: { landingPath: '/demo' },
+          attribution: {
+            landingPath: getLocalizedPath({ kind: 'static', key: 'demo' }, locale) ?? '/demo',
+          },
         },
         abortRef.current.signal,
       );
       setStatus('success');
-      setMessage(
-        receipt.submissionId.startsWith('preview-')
-          ? 'Preview request confirmed. No information was sent.'
-          : 'Request confirmed. We have the details needed for the next step.',
-      );
+      setMessage(receipt.submissionId.startsWith('preview-') ? copy.previewSuccess : copy.success);
       trackConsentedEvent({ name: 'demo_submitted' });
     } catch (error) {
       if (abortRef.current.signal.aborted) return;
       const code = error instanceof LeadSubmissionError ? error.code : 'unexpected';
       setStatus('error');
       setMessage(
-        error instanceof LeadSubmissionError
+        error instanceof LeadSubmissionError && locale === 'en'
           ? error.message
-          : 'The request could not be sent. Please try again.',
+          : copy.unexpectedError,
       );
       trackConsentedEvent({ name: 'submission_failed', surface: 'demo', code });
     }
@@ -134,11 +141,14 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
   if (status === 'success') {
     return (
       <div className="demo-form demo-success" data-hydrated="true" role="status">
-        <span className="evidence-badge">Submission confirmed</span>
-        <h2>Thank you. Request confirmed.</h2>
+        <span className="evidence-badge">{copy.submissionConfirmed}</span>
+        <h2>{copy.successTitle}</h2>
         <p>{message}</p>
-        <a className="button button-ink" href={withBase('/')}>
-          Return home
+        <a
+          className="button button-ink"
+          href={withBase(getLocalizedPath({ kind: 'static', key: 'home' }, locale) ?? '/')}
+        >
+          {copy.returnHome}
         </a>
       </div>
     );
@@ -153,23 +163,23 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
     >
       <header className="demo-form-heading">
         <div>
-          <p className="product-label">Meeting request</p>
-          <h2>Tell us how to reach you.</h2>
+          <p className="product-label">{copy.requestLabel}</p>
+          <h2>{copy.requestTitle}</h2>
         </div>
-        <p>A few details to prepare</p>
+        <p>{copy.preparationNote}</p>
       </header>
 
       {!hydrated && (
         <p className="demo-hydration-note" role="status">
-          The form will be ready in a moment. If it does not, enable JavaScript and reload.
+          {copy.hydrationNote}
         </p>
       )}
       <fieldset disabled={!hydrated || status === 'submitting'}>
-        <legend className="visually-hidden">Demo request details</legend>
+        <legend className="visually-hidden">{copy.legend}</legend>
         <div className="demo-required-grid">
           <Field
             id="fullName"
-            label="Full name"
+            label={copy.fullName}
             error={errors.fullName}
             input={
               <input
@@ -183,7 +193,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
           />
           <Field
             id="workEmail"
-            label="Work email"
+            label={copy.workEmail}
             error={errors.workEmail}
             input={
               <input
@@ -197,7 +207,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
           />
           <Field
             id="company"
-            label="Company"
+            label={copy.company}
             error={errors.company}
             input={
               <input
@@ -211,7 +221,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
           />
           <Field
             id="phoneNumber"
-            label="Phone number (optional)"
+            label={copy.phone}
             error={errors.phoneNumber}
             input={
               <input
@@ -228,11 +238,11 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
         </div>
 
         <details className="demo-optional-details">
-          <summary>Add planning context (optional)</summary>
+          <summary>{copy.optionalSummary}</summary>
           <div className="field-grid two-columns">
             <Field
               id="role"
-              label="Role"
+              label={copy.role}
               error={errors.role}
               input={
                 <input
@@ -246,7 +256,7 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
             />
             <Field
               id="sizeBand"
-              label="Organization size"
+              label={copy.organizationSize}
               error={errors.sizeBand}
               input={
                 <select
@@ -254,17 +264,17 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
                   value={values.sizeBand}
                   onChange={(event) => updateValue('sizeBand', event.target.value)}
                 >
-                  <option value="">Choose a band</option>
-                  <option value="1-249">1–249 people</option>
-                  <option value="250-999">250–999 people</option>
-                  <option value="1000-4999">1,000–4,999 people</option>
-                  <option value="5000-plus">5,000+ people</option>
+                  <option value="">{copy.chooseBand}</option>
+                  <option value="1-249">{copy.peopleBands[0]}</option>
+                  <option value="250-999">{copy.peopleBands[1]}</option>
+                  <option value="1000-4999">{copy.peopleBands[2]}</option>
+                  <option value="5000-plus">{copy.peopleBands[3]}</option>
                 </select>
               }
             />
             <Field
               id="desiredStart"
-              label="Desired start window"
+              label={copy.desiredStart}
               error={errors.desiredStart}
               input={
                 <select
@@ -272,22 +282,22 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
                   value={values.desiredStart}
                   onChange={(event) => updateValue('desiredStart', event.target.value)}
                 >
-                  <option value="">Choose a window</option>
-                  <option value="exploring">Exploring now</option>
-                  <option value="0-3-months">Within 3 months</option>
-                  <option value="3-6-months">Within 3–6 months</option>
-                  <option value="6-plus-months">More than 6 months</option>
+                  <option value="">{copy.chooseWindow}</option>
+                  <option value="exploring">{copy.windows[0]}</option>
+                  <option value="0-3-months">{copy.windows[1]}</option>
+                  <option value="3-6-months">{copy.windows[2]}</option>
+                  <option value="6-plus-months">{copy.windows[3]}</option>
                 </select>
               }
             />
             <label className="field demo-systems-context">
-              <span>Systems or context</span>
+              <span>{copy.systems}</span>
               <textarea
                 id="demo-systemsContext"
                 rows={3}
                 value={values.systemsContext}
                 onChange={(event) => updateValue('systemsContext', event.target.value)}
-                placeholder="Approved knowledge sources or systems involved"
+                placeholder={copy.systemsPlaceholder}
               />
             </label>
           </div>
@@ -327,10 +337,10 @@ export default function DemoForm({ privacyAcknowledgement, adapter: suppliedAdap
             disabled={!hydrated || status === 'submitting'}
           >
             {status === 'submitting'
-              ? 'Submitting…'
+              ? copy.submitting
               : status === 'error'
-                ? 'Try again'
-                : 'Request a demo'}
+                ? copy.retry
+                : copy.requestDemo}
           </button>
         </div>
       </fieldset>

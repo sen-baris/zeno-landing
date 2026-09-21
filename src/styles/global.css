@@ -385,6 +385,35 @@ h2 {
   gap: 20px;
 }
 
+.locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+}
+
+.locale-switcher a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.locale-switcher a + a {
+  border-left: 1px solid var(--rule);
+  padding-left: 7px;
+}
+
+.locale-switcher a[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.locale-switcher a:hover,
+.locale-switcher a:focus-visible {
+  color: var(--action);
+}
+
 .desktop-nav .nav-business-case-cta {
   gap: 6px;
   font-weight: 620;
@@ -4741,6 +4770,26 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     border-bottom: 0;
   }
 
+  .mobile-locale-switcher {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .mobile-menu nav .mobile-locale-switcher a {
+    border-bottom: 0;
+    text-align: center;
+  }
+
+  .mobile-menu nav .mobile-locale-switcher a + a {
+    border-left: 1px solid var(--rule);
+  }
+
+  .mobile-menu nav .mobile-locale-switcher a[aria-current='page'] {
+    background: color-mix(in srgb, var(--evidence) 10%, transparent);
+    font-weight: 650;
+  }
+
   .mobile-menu-nested {
     padding-left: 26px;
     color: var(--muted);
@@ -5614,6 +5663,43 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 
 .solution-agents {
   margin-top: clamp(38px, 5vw, 62px);
+}
+
+.solution-agent-grid {
+  display: grid;
+  margin-top: clamp(38px, 5vw, 62px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
+}
+
+.solution-agent-grid article {
+  min-width: 0;
+  padding: clamp(24px, 3vw, 38px);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.solution-agent-grid h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-weight: 400;
+}
+
+.solution-agent-grid p {
+  margin: 14px 0 0;
+}
+
+@media (max-width: 820px) {
+  .solution-agent-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .localized-page .split-heading {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 /* One use case per row: what it does on the left, the screen it does it on to the right. The copy

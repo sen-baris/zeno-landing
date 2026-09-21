@@ -3,6 +3,7 @@ import DemoForm from '../components/islands/DemoForm';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
+import { createLocalizedSeo } from '../lib/i18n/seo';
 
 const preparationClaim = resolveApprovedClaims(
   claimRegistry,
@@ -14,12 +15,13 @@ const privacyAcknowledgementClaim = resolveApprovedClaims(
   ['demo-response-data-use'],
   'demo.form',
 )[0]!;
+const seo = createLocalizedSeo({ kind: 'static', key: 'demo' }, 'en');
 ---
 
 <BaseLayout
   title="Book a demo | Zeno"
   description="Bring one enterprise workflow and request a prepared conversation with Zeno."
-  canonicalPath="/demo"
+  seo={seo}
   pageClass="demo-page"
 >
   <section class="demo-conversion section-rule" aria-labelledby="demo-page-title">

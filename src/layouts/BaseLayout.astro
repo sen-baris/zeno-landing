@@ -6,18 +6,27 @@ import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import MotionRuntime from '../components/MotionRuntime.astro';
+import { localeDefinitions } from '../lib/i18n/locales';
+import type { LocalizedSeo } from '../lib/i18n/seo';
+import { sharedUiCopy } from '../lib/i18n/ui';
 import { withBase } from '../lib/routing/base-path';
 
 interface Props {
   title: string;
   description: string;
-  canonicalPath: string;
+  seo: LocalizedSeo;
   pageClass?: string;
   noIndex?: boolean;
 }
 
-const { title, description, canonicalPath, pageClass = '', noIndex = false } = Astro.props;
-const canonical = new URL(withBase(canonicalPath), Astro.site);
+const { title, description, seo, pageClass = '', noIndex = false } = Astro.props;
+const canonical = new URL(withBase(seo.canonicalPath), Astro.site);
+const copy = sharedUiCopy[seo.locale];
+const localeDefinition = localeDefinitions[seo.locale];
+const alternateUrls = seo.hreflangLinks.map((alternate) => ({
+  hreflang: alternate.hreflang,
+  href: new URL(withBase(alternate.path), Astro.site),
+}));
 
 // A shared preview is not a launch. Keep unlaunched brand, draft copy, and customer logos out of
 // search indexes until the production release gate has been satisfied.
@@ -25,7 +34,7 @@ const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={seo.locale} dir={localeDefinition.direction}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -33,8 +42,17 @@ const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
     <meta name="theme-color" content="#F7F3EE" />
     <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <meta name="description" content={description} />
-    {(noIndex || isPreviewDeploy) && <meta name="robots" content="noindex, nofollow" />}
+    {
+      (noIndex || !seo.isPublished || isPreviewDeploy) && (
+        <meta name="robots" content="noindex, nofollow" />
+      )
+    }
     <link rel="canonical" href={canonical} />
+    {
+      alternateUrls.map((alternate) => (
+        <link rel="alternate" hreflang={alternate.hreflang} href={alternate.href} />
+      ))
+    }
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Zeno" />
     <meta property="og:title" content={title} />
@@ -47,11 +65,11 @@ const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
     <MotionRuntime />
   </head>
   <body class={pageClass}>
-    <a class="skip-link" href="#main-content">Skip to main content</a>
-    <Header />
+    <a class="skip-link" href="#main-content">{copy.skipLink}</a>
+    <Header locale={seo.locale} switcherLinks={seo.switcherLinks} />
     <main id="main-content">
       <slot />
     </main>
-    <Footer />
+    <Footer locale={seo.locale} />
   </body>
 </html>
