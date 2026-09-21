@@ -39,26 +39,41 @@ test('the calculator stays mounted after its development runtime hydrates', asyn
   expect(pageErrors).toEqual([]);
 });
 
-test('Business case replaces readiness as the compact header action', async ({ page }) => {
+test('Calculate business case is a clear header action', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
   const desktop = page.getByRole('navigation', { name: 'Primary navigation' });
   await expect(desktop.getByRole('link', { name: 'Why Zeno', exact: true })).toHaveCount(0);
-  await expect(desktop.getByRole('link', { name: 'Business case', exact: true })).toHaveAttribute(
-    'href',
-    '/pricing',
-  );
+  await expect(
+    desktop.getByRole('link', { name: 'Calculate business case', exact: true }),
+  ).toHaveAttribute('href', '/pricing');
   await expect(desktop.getByRole('link', { name: 'Pricing', exact: true })).toHaveCount(0);
-  await expect(desktop.getByRole('link', { name: 'Business case', exact: true })).toHaveCount(1);
+  await expect(desktop.getByRole('link', { name: 'Business case', exact: true })).toHaveCount(0);
+  await expect(
+    desktop.getByRole('link', { name: 'Calculate business case', exact: true }),
+  ).toHaveCount(1);
   await expect(desktop.getByRole('link', { name: 'Assess readiness', exact: true })).toHaveCount(0);
-  const businessCase = desktop.getByRole('link', { name: 'Business case', exact: true });
-  expect(
-    Number.parseFloat(await businessCase.evaluate((link) => getComputedStyle(link).borderRadius)),
-  ).toBeLessThanOrEqual(4);
+  const businessCase = desktop.getByRole('link', { name: 'Calculate business case', exact: true });
+  await expect(businessCase.locator('.nav-action-arrow')).toHaveText('→');
+  await expect(businessCase.locator('.nav-action-arrow')).toHaveAttribute('aria-hidden', 'true');
+  const product = desktop.getByRole('link', { name: 'Product', exact: true });
+  expect(await businessCase.evaluate((link) => getComputedStyle(link).color)).toBe(
+    await product.evaluate((link) => getComputedStyle(link).color),
+  );
   expect(await businessCase.evaluate((link) => getComputedStyle(link).backgroundColor)).toBe(
     'rgba(0, 0, 0, 0)',
   );
+  expect(await businessCase.evaluate((link) => getComputedStyle(link).borderTopWidth)).toBe('0px');
+  expect(await businessCase.evaluate((link) => getComputedStyle(link).textDecorationLine)).not.toBe(
+    'underline',
+  );
+  await businessCase.hover();
+  expect(await businessCase.evaluate((link) => getComputedStyle(link).textDecorationLine)).toBe(
+    'underline',
+  );
+  await businessCase.focus();
+  expect(await businessCase.evaluate((link) => getComputedStyle(link).outlineStyle)).toBe('solid');
 
   const header = page.locator('.site-header');
   await expect(header.getByRole('link', { name: 'Zeno home' })).toHaveAttribute('href', '/');
@@ -84,10 +99,24 @@ test('Business case replaces readiness as the compact header action', async ({ p
   await page.locator('.mobile-menu > summary').click();
   const mobile = page.getByRole('navigation', { name: 'Mobile navigation' });
   await expect(mobile.getByRole('link', { name: 'Why Zeno', exact: true })).toHaveCount(0);
-  await expect(mobile.getByRole('link', { name: 'Business case', exact: true })).toHaveAttribute(
-    'href',
-    '/pricing',
+  await expect(
+    mobile.getByRole('link', { name: 'Calculate business case', exact: true }),
+  ).toHaveAttribute('href', '/pricing');
+  await expect(
+    mobile
+      .getByRole('link', { name: 'Calculate business case', exact: true })
+      .locator('.nav-action-arrow'),
+  ).toHaveText('→');
+  expect(
+    await mobile
+      .getByRole('link', { name: 'Calculate business case', exact: true })
+      .evaluate((link) => getComputedStyle(link).color),
+  ).toBe(
+    await mobile
+      .getByRole('link', { name: 'Product', exact: true })
+      .evaluate((link) => getComputedStyle(link).color),
   );
+  await expect(mobile.getByRole('link', { name: 'Business case', exact: true })).toHaveCount(0);
   await expect(mobile.getByRole('link', { name: 'Assess readiness', exact: true })).toHaveCount(0);
   await expect(mobile.getByRole('link', { name: 'Sign in', exact: true })).toHaveAttribute(
     'href',
@@ -107,9 +136,7 @@ test('the Solutions trigger remains centered and aligned after the label change'
     const product = Array.from(document.querySelectorAll<HTMLElement>('.desktop-nav > a')).find(
       (link) => link.textContent?.trim() === 'Product',
     );
-    const businessCase = Array.from(
-      document.querySelectorAll<HTMLElement>('.desktop-nav > a'),
-    ).find((link) => link.textContent?.trim() === 'Business case');
+    const businessCase = document.querySelector<HTMLElement>('.nav-business-case-cta');
     if (!summary || !label || !product || !businessCase) throw new Error('Missing navigation');
     const read = (element: HTMLElement) => {
       const rect = element.getBoundingClientRect();

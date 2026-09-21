@@ -386,19 +386,13 @@ h2 {
 }
 
 .desktop-nav .nav-business-case-cta {
-  border-bottom: 2px solid color-mix(in srgb, var(--evidence) 54%, transparent);
-  border-radius: 0;
-  padding-inline: 2px;
-  background: transparent;
-  color: var(--evidence-ink);
-  font-weight: 580;
+  gap: 6px;
+  font-weight: 620;
 }
 
-.desktop-nav .nav-business-case-cta:hover,
-.desktop-nav .nav-business-case-cta:focus-visible {
-  border-color: var(--evidence);
-  background: transparent;
-  text-decoration: none;
+.nav-action-arrow {
+  font-size: 0.95em;
+  line-height: 1;
 }
 
 /* Solutions dropdown
@@ -4736,9 +4730,10 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   }
 
   .mobile-menu nav .mobile-nav-business-case {
-    border-left: 3px solid color-mix(in srgb, var(--evidence) 60%, transparent);
-    background: color-mix(in srgb, var(--evidence) 7%, var(--paper));
-    color: var(--evidence-ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     font-weight: 600;
   }
 

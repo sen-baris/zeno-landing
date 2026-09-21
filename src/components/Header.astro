@@ -46,7 +46,10 @@ const appLoginUrl = appLoginClaim.public_url;
         </div>
       </details>
       <a href={withBase('/security')}>Security</a>
-      <a class="nav-business-case-cta" href={withBase('/pricing')}>Business case</a>
+      <a class="nav-business-case-cta" href={withBase('/pricing')}>
+        <span>Calculate business case</span>
+        <span class="nav-action-arrow" aria-hidden="true">→</span>
+      </a>
     </nav>
     <div class="header-actions">
       <a class="button button-small button-secondary" href={appLoginUrl} data-sign-in-link
@@ -67,7 +70,10 @@ const appLoginUrl = appLoginClaim.public_url;
           ))
         }
         <a href={withBase('/security')}>Security</a>
-        <a class="mobile-nav-business-case" href={withBase('/pricing')}>Business case</a>
+        <a class="mobile-nav-business-case" href={withBase('/pricing')}>
+          <span>Calculate business case</span>
+          <span class="nav-action-arrow" aria-hidden="true">→</span>
+        </a>
         <a href={appLoginUrl} data-sign-in-link>{appLoginClaim.statement}</a>
         <a href={withBase('/demo')}>Book a demo</a>
       </nav>

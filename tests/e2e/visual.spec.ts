@@ -142,6 +142,12 @@ test('desktop pricing navigation alignment', async ({ page }) => {
   await page.goto('/pricing');
   await expect(page.locator('.business-case-calculator')).toHaveAttribute('data-hydrated', 'true');
   await page.locator('.nav-menu > summary').focus();
+  await expect(
+    page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', {
+      name: 'Calculate business case',
+      exact: true,
+    }),
+  ).toBeVisible();
 
   await expect(page.locator('.site-header')).toHaveScreenshot('pricing-navigation-1440.png', {
     animations: 'disabled',
@@ -156,6 +162,12 @@ test('mobile pricing navigation actions', async ({ page }) => {
   await expect(page.locator('.business-case-calculator')).toHaveAttribute('data-hydrated', 'true');
   await page.locator('.mobile-menu > summary').click();
   await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', {
+      name: 'Calculate business case',
+      exact: true,
+    }),
+  ).toBeVisible();
 
   await expect(page).toHaveScreenshot('pricing-navigation-mobile-390.png', {
     animations: 'disabled',
