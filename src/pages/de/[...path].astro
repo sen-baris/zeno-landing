@@ -16,7 +16,6 @@ import {
   getGermanSolution,
 } from '../../lib/i18n/de-content';
 import { assertGermanClaimsApprovedForPublication } from '../../lib/i18n/de-claims';
-import { isPublishedLocale } from '../../lib/i18n/locales';
 import {
   getAllLocalizedRouteEntries,
   getLocalizedPath,
@@ -32,11 +31,10 @@ interface Props {
 
 export function getStaticPaths() {
   if (import.meta.env.CONTENT_MODE === 'production') {
-    if (!isPublishedLocale('de')) return [];
     assertGermanClaimsApprovedForPublication();
   }
 
-  return getAllLocalizedRouteEntries({ includePreview: true })
+  return getAllLocalizedRouteEntries()
     .filter(({ locale }) => locale === 'de')
     .map(({ path, reference }) => ({
       params: { path: path === '/de/' ? undefined : path.replace(/^\/de\//, '') },
@@ -45,7 +43,7 @@ export function getStaticPaths() {
 }
 
 const { reference } = Astro.props;
-const seo = createLocalizedSeo(reference, 'de', { includePreviewLocales: true });
+const seo = createLocalizedSeo(reference, 'de');
 const demoPath = getLocalizedPath({ kind: 'static', key: 'demo' }, 'de')!;
 const productPath = getLocalizedPath({ kind: 'static', key: 'product' }, 'de')!;
 const homePath = getLocalizedPath({ kind: 'static', key: 'home' }, 'de')!;
@@ -101,7 +99,7 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
         </section>
 
         {reference.kind === 'static' && reference.key === 'pricing' && (
-          <section class="pricing-hero section-rule" aria-label="Business Case Rechner">
+          <section class="pricing-hero section-rule" aria-label="Business-Case-Rechner">
             <div class="shell pricing-calculator-column">
               <script is:inline>
                 document.documentElement.classList.add('has-pricing-calculator');
@@ -109,23 +107,23 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
               <BusinessCaseCalculator
                 client:load
                 locale="de"
-                title="Berechnen Sie einen ersten Richtwert."
+                title="Einen ersten Richtwert berechnen."
                 pilotStatement="Ein fokussierter Pilot schafft eine überprüfbare Grundlage für die weitere Einführung."
                 pilotMethod="Die Pilotgröße nutzt 20 Prozent des Teams, gerundet auf ganze Personen. Mindestens fünf Personen, wenn das Team groß genug ist, höchstens 20 und nie mehr als die eingegebene Teamgröße."
-                disclaimer="Schätzungen dienen nur der Planung und basieren vollständig auf Ihren Eingaben. Sie garantieren weder Zeitersparnis noch finanziellen Nutzen oder einen endgültigen Zeno-Preis."
-                privacyStatement="Ihre Angaben bleiben in diesem Browser. Sie werden nicht gesendet oder gespeichert."
+                disclaimer="Schätzungen dienen nur der Planung und basieren vollständig auf den Eingaben. Daraus entstehen keine garantierte Zeitersparnis, kein garantierter finanzieller Nutzen und kein endgültiger Zeno-Preis."
+                privacyStatement="Alle Angaben bleiben in diesem Browser. Es werden keine Daten gesendet oder gespeichert."
               />
               <noscript>
                 <div class="pricing-calculator-fallback">
                   <p class="product-label">Rechenweg</p>
-                  <h2>Berechnen Sie die Schätzung manuell.</h2>
+                  <h2>Die Schätzung manuell berechnen.</h2>
                   <p>
                     Personen × gemeinsame Wochenstunden × zurückgewonnener Zeitanteil ×
-                    Arbeitswochen ergibt die jährlich zurückgewonnenen Stunden. Multiplizieren Sie
-                    diese Stunden mit dem Planungswert pro Stunde.
+                    Arbeitswochen ergibt die jährlich zurückgewonnenen Stunden. Diese Stunden werden
+                    mit dem Planungswert pro Stunde multipliziert.
                   </p>
                   <p>
-                    Schätzungen dienen nur der Planung. Sie garantieren weder Zeitersparnis noch
+                    Schätzungen dienen nur der Planung und garantieren weder Zeitersparnis noch
                     finanziellen Nutzen oder einen endgültigen Zeno-Preis.
                   </p>
                   <a class="button button-primary" href={withBase(demoPath)}>
@@ -144,8 +142,8 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
                 <p class="eyebrow">Demo buchen</p>
                 <h2>Ein vorbereitetes Gespräch.</h2>
                 <p>
-                  Erzählen Sie uns kurz von Ihrem Team. Wir bereiten das Gespräch passend zu Ihren
-                  Systemen und Kontrollen vor.
+                  Ein kurzer Überblick über Team, Systeme und Kontrollen reicht für die
+                  Vorbereitung.
                 </p>
               </header>
               <DemoForm
@@ -228,11 +226,11 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
             <div class="shell conversion-grid">
               <div>
                 <p class="eyebrow">Anforderungen prüfen</p>
-                <h2 id="security-de-cta">Bringen Sie Ihre Sicherheitsfragen mit.</h2>
+                <h2 id="security-de-cta">Sicherheitsfragen direkt klären.</h2>
               </div>
               <div>
                 <p>
-                  Wir ordnen Ihre Anforderungen an Zugriff, Hosting und Prüfung dem Workspace zu.
+                  Anforderungen an Zugriff, Hosting und Prüfung werden dem Workspace zugeordnet.
                 </p>
                 <div class="button-row">
                   <a class="button button-paper" href={withBase(demoPath)}>
@@ -409,8 +407,8 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
             </div>
             <div>
               <p>
-                Bringen Sie ein wiederkehrendes Dokument mit. Wir zeigen den Agenten, seinen
-                Unternehmenskontext und die verantwortliche Prüfung.
+                Ein wiederkehrendes Dokument reicht. Wir zeigen den Agenten, den Unternehmenskontext
+                und die verantwortliche Prüfung.
               </p>
               <a class="button button-paper" href={withBase(demoPath)}>
                 Demo buchen
@@ -509,10 +507,10 @@ const pageDescription = staticPage?.description ?? solution?.metaDescription ?? 
         <footer class="customer-story-footer">
           <div class="shell customer-story-footer-grid customer-story-footer-grid-single">
             <div>
-              <h2>Bringen Sie einen Workflow in die tägliche Arbeit.</h2>
+              <h2>Einen Workflow in die tägliche Arbeit bringen.</h2>
               <p>
-                Zeigen Sie uns einen wiederkehrenden Prozess. Wir ordnen Unternehmenskontext,
-                Agentenarbeit und menschliche Prüfung zu.
+                Ein wiederkehrender Prozess reicht. Wir ordnen Unternehmenskontext, Agentenarbeit
+                und menschliche Prüfung zu.
               </p>
               <a class="button button-inverse" href={withBase(demoPath)}>
                 Demo buchen

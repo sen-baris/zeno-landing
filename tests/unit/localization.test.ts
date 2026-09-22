@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { customerStoryDrafts } from '../../src/lib/content/customer-stories';
 import { solutions } from '../../src/lib/content/solutions';
@@ -7,7 +9,7 @@ import {
 } from '../../src/lib/i18n/content';
 import {
   assertGermanClaimsApprovedForPublication,
-  germanLocalizedClaimDrafts,
+  germanLocalizedClaims,
 } from '../../src/lib/i18n/de-claims';
 import {
   germanCustomerStories,
@@ -27,6 +29,7 @@ import {
   getRouteSwitcherLinks,
 } from '../../src/lib/i18n/routes';
 import { createLocalizedSeo, createStandaloneSeo } from '../../src/lib/i18n/seo';
+import { sharedUiCopy } from '../../src/lib/i18n/ui';
 
 describe('localized route registry', () => {
   it('preserves English routes and maps the approved German slugs', () => {
@@ -45,11 +48,15 @@ describe('localized route registry', () => {
     ]);
   });
 
-  it('keeps preview routes out of production hreflang until publication', () => {
+  it('publishes complete reciprocal English and German route clusters', () => {
     expect(getRouteSwitcherLinks({ kind: 'static', key: 'home' })).toHaveLength(2);
-    expect(getPublishedHreflangLinks({ kind: 'static', key: 'home' })).toEqual([]);
-    expect(getAllLocalizedRouteEntries()).not.toContainEqual(
-      expect.objectContaining({ locale: 'de' }),
+    expect(getPublishedHreflangLinks({ kind: 'static', key: 'home' })).toEqual([
+      { hreflang: 'en', path: '/' },
+      { hreflang: 'de', path: '/de/' },
+      { hreflang: 'x-default', path: '/' },
+    ]);
+    expect(getAllLocalizedRouteEntries()).toContainEqual(
+      expect.objectContaining({ locale: 'de', path: '/de/' }),
     );
   });
 
@@ -70,7 +77,7 @@ describe('localized route registry', () => {
     expect(isLocale('fr')).toBe(false);
     expect(isLocale(null)).toBe(false);
     expect(isPublishedLocale('en')).toBe(true);
-    expect(isPublishedLocale('de')).toBe(false);
+    expect(isPublishedLocale('de')).toBe(true);
 
     expect(
       createLocalizedSeo({ kind: 'static', key: 'product' }, 'de', {
@@ -79,9 +86,16 @@ describe('localized route registry', () => {
     ).toEqual({
       locale: 'de',
       canonicalPath: '/de/produkt',
-      hreflangLinks: [],
-      switcherLinks: [{ locale: 'en', lang: 'en', label: 'English', path: '/product' }],
-      isPublished: false,
+      hreflangLinks: [
+        { hreflang: 'en', path: '/product' },
+        { hreflang: 'de', path: '/de/produkt' },
+        { hreflang: 'x-default', path: '/product' },
+      ],
+      switcherLinks: [
+        { locale: 'en', lang: 'en', label: 'English', path: '/product' },
+        { locale: 'de', lang: 'de', label: 'Deutsch', path: '/de/produkt' },
+      ],
+      isPublished: true,
     });
     expect(() => createLocalizedSeo({ kind: 'static', key: 'privacy' }, 'de')).toThrow(
       /does not have a localized path/,
@@ -250,28 +264,32 @@ describe('future localized content contract', () => {
 });
 
 describe('German claim publication gate', () => {
-  it('keeps every translated factual claim in draft until exact wording is approved', () => {
-    expect(germanLocalizedClaimDrafts.length).toBeGreaterThan(0);
-    expect(germanLocalizedClaimDrafts.every((claim) => claim.approvalStatus === 'draft')).toBe(
-      true,
-    );
-    expect(germanLocalizedClaimDrafts.every((claim) => claim.locale === 'de')).toBe(true);
-    expect(germanLocalizedClaimDrafts.every((claim) => !claim.statement.includes('—'))).toBe(true);
-    expect(new Set(germanLocalizedClaimDrafts.map((claim) => claim.id)).size).toBe(
-      germanLocalizedClaimDrafts.length,
+  it('requires complete approval for every published German claim', () => {
+    expect(germanLocalizedClaims.length).toBeGreaterThan(0);
+    expect(germanLocalizedClaims.every((claim) => claim.approvalStatus === 'approved')).toBe(true);
+    expect(germanLocalizedClaims.every((claim) => claim.locale === 'de')).toBe(true);
+    expect(germanLocalizedClaims.every((claim) => !claim.statement.includes('—'))).toBe(true);
+    expect(new Set(germanLocalizedClaims.map((claim) => claim.id)).size).toBe(
+      germanLocalizedClaims.length,
     );
     expect(
-      germanLocalizedClaimDrafts.every(
+      germanLocalizedClaims.every(
         (claim) =>
           claim.sourceClaimId.length > 0 &&
           claim.allowedSurface.startsWith('de.') &&
-          claim.evidence.includes('requires approval'),
+          claim.evidence.includes('2026-09-22') &&
+          claim.approvedBy === 'Baris, German publication direction' &&
+          claim.approvedAt === '2026-09-22',
       ),
     ).toBe(true);
-    expect(assertGermanClaimsApprovedForPublication).toThrow(/publication is blocked/);
+    expect(assertGermanClaimsApprovedForPublication).not.toThrow();
   });
 
-  it('keeps new nonlegal German copy free of em dashes', () => {
+  it('keeps public German copy neutral and free of experimental labels', () => {
+    const germanRouteSource = readFileSync(
+      resolve(process.cwd(), 'src/pages/de/[...path].astro'),
+      'utf8',
+    );
     const serialized = JSON.stringify({
       localeDefinitions,
       germanStaticPages,
@@ -279,8 +297,15 @@ describe('German claim publication gate', () => {
       germanCustomerStories,
       businessCaseUiCopy,
       demoFormUiCopy,
+      sharedUiCopy,
     });
-    expect(serialized).not.toContain('—');
+    const publicGerman = `${serialized}\n${germanRouteSource}`;
+    expect(publicGerman).not.toMatch(/\b(?:Sie|Ihnen|Ihr|Ihre|Ihren|Ihrem|Ihrer|Ihres)\b/);
+    expect(publicGerman).not.toMatch(
+      /\b(?:du|dein|deine|deinen|deinem|deiner|deines|euch|euer|eure|euren|eurem|eurer|eures)\b/i,
+    );
+    expect(publicGerman).not.toMatch(/\b(?:Preview|Vorschau|V1)\b/i);
+    expect(publicGerman).not.toContain('—');
   });
 
   it('resolves translated solution and customer records and rejects missing ones', () => {

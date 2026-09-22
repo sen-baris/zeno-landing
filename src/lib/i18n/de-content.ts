@@ -20,17 +20,17 @@ export interface GermanStaticPage {
 
 export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>> = {
   home: {
-    title: 'KI-Agenten, die Ihre Teams wirklich nutzen | Zeno',
+    title: 'KI-Agenten, die Teams wirklich nutzen | Zeno',
     description:
-      'Finden Sie wertvolle Workflows und entwickeln Sie Agenten mit den Menschen, die sie nutzen. Steigern Sie die Nutzung in einem kontrollierten Workspace für Europa.',
+      'Wertvolle Workflows finden und Agenten gemeinsam mit den Menschen entwickeln, die sie nutzen. So wächst die Nutzung in einem kontrollierten Workspace für Europa.',
     eyebrow: 'Enterprise AI',
-    headline: 'KI-Agenten, die Ihre Teams wirklich nutzen.',
+    headline: 'KI-Agenten, die Teams wirklich nutzen.',
     intro:
-      'Wählen Sie einen vorgefertigten Agenten oder gestalten Sie Ihren eigenen. Wir verankern ihn in Ihrem Unternehmenskontext und begleiten die Einführung.',
+      'Mit einem vorgefertigten Agenten beginnen oder einen eigenen gestalten. Wir verankern ihn im Unternehmenskontext und begleiten die Einführung.',
     sections: [
       {
         eyebrow: '01 / Finden',
-        title: 'Beginnen Sie mit der Arbeit, die wirklich Zeit kostet.',
+        title: 'Mit der Arbeit beginnen, die wirklich Zeit kostet.',
         paragraphs: [
           'Wir betrachten wiederkehrende Aufgaben, vorhandenes Wissen und die Menschen, die das Ergebnis verantworten.',
           'So wird aus einem allgemeinen KI-Vorhaben ein klarer erster Workflow.',
@@ -38,15 +38,15 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
       },
       {
         eyebrow: '02 / Entwickeln',
-        title: 'Starten Sie vorgefertigt oder passend zu Ihrem Prozess.',
+        title: 'Vorgefertigt beginnen oder passend zum Prozess aufbauen.',
         paragraphs: [
-          'Nutzen Sie einen vorhandenen Agenten als Ausgangspunkt oder bauen Sie einen Agenten um Ihren eigenen Ablauf.',
-          'Der Agent arbeitet mit Ihren freigegebenen Systemen und gibt das Ergebnis zur Prüfung zurück.',
+          'Ein vorhandener Agent dient als Ausgangspunkt. Alternativ entsteht ein Agent rund um den eigenen Ablauf.',
+          'Der Agent arbeitet mit freigegebenen Systemen und gibt das Ergebnis zur Prüfung zurück.',
         ],
       },
       {
         eyebrow: '03 / Einführen',
-        title: 'Machen Sie aus dem ersten Einsatz tägliche Arbeit.',
+        title: 'Aus dem ersten Einsatz wird tägliche Arbeit.',
         paragraphs: [
           'Wir bleiben nach dem Start dabei. Gemeinsam verbessern wir, was Teams nutzen, und erweitern, was funktioniert.',
         ],
@@ -62,7 +62,7 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
         eyebrow: 'Sicherheit und Kontrolle',
         title: 'Regeln bleiben nah an der Arbeit.',
         paragraphs: [
-          'Steuern Sie Wissenszugriff, freigegebene Modelle und menschliche Prüfschritte in einem gemeinsamen Workspace.',
+          'Wissenszugriff, freigegebene Modelle und menschliche Prüfschritte bleiben in einem gemeinsamen Workspace steuerbar.',
         ],
       },
     ],
@@ -72,55 +72,55 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
     description:
       'Enterprise AI mit Unternehmenswissen, vorgefertigten oder individuellen Agenten, wichtigen Modellen mit EU-Hosting und kontrollierten Workspaces.',
     eyebrow: 'Produkt',
-    headline: 'Enterprise AI für Ihr Unternehmen.',
+    headline: 'Enterprise AI im Unternehmenskontext.',
     intro:
-      'Arbeiten Sie im Chat, verbinden Sie Unternehmenswissen und überführen Sie wiederkehrende Aufgaben in sichtbare Abläufe.',
+      'Im Chat beginnen, Unternehmenswissen verbinden und wiederkehrende Aufgaben in sichtbare Abläufe überführen.',
     sections: [
       {
         eyebrow: 'Chat',
-        title: 'Beginnen Sie mit der Aufgabe vor Ihnen.',
+        title: 'Mit der aktuellen Aufgabe beginnen.',
         paragraphs: [
-          'Wählen Sie einen Agenten, geben Sie die Aufgabe ein und arbeiten Sie mit dem relevanten Unternehmenskontext.',
+          'Agent auswählen, Aufgabe eingeben und mit dem relevanten Unternehmenskontext arbeiten.',
         ],
       },
       {
         eyebrow: 'Agenten',
         title: 'Vorgefertigt starten oder individuell aufbauen.',
         paragraphs: [
-          'Nutzen Sie Agenten für Präsentationen, Finanzen und Recht als Ausgangspunkt. Gestalten Sie eigene Agenten für besondere Prozesse.',
+          'Agenten für Präsentationen, Finanzen und Recht bieten einen direkten Ausgangspunkt. Eigene Agenten bilden besondere Prozesse ab.',
         ],
       },
       {
         eyebrow: 'Wissen',
-        title: 'Verbinden Sie den Kontext, den Ihre Teams bereits nutzen.',
+        title: 'Den Kontext verbinden, den Teams bereits nutzen.',
         paragraphs: [
           'Wissensdatenbanken können über MCP-Connectoren mit vorhandenen Systemen verbunden werden.',
         ],
       },
       {
         eyebrow: 'Kontrollierter Workspace',
-        title: 'Behalten Sie Regeln und Arbeit an einem Ort.',
+        title: 'Regeln und Arbeit bleiben an einem Ort.',
         paragraphs: [
-          'Steuern Sie Wissenszugriff, Modellwahl, menschliche Prüfschritte und die Nutzung im Workspace.',
-          'Greifen Sie an einem Ort auf wichtige KI-Modelle mit EU-Hosting zu.',
+          'Wissenszugriff, Modellwahl, menschliche Prüfschritte und Nutzung bleiben im Workspace steuerbar.',
+          'Wichtige KI-Modelle mit EU-Hosting stehen an einem Ort bereit.',
         ],
       },
     ],
   },
   pricing: {
-    title: 'Business Case Rechner | Zeno',
+    title: 'Business-Case-Rechner | Zeno',
     description:
-      'Wählen Sie die Arbeit, die Ihr Team Zeit kostet, und schätzen Sie den möglichen jährlichen Zeitwert für einen fokussierten Pilotversuch.',
+      'Zeitintensive Arbeit auswählen und den möglichen Jahreswert der zurückgewonnenen Zeit für einen fokussierten Piloten schätzen.',
     eyebrow: 'Business Case',
-    headline: 'Was könnte Ihr Team zurückgewinnen?',
+    headline: 'Was kann das Team zurückgewinnen?',
     intro:
-      'Wählen Sie die Arbeit, die Zeit kostet. Ergänzen Sie einen groben Wochenwert. Erhalten Sie eine Planungsschätzung und einen fokussierten Pilotvorschlag.',
+      'Zeitintensive Arbeit auswählen, einen groben Wochenwert ergänzen und eine Planungsschätzung mit Pilotvorschlag erhalten.',
     sections: [
       {
-        eyebrow: 'Enterprise Plan',
+        eyebrow: 'Enterprise-Plan',
         title: 'Der Preis richtet sich nach der Einführung.',
         paragraphs: [
-          'Planen Sie die Plattform passend zu Teams und Workflows. Ergänzen Sie verbundene Systeme und Kontrollen nach Bedarf.',
+          'Die Plattform richtet sich nach Teams und Workflows. Verbundene Systeme und Kontrollen kommen nach Bedarf hinzu.',
         ],
         points: ['Personen', 'Workflows', 'Systeme', 'Kontrollen'],
       },
@@ -129,15 +129,15 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
   security: {
     title: 'Sicherheit und Compliance | Zeno',
     description:
-      'Erfahren Sie mehr über Workspace-Kontrollen, unabhängige Prüfungen, Datenschutz und Hosting-Optionen für Zeno.',
+      'Workspace-Kontrollen, unabhängige Prüfungen, Datenschutz und Hosting-Optionen für Zeno im Überblick.',
     eyebrow: 'Sicherheit',
-    headline: 'Skalieren Sie KI, ohne Kontrolle abzugeben.',
+    headline: 'KI skalieren, ohne Kontrolle abzugeben.',
     intro:
-      'Steuern Sie Wissenszugriff, freigegebene Modelle und menschliche Prüfschritte in einem kontrollierten Workspace.',
+      'Wissenszugriff, freigegebene Modelle und menschliche Prüfschritte bleiben in einem kontrollierten Workspace steuerbar.',
     sections: [
       {
         eyebrow: 'Zertifizierungen und Datenschutz',
-        title: 'Sicherheit, die Sie überprüfen können.',
+        title: 'Sicherheit, die sich überprüfen lässt.',
         paragraphs: [
           'ISO 27001, SOC 2 Type I, SOC 2 Type II und das Datenschutzprogramm gehören zu Text Cortex AI, dem Unternehmen hinter Zeno.',
         ],
@@ -150,17 +150,17 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
       },
       {
         eyebrow: 'Workspace-Kontrollen',
-        title: 'Halten Sie Regeln nah an der Arbeit.',
+        title: 'Regeln bleiben nah an der Arbeit.',
         paragraphs: [
-          'Verwalten Sie, wer verbundenes Unternehmenswissen nutzen kann. Wählen Sie freigegebene Modelle und halten Sie Prüfung und Freigabe im Workflow.',
-          'Eine dedizierte Single-Tenant-Infrastruktur ist zusätzlich zur geteilten Bereitstellung verfügbar.',
+          'Zugriff auf verbundenes Unternehmenswissen bleibt steuerbar. Freigegebene Modelle, Prüfung und Freigabe bleiben im Workflow.',
+          'Eine dedizierte Single-Tenant-Infrastruktur ist zusätzlich zur gemeinsam genutzten Bereitstellung verfügbar.',
         ],
       },
       {
         eyebrow: 'Trust Center',
         title: 'Von der Übersicht zu den Zertifizierungen.',
         paragraphs: [
-          'Im öffentlichen Trust Center finden Sie Zertifizierungen, Richtlinien, Kontrollen, Dokumente und Subprozessoren.',
+          'Das öffentliche Trust Center bündelt Zertifizierungen, Richtlinien, Kontrollen, Dokumente und Subprozessoren.',
         ],
       },
     ],
@@ -168,17 +168,17 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
   demo: {
     title: 'Demo buchen | Zeno',
     description:
-      'Bringen Sie einen Enterprise-Workflow mit und vereinbaren Sie ein vorbereitetes Gespräch mit Zeno.',
+      'Einen Enterprise-Workflow mitbringen und ein vorbereitetes Gespräch mit Zeno vereinbaren.',
     eyebrow: 'Demo buchen',
-    headline: 'Bringen Sie uns einen Workflow.',
+    headline: 'Ein Workflow reicht für den Anfang.',
     intro:
-      'Sagen Sie uns, was Sie verbessern möchten. Wir bereiten das Gespräch rund um Ihr Team, Ihre Systeme und Ihre Kontrollen vor.',
+      'Ein kurzer Überblick über das gewünschte Ergebnis genügt. Wir bereiten das Gespräch rund um Team, Systeme und Kontrollen vor.',
     sections: [
       {
         eyebrow: 'Wie es weitergeht',
         title: 'Ein vorbereitetes Gespräch.',
         paragraphs: [
-          'Wir prüfen den Workflow und Ihren Ausgangspunkt.',
+          'Wir prüfen den Workflow und den aktuellen Ausgangspunkt.',
           'Wir bereiten die wichtigsten Fragen zu Umsetzung und Kontrolle vor.',
           'Anschließend schlagen wir einen passenden nächsten Schritt vor.',
         ],
@@ -187,12 +187,11 @@ export const germanStaticPages: Partial<Record<StaticRouteKey, GermanStaticPage>
   },
   solutions: {
     title: 'Enterprise AI Lösungen nach Branche | Zeno',
-    description:
-      'Entdecken Sie Zeno für Fertigung, Unternehmensberatung, M&A, Private Equity und Recht.',
+    description: 'Zeno für Fertigung, Unternehmensberatung, M&A, Private Equity und Recht.',
     eyebrow: 'Lösungen',
-    headline: 'Der gleiche Workspace. Ihre Arbeit.',
+    headline: 'Der gleiche Workspace. Passend zur Arbeit.',
     intro:
-      'Ein kontrollierter Workspace. Agenten arbeiten mit Ihrem Unternehmenskontext und bereiten Dokumente vor, die Ihre Teams bereits verantworten.',
+      'Ein kontrollierter Workspace. Agenten arbeiten mit Unternehmenskontext und bereiten Dokumente vor, die Teams bereits verantworten.',
     sections: [],
   },
 };
@@ -228,18 +227,18 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
     eyebrow: 'Fertigung',
     headline: 'Die Dokumentation rund um das Bauteil.',
     subhead:
-      'Entwerfen Sie Qualitätsberichte und prüfen Sie Spezifikationen anhand Ihrer technischen Unterlagen. Der verantwortliche Ingenieur prüft das Ergebnis.',
+      'Qualitätsberichte entwerfen und Spezifikationen anhand technischer Unterlagen prüfen. Der verantwortliche Ingenieur prüft das Ergebnis.',
     summary: 'Qualitätsberichte und Spezifikationsprüfungen auf Basis technischer Unterlagen.',
     metaDescription:
-      'Zeno für die Fertigung. Erstellen Sie 8D- und CAPA-Berichte, vergleichen Sie Spezifikationen und beantworten Sie Qualitätsfragen in einem kontrollierten Workspace.',
+      'Zeno für die Fertigung. 8D- und CAPA-Berichte erstellen, Spezifikationen vergleichen und Qualitätsfragen in einem kontrollierten Workspace beantworten.',
     journey: [
       {
         title: 'Unternehmenskontext',
-        description: 'Verbinden Sie Zeichnungen, Standards und Qualitätsunterlagen.',
+        description: 'Zeichnungen, Standards und Qualitätsunterlagen verbinden.',
       },
       {
         title: 'Ausgangspunkt',
-        description: 'Wählen Sie einen vorgefertigten Agenten oder bauen Sie einen eigenen.',
+        description: 'Mit einem vorgefertigten Agenten beginnen oder einen eigenen aufbauen.',
       },
       {
         title: 'Prüfbare Arbeit',
@@ -256,18 +255,18 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       ],
       reviewer: 'Verantwortlicher Ingenieur',
     },
-    workTitle: 'Ein Agent pro Dokument, nicht ein Assistent für das ganze Werk.',
+    workTitle: 'Ein Agent pro Dokument. Kein Assistent für das ganze Werk.',
     workBody:
-      'Geben Sie jedem Agenten ein Dokument, freigegebene Unterlagen und eine benannte Person für die Prüfung.',
+      'Jeder Agent erhält ein Dokument, freigegebene Unterlagen und eine benannte Person für die Prüfung.',
     agents: [
       {
         name: 'Lieferantenqualitäts-Agent',
-        does: 'Erstellt einen 8D-Entwurf aus Reklamation und relevanten Qualitätsunterlagen.',
+        does: 'Erstellt einen 8D-Entwurf aus der Reklamation und relevanten Qualitätsunterlagen.',
         from: 'Reklamationen, frühere 8D- und CAPA-Dateien sowie Lieferantenunterlagen',
       },
       {
         name: 'Spezifikations-Agent',
-        does: 'Vergleicht Kundenzeichnungen mit Ihrem Standard und belegt jede Abweichung.',
+        does: 'Vergleicht Kundenzeichnungen mit dem internen Standard und belegt jede Abweichung.',
         from: 'Kundenzeichnungen, Spezifikationen und interne Standards',
       },
       {
@@ -321,28 +320,28 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       {
         question: 'Wie beginnt die Einführung?',
         answer:
-          'Starten Sie mit einem Dokumenttyp in einem Werk. Erweitern Sie nach der fachlichen Prüfung.',
+          'Ein Dokumenttyp in einem Werk bildet den Anfang. Nach der fachlichen Prüfung folgt die Erweiterung.',
       },
     ],
-    closing: 'Beginnen Sie mit dem Bericht, den Ihr Qualitätsteam am häufigsten erstellt.',
+    closing: 'Mit dem Bericht beginnen, den das Qualitätsteam am häufigsten erstellt.',
   },
   'management-consulting': {
     navLabel: 'Unternehmensberatung',
     eyebrow: 'Unternehmensberatung',
     headline: 'Die Arbeit zwischen den Terminen.',
     subhead:
-      'Erstellen Sie Angebote und Kundenunterlagen aus dem Wissen Ihrer Beratung. Halten Sie jedes Mandat getrennt.',
+      'Angebote und Kundenunterlagen aus dem Wissen der Beratung erstellen. Jedes Mandat bleibt getrennt.',
     summary: 'Angebote und Kundenunterlagen auf Basis des Beratungswissens.',
     metaDescription:
-      'Zeno für Unternehmensberatungen. Erstellen Sie Angebote, fassen Sie Interviews zusammen und bauen Sie Kundenunterlagen mit mandatsbezogenem Zugriff.',
+      'Zeno für Unternehmensberatungen. Angebote erstellen, Interviews zusammenfassen und Kundenunterlagen mit mandatsbezogenem Zugriff aufbauen.',
     journey: [
       {
         title: 'Unternehmenskontext',
-        description: 'Verbinden Sie Briefing, Referenzen und passende frühere Projekte.',
+        description: 'Briefing, Referenzen und passende frühere Projekte verbinden.',
       },
       {
         title: 'Ausgangspunkt',
-        description: 'Wählen Sie einen vorgefertigten Agenten oder bauen Sie einen eigenen.',
+        description: 'Mit einem vorgefertigten Agenten beginnen oder einen eigenen aufbauen.',
       },
       {
         title: 'Prüfbare Arbeit',
@@ -359,7 +358,7 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       ],
       reviewer: 'Verantwortlicher Partner',
     },
-    workTitle: 'Bereiten Sie die Arbeit vor, die Beratung bleibt beim Team.',
+    workTitle: 'Die Arbeit vorbereiten. Die Beratung bleibt beim Team.',
     workBody:
       'Agenten sammeln Material, strukturieren Entwürfe und verweisen auf Quellen. Berater entscheiden.',
     agents: [
@@ -412,28 +411,28 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       },
       {
         question: 'Wie starten wir?',
-        answer: 'Beginnen Sie mit einem wiederkehrenden Angebot oder Kundenbericht.',
+        answer: 'Ein wiederkehrendes Angebot oder ein Kundenbericht bildet den Anfang.',
       },
     ],
-    closing: 'Beginnen Sie mit dem Angebot, das Ihr Team regelmäßig neu aufbaut.',
+    closing: 'Mit dem Angebot beginnen, das das Team regelmäßig neu aufbaut.',
   },
   'm-and-a': {
     navLabel: 'M&A',
     eyebrow: 'M&A',
     headline: 'Mehr Zeit für das Urteil hinter dem Deal.',
     subhead:
-      'Finden Sie Zielunternehmen und bereiten Sie qualifizierte Longlists vor. Berater prüfen jeden Kandidaten.',
+      'Zielunternehmen finden und qualifizierte Longlists vorbereiten. Berater prüfen jeden Kandidaten.',
     summary: 'Zielsuche und qualifizierte Longlists für M&A-Teams.',
     metaDescription:
-      'Zeno für M&A. Recherchieren Sie Zielunternehmen, erstellen Sie qualifizierte Longlists und bereiten Sie Outreach mit verbundenem Wissen vor.',
+      'Zeno für M&A. Zielunternehmen recherchieren, qualifizierte Longlists erstellen und Outreach mit verbundenem Wissen vorbereiten.',
     journey: [
       {
         title: 'Unternehmenskontext',
-        description: 'Verbinden Sie Suchkriterien, Sektorerfahrung und frühere Mandate.',
+        description: 'Suchkriterien, Sektorerfahrung und frühere Mandate verbinden.',
       },
       {
         title: 'Ausgangspunkt',
-        description: 'Wählen Sie einen vorgefertigten Agenten oder bauen Sie einen eigenen.',
+        description: 'Mit einem vorgefertigten Agenten beginnen oder einen eigenen aufbauen.',
       },
       {
         title: 'Prüfbare Arbeit',
@@ -496,28 +495,27 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       },
       {
         question: 'Wie starten wir?',
-        answer:
-          'Beginnen Sie mit einer klaren Suchthese und einer wiederkehrenden Rechercheaufgabe.',
+        answer: 'Eine klare Suchthese und eine wiederkehrende Rechercheaufgabe bilden den Anfang.',
       },
     ],
-    closing: 'Beginnen Sie mit der Suche, die Ihr Deal-Team gerade von Hand aufbaut.',
+    closing: 'Mit der Suche beginnen, die das Deal-Team gerade von Hand aufbaut.',
   },
   'private-equity': {
     navLabel: 'Private Equity',
     eyebrow: 'Private Equity',
-    headline: 'Der Investment-Memo vor dem Investment Committee.',
-    subhead: 'Bereiten Sie Marktanalyse, Unternehmenskontext und offene Due-Diligence-Fragen vor.',
+    headline: 'Das Investment-Memo vor dem Investment Committee.',
+    subhead: 'Marktanalyse, Unternehmenskontext und offene Due-Diligence-Fragen vorbereiten.',
     summary: 'Investment-Memos und offene Due-Diligence-Fragen mit verbundenem Wissen.',
     metaDescription:
-      'Zeno für Investment-Teams. Bereiten Sie Investment-Memos, Marktanalysen und offene Due-Diligence-Fragen in einem kontrollierten Workspace vor.',
+      'Zeno für Investment-Teams. Investment-Memos, Marktanalysen und offene Due-Diligence-Fragen in einem kontrollierten Workspace vorbereiten.',
     journey: [
       {
         title: 'Unternehmenskontext',
-        description: 'Verbinden Sie Pitch Deck, Fondsstrategie und frühere Investments.',
+        description: 'Pitch Deck, Fondsstrategie und frühere Investments verbinden.',
       },
       {
         title: 'Ausgangspunkt',
-        description: 'Wählen Sie einen vorgefertigten Agenten oder bauen Sie einen eigenen.',
+        description: 'Mit einem vorgefertigten Agenten beginnen oder einen eigenen aufbauen.',
       },
       {
         title: 'Prüfbare Arbeit',
@@ -572,7 +570,7 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       },
       {
         question: 'Wie werden offene Fragen behandelt?',
-        answer: 'Sie werden im Memo sichtbar markiert und mit den relevanten Quellen verbunden.',
+        answer: 'Offene Fragen bleiben im Memo sichtbar und mit den relevanten Quellen verbunden.',
       },
       {
         question: 'Kann bestehendes Fonds-Wissen einfließen?',
@@ -580,28 +578,28 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       },
       {
         question: 'Wie starten wir?',
-        answer: 'Beginnen Sie mit einem wiederkehrenden Memo oder einem Teil der Due Diligence.',
+        answer: 'Ein wiederkehrendes Memo oder ein Teil der Due Diligence bildet den Anfang.',
       },
     ],
-    closing: 'Beginnen Sie mit dem Memo, das Ihr Team als Nächstes vorbereitet.',
+    closing: 'Mit dem Memo beginnen, das das Team als Nächstes vorbereitet.',
   },
   legal: {
     navLabel: 'Recht',
     eyebrow: 'Recht',
-    headline: 'Der erste Vertragsentwurf gegen Ihr eigenes Playbook.',
+    headline: 'Der erste Vertragsentwurf im Abgleich mit dem eigenen Playbook.',
     subhead:
-      'Prüfen Sie Verträge anhand Ihrer Klauseln und Richtlinien. Juristen behalten die Freigabe.',
-    summary: 'Vertragsprüfung auf Basis des Playbooks Ihrer Kanzlei oder Rechtsabteilung.',
+      'Verträge anhand eigener Klauseln und Richtlinien prüfen. Juristen behalten die Freigabe.',
+    summary: 'Vertragsprüfung auf Basis des Playbooks einer Kanzlei oder Rechtsabteilung.',
     metaDescription:
-      'Zeno für Rechtsteams. Prüfen Sie Verträge gegen Ihr Playbook, erstellen Sie Klauselvorschläge und behalten Sie die juristische Freigabe.',
+      'Zeno für Rechtsteams. Verträge anhand des eigenen Playbooks prüfen, Klauselvorschläge erstellen und die juristische Freigabe behalten.',
     journey: [
       {
         title: 'Unternehmenskontext',
-        description: 'Verbinden Sie Playbook, Vorlagen und freigegebene Präzedenzfälle.',
+        description: 'Playbook, Vorlagen und freigegebene Präzedenzfälle verbinden.',
       },
       {
         title: 'Ausgangspunkt',
-        description: 'Wählen Sie einen vorgefertigten Legal Agent oder bauen Sie einen eigenen.',
+        description: 'Mit einem vorgefertigten Legal Agent beginnen oder einen eigenen aufbauen.',
       },
       {
         title: 'Prüfbare Arbeit',
@@ -614,7 +612,7 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       resultItems: ['Abweichungen markiert', 'Playbook-Klauseln verknüpft', 'Entscheidungen offen'],
       reviewer: 'Verantwortlicher Jurist',
     },
-    workTitle: 'Bereiten Sie die Prüfung vor. Lassen Sie die Rechtsberatung beim Juristen.',
+    workTitle: 'Die Prüfung vorbereiten. Die Rechtsberatung bleibt beim Juristen.',
     workBody:
       'Agenten vergleichen, markieren und entwerfen. Ein benannter Jurist prüft und entscheidet.',
     agents: [
@@ -665,10 +663,10 @@ export const germanSolutions: Record<SolutionSlug, GermanSolutionContent> = {
       },
       {
         question: 'Wie starten wir?',
-        answer: 'Beginnen Sie mit einem Vertragstyp und einem klaren Playbook.',
+        answer: 'Ein Vertragstyp und ein klares Playbook bilden den Anfang.',
       },
     ],
-    closing: 'Beginnen Sie mit dem Vertrag, den Ihr Team am häufigsten prüft.',
+    closing: 'Mit dem Vertrag beginnen, den das Team am häufigsten prüft.',
   },
 };
 
@@ -777,7 +775,7 @@ export const germanCustomerStories: Record<string, GermanCustomerStory> = {
       {
         claimId: 'customer-result-b2venture-opportunity-time-de-draft',
         value: '5 bis 10 Stunden',
-        label: 'früherer Aufwand pro Investment-Chance',
+        label: 'früherer Aufwand pro Investmentmöglichkeit',
         qualifier: 'Qualifizierter Ausgangswert, keine garantierte Einsparung.',
       },
     ],
@@ -816,7 +814,7 @@ export const germanCustomerStories: Record<string, GermanCustomerStory> = {
         heading: 'Regelmäßige Nutzung wurde Teil des Investment-Prozesses.',
         paragraphs: [
           'Die Einführung erreichte über 70 Prozent Aktivierung. Die Nutzung verdoppelte sich innerhalb von vier Monaten.',
-          'Vor der Einführung beanspruchte eine Investment-Chance typischerweise fünf bis zehn Stunden dieser Vorbereitung.',
+          'Vor der Einführung beanspruchte die Vorbereitung einer Investmentmöglichkeit typischerweise fünf bis zehn Stunden.',
         ],
       },
     ],

@@ -1,15 +1,16 @@
 ---
 import { trustCenterUrl } from '../lib/claims/registry';
 import type { Locale } from '../lib/i18n/locales';
-import { getLocalizedPath, type StaticRouteKey } from '../lib/i18n/routes';
+import { getLocalizedPath, type LocalizedRouteLink, type StaticRouteKey } from '../lib/i18n/routes';
 import { sharedUiCopy } from '../lib/i18n/ui';
 import { withBase } from '../lib/routing/base-path';
 
 interface Props {
   locale: Locale;
+  switcherLinks: readonly LocalizedRouteLink[];
 }
 
-const { locale } = Astro.props;
+const { locale, switcherLinks } = Astro.props;
 const copy = sharedUiCopy[locale].footer;
 const route = (key: StaticRouteKey, targetLocale: Locale = locale) => {
   const path = getLocalizedPath({ kind: 'static', key }, targetLocale);
@@ -63,7 +64,29 @@ const route = (key: StaticRouteKey, targetLocale: Locale = locale) => {
     </nav>
     <div class="footer-meta">
       <span>© {new Date().getFullYear()} Zeno</span>
-      <span>{copy.previewLabel}</span>
+      {
+        switcherLinks.length > 1 && (
+          <nav class="footer-locale-switcher" aria-label={copy.languageLabel}>
+            {switcherLinks.map((link, index) => (
+              <span class="footer-locale-option">
+                {index > 0 && (
+                  <span class="footer-locale-separator" aria-hidden="true">
+                    /
+                  </span>
+                )}
+                <a
+                  href={withBase(link.path)}
+                  lang={link.lang}
+                  hreflang={link.lang}
+                  aria-current={link.locale === locale ? 'page' : undefined}
+                >
+                  {link.label}
+                </a>
+              </span>
+            ))}
+          </nav>
+        )
+      }
     </div>
   </div>
 </footer>

@@ -187,7 +187,7 @@ describe('compact demo form', () => {
     const submitButton = screen.getByRole('button', { name: 'Demo anfragen' });
     await waitFor(() => expect(submitButton).toBeEnabled());
     await user.click(submitButton);
-    expect(screen.getByText('Geben Sie Ihren vollständigen Namen ein.')).toBeInTheDocument();
+    expect(screen.getByText('Vollständigen Namen eingeben.')).toBeInTheDocument();
 
     await user.type(screen.getByLabelText('Vollständiger Name'), 'Alex Beispiel');
     await user.type(screen.getByLabelText('Geschäftliche E-Mail-Adresse'), 'alex@example.test');

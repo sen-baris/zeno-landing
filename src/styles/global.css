@@ -385,35 +385,6 @@ h2 {
   gap: 20px;
 }
 
-.locale-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
-}
-
-.locale-switcher a {
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.locale-switcher a + a {
-  border-left: 1px solid var(--rule);
-  padding-left: 7px;
-}
-
-.locale-switcher a[aria-current='page'] {
-  color: var(--ink);
-  font-weight: 650;
-}
-
-.locale-switcher a:hover,
-.locale-switcher a:focus-visible {
-  color: var(--action);
-}
-
 .desktop-nav .nav-business-case-cta {
   gap: 6px;
   font-weight: 620;
@@ -3152,6 +3123,38 @@ h2 {
   text-transform: uppercase;
 }
 
+.footer-locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-transform: none;
+}
+
+.footer-locale-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.footer-locale-separator {
+  color: color-mix(in srgb, var(--paper) 38%, transparent);
+}
+
+.footer-locale-switcher a {
+  color: color-mix(in srgb, var(--paper) 58%, transparent);
+  text-decoration: none;
+}
+
+.footer-locale-switcher a[aria-current='page'] {
+  color: var(--paper);
+  font-weight: 650;
+}
+
+.footer-locale-switcher a:hover,
+.footer-locale-switcher a:focus-visible {
+  color: color-mix(in srgb, var(--evidence) 72%, var(--paper));
+}
+
 /* Workflow run visual */
 .workflow-run {
   margin-top: 0;
@@ -4768,26 +4771,6 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 
   .mobile-menu nav a:last-child {
     border-bottom: 0;
-  }
-
-  .mobile-locale-switcher {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .mobile-menu nav .mobile-locale-switcher a {
-    border-bottom: 0;
-    text-align: center;
-  }
-
-  .mobile-menu nav .mobile-locale-switcher a + a {
-    border-left: 1px solid var(--rule);
-  }
-
-  .mobile-menu nav .mobile-locale-switcher a[aria-current='page'] {
-    background: color-mix(in srgb, var(--evidence) 10%, transparent);
-    font-weight: 650;
   }
 
   .mobile-menu-nested {

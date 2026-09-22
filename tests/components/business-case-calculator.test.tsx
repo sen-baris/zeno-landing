@@ -219,7 +219,7 @@ describe('BusinessCaseCalculator', () => {
     await user.click(screen.getByRole('button', { name: 'Schätzung anzeigen' }));
 
     expect(
-      await screen.findByRole('heading', { name: 'Was Ihr Team zurückgewinnen könnte' }),
+      await screen.findByRole('heading', { name: 'Was das Team zurückgewinnen kann' }),
     ).toBeInTheDocument();
     expect(document.querySelector('.business-case-value-figure')).toHaveTextContent('41.400 €');
     expect(document.querySelector('.business-case-hours-summary')).toHaveTextContent('828 Stunden');

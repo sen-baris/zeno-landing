@@ -16,7 +16,6 @@ export interface SharedUiCopy {
     bookDemo: string;
     menuOpenLabel: string;
     menuLabel: string;
-    languageLabel: string;
   };
   footer: {
     tagline: string;
@@ -36,7 +35,7 @@ export interface SharedUiCopy {
     terms: string;
     imprint: string;
     englishDocument: string;
-    previewLabel: string;
+    languageLabel: string;
   };
 }
 
@@ -57,7 +56,6 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       bookDemo: 'Book a demo',
       menuOpenLabel: 'Menu, open navigation',
       menuLabel: 'Menu',
-      languageLabel: 'Language',
     },
     footer: {
       tagline: 'Enterprise AI for everyday work, from useful assistance to governed execution.',
@@ -77,7 +75,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       terms: 'Terms of service',
       imprint: 'Imprint',
       englishDocument: '',
-      previewLabel: 'English / V1 preview',
+      languageLabel: 'Language',
     },
   },
   de: {
@@ -96,7 +94,6 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       bookDemo: 'Demo buchen',
       menuOpenLabel: 'Menü, Navigation öffnen',
       menuLabel: 'Menü',
-      languageLabel: 'Sprache',
     },
     footer: {
       tagline:
@@ -117,7 +114,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       terms: 'Nutzungsbedingungen',
       imprint: 'Impressum',
       englishDocument: ' (Englisch)',
-      previewLabel: 'Deutsch / Vorschau',
+      languageLabel: 'Sprache',
     },
   },
 };

@@ -1,6 +1,6 @@
 # Product team handover checklist
 
-Last updated: 2026-09-21
+Last updated: 2026-09-22
 
 This checklist covers the operational decisions required to move the Zeno website from its temporary
 GitHub Pages demo environment to a product-team-owned production environment.
@@ -19,7 +19,7 @@ claims, localization, testing, and design contracts.
 | Email delivery      | Mailgun is the intended provider; integration is pending                   |
 | Analytics           | No provider is installed                                                   |
 | English content     | Available, subject to the production release gates                         |
-| German content      | Review-only, noindex, and excluded from production                         |
+| German content      | Published with reciprocal locale metadata; Pages remains globally noindex  |
 | German legal pages  | Not approved and not generated                                             |
 | Production release  | Intentionally blocked until the explicit release requirements pass         |
 
@@ -137,7 +137,7 @@ Do not expand the current acknowledgement wording or data use without legal and 
 - [ ] Confirm canonical URLs in rendered HTML.
 - [ ] Confirm `robots.txt` and sitemap URLs use the production origin.
 - [ ] Keep deployment previews noindex.
-- [ ] Do not publish German routes until their claim approval gate passes.
+- [ ] Preserve reciprocal English and German canonicals, hreflang, and footer switching.
 - [ ] Do not create German legal routes without approved legal documents.
 
 The legacy `/ai-readiness` route must continue to redirect to `/pricing` unless an approved migration

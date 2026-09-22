@@ -1,6 +1,6 @@
 # Zeno website maintainer guide
 
-Last updated: 2026-09-21
+Last updated: 2026-09-22
 
 This is the main handover document for the Zeno marketing website. It explains what the site is
 trying to do, where each source of truth lives, how the interactive parts work, and which decisions
@@ -22,8 +22,8 @@ site that exists today.
   components.
 - **Current deployment:** GitHub Pages is a temporary noindex demo build with synthetic lead
   submission. Production hosting has not been selected in this repository.
-- **Current localization:** English is published. German is review-only until its exact claims are
-  approved.
+- **Current localization:** English and German are published. German legal documents are not yet
+  available.
 
 If a change affects a public claim, customer proof, security statement, legal document, form,
 localized route, or release setting, read the relevant detailed section before editing.
@@ -152,7 +152,7 @@ src/
   layouts/                Shared document shells
   lib/claims/              Approved public claims and resolvers
   lib/content/             Typed English page and story content
-  lib/i18n/                Locales, routes, German drafts, and SEO records
+  lib/i18n/                Locales, routes, German content, and SEO records
   lib/leads/               Demo validation and submission boundary
   lib/pricing/             Framework-independent calculator logic
   lib/routing/             Deployment base-path handling
@@ -198,7 +198,7 @@ JSX. Do not make CSS or screenshots the only place a user can understand a produ
 | `/terms-of-service` | Markdown legal page                | approved legal document record         |
 | `/imprint`          | Markdown legal page                | approved legal document record         |
 | `/ai-readiness`     | legacy redirect page               | noindex redirect to `/pricing`         |
-| `/de/*`             | `src/pages/de/[...path].astro`     | German preview content and claims      |
+| `/de/*`             | `src/pages/de/[...path].astro`     | Published German content and claims    |
 
 The central localized route registry is `src/lib/i18n/routes.ts`. Internal links, canonicals,
 language switching, and the sitemap should resolve through it rather than reconstructing slugs in
@@ -481,11 +481,15 @@ English is the unprefixed default locale. German uses `/de/` and localized slugs
 | Locale  | Status    | Search behavior                                                      |
 | ------- | --------- | -------------------------------------------------------------------- |
 | English | Published | Self-canonical and indexable unless the whole deployment is preview. |
-| German  | Preview   | `noindex`, excluded from production builds, sitemap, and hreflang.   |
+| German  | Published | Self-canonical and indexable unless the whole deployment is preview. |
 
-German factual statements have separate draft claim records in `src/lib/i18n/de-claims.ts`. A
-production build cannot publish German content until every localized record is explicitly approved
-with approval ownership and date. Changing the locale status alone is not enough.
+German factual statements have separate approved claim records in `src/lib/i18n/de-claims.ts`. A
+production build validates their approval ownership and date before generating German routes.
+Changing locale status alone is never enough to publish a future locale.
+
+Language switching appears only in the footer and preserves the current page. German uses a
+neutral, direct voice without formal `Sie` or informal `du` address. The switcher has no preview,
+version, or experimental status label.
 
 German legal routes are reserved but not generated:
 
@@ -658,7 +662,7 @@ Use `withBase` for internal paths so preview deployments continue to work below 
 2. Give it a unique stable slug, headline, workspace, customer proof, controls, FAQs, and conversion.
 3. Add approved workspace and proof claims.
 4. Add its localized slug mapping.
-5. Add German preview content and German draft claim records.
+5. Add German content and separately governed localized claim records.
 6. Confirm the Solutions menu and sitemap derive it automatically.
 7. Add unit, browser, responsive, and visual coverage.
 
@@ -724,7 +728,6 @@ new accepted direction replaces them.
 - The product team must select and own the production hosting platform.
 - The temporary GitHub Pages workflow must either remain an explicit noindex preview or be retired
   after production cutover.
-- German factual claims require exact wording approval before publication.
 - German Privacy Policy, Terms of Service, and Imprint are not approved.
 - No CMS provider or public blog route has been selected.
 - No analytics provider is installed.

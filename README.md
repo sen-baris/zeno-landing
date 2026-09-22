@@ -21,7 +21,7 @@ are tracked in the [handover checklist](./docs/product-team-handover-checklist.m
 - `/demo`: demo request form
 - `/security`: security, privacy, certification, and workspace-control overview
 - `/privacy-policy`, `/terms-of-service`, and `/imprint`: approved verbatim legal documents
-- `/de/*`: German review routes, excluded from production until localized claims are approved
+- `/de/*`: published German routes with localized slugs; legal documents remain English-only
 - `/ai-readiness`: noindex legacy redirect to `/pricing`, with a visible fallback link
 
 The business-case calculator runs locally in the browser. It does not save or submit visitor inputs.
@@ -35,7 +35,9 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The local development lead adapter is synthetic by default. Preview receipts are explicitly labelled and do not send information or email. A production build accepts only a same-origin server gateway path; CRM credentials must never enter the browser bundle.
+The local development lead adapter is synthetic by default. Its confirmation states that no
+information was sent. A production build accepts only a same-origin server gateway path; CRM
+credentials must never enter the browser bundle.
 
 ## Verification
 

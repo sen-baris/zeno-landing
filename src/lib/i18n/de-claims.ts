@@ -15,9 +15,11 @@ export interface GermanLocalizedClaimRecord {
 }
 
 const evidence =
-  'Machine translation of the corresponding approved English content. Exact German wording requires approval before publication.';
+  'Approved English source content plus the German publication direction dated 2026-09-22.';
+const approvedBy = 'Baris, German publication direction';
+const approvedAt = '2026-09-22';
 
-function draft(
+function approvedTranslation(
   id: string,
   sourceClaimId: string,
   statement: string,
@@ -28,9 +30,11 @@ function draft(
     locale: 'de',
     sourceClaimId,
     statement,
-    approvalStatus: 'draft',
+    approvalStatus: 'approved',
     allowedSurface,
     evidence,
+    approvedBy,
+    approvedAt,
   };
 }
 
@@ -40,27 +44,27 @@ const translatedPageClaims: GermanLocalizedClaimRecord[] = Object.entries(
   const translated = page;
   const surface = `de.${key}`;
   return [
-    draft(
+    approvedTranslation(
       `de-${key}-metadata`,
       `${key}-page-metadata`,
       translated.description,
       `${surface}.metadata`,
     ),
-    draft(
+    approvedTranslation(
       `de-${key}-hero`,
       `${key}-page-hero`,
       `${translated.headline} ${translated.intro}`,
       `${surface}.hero`,
     ),
     ...translated.sections.flatMap((section, sectionIndex) => [
-      draft(
+      approvedTranslation(
         `de-${key}-section-${sectionIndex + 1}`,
         `${key}-page-section-${sectionIndex + 1}`,
         [section.title, ...section.paragraphs].join(' '),
         `${surface}.section-${sectionIndex + 1}`,
       ),
       ...(section.points ?? []).map((point, pointIndex) =>
-        draft(
+        approvedTranslation(
           `de-${key}-section-${sectionIndex + 1}-point-${pointIndex + 1}`,
           `${key}-page-section-${sectionIndex + 1}-point-${pointIndex + 1}`,
           point,
@@ -78,27 +82,27 @@ const translatedSolutionClaims: GermanLocalizedClaimRecord[] = Object.entries(
   if (!source) throw new Error(`German solution "${slug}" has no English source record.`);
   const surface = `de.solutions.${slug}`;
   return [
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-metadata`,
       `solution-${slug}-metadata`,
       translated.metaDescription,
       `${surface}.metadata`,
     ),
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-hero`,
       `solution-${slug}-hero`,
       `${translated.headline} ${translated.subhead}`,
       `${surface}.hero`,
     ),
     ...translated.journey.map((step, index) =>
-      draft(
+      approvedTranslation(
         `de-solution-${slug}-journey-${index + 1}`,
         index === 1 ? source.startingPointClaimId : `solution-${slug}-journey-${index + 1}`,
         `${step.title}. ${step.description}`,
         `${surface}.journey`,
       ),
     ),
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-workspace`,
       source.workspace.claimId,
       [
@@ -109,28 +113,28 @@ const translatedSolutionClaims: GermanLocalizedClaimRecord[] = Object.entries(
       ].join(' '),
       `${surface}.workspace`,
     ),
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-work`,
       `solution-${slug}-work`,
       `${translated.workTitle} ${translated.workBody}`,
       `${surface}.work`,
     ),
     ...translated.agents.map((agent, index) =>
-      draft(
+      approvedTranslation(
         `de-solution-${slug}-agent-${index + 1}`,
         `solution-${slug}-agent-${index + 1}`,
         `${agent.name}. ${agent.does} ${agent.from}`,
         `${surface}.work`,
       ),
     ),
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-controls-intro`,
       `solution-${slug}-controls-intro`,
       `${translated.wallsTitle} ${translated.wallsBody}`,
       `${surface}.controls`,
     ),
     ...translated.controls.map((control, index) =>
-      draft(
+      approvedTranslation(
         `de-solution-${slug}-control-${index + 1}`,
         `solution-${slug}-control-${index + 1}`,
         `${control.label}. ${control.value}`,
@@ -138,14 +142,14 @@ const translatedSolutionClaims: GermanLocalizedClaimRecord[] = Object.entries(
       ),
     ),
     ...translated.questions.map((entry, index) =>
-      draft(
+      approvedTranslation(
         `de-solution-${slug}-faq-${index + 1}`,
         `solution-${slug}-faq-${index + 1}`,
         `${entry.question} ${entry.answer}`,
         `${surface}.faq`,
       ),
     ),
-    draft(
+    approvedTranslation(
       `de-solution-${slug}-closing`,
       `solution-${slug}-closing`,
       translated.closing,
@@ -161,14 +165,14 @@ const translatedCustomerClaims: GermanLocalizedClaimRecord[] = Object.entries(
   if (!source) throw new Error(`German customer story "${slug}" has no English source record.`);
   const surface = `de.customers.${slug}`;
   return [
-    draft(
+    approvedTranslation(
       `de-customer-${slug}-narrative`,
       source.narrativeClaimId,
       `${translated.title} ${translated.summary}`,
       `${surface}.hero`,
     ),
     ...translated.results.map((result, index) =>
-      draft(
+      approvedTranslation(
         result.claimId,
         source.qualifiedResults[index]?.claimId ?? result.claimId.replace(/-de-draft$/, ''),
         [result.value, result.label + '.', result.qualifier].join(' '),
@@ -176,7 +180,7 @@ const translatedCustomerClaims: GermanLocalizedClaimRecord[] = Object.entries(
       ),
     ),
     ...translated.sections.map((section, index) =>
-      draft(
+      approvedTranslation(
         `de-customer-${slug}-section-${index + 1}`,
         source.sections[index]?.claimId ?? `customer-story-${slug}-section-${index + 1}`,
         [section.heading, ...section.paragraphs, ...(section.points ?? [])].join(' '),
@@ -186,14 +190,14 @@ const translatedCustomerClaims: GermanLocalizedClaimRecord[] = Object.entries(
   ];
 });
 
-export const germanLocalizedClaimDrafts: readonly GermanLocalizedClaimRecord[] = [
+export const germanLocalizedClaims: readonly GermanLocalizedClaimRecord[] = [
   ...translatedPageClaims,
   ...translatedSolutionClaims,
   ...translatedCustomerClaims,
 ];
 
 export function assertGermanClaimsApprovedForPublication(): void {
-  const unapproved = germanLocalizedClaimDrafts.filter(
+  const unapproved = germanLocalizedClaims.filter(
     (claim) =>
       claim.approvalStatus !== 'approved' || !claim.approvedBy?.trim() || !claim.approvedAt?.trim(),
   );

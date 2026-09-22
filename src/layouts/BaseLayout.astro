@@ -66,10 +66,10 @@ const isPreviewDeploy = import.meta.env.PUBLIC_PREVIEW_DEPLOY === 'true';
   </head>
   <body class={pageClass}>
     <a class="skip-link" href="#main-content">{copy.skipLink}</a>
-    <Header locale={seo.locale} switcherLinks={seo.switcherLinks} />
+    <Header locale={seo.locale} />
     <main id="main-content">
       <slot />
     </main>
-    <Footer locale={seo.locale} />
+    <Footer locale={seo.locale} switcherLinks={seo.switcherLinks} />
   </body>
 </html>

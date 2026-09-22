@@ -184,14 +184,13 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
   questions: [
     {
       field: 'workTypeIds',
-      heading: 'Welche Arbeit kostet Ihr Team Zeit?',
-      description:
-        'Wählen Sie alles Passende aus. Zählen Sie die Zeit für diese Aufgaben zusammen.',
+      heading: 'Welche Arbeit kostet im Team Zeit?',
+      description: 'Alles Passende auswählen. Die Zeit für diese Aufgaben zusammenrechnen.',
     },
     {
       field: 'weeklyHoursSpent',
       heading: 'Wie viele Stunden verbringt eine Person pro Woche mit dieser Arbeit?',
-      description: 'Verwenden Sie einen gemeinsamen Gesamtwert für alle gewählten Aufgaben.',
+      description: 'Ein gemeinsamer Gesamtwert für alle gewählten Aufgaben genügt.',
       min: 0.5,
       max: 80,
       step: 0.5,
@@ -199,7 +198,7 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
     {
       field: 'people',
       heading: 'Wie viele Personen erledigen diese Arbeit?',
-      description: 'Wählen Sie eine Teamgröße oder geben Sie die genaue Zahl ein.',
+      description: 'Eine Teamgröße auswählen oder die genaue Zahl eingeben.',
       min: 1,
       max: 100_000,
       step: 1,
@@ -230,8 +229,8 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
     { id: '16-hours', label: 'Etwa 16 Stunden', value: 16 },
     { id: 'custom', label: 'Genaue Stundenzahl' },
   ],
-  calculatorLabel: 'Business Case Rechner',
-  estimateLabel: 'Business Case Schätzung',
+  calculatorLabel: 'Business-Case-Rechner',
+  estimateLabel: 'Business-Case-Schätzung',
   progressLabel: 'Fortschritt der Business Case Berechnung',
   step: (current, total) => `Schritt ${current} von ${total}`,
   questionLegend: (current) => `Frage ${current} zum Business Case`,
@@ -248,17 +247,17 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
     unit: 'Personen',
     after: 'den gerundeten Mittelwert dieser Spanne.',
   },
-  weeklyChoiceError: 'Wählen Sie eine Wochenzeit oder geben Sie einen eigenen Wert ein.',
-  peopleChoiceError: 'Wählen Sie eine Teamgröße oder geben Sie einen eigenen Wert ein.',
+  weeklyChoiceError: 'Wochenzeit auswählen oder einen eigenen Wert eingeben.',
+  peopleChoiceError: 'Teamgröße auswählen oder einen eigenen Wert eingeben.',
   exactPeople: 'Genaue Personenzahl',
   customHours: 'Eigene Wochenstunden',
-  exactPeopleDescription: 'Geben Sie eine ganze Zahl zwischen 1 und 100.000 ein.',
-  customHoursDescription: 'Geben Sie einen Gesamtwert zwischen 0,5 und 80 ein.',
+  exactPeopleDescription: 'Ganze Zahl zwischen 1 und 100.000 eingeben.',
+  customHoursDescription: 'Gesamtwert zwischen 0,5 und 80 eingeben.',
   back: 'Zurück',
   continue: 'Weiter',
   seeEstimate: 'Schätzung anzeigen',
   planningEstimate: 'Planungsschätzung',
-  resultTitle: 'Was Ihr Team zurückgewinnen könnte',
+  resultTitle: 'Was das Team zurückgewinnen kann',
   editAnswers: 'Antworten bearbeiten',
   fullTeamLabel: 'Schätzung für das gesamte Team',
   yearlyValueLabel: 'Möglicher jährlicher Wert der zurückgewonnenen Zeit',
@@ -270,10 +269,10 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
   selectedWorkLabel: 'Gewählte Arbeit',
   assumptions: (people, hours, recovery, hourlyValue, weeks) =>
     `Grundlage: ${people} Personen, ${hours} gemeinsame Stunden pro Person und Woche, ${recovery} % zurückgewonnene Zeit, ${hourlyValue} pro Stunde und ${weeks} Arbeitswochen.`,
-  restoreEstimate: 'Prüfen Sie die Berechnungseinstellungen, um die Schätzung wiederherzustellen.',
+  restoreEstimate: 'Berechnungseinstellungen prüfen, um die Schätzung wiederherzustellen.',
   pilotLabel: 'Ein praktischer erster Schritt',
   pilotTitle: (people, singular) =>
-    `Testen Sie den Business Case mit ${people} ${singular ? 'Person' : 'Personen'}.`,
+    `Den Business Case mit ${people} ${singular ? 'Person' : 'Personen'} testen.`,
   pilotHours: {
     before: 'Das entspricht',
     unit: 'Stunden',
@@ -281,7 +280,7 @@ const germanBusinessCaseCopy: BusinessCaseUiCopy = {
   },
   pilotAction: 'Pilot planen',
   zeroScenario:
-    'Bei 0 % zurückgewonnener Zeit entsteht kein modellierter Zeitwert. Passen Sie das Szenario in den Berechnungseinstellungen an.',
+    'Bei 0 % zurückgewonnener Zeit entsteht kein modellierter Zeitwert. Das Szenario lässt sich in den Berechnungseinstellungen anpassen.',
   settings: 'Berechnungseinstellungen',
   recoveryLabel: 'Zurückgewonnene Zeit (%)',
   recoveryDescription: 'Beispielszenario, keine gemessene Zeno-Einsparung.',
@@ -318,8 +317,8 @@ export function localizeBusinessCaseErrors(
   >) {
     if (field === 'workTypeIds') {
       translated[field] = message.includes('valid')
-        ? 'Wählen Sie gültige Aufgaben ohne Wiederholungen.'
-        : 'Wählen Sie mindestens eine Aufgabe.';
+        ? 'Gültige Aufgaben ohne Wiederholungen auswählen.'
+        : 'Mindestens eine Aufgabe auswählen.';
       continue;
     }
     const label = labels[field];
@@ -368,7 +367,7 @@ export const demoFormUiCopy: Record<Locale, DemoFormUiCopy> = {
   en: {
     submissionConfirmed: 'Submission confirmed',
     successTitle: 'Thank you. Request confirmed.',
-    previewSuccess: 'Preview request confirmed. No information was sent.',
+    previewSuccess: 'Request confirmed. No information was sent.',
     success: 'Request confirmed. We have the details needed for the next step.',
     returnHome: 'Return home',
     requestLabel: 'Meeting request',
@@ -398,15 +397,15 @@ export const demoFormUiCopy: Record<Locale, DemoFormUiCopy> = {
   },
   de: {
     submissionConfirmed: 'Anfrage bestätigt',
-    successTitle: 'Vielen Dank. Ihre Anfrage ist bestätigt.',
-    previewSuccess: 'Vorschauanfrage bestätigt. Es wurden keine Informationen gesendet.',
-    success: 'Anfrage bestätigt. Wir haben die Angaben für den nächsten Schritt.',
+    successTitle: 'Vielen Dank. Die Anfrage ist bestätigt.',
+    previewSuccess: 'Anfrage bestätigt. Es wurden keine Angaben gesendet.',
+    success: 'Anfrage bestätigt. Die Angaben für den nächsten Schritt sind vollständig.',
     returnHome: 'Zur Startseite',
     requestLabel: 'Gespräch anfragen',
-    requestTitle: 'Wie können wir Sie erreichen?',
+    requestTitle: 'Kontaktdaten für das Gespräch.',
     preparationNote: 'Einige Angaben zur Vorbereitung',
     hydrationNote:
-      'Das Formular ist gleich bereit. Falls nicht, aktivieren Sie JavaScript und laden Sie die Seite neu.',
+      'Das Formular ist gleich bereit. Falls nicht, JavaScript aktivieren und die Seite neu laden.',
     legend: 'Angaben zur Demo-Anfrage',
     fullName: 'Vollständiger Name',
     workEmail: 'Geschäftliche E-Mail-Adresse',
@@ -420,7 +419,7 @@ export const demoFormUiCopy: Record<Locale, DemoFormUiCopy> = {
     desiredStart: 'Gewünschter Start',
     chooseWindow: 'Zeitraum wählen',
     windows: [
-      'Wir orientieren uns',
+      'Erste Orientierung',
       'Innerhalb von 3 Monaten',
       'In 3–6 Monaten',
       'Später als 6 Monate',
@@ -430,23 +429,21 @@ export const demoFormUiCopy: Record<Locale, DemoFormUiCopy> = {
     submitting: 'Wird gesendet…',
     retry: 'Erneut versuchen',
     requestDemo: 'Demo anfragen',
-    unexpectedError: 'Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.',
+    unexpectedError: 'Die Anfrage konnte nicht gesendet werden. Bitte erneut versuchen.',
   },
 };
 
 export function localizeDemoErrors(errors: DemoFormErrors, locale: Locale): DemoFormErrors {
   if (locale === 'en') return errors;
   const translated: DemoFormErrors = {};
-  if (errors.fullName) translated.fullName = 'Geben Sie Ihren vollständigen Namen ein.';
-  if (errors.workEmail)
-    translated.workEmail = 'Geben Sie eine gültige geschäftliche E-Mail-Adresse ein.';
-  if (errors.company) translated.company = 'Geben Sie den Unternehmensnamen ein.';
+  if (errors.fullName) translated.fullName = 'Vollständigen Namen eingeben.';
+  if (errors.workEmail) translated.workEmail = 'Gültige geschäftliche E-Mail-Adresse eingeben.';
+  if (errors.company) translated.company = 'Unternehmensnamen eingeben.';
   if (errors.phoneNumber) {
-    translated.phoneNumber =
-      'Geben Sie eine gültige Telefonnummer ein oder lassen Sie das Feld leer.';
+    translated.phoneNumber = 'Gültige Telefonnummer eingeben oder das Feld leer lassen.';
   }
   if (errors.privacyAcknowledged) {
-    translated.privacyAcknowledged = 'Bestätigen Sie, wie diese Angaben verwendet werden.';
+    translated.privacyAcknowledged = 'Verwendung dieser Angaben bestätigen.';
   }
   return translated;
 }

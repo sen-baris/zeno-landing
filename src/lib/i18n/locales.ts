@@ -1,3 +1,14 @@
+export type LocalePublicationStatus = 'preview' | 'published';
+
+interface LocaleDefinition {
+  code: string;
+  label: string;
+  prefix: string;
+  direction: 'ltr' | 'rtl';
+  numberFormatLocale: string;
+  publicationStatus: LocalePublicationStatus;
+}
+
 export const localeDefinitions = {
   en: {
     code: 'en',
@@ -13,12 +24,11 @@ export const localeDefinitions = {
     prefix: '/de',
     direction: 'ltr',
     numberFormatLocale: 'de-DE',
-    publicationStatus: 'preview',
+    publicationStatus: 'published',
   },
-} as const;
+} as const satisfies Record<string, LocaleDefinition>;
 
 export type Locale = keyof typeof localeDefinitions;
-export type LocalePublicationStatus = (typeof localeDefinitions)[Locale]['publicationStatus'];
 
 export const defaultLocale: Locale = 'en';
 export const locales = Object.keys(localeDefinitions) as Locale[];
