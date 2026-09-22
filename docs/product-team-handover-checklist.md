@@ -8,6 +8,10 @@ GitHub Pages demo environment to a product-team-owned production environment.
 Read the [site maintainer guide](./site-maintainer-guide.md) for the complete architecture, content,
 claims, localization, testing, and design contracts.
 
+Use the [page-building playbook](page-building-playbook.md) for daily work. The repository-local
+Localization and SEO skills preserve the full translated experience and search contract across
+agents. Keep them registered in AGENTS.md and update their workflow with any architecture change.
+
 ## Current handover state
 
 | Area                | Current state                                                              |
@@ -138,6 +142,8 @@ Do not expand the current acknowledgement wording or data use without legal and 
 - [ ] Confirm `robots.txt` and sitemap URLs use the production origin.
 - [ ] Keep deployment previews noindex.
 - [ ] Preserve reciprocal English and German canonicals, hreflang, and footer switching.
+- [ ] Keep full English/German parity through the shared page compositions. Do not replace a
+      translated page with a shorter template. Run the paired section, motion, form, and reflow tests.
 - [ ] Do not create German legal routes without approved legal documents.
 
 The legacy `/ai-readiness` route must continue to redirect to `/pricing` unless an approved migration
@@ -145,6 +151,8 @@ replaces it.
 
 ## 6. Set up delivery and CI
 
+- [ ] Preserve the repository skills and require a dated feature audit for each meaningful change.
+- [ ] Run governance validation before artifact publication, not only in an independent CI job.
 - [ ] Recreate the existing formatting, lint, type, unit, coverage, build, budget, governance, and
       browser checks in the product team’s CI.
 - [ ] Keep GitHub branch protection or an equivalent review gate.

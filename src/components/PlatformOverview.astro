@@ -1,7 +1,13 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import { euStarsPath, euStarsViewBox } from '../lib/icons/eu-stars';
 
 interface Props {
+  locale: Locale;
   platformStatement: string;
   startingPointStatement: string;
   examplesStatement: string;
@@ -25,7 +31,7 @@ const customExample = agentExamples.find((example) => example.kind !== 'Prebuilt
 <figure class="platform-overview" data-reveal aria-labelledby="platform-overview-caption">
   <div class="platform-overview-frame">
     <div class="platform-overview-bar">
-      <span>The enterprise AI platform</span>
+      <span>{t('The enterprise AI platform')}</span>
       <div class="platform-hosting-claim">
         <svg
           class="platform-hosting-mark"
@@ -35,21 +41,21 @@ const customExample = agentExamples.find((example) => example.kind !== 'Prebuilt
         >
           <path d={euStarsPath}></path>
         </svg>
-        <span>{modelHostingStatement}</span>
+        <span>{t(modelHostingStatement)}</span>
       </div>
     </div>
 
     <div class="platform-overview-flow">
       <section aria-labelledby="context-stage-title">
-        <p class="product-label">01 / Context</p>
-        <h2 id="context-stage-title">Your company context</h2>
+        <p class="product-label">{t('01 / Context')}</p>
+        <h2 id="context-stage-title">{t('Your company context')}</h2>
         <ul class="stage-stack source-stack">
           <li>
             <svg class="stage-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
               <rect x="3" y="3" width="14" height="14" rx="3.4"></rect>
               <path d="m6.8 10.2 2.1 2.1 4.3-4.6"></path>
             </svg>
-            Company knowledge
+            {t('Company knowledge')}
           </li>
           <li>
             <svg class="stage-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
@@ -57,7 +63,7 @@ const customExample = agentExamples.find((example) => example.kind !== 'Prebuilt
               <rect x="3" y="11" width="14" height="5.4" rx="1.8"></rect>
               <path d="M6 6.3h0.01M6 13.7h0.01"></path>
             </svg>
-            Business systems
+            {t('Business systems')}
           </li>
           <li>
             <svg class="stage-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
@@ -66,54 +72,54 @@ const customExample = agentExamples.find((example) => example.kind !== 'Prebuilt
               <circle cx="14.6" cy="8.7" r="2.1"></circle>
               <path d="M13.5 12.8c2.2-.2 3.6 1.2 3.6 3.7"></path>
             </svg>
-            Team guidance
+            {t('Team guidance')}
           </li>
         </ul>
       </section>
 
       <section class="platform-agent-stage" aria-labelledby="agents-stage-title">
-        <p class="product-label">02 / Agents</p>
-        <h2 id="agents-stage-title">Agents built for the work</h2>
-        <div class="platform-agent-choices" aria-label={startingPointStatement}>
+        <p class="product-label">{t('02 / Agents')}</p>
+        <h2 id="agents-stage-title">{t('Agents built for the work')}</h2>
+        <div class="platform-agent-choices" aria-label={t(startingPointStatement)}>
           <div data-agent-choice="prebuilt">
-            <span>Prebuilt</span>
-            <strong>{prebuiltExamples.map((example) => example.label).join(', ')}</strong>
+            <span>{t('Prebuilt')}</span>
+            <strong>{t(prebuiltExamples.map((example) => example.label).join(', '))}</strong>
           </div>
-          <span class="platform-agent-or">or</span>
+          <span class="platform-agent-or">{t('or')}</span>
           <div data-agent-choice="custom">
-            <span>From scratch</span>
-            <strong>{customExample?.label}</strong>
+            <span>{t('From scratch')}</span>
+            <strong>{t(customExample?.label)}</strong>
           </div>
         </div>
       </section>
 
       <section aria-labelledby="work-stage-title">
-        <p class="product-label">03 / Work</p>
-        <h2 id="work-stage-title">Get the work done</h2>
+        <p class="product-label">{t('03 / Work')}</p>
+        <h2 id="work-stage-title">{t('Get the work done')}</h2>
         <ul class="stage-stack platform-work-list">
-          <li><span>01</span>Ask in Chat</li>
-          <li><span>02</span>Run agent tasks</li>
-          <li><span>03</span>Build visible workflows</li>
+          <li><span>01</span>{t('Ask in Chat')}</li>
+          <li><span>02</span>{t('Run agent tasks')}</li>
+          <li><span>03</span>{t('Build visible workflows')}</li>
         </ul>
       </section>
     </div>
 
     <div class="platform-governance">
       <div>
-        <p class="product-label">One governed workspace</p>
-        <p>{governanceStatement}</p>
+        <p class="product-label">{t('One governed workspace')}</p>
+        <p>{t(governanceStatement)}</p>
       </div>
-      <ul aria-label="Enterprise controls">
-        <li>Knowledge access</li>
-        <li>Model choice</li>
-        <li>Human checkpoints</li>
-        <li>Adoption visibility</li>
+      <ul aria-label={t('Enterprise controls')}>
+        <li>{t('Knowledge access')}</li>
+        <li>{t('Model choice')}</li>
+        <li>{t('Human checkpoints')}</li>
+        <li>{t('Adoption visibility')}</li>
       </ul>
     </div>
   </div>
   <figcaption id="platform-overview-caption" class="visually-hidden">
-    {platformStatement}{' '}{startingPointStatement}{' '}{examplesStatement}{' '}{
-      modelHostingStatement
-    }{' '}{governanceStatement}
+    {t(platformStatement)}{' '}{t(startingPointStatement)}{' '}{t(examplesStatement)}{' '}{
+      t(modelHostingStatement)
+    }{' '}{t(governanceStatement)}
   </figcaption>
 </figure>

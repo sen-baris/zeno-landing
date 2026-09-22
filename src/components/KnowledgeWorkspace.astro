@@ -1,7 +1,12 @@
 ---
-import { withBase } from '../lib/routing/base-path';
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
 
 interface Props {
+  locale: Locale;
   statement: string;
   caption: string;
 }
@@ -18,14 +23,14 @@ const connectors = [
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
-        <span>Knowledge</span>
+        <span>{t('Knowledge')}</span>
       </div>
-      <span class="product-frame-status">Finance workspace</span>
+      <span class="product-frame-status">{t('Finance workspace')}</span>
     </div>
 
     <div class="knowledge-workspace-body">
       <section class="knowledge-source-column" aria-labelledby="knowledge-sources-title">
-        <p class="product-label" id="knowledge-sources-title">Existing systems</p>
+        <p class="product-label" id="knowledge-sources-title">{t('Existing systems')}</p>
         <ul>
           {
             connectors.map((connector) => (
@@ -33,7 +38,7 @@ const connectors = [
                 <span class="knowledge-connector-mark">
                   <img src={connector.logo} alt="" width="36" height="36" loading="lazy" />
                 </span>
-                <span>{connector.name}</span>
+                <span>{t(connector.name)}</span>
               </li>
             ))
           }
@@ -45,7 +50,7 @@ const connectors = [
                 <path d="M10.8 11.2 17.2 16.8M17.2 11.2 10.8 16.8"></path>
               </svg>
             </span>
-            <span>Custom MCP</span>
+            <span>{t('Custom MCP')}</span>
           </li>
         </ul>
       </section>
@@ -56,28 +61,28 @@ const connectors = [
         <div class="knowledge-base-mark" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
-        <p class="product-label">Knowledge base</p>
-        <h3 id="knowledge-base-title">Finance knowledge</h3>
+        <p class="product-label">{t('Knowledge base')}</p>
+        <h3 id="knowledge-base-title">{t('Finance knowledge')}</h3>
         <ul>
-          <li>Policies</li>
-          <li>Reporting</li>
-          <li>Team context</li>
+          <li>{t('Policies')}</li>
+          <li>{t('Reporting')}</li>
+          <li>{t('Team context')}</li>
         </ul>
       </section>
 
       <span class="knowledge-flow-arrow" aria-hidden="true">→</span>
 
       <section class="knowledge-destination-column" aria-labelledby="knowledge-destinations-title">
-        <p class="product-label" id="knowledge-destinations-title">Available to</p>
+        <p class="product-label" id="knowledge-destinations-title">{t('Available to')}</p>
         <ul>
-          <li><span>01</span><strong>Chat</strong></li>
-          <li><span>02</span><strong>Finance Agent</strong></li>
-          <li><span>03</span><strong>Reporting workflow</strong></li>
+          <li><span>01</span><strong>{t('Chat')}</strong></li>
+          <li><span>02</span><strong>{t('Finance Agent')}</strong></li>
+          <li><span>03</span><strong>{t('Reporting workflow')}</strong></li>
         </ul>
       </section>
     </div>
   </div>
   <figcaption id="knowledge-workspace-caption" class="visually-hidden">
-    {statement}{' '}{caption}
+    {t(statement)}{' '}{t(caption)}
   </figcaption>
 </figure>

@@ -37,6 +37,8 @@
 - No unexplained regression in loading, interaction, or layout stability
 - Titles, descriptions, canonical URLs, social metadata, structured data, sitemap, and robots
 - Correct production origin and no accidental noindex
+- Use $enterprise-ai-seo for same-language canonicals, reciprocal alternate groups, exclusions, and
+  root/project-path output. Use $enterprise-ai-localization for complete page and interaction parity.
 
 ## Security and operations
 
@@ -46,6 +48,12 @@
 - Form/CRM ownership, monitoring, alerting, rollback, and incident contact verified when configured
 
 ## Decision rules
+
+Save a dated release report in `docs/audits/` identifying the candidate revision and target
+environment. A temporary noindex synthetic preview may be ready while production remains blocked;
+state that scope explicitly without treating preview checks as production approval. Record any
+post-push hosted-artifact check as a follow-up until the actual workflow and deployed page are
+verified. Never silently waive failed gates or turn missing external-service access into a pass.
 
 - READY: all critical surfaces verified and no unresolved findings.
 - READY WITH DOCUMENTED P3 FOLLOW-UPS: only owned P3 issues remain.

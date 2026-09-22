@@ -38,3 +38,8 @@ Every finding must include:
 9. Final decision: PASS or BLOCKED
 
 PASS requires no unresolved P0-P2. A command that was not run cannot be reported as passing.
+
+Use [the report template](report-template.md) for a new audit. Replace its prompts with actual
+evidence; omit only inapplicable rows with a reason. Localized layout review must record page pairs,
+states, viewport dimensions, wrapping/overlap findings, and first-screen conversion. Snapshot
+generation, route status, or overflow assertions alone are insufficient.

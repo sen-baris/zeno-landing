@@ -1,0 +1,130 @@
+---
+import type { Locale } from '../../lib/i18n/locales';
+import { createPageLocale } from '../../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
+import BusinessCaseCalculator from '../islands/BusinessCaseCalculator';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { claimRegistry } from '../../lib/claims/registry';
+import { createPageClaimResolver } from '../../lib/i18n/de-claims';
+const resolveApprovedClaims = createPageClaimResolver(locale);
+import { pricingPageContent } from '../../lib/content/pricing';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
+
+const resolvePricingClaim = (id: string, surface: string) =>
+  resolveApprovedClaims(claimRegistry, [id], surface)[0]!;
+
+const metadataClaim = resolvePricingClaim(pricingPageContent.metadata.claimId, 'pricing.metadata');
+const titleClaim = resolvePricingClaim(pricingPageContent.hero.titleClaimId, 'pricing.hero');
+const summaryClaim = resolvePricingClaim(pricingPageContent.hero.summaryClaimId, 'pricing.hero');
+const calculatorTitleClaim = resolvePricingClaim(
+  pricingPageContent.calculator.titleClaimId,
+  'pricing.calculator',
+);
+const calculatorPilotClaim = resolvePricingClaim(
+  pricingPageContent.calculator.pilotClaimId,
+  'pricing.calculator',
+);
+const calculatorDisclaimerClaim = resolvePricingClaim(
+  pricingPageContent.calculator.disclaimerClaimId,
+  'pricing.calculator',
+);
+const calculatorPrivacyClaim = resolvePricingClaim(
+  pricingPageContent.calculator.privacyClaimId,
+  'pricing.calculator',
+);
+const enterpriseOfferClaim = resolvePricingClaim(
+  pricingPageContent.enterprise.offerClaimId,
+  'pricing.enterprise',
+);
+const enterpriseTitleClaim = resolvePricingClaim(
+  pricingPageContent.enterprise.titleClaimId,
+  'pricing.enterprise',
+);
+const enterpriseSummaryClaim = resolvePricingClaim(
+  pricingPageContent.enterprise.summaryClaimId,
+  'pricing.enterprise',
+);
+const seo = createLocalizedSeo({ kind: 'static', key: 'pricing' }, locale);
+interface Props {
+  locale: Locale;
+}
+---
+
+<BaseLayout
+  title={t('Business case and enterprise pricing | Zeno')}
+  description={t(metadataClaim.statement)}
+  seo={seo}
+  pageClass="pricing-page"
+>
+  <section class="pricing-hero section-rule" aria-labelledby="pricing-page-title">
+    <div class="shell pricing-hero-grid">
+      <div class="pricing-hero-copy">
+        <p class="eyebrow">{t(pricingPageContent.hero.eyebrow)}</p>
+        <h1 id="pricing-page-title">{t(titleClaim.statement)}</h1>
+        <p>{t(summaryClaim.statement)}</p>
+        <a class="button button-primary" href={withBase('/demo')}>
+          {t(pricingPageContent.hero.primaryAction)}
+        </a>
+      </div>
+
+      <div class="pricing-calculator-column">
+        <script is:inline>
+          document.documentElement.classList.add('has-pricing-calculator');
+        </script>
+        <BusinessCaseCalculator
+          locale={locale}
+          client:load
+          title={t(calculatorTitleClaim.statement)}
+          pilotStatement={t(calculatorPilotClaim.statement)}
+          pilotMethod={t(pricingPageContent.calculator.fallbackPilotMethod)}
+          disclaimer={t(calculatorDisclaimerClaim.statement)}
+          privacyStatement={t(calculatorPrivacyClaim.statement)}
+        />
+        <noscript>
+          <div class="pricing-calculator-fallback">
+            <p class="product-label">{t('Calculation method')}</p>
+            <h2>{t(pricingPageContent.calculator.fallbackTitle)}</h2>
+            <p>{t(pricingPageContent.calculator.fallbackMethod)}</p>
+            <p>{t(pricingPageContent.calculator.fallbackPilotMethod)}</p>
+            <p>{t(calculatorDisclaimerClaim.statement)}</p>
+            <a class="button button-primary" href={withBase('/demo')}>
+              {t(pricingPageContent.calculator.fallbackAction)}
+            </a>
+          </div>
+        </noscript>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing-enterprise-close section-rule" aria-labelledby="pricing-enterprise-title">
+    <div class="shell pricing-enterprise-grid">
+      <header>
+        <div class="pricing-enterprise-labels">
+          <p class="eyebrow">{t(pricingPageContent.enterprise.eyebrow)}</p>
+          <p class="product-label">{t(enterpriseOfferClaim.statement)}</p>
+        </div>
+        <h2 id="pricing-enterprise-title">{t(enterpriseTitleClaim.statement)}</h2>
+        <p>{t(enterpriseSummaryClaim.statement)}</p>
+        <a class="button button-paper" href={withBase(pricingPageContent.enterprise.actionHref)}>
+          {t(pricingPageContent.enterprise.action)}
+        </a>
+      </header>
+
+      <ol class="pricing-scope-list">
+        {
+          pricingPageContent.enterprise.scopePrompts.map((prompt) => (
+            <li>
+              <span>{t(prompt.number)}</span>
+              <div>
+                <p class="product-label">{t(prompt.label)}</p>
+                <p>{t(prompt.question)}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</BaseLayout>

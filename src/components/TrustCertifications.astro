@@ -1,8 +1,14 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import type { CertificationAsset } from '../lib/claims/certification-assets';
 import type { ClaimRecord } from '../lib/claims/types';
 
 interface Props {
+  locale: Locale;
   certifications: readonly ClaimRecord[];
   assets: readonly CertificationAsset[];
   trustCenterUrl: string;
@@ -24,18 +30,16 @@ const attributions = [...new Set(certifications.map((claim) => claim.attribution
 
 <section class="trust-certifications" data-reveal aria-labelledby="certifications-title">
   <div class="trust-certifications-head">
-    <p class="product-label" id="certifications-title">Independently audited security</p>
+    <p class="product-label" id="certifications-title">{t('Independently audited security')}</p>
     <a
       class="text-link trust-center-link"
       href={trustCenterUrl}
       target="_blank"
       rel="noopener noreferrer"
     >
-      Open the trust center<span class="visually-hidden"> (opens in a new tab)</span><span
-        aria-hidden="true"
-      >
-        ↗</span
-      >
+      {t('Open the trust center')}<span class="visually-hidden">
+        {t('(opens in a new tab)')}</span
+      ><span aria-hidden="true"> ↗</span>
     </a>
   </div>
 
@@ -47,15 +51,19 @@ const attributions = [...new Set(certifications.map((claim) => claim.attribution
             <path d="M16 2.6 27.4 7v9.2c0 6.4-4.5 11.6-11.4 13.8C9.1 27.8 4.6 22.6 4.6 16.2V7Z" />
             <path class="certification-check" d="m11 16.2 3.6 3.6 6.8-7.2" />
           </svg>
-          <h3>{label}</h3>
-          <p>{claim.statement}</p>
+          <h3>{t(label)}</h3>
+          <p>{t(claim.statement)}</p>
         </li>
       ))
     }
   </ul>
 
   <p class="certification-attribution">
-    {attributions.join(' ')} The certificates themselves, along with the audit reports and the list of
-    subprocessors, are in the trust center.
+    {t(attributions.join(' '))}
+    {
+      t(
+        'The certificates themselves, along with the audit reports and the list of subprocessors, are in the trust center.',
+      )
+    }
   </p>
 </section>

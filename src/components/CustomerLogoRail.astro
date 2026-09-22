@@ -1,10 +1,15 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
 import type { CustomerLogoAsset } from '../lib/claims/customer-logo-assets';
 import type { ClaimRecord } from '../lib/claims/types';
 import type { CustomerStoryDraft, CustomerVoice } from '../lib/content/customer-stories';
-import { withBase } from '../lib/routing/base-path';
 
 interface Props {
+  locale: Locale;
   logos: readonly CustomerLogoAsset[];
   audiences: readonly string[];
   proof: readonly ClaimRecord[];
@@ -43,13 +48,13 @@ const voiceByLogoClaimId = new Map(
       variant === 'proof' ? (
         <>
           <header class="customer-proof-intro">
-            <p class="eyebrow">Customer stories</p>
-            <h2 id="customer-proof-title">AI becomes useful when people keep using it.</h2>
+            <p class="eyebrow">{t('Customer stories')}</p>
+            <h2 id="customer-proof-title">{t('AI becomes useful when people keep using it.')}</h2>
           </header>
           {anonymousVoices.length > 0 && (
-            <div class="customer-voice-grid" aria-label="Customer perspectives">
+            <div class="customer-voice-grid" aria-label={t('Customer perspectives')}>
               {anonymousVoices.map((voice) => (
-                <figure class="customer-quote">
+                <figure class="customer-quote" lang="en">
                   <blockquote>
                     <p>“{voice.excerpt}”</p>
                   </blockquote>
@@ -58,7 +63,7 @@ const voiceByLogoClaimId = new Map(
               ))}
             </div>
           )}
-          <ul class="customer-logo-list customer-proof-grid" aria-label="Customer logos">
+          <ul class="customer-logo-list customer-proof-grid" aria-label={t('Customer logos')}>
             {logos.map((logo) => {
               const story = storyByLogoClaimId.get(logo.claimId);
               const voice = voiceByLogoClaimId.get(logo.claimId);
@@ -73,13 +78,13 @@ const voiceByLogoClaimId = new Map(
                         <span class="customer-proof-logo">
                           <img
                             src={withBase(logo.src)}
-                            alt={logo.name}
+                            alt={t(logo.name)}
                             loading="eager"
                             decoding="async"
                           />
                         </span>
                         <span class="customer-proof-control">
-                          {story ? 'Case study' : 'Quote'}
+                          {t(story ? 'Case study' : 'Quote')}
                           <span aria-hidden="true" class="customer-proof-symbol">
                             +
                           </span>
@@ -87,15 +92,15 @@ const voiceByLogoClaimId = new Map(
                       </summary>
                       <div class="customer-proof-panel">
                         <p class="product-label">
-                          {story ? 'Customer story' : 'Customer perspective'}
+                          {t(story ? 'Customer story' : 'Customer perspective')}
                         </p>
                         {story ? (
-                          <h3>{story.title}</h3>
+                          <h3>{t(story.title)}</h3>
                         ) : (
-                          <h3>Why one familiar workspace matters.</h3>
+                          <h3>{t('Why one familiar workspace matters.')}</h3>
                         )}
                         {voice && (
-                          <figure>
+                          <figure lang="en">
                             <blockquote>
                               <p>“{voice.excerpt}”</p>
                             </blockquote>
@@ -104,8 +109,8 @@ const voiceByLogoClaimId = new Map(
                         )}
                         {highlight && (
                           <p class="customer-proof-highlight">
-                            <strong>{highlight.value}</strong>
-                            <span>{highlight.label}</span>
+                            <strong>{t(highlight.value)}</strong>
+                            <span>{t(highlight.label)}</span>
                           </p>
                         )}
                         {story && (
@@ -113,7 +118,8 @@ const voiceByLogoClaimId = new Map(
                             class="customer-proof-link"
                             href={withBase(`/customers/${story.slug}`)}
                           >
-                            Read customer story <span aria-hidden="true">→</span>
+                            {' '}
+                            {t('Read customer story')} <span aria-hidden="true">→</span>
                           </a>
                         )}
                       </div>
@@ -123,7 +129,7 @@ const voiceByLogoClaimId = new Map(
                       <span class="customer-proof-logo">
                         <img
                           src={withBase(logo.src)}
-                          alt={logo.name}
+                          alt={t(logo.name)}
                           loading="eager"
                           decoding="async"
                         />
@@ -139,14 +145,15 @@ const voiceByLogoClaimId = new Map(
         <>
           <div class="customer-proof-heading">
             <p class="eyebrow" id="customer-proof-title">
-              In good company
+              {' '}
+              {t('In good company')}{' '}
             </p>
-            <p>{intro}</p>
+            <p>{t(intro)}</p>
           </div>
-          <ul class="customer-logo-list" data-reveal aria-label="Customer logos">
+          <ul class="customer-logo-list" data-reveal aria-label={t('Customer logos')}>
             {logos.map((logo) => (
               <li data-logo={logo.claimId}>
-                <img src={withBase(logo.src)} alt={logo.name} loading="eager" decoding="async" />
+                <img src={withBase(logo.src)} alt={t(logo.name)} loading="eager" decoding="async" />
               </li>
             ))}
           </ul>
@@ -155,18 +162,18 @@ const voiceByLogoClaimId = new Map(
     }
     {
       proof.length > 0 && (
-        <div class="approved-proof" aria-label="Approved Zeno evidence">
+        <div class="approved-proof" aria-label={t('Approved Zeno evidence')}>
           {proof.map((claim) => (
             <p>
-              <span>{claim.category}</span>
-              {claim.statement}
-              {claim.attribution && <small>{claim.attribution}</small>}
+              <span>{t(claim.category)}</span>
+              {t(claim.statement)}
+              {claim.attribution && <small>{t(claim.attribution)}</small>}
             </p>
           ))}
         </div>
       )
     }
-    <span class="visually-hidden">Audience: {audiences.join(', ')}</span>
+    <span class="visually-hidden">{t('Audience:')} {t(audiences.join(', '))}</span>
   </div>
 </section>
 

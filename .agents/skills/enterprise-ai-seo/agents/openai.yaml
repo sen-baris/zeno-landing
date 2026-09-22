@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI SEO"
+  short_description: "Maintain canonical and localized search routes"
+  default_prompt: "Use $enterprise-ai-seo to verify this route, its localized metadata, and its sitemap eligibility."

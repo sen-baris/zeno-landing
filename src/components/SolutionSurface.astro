@@ -1,8 +1,14 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import { stepLabels, verdictLabels } from '../lib/content/solution-surfaces';
 import type { SolutionSurface } from '../lib/content/solution-surfaces';
 
 interface Props {
+  locale: Locale;
   surface: SolutionSurface;
   /** The agent the surface belongs to, shown in the frame bar. */
   agent: string;
@@ -38,9 +44,9 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
 <div class="solution-surface product-frame" data-surface={surface.kind} aria-hidden="true">
   <div class="product-frame-bar">
     <div>
-      <span>{agent}</span>
+      <span>{t(agent)}</span>
     </div>
-    <span class="product-frame-status">{statuses[surface.kind]}</span>
+    <span class="product-frame-status">{t(statuses[surface.kind])}</span>
   </div>
 
   {
@@ -50,20 +56,20 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
           {surface.kind === 'workflow' && (
             <p class="surface-applied">
               <span class="surface-chip" data-chip="workflow">
-                {surface.workflow}
+                {t(surface.workflow)}
               </span>
               <span class="surface-chip">
-                {surface.field.label}: {surface.field.value}
+                {t(surface.field.label)}: {t(surface.field.value)}
               </span>
             </p>
           )}
 
           <div class="surface-message">
-            <p>{surface.kind === 'workflow' ? surface.prompt : surface.ask}</p>
+            <p>{t(surface.kind === 'workflow' ? surface.prompt : surface.ask)}</p>
             {surface.kind === 'workflow' && (
               <ul class="surface-files">
                 {surface.files.map((file) => (
-                  <li>{file}</li>
+                  <li>{t(file)}</li>
                 ))}
               </ul>
             )}
@@ -72,15 +78,15 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
           {surface.kind === 'workflow' ? (
             <p class="surface-working">
               <span class="surface-spark" />
-              {surface.reply}
+              {t(surface.reply)}
             </p>
           ) : (
             <div class="surface-reply">
-              <p class="surface-answer">{surface.answer}</p>
-              <p class="product-label">From</p>
+              <p class="surface-answer">{t(surface.answer)}</p>
+              <p class="product-label">{t('From')}</p>
               <ul class="surface-cites">
                 {surface.cites.map((cite) => (
-                  <li>{cite}</li>
+                  <li>{t(cite)}</li>
                 ))}
               </ul>
             </div>
@@ -88,8 +94,8 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
         </div>
 
         <p class="surface-composer">
-          <span class="surface-composer-field">Ask anything</span>
-          <span class="surface-model">Approved provider</span>
+          <span class="surface-composer-field">{t('Ask anything')}</span>
+          <span class="surface-model">{t('Approved provider')}</span>
           <span class="surface-send">
             <svg viewBox="0 0 16 16" focusable="false">
               <path d="M8 12.5V3.5M4.2 7.3 8 3.5l3.8 3.8" />
@@ -104,15 +110,15 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
     surface.kind === 'automation' && (
       <div class="surface-body surface-automation">
         <p class="surface-workflow-name">
-          <span class="product-label">Runs</span>
-          {surface.run}
+          <span class="product-label">{t('Runs')}</span>
+          {t(surface.run)}
         </p>
-        <p class="surface-trigger">{surface.trigger}</p>
+        <p class="surface-trigger">{t(surface.trigger)}</p>
         <ol class="surface-steps">
           {surface.steps.map((step) => (
             <li data-state={step.state}>
-              <span class="surface-step-title">{step.title}</span>
-              <span class="surface-step-state">{stepLabels[step.state]}</span>
+              <span class="surface-step-title">{t(step.title)}</span>
+              <span class="surface-step-state">{t(stepLabels[step.state])}</span>
             </li>
           ))}
         </ol>
@@ -124,20 +130,20 @@ const isChat = surface.kind === 'assistant' || surface.kind === 'workflow';
     surface.kind === 'result' && (
       <div class="surface-body surface-result">
         <p class="surface-workflow-name">
-          <span class="product-label">Draft</span>
-          {surface.document}
+          <span class="product-label">{t('Draft')}</span>
+          {t(surface.document)}
         </p>
         <ul class="surface-findings">
           {surface.findings.map((finding) => (
             <li data-verdict={finding.verdict}>
-              <span class="surface-finding-label">{finding.label}</span>
-              <span class="surface-finding-verdict">{verdictLabels[finding.verdict]}</span>
+              <span class="surface-finding-label">{t(finding.label)}</span>
+              <span class="surface-finding-verdict">{t(verdictLabels[finding.verdict])}</span>
             </li>
           ))}
         </ul>
         <p class="surface-actions surface-result-foot">
-          <span>{surface.status}</span>
-          <span class="review-action">Open for review</span>
+          <span>{t(surface.status)}</span>
+          <span class="review-action">{t('Open for review')}</span>
         </p>
       </div>
     )

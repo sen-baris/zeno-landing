@@ -58,3 +58,12 @@ Use the relevant sections; do not treat the checklist as a substitute for reason
 - Remove dead paths and obsolete flags within scope.
 - Document only non-obvious constraints and decisions.
 - Keep tests beside the behavior they protect.
+
+## Localized page parity
+
+- English and German use the same page composition, visual components, and interaction code. Locale routes select content and SEO, not a reduced template.
+- Require complete translated copy. Missing keys must fail the build; do not fall back to English or omit sections.
+- Keep route keys, anchors, and animation stages independent of translated labels. Store emphasis as structured copy instead of splitting an English phrase.
+- Resolve factual translations against real source claim IDs and approved exact wording. Editing a catalog must not grant approval automatically.
+- Compare every page pair for section order, visual and semantic coverage, localized destinations, and disclosure behavior. Check text wrapping and first-screen conversion, not only document overflow.
+- Verify pinned sequences in both languages, including reverse scroll, keyboard paging, resize, enlarged text, reduced motion, and no JavaScript. If content cannot fit a pinned scene, render the complete static scene.

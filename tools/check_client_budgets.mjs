@@ -6,6 +6,10 @@ const routes = [
   { route: '/product', html: 'dist/product/index.html', budget: 75 * 1024 },
   { route: '/pricing', html: 'dist/pricing/index.html', budget: 150 * 1024 },
   { route: '/demo', html: 'dist/demo/index.html', budget: 150 * 1024 },
+  { route: '/de/', html: 'dist/de/index.html', budget: 75 * 1024 },
+  { route: '/de/produkt', html: 'dist/de/produkt/index.html', budget: 75 * 1024 },
+  { route: '/de/business-case', html: 'dist/de/business-case/index.html', budget: 150 * 1024 },
+  { route: '/de/demo', html: 'dist/de/demo/index.html', budget: 150 * 1024 },
 ];
 
 let failed = false;

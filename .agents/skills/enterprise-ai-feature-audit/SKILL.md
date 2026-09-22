@@ -13,6 +13,8 @@ Audit the completed change as a skeptical senior reviewer. Passing implementatio
 2. Map the behavior across ownership, feedback, failure radius, and timing.
 3. Identify affected users, viewports, input methods, content claims, integrations, and neighboring behavior.
 4. Run the targeted verification that the implementer reports, then inspect beyond its happy path.
+5. Review affected language pairs with $enterprise-ai-localization and routing/metadata changes
+   with $enterprise-ai-seo. Shared changes require checking English for regressions too.
 
 ## Challenge the change
 
@@ -29,5 +31,10 @@ Audit the completed change as a skeptical senior reviewer. Passing implementatio
 Record every issue using the standard finding contract and severity scale. Reproduce it before changing code. Fix findings inside the authorized scope, add regression coverage, and rerun the smallest relevant checks followed by the affected suite.
 
 Do not declare completion with an unresolved P0, P1, or P2. A P3 may be deferred only with its impact, owner, and follow-up recorded. Report zero findings only when the audit evidence supports it.
+
+Save the report in `docs/audits/YYYY-MM-DD-topic-audit.md`, even when there are no findings. Use
+the template linked from the audit contract. Include the exact tested scope, commands and results,
+reviewed visual states, limitations, and final PASS or BLOCKED. Reused evidence must identify its
+revision and explain why it is still applicable. Re-run affected checks after the last relevant edit.
 
 Read [references/audit-contract.md](references/audit-contract.md) before recording or resolving findings.

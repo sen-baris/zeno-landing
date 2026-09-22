@@ -1,7 +1,13 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import type { SolutionJourneyStep, SolutionWorkspace } from '../lib/content/solutions';
 
 interface Props {
+  locale: Locale;
   journey: readonly SolutionJourneyStep[];
   workspace: SolutionWorkspace;
   startingPointStatement: string;
@@ -12,14 +18,14 @@ const { journey, workspace, startingPointStatement, hostingStatement } = Astro.p
 ---
 
 <div class="solution-product-story">
-  <ol class="solution-journey" aria-label="How the product supports this work">
+  <ol class="solution-journey" aria-label={t('How the product supports this work')}>
     {
       journey.map((step, index) => (
         <li data-step={step.id}>
-          <span class="solution-journey-number">{String(index + 1).padStart(2, '0')}</span>
+          <span class="solution-journey-number">{t(String(index + 1).padStart(2, '0'))}</span>
           <div>
-            <h2>{step.title}</h2>
-            <p>{step.id === 'agent' ? startingPointStatement : step.description}</p>
+            <h2>{t(step.title)}</h2>
+            <p>{t(step.id === 'agent' ? startingPointStatement : step.description)}</p>
           </div>
         </li>
       ))
@@ -30,50 +36,50 @@ const { journey, workspace, startingPointStatement, hostingStatement } = Astro.p
     <div class="solution-workspace-frame product-frame" aria-hidden="true">
       <div class="product-frame-bar solution-workspace-bar">
         <div>
-          <span>Governed workspace</span>
+          <span>{t('Governed workspace')}</span>
         </div>
-        <span class="product-frame-status">{workspace.agent}</span>
+        <span class="product-frame-status">{t(workspace.agent)}</span>
       </div>
 
       <div class="solution-workspace-grid">
         <section class="solution-workspace-context">
-          <p class="product-label">Company context</p>
+          <p class="product-label">{t('Company context')}</p>
           <ul>
-            {workspace.contextSources.map((source) => <li>{source}</li>)}
+            {workspace.contextSources.map((source) => <li>{t(source)}</li>)}
           </ul>
         </section>
 
         <span class="solution-workspace-arrow" aria-hidden="true">→</span>
 
         <section class="solution-workspace-agent">
-          <p class="solution-starting-point">Prebuilt or custom</p>
-          <p class="product-label">Agent</p>
-          <h3>{workspace.agent}</h3>
-          <p>{workspace.task}</p>
+          <p class="solution-starting-point">{t('Prebuilt or custom')}</p>
+          <p class="product-label">{t('Agent')}</p>
+          <h3>{t(workspace.agent)}</h3>
+          <p>{t(workspace.task)}</p>
         </section>
 
         <span class="solution-workspace-arrow" aria-hidden="true">→</span>
 
         <section class="solution-workspace-result">
-          <p class="product-label">Reviewable work</p>
-          <h3>{workspace.resultTitle}</h3>
+          <p class="product-label">{t('Reviewable work')}</p>
+          <h3>{t(workspace.resultTitle)}</h3>
           <ul>
-            {workspace.resultItems.map((item) => <li>{item}</li>)}
+            {workspace.resultItems.map((item) => <li>{t(item)}</li>)}
           </ul>
           <p class="solution-workspace-review">
-            <span>Review</span>
-            <strong>{workspace.reviewer}</strong>
+            <span>{t('Review')}</span>
+            <strong>{t(workspace.reviewer)}</strong>
           </p>
         </section>
       </div>
 
       <div class="solution-workspace-controls">
-        <span>Knowledge access</span>
-        <span>Model choice</span>
-        <span>Human review</span>
-        <strong>{hostingStatement}</strong>
+        <span>{t('Knowledge access')}</span>
+        <span>{t('Model choice')}</span>
+        <span>{t('Human review')}</span>
+        <strong>{t(hostingStatement)}</strong>
       </div>
     </div>
-    <figcaption>{workspace.caption}</figcaption>
+    <figcaption>{t(workspace.caption)}</figcaption>
   </figure>
 </div>

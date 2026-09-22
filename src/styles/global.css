@@ -128,6 +128,42 @@ h1 {
   font-size: clamp(4.5rem, 7.7vw, 7.9rem);
 }
 
+/* German compounds need real word boundaries, not arbitrary clipping to a column. */
+html:lang(de) :is(h1, h2, h3, p, li, dd, a, span, button, strong) {
+  overflow-wrap: normal;
+  hyphens: auto;
+}
+
+html:lang(de) :is(.product-label, .eyebrow, .site-header, .footer-locale-switcher) {
+  hyphens: none;
+}
+
+html:lang(de) .hw-europe {
+  hyphens: none;
+  padding-left: 16px;
+}
+
+@media (min-width: 1101px) {
+  html:lang(de) :is(h1, h2, h3) {
+    /* Avoid tiny fragments in display headings; narrow layouts retain flexible native wrapping. */
+    hyphenate-limit-chars: 6 4 4;
+    -webkit-hyphenate-limit-before: 4;
+    -webkit-hyphenate-limit-after: 4;
+  }
+}
+
+@media (max-width: 560px) {
+  html:lang(de) main h1 {
+    font-size: clamp(2.65rem, 10.5vw, 3.3rem);
+    line-height: 1.04;
+  }
+
+  html:lang(de) main h2 {
+    font-size: clamp(2.15rem, 8.5vw, 2.8rem);
+    line-height: 1.08;
+  }
+}
+
 h2 {
   font-size: clamp(3.2rem, 5.25vw, 5.7rem);
 }
@@ -2369,7 +2405,6 @@ h2 {
 .adoption-partnership-scene {
   position: relative;
   min-height: 450px;
-  overflow: hidden;
   /* The chart-only scene previously reserved this breathing room through its minimum height. Keep
      the non-pinned composition unchanged now that the heading lives in the same semantic scene. */
   padding-bottom: 40px;
@@ -5040,6 +5075,11 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     padding-block: 66px;
   }
 
+  .customer-story-quote blockquote p {
+    /* Leave room for original-language brand names when visitors enlarge the text. */
+    font-size: clamp(1.5rem, 7.5vw, 2rem);
+  }
+
   .customer-story-article-section {
     padding-block: 54px;
     gap: 28px;
@@ -5679,7 +5719,8 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     grid-template-columns: 1fr;
   }
 
-  .localized-page .split-heading {
+  .solution-work .split-heading,
+  .solution-walls .split-heading {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -6261,6 +6302,7 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 }
 
 .solution-index-go {
+  min-inline-size: 1em;
   color: var(--action);
   font-size: 1.2rem;
 }
@@ -7909,7 +7951,7 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
 
   .pricing-hero h1,
   .demo-conversion h1 {
-    font-size: clamp(3rem, 15vw, 4.2rem);
+    font-size: clamp(2.65rem, 12.5vw, 3.65rem);
   }
 
   .pricing-hero-copy > p:not(.eyebrow),

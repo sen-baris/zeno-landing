@@ -10,6 +10,10 @@ Use this guide together with [AGENTS.md](../AGENTS.md). AGENTS.md contains the b
 claims, accessibility, testing, and release rules. This guide explains how those rules apply to the
 site that exists today.
 
+For a concise step-by-step implementation and handoff process, use the
+[page-building playbook](page-building-playbook.md). It maps work to repository skills and shows
+how shared pages, localization, SEO, tests, and audits fit together.
+
 ## Five-minute orientation
 
 - **Primary goal:** turn enterprise interest into a business-case estimate or a prepared demo
@@ -148,6 +152,7 @@ Decorative behavior does not justify hydration.
 src/
   assets/                 Local image assets
   components/             Shared Astro components and product visuals
+  components/pages/       Complete locale-aware page compositions and page boundaries
   components/islands/     Narrow React interactions
   layouts/                Shared document shells
   lib/claims/              Approved public claims and resolvers
@@ -203,6 +208,10 @@ JSX. Do not make CSS or screenshots the only place a user can understand a produ
 The central localized route registry is `src/lib/i18n/routes.ts`. Internal links, canonicals,
 language switching, and the sitemap should resolve through it rather than reconstructing slugs in
 individual components.
+
+The route files are thin entry points. Complete section markup and claim/SEO resolution live in
+the locale-aware page compositions under `src/components/pages/`. Both English entry points and
+the German dispatcher render those same compositions.
 
 ## Content and claims governance
 
@@ -483,9 +492,30 @@ English is the unprefixed default locale. German uses `/de/` and localized slugs
 | English | Published | Self-canonical and indexable unless the whole deployment is preview. |
 | German  | Published | Self-canonical and indexable unless the whole deployment is preview. |
 
-German factual statements have separate approved claim records in `src/lib/i18n/de-claims.ts`. A
-production build validates their approval ownership and date before generating German routes.
-Changing locale status alone is never enough to publish a future locale.
+All 15 German nonlegal routes use the same page compositions as English in
+`src/components/pages/`. Route files select the locale, content reference, and SEO. They must not
+introduce shortened language-specific templates. Every section, visual, caption, interaction,
+and conversion destination needs a counterpart. The former shorter-page policy is retired.
+
+German copy lives in the typed `de-*-copy.ts` catalogs. `page-copy.ts` requires exact translations
+and fails on missing copy instead of falling back to English. Keep animation stage IDs and anchors
+stable. Visual emphasis uses structured copy, never a split on an English phrase.
+
+German factual approval is a reviewed snapshot in `src/lib/i18n/de-approved-claims.json`.
+`de-claims.ts` validates the real English source claim, its current approval, exact source and
+translated wording, and unchanged allowed surfaces at the page boundary. Customer article claims
+are reconstructed from the same section and result records the page renders. A catalog edit does
+not approve itself. Update a factual translation and its approval snapshot together only with
+explicit approval. Changing locale status alone is never enough to publish a future locale.
+
+Both homepage scroll stories use shared scripts and the same desktop eligibility rules. When
+larger text cannot fit inside a pinned scene, the complete static scene replaces it. Include
+forward and reverse scrolling, keyboard paging, font resizing, and no-JavaScript rendering in QA.
+The paired localization tests check all routes at 390, 768, 1101, and 1440px. Inspect actual word
+wrapping, overlap, and first-screen conversion as well as horizontal overflow.
+
+The [German parity audit](audits/2026-09-22-german-page-parity-audit.md) records the repaired
+omissions, exact verification scope, reviewed baselines, and unchanged release constraints.
 
 Language switching appears only in the footer and preserves the current page. German uses a
 neutral, direct voice without formal `Sie` or informal `du` address. The switcher has no preview,
@@ -508,6 +538,9 @@ approved German documents exist.
 - `x-default` points to English.
 - Both language versions emit the same reciprocal set.
 - Missing, draft, noindex, redirect, error, and untranslated legal routes do not emit hreflang.
+- That exclusion refers to individual content eligibility. The temporary globally noindex review
+  deployment retains alternate clusters for published content using its preview origin and base
+  so the generated structure remains testable. It is still not eligible for launch or indexing.
 - HTML head annotations are the only hreflang mechanism. Do not duplicate them in sitemap XML or
   HTTP headers.
 - No browser-language, cookie, or IP redirect is used.
@@ -542,6 +575,12 @@ The adapter must:
 - fetch and normalize content at build time.
 
 No CMS vendor or blog prefix has been selected. Do not introduce either speculatively.
+
+The dedicated [localization skill](../.agents/skills/enterprise-ai-localization/SKILL.md) owns the
+repeatable parity and translated-approval workflow. The [SEO skill](../.agents/skills/enterprise-ai-seo/SKILL.md)
+owns routing, publication, head metadata, sitemap, project-path checks, and the future CMS contract.
+Read both when expanding the language set. Adding an item to the locale array alone is not enough;
+current locale-specific route segments, copy branches, claims, and forms also need explicit support.
 
 ## Testing and quality gates
 
@@ -598,6 +637,13 @@ Do not update visual snapshots blindly. Inspect the rendered difference first, t
 baseline that represents an accepted visual change.
 
 Coverage floors are 90 percent for statements, lines, and functions, and 85 percent for branches.
+
+Every meaningful feature change requires a dated report under `docs/audits/` using the
+[feature-audit contract](../.agents/skills/enterprise-ai-feature-audit/references/audit-contract.md).
+Record tested revisions or changed-file scope, commands, page/state pairs, limitations, findings,
+and reruns. No unresolved P0-P2 is allowed at completion. Historic audit results are not automatic
+approval for a new revision. Skills and their references are validated by stdlib Python tests;
+the preview publishing job runs this governance check before uploading an artifact.
 
 ## Preview, production, and release
 

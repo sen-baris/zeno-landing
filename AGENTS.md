@@ -33,10 +33,16 @@ Use the following skills:
 - $enterprise-ai-testing whenever behavior, logic, interactions, forms, integrations, consent, analytics, navigation, accessibility, responsiveness, or regressions change.
 - $enterprise-ai-component-intake before copying, installing, adapting, or upgrading any external component, snippet, package, effect, or registry source.
 - $enterprise-ai-claims-and-content for public product, customer, metric, ROI, security, privacy, compliance, certification, comparison, metadata, or structured-data statements.
+- $enterprise-ai-localization for locale work and changes to shared pages, public copy, visuals, forms, or interactions consumed by multiple languages. Preserve full page parity, exact translated claim approval, and language-specific QA.
+- $enterprise-ai-seo for routes, slugs, localized metadata, canonicals, hreflang, sitemap, publication status, deployment origin or base paths, and future build-time content adapters.
 - $enterprise-ai-feature-audit after every meaningful feature, behavior change, refactor, integration, or bug fix and before declaring it complete.
 - $enterprise-ai-release-audit before any production deployment, public launch, or release-candidate approval.
 
 Read a triggered SKILL.md completely before acting. Read only its directly relevant references. If a skill blocks publication or release, report the missing evidence or failed gate rather than bypassing it.
+
+Use [the page-building playbook](docs/page-building-playbook.md) for the repeatable implementation
+and handoff sequence. Shared page compositions are the source of structural truth for every
+published language. A translation must not become a shorter page or lose visuals or interactions.
 
 ## Mandatory engineering workflow
 
@@ -63,6 +69,11 @@ Read a triggered SKILL.md completely before acting. Read only its directly relev
 6. Audit.
    - Run $enterprise-ai-feature-audit after the implementation passes its checks.
    - Reproduce findings, fix authorized P0-P2 findings, add regression evidence, and rerun affected checks.
+   - Save a dated report in `docs/audits/` with the reviewed revision or changed-file scope, commands,
+     environments, findings, reruns, and limitations. Historical reports are not evidence for new edits.
+   - For shared or localized UI, compare affected language pairs for content, visuals, interactions,
+     wrapping, and conversion placement. Route availability and no horizontal overflow alone do not
+     establish parity. Inspect visual changes before approving baselines.
 7. Report honestly.
    - Lead with the outcome.
    - List verification performed and anything not verified.
@@ -209,6 +220,9 @@ Run these checks whenever AGENTS.md, a skill, its metadata, its references, the 
 2. python3 -m unittest discover -s tests -p "test_agent_skills.py" -v
 
 The GitHub workflow must run the same checks. Keep governance validation dependent only on the Python standard library.
+The preview deployment must run governance validation before uploading its artifact, not merely
+rely on a separate workflow that may fail after publishing. A passing automation check does not
+replace the documented feature audit or the production release decision.
 
 ## Definition of done
 

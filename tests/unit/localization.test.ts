@@ -1,8 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { customerStoryDrafts } from '../../src/lib/content/customer-stories';
-import { solutions } from '../../src/lib/content/solutions';
 import {
   groupPublishedLocalizedContent,
   resolveLocalizedContentGroup,
@@ -11,13 +9,7 @@ import {
   assertGermanClaimsApprovedForPublication,
   germanLocalizedClaims,
 } from '../../src/lib/i18n/de-claims';
-import {
-  germanCustomerStories,
-  germanSolutions,
-  germanStaticPages,
-  getGermanCustomerStory,
-  getGermanSolution,
-} from '../../src/lib/i18n/de-content';
+import { germanPageCopy, translatePageText } from '../../src/lib/i18n/page-copy';
 import { businessCaseUiCopy, demoFormUiCopy } from '../../src/lib/i18n/forms';
 import { isLocale, isPublishedLocale, localeDefinitions } from '../../src/lib/i18n/locales';
 import {
@@ -276,9 +268,9 @@ describe('German claim publication gate', () => {
       germanLocalizedClaims.every(
         (claim) =>
           claim.sourceClaimId.length > 0 &&
-          claim.allowedSurface.startsWith('de.') &&
+          claim.allowedSurfaces.length > 0 &&
           claim.evidence.includes('2026-09-22') &&
-          claim.approvedBy === 'Baris, German publication direction' &&
+          claim.approvedBy === 'Baris, German parity direction' &&
           claim.approvedAt === '2026-09-22',
       ),
     ).toBe(true);
@@ -292,9 +284,7 @@ describe('German claim publication gate', () => {
     );
     const serialized = JSON.stringify({
       localeDefinitions,
-      germanStaticPages,
-      germanSolutions,
-      germanCustomerStories,
+      germanCopy: Object.values(germanPageCopy),
       businessCaseUiCopy,
       demoFormUiCopy,
       sharedUiCopy,
@@ -308,17 +298,10 @@ describe('German claim publication gate', () => {
     expect(publicGerman).not.toContain('—');
   });
 
-  it('resolves translated solution and customer records and rejects missing ones', () => {
-    expect(getGermanSolution(solutions[0]!)).toBe(germanSolutions.manufacturing);
-    expect(getGermanCustomerStory(customerStoryDrafts[0]!)).toBe(germanCustomerStories.atares);
-    expect(() => getGermanSolution({ ...solutions[0]!, slug: 'missing' })).toThrow(
-      /Missing German solution/,
+  it('requires exact translated page copy instead of silently omitting content', () => {
+    expect(translatePageText('de', 'Customer context')).toBe('Kundenkontext');
+    expect(() => translatePageText('de', 'Missing page translation')).toThrow(
+      /Missing German page copy/,
     );
-    expect(() =>
-      getGermanCustomerStory({
-        ...customerStoryDrafts[0]!,
-        slug: 'missing',
-      }),
-    ).toThrow(/Missing German customer story/);
   });
 });

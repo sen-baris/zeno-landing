@@ -1,4 +1,9 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 interface SecurityWorkspaceControl {
   id: string;
   label: string;
@@ -6,6 +11,7 @@ interface SecurityWorkspaceControl {
 }
 
 interface Props {
+  locale: Locale;
   caption: string;
   controls: readonly SecurityWorkspaceControl[];
 }
@@ -17,34 +23,34 @@ const { caption, controls } = Astro.props;
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
-        <span>Administration</span>
+        <span>{t('Administration')}</span>
       </div>
-      <span class="product-frame-status">Governed workspace</span>
+      <span class="product-frame-status">{t('Governed workspace')}</span>
     </div>
 
     <div class="security-workspace-body">
       <div class="security-workspace-context" aria-hidden="true">
-        <span class="product-label">Company context</span>
+        <span class="product-label">{t('Company context')}</span>
         <div class="security-context-core">
           <svg viewBox="0 0 88 88" focusable="false">
             <path d="M44 5 75 17v25c0 17-12.2 31.5-31 37.5C25.2 73.5 13 59 13 42V17Z"></path>
             <path class="security-context-check" d="m30 43 9 9 19-21"></path>
           </svg>
-          <strong>Protected workspace</strong>
-          <span>Knowledge, agents and models</span>
+          <strong>{t('Protected workspace')}</strong>
+          <span>{t('Knowledge, agents and models')}</span>
         </div>
       </div>
 
-      <ol class="security-workspace-controls" aria-label="Governed workspace controls">
+      <ol class="security-workspace-controls" aria-label={t('Governed workspace controls')}>
         {
           controls.map((control, index) => (
             <li data-security-control={control.id}>
-              <span class="security-control-index">{String(index + 1).padStart(2, '0')}</span>
+              <span class="security-control-index">{t(String(index + 1).padStart(2, '0'))}</span>
               <div>
-                <h3>{control.label}</h3>
-                <p>{control.statement}</p>
+                <h3>{t(control.label)}</h3>
+                <p>{t(control.statement)}</p>
               </div>
-              <span class="security-control-state">Set</span>
+              <span class="security-control-state">{t('Set')}</span>
             </li>
           ))
         }

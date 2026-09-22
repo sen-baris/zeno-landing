@@ -9,6 +9,12 @@ public claims, customer proof, security content, legal text, forms, localization
 configuration. It is the practical handover for the current site and records the design and content
 decisions behind the implementation.
 
+For day-to-day work, use the [page-building playbook](./docs/page-building-playbook.md). The
+repository includes dedicated [localization](./.agents/skills/enterprise-ai-localization/SKILL.md)
+and [SEO](./.agents/skills/enterprise-ai-seo/SKILL.md) skills, plus shared development, testing, claims,
+and audit skills registered in AGENTS.md. They preserve full English/German page parity and a
+repeatable, documented verification process for the next maintainer or agent.
+
 The current GitHub Pages deployment is temporary demo infrastructure. Product-team migration tasks
 are tracked in the [handover checklist](./docs/product-team-handover-checklist.md).
 

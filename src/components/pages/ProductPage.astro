@@ -1,0 +1,168 @@
+---
+import type { Locale } from '../../lib/i18n/locales';
+import { createPageLocale } from '../../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GovernanceConsole from '../GovernanceConsole.astro';
+import KnowledgeWorkspace from '../KnowledgeWorkspace.astro';
+import PlatformOverview from '../PlatformOverview.astro';
+import ProductWorkspace from '../ProductWorkspace.astro';
+import { claimRegistry } from '../../lib/claims/registry';
+import { createPageClaimResolver } from '../../lib/i18n/de-claims';
+const resolveApprovedClaims = createPageClaimResolver(locale);
+import { productPageContent, productSurfaces } from '../../lib/content/product';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
+
+const resolveProductClaim = (id: string, surface: string) =>
+  resolveApprovedClaims(claimRegistry, [id], surface)[0]!;
+
+const metadataClaim = resolveProductClaim(productPageContent.metadata.claimId, 'product.metadata');
+const introTitleClaim = resolveProductClaim(productPageContent.intro.titleClaimId, 'product.hero');
+const introClaim = resolveProductClaim(productPageContent.intro.claimId, 'product.hero');
+const modelHostingClaim = resolveProductClaim(
+  productPageContent.intro.modelHostingClaimId,
+  'product.hero',
+);
+const heroGovernanceClaim = resolveProductClaim(
+  productPageContent.intro.governanceClaimId,
+  'product.hero',
+);
+const resolvedSurfaces = productSurfaces.map((surface) => ({
+  ...surface,
+  statement: resolveProductClaim(surface.claimId, `product.${surface.id}`).statement,
+  caption: resolveProductClaim(surface.figureClaimId, `product.${surface.id}`).statement,
+}));
+const chatSurface = resolvedSurfaces[0]!;
+const knowledgeSurface = resolvedSurfaces[1]!;
+const agentStartingPointClaim = resolveProductClaim(
+  productPageContent.agentStartingPoint.claimId,
+  'product.hero',
+);
+const prebuiltExamplesClaim = resolveProductClaim(
+  productPageContent.agentStartingPoint.examplesClaimId,
+  'product.hero',
+);
+const governanceClaim = resolveProductClaim(
+  productPageContent.governance.claimId,
+  'product.governance',
+);
+const governanceHostingClaim = resolveProductClaim(
+  productPageContent.governance.hostingClaimId,
+  'product.governance',
+);
+const seo = createLocalizedSeo({ kind: 'static', key: 'product' }, locale);
+interface Props {
+  locale: Locale;
+}
+---
+
+<BaseLayout
+  title={t('Product | Zeno')}
+  description={t(metadataClaim.statement)}
+  seo={seo}
+  pageClass="product-page"
+>
+  <section class="page-intro product-intro section-rule" aria-labelledby="product-page-title">
+    <div class="shell">
+      <div class="product-intro-copy narrow-shell">
+        <p class="eyebrow">{t(productPageContent.intro.eyebrow)}</p>
+        <div class="product-hero-copy">
+          <h1 id="product-page-title">{t(introTitleClaim.statement)}</h1>
+          <div class="product-hero-summary">
+            <p>{t(introClaim.statement)}</p>
+            <p>{t(agentStartingPointClaim.statement)}</p>
+          </div>
+        </div>
+      </div>
+      <PlatformOverview
+        locale={locale}
+        platformStatement={introClaim.statement}
+        startingPointStatement={agentStartingPointClaim.statement}
+        examplesStatement={prebuiltExamplesClaim.statement}
+        agentExamples={productPageContent.agentStartingPoint.examples}
+        modelHostingStatement={modelHostingClaim.statement}
+        governanceStatement={heroGovernanceClaim.statement}
+      />
+    </div>
+  </section>
+
+  <section
+    class="product-surface product-surface-paper section-rule"
+    id={chatSurface.id}
+    aria-labelledby="product-chat-title"
+    data-product-surface={chatSurface.id}
+  >
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">{t(chatSurface.eyebrow)}</p>
+          <h2 id="product-chat-title">{t(chatSurface.title)}</h2>
+        </div>
+        <p>{t(chatSurface.statement)}</p>
+      </header>
+      <ProductWorkspace
+        locale={locale}
+        statement={chatSurface.statement}
+        caption={chatSurface.caption}
+      />
+    </div>
+  </section>
+
+  <section
+    class="product-surface section-rule"
+    id={knowledgeSurface.id}
+    aria-labelledby="product-knowledge-title"
+    data-product-surface={knowledgeSurface.id}
+  >
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">{t(knowledgeSurface.eyebrow)}</p>
+          <h2 id="product-knowledge-title">{t(knowledgeSurface.title)}</h2>
+        </div>
+        <p>{t(knowledgeSurface.statement)}</p>
+      </header>
+      <KnowledgeWorkspace
+        locale={locale}
+        statement={knowledgeSurface.statement}
+        caption={knowledgeSurface.caption}
+      />
+    </div>
+  </section>
+
+  <section class="product-governance section-rule" aria-labelledby="product-governance-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">{t(productPageContent.governance.eyebrow)}</p>
+          <h2 id="product-governance-title">{t(productPageContent.governance.title)}</h2>
+        </div>
+        <p>{t(governanceClaim.statement)}</p>
+      </header>
+      <GovernanceConsole
+        locale={locale}
+        statement={governanceClaim.statement}
+        hostingStatement={governanceHostingClaim.statement}
+      />
+    </div>
+  </section>
+
+  <section class="conversion" aria-labelledby="product-cta-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">{t(productPageContent.conversion.eyebrow)}</p>
+        <h2 id="product-cta-title">{t(productPageContent.conversion.title)}</h2>
+      </div>
+      <div>
+        <p>{t(productPageContent.conversion.description)}</p>
+        <div class="button-row">
+          <a class="button button-paper" href={withBase('/demo')}>{t('Book a demo')}</a>
+          <a class="button button-inverse" href={withBase('/pricing')}>{t('Assess AI readiness')}</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

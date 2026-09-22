@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise AI Localization"
+  short_description: "Preserve complete localized page parity"
+  default_prompt: "Use $enterprise-ai-localization to update this page in every published language and verify parity."

@@ -47,7 +47,7 @@ test('published language switcher lives in the footer and preserves the current 
     'https://heyzeno.com/de/produkt',
   );
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Enterprise AI im Unternehmenskontext.',
+    'KI, die das Unternehmen kennt.',
   );
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
   await expect(page.locator('link[rel="alternate"]')).toHaveCount(3);

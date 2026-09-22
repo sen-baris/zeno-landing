@@ -13,13 +13,16 @@ EXPECTED_SKILLS = (
     "enterprise-ai-claims-and-content",
     "enterprise-ai-component-intake",
     "enterprise-ai-feature-audit",
+    "enterprise-ai-localization",
     "enterprise-ai-release-audit",
+    "enterprise-ai-seo",
     "enterprise-ai-testing",
     "enterprise-ai-web-development",
 )
 
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MARKDOWN_LINK_PATTERN = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
+SKILL_REFERENCE_PATTERN = re.compile(r"\$(enterprise-ai-[a-z0-9]+(?:-[a-z0-9]+)*)")
 OUT_OF_SCOPE_DOMAIN_MARKERS = (
     "sector" + "-run",
     "game" + "play",
@@ -208,6 +211,10 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> tuple[str | None, list[s
         if marker in scoped_text:
             errors.append(f"{relative_dir}: contains out-of-scope domain marker '{marker}'")
 
+    for reference in sorted(set(SKILL_REFERENCE_PATTERN.findall(scoped_text))):
+        if reference not in EXPECTED_SKILLS:
+            errors.append(f"{relative_dir}: unknown skill reference '${reference}'")
+
     return declared_name, errors
 
 
@@ -221,6 +228,9 @@ def validate_agents_file(repo_root: Path) -> list[str]:
     for skill_name in EXPECTED_SKILLS:
         if f"${skill_name}" not in text:
             errors.append(f"AGENTS.md: missing registration for ${skill_name}")
+    for reference in sorted(set(SKILL_REFERENCE_PATTERN.findall(text))):
+        if reference not in EXPECTED_SKILLS:
+            errors.append(f"AGENTS.md: unknown skill reference '${reference}'")
     if "Skills-first rule" not in text:
         errors.append("AGENTS.md: missing the skills-first rule")
     lower_text = text.lower()

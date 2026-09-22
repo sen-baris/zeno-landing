@@ -1,10 +1,16 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import Glyph from './Glyph.astro';
 import SolutionSurface from './SolutionSurface.astro';
 import { featuredAgents, remainingAgents } from '../lib/content/solutions';
 import type { Solution } from '../lib/content/solutions';
 
 interface Props {
+  locale: Locale;
   solution: Solution;
 }
 
@@ -34,16 +40,16 @@ const remaining = remainingAgents(solution);
             <span class="solution-agent-mark">
               <Glyph name={agent.glyph} />
             </span>
-            <b>{agent.name}</b>
+            <b>{t(agent.name)}</b>
           </p>
-          <h3>{agent.does}</h3>
+          <h3>{t(agent.does)}</h3>
           <p class="solution-agent-from">
-            <span>Reads</span>
-            {agent.from}
+            <span>{t('Reads')}</span>
+            {t(agent.from)}
           </p>
         </div>
         <div class="solution-case-visual">
-          <SolutionSurface surface={agent.surface!} agent={agent.name} />
+          <SolutionSurface locale={locale} surface={agent.surface!} agent={agent.name} />
         </div>
       </article>
     ))
@@ -57,12 +63,12 @@ const remaining = remainingAgents(solution);
             <span class="solution-agent-mark">
               <Glyph name={agent.glyph} />
             </span>
-            <b>{agent.name}</b>
+            <b>{t(agent.name)}</b>
           </p>
-          <p class="solution-agent-does">{agent.does}</p>
+          <p class="solution-agent-does">{t(agent.does)}</p>
           <p class="solution-agent-from">
-            <span>Reads</span>
-            {agent.from}
+            <span>{t('Reads')}</span>
+            {t(agent.from)}
           </p>
         </li>
       ))

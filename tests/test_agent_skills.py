@@ -53,6 +53,53 @@ def write_valid_repository(root: Path) -> None:
 
 
 class AgentSkillValidatorTests(unittest.TestCase):
+    def test_localization_and_seo_are_required_registered_skills(self) -> None:
+        for name in ("enterprise-ai-localization", "enterprise-ai-seo"):
+            with self.subTest(skill=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                write_valid_repository(root)
+                self.assertIn(name, validator.EXPECTED_SKILLS)
+                self.assertEqual([], validator.validate_repository(root))
+                agents = root / "AGENTS.md"
+                agents.write_text(
+                    agents.read_text(encoding="utf-8").replace(f"- ${name}\n", ""),
+                    encoding="utf-8",
+                )
+                self.assertTrue(any(
+                    f"missing registration for ${name}" in error
+                    for error in validator.validate_repository(root)
+                ))
+
+    def test_rejects_unknown_skill_handoff_in_nested_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_valid_repository(root)
+            reference = root / ".agents/skills/enterprise-ai-localization/references/checklist.md"
+            reference.write_text("Use $enterprise-ai-nonexistent for the next step.\n", encoding="utf-8")
+            self.assertTrue(any(
+                "unknown skill reference '$enterprise-ai-nonexistent'" in error
+                for error in validator.validate_repository(root)
+            ))
+
+    def test_accepts_registered_cross_skill_handoffs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_valid_repository(root)
+            reference = root / ".agents/skills/enterprise-ai-localization/references/checklist.md"
+            reference.write_text("Use $enterprise-ai-seo and $enterprise-ai-feature-audit.\n", encoding="utf-8")
+            self.assertEqual([], validator.validate_repository(root))
+
+    def test_rejects_unknown_agents_handoff(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_valid_repository(root)
+            agents = root / "AGENTS.md"
+            agents.write_text(agents.read_text(encoding="utf-8") + "\nUse $enterprise-ai-absent.\n", encoding="utf-8")
+            self.assertTrue(any(
+                "AGENTS.md: unknown skill reference '$enterprise-ai-absent'" in error
+                for error in validator.validate_repository(root)
+            ))
+
     def test_current_repository_is_valid(self) -> None:
         self.assertEqual([], validator.validate_repository(REPO_ROOT))
 

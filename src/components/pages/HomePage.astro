@@ -1,0 +1,280 @@
+---
+import type { Locale } from '../../lib/i18n/locales';
+import { createPageLocale } from '../../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BusinessCase from '../BusinessCase.astro';
+import CustomerLogoRail from '../CustomerLogoRail.astro';
+import GovernedWorkspace from '../GovernedWorkspace.astro';
+import AdoptionPartnership from '../AdoptionPartnership.astro';
+import TrustCertifications from '../TrustCertifications.astro';
+import VisionStatement from '../VisionStatement.astro';
+import { businessCaseAssets } from '../../lib/claims/business-case-assets';
+import { certificationAssets } from '../../lib/claims/certification-assets';
+import { customerLogoAssets } from '../../lib/claims/customer-logo-assets';
+import {
+  claimRegistry,
+  homepageBusinessCaseClaimIds,
+  homepageCertificationClaimIds,
+  homepageCustomerProofVoiceClaimIds,
+  homepageCustomerLogoClaimIds,
+  homepageDeploymentClaimIds,
+  homepageHeroCapabilityClaimIds,
+  homepageProofClaimIds,
+  homepageTestimonialClaimIds,
+  trustCenterUrl,
+} from '../../lib/claims/registry';
+import { createPageClaimResolver } from '../../lib/i18n/de-claims';
+const resolveApprovedClaims = createPageClaimResolver(locale);
+import { audiences, draftHomeCopy, operatingShift } from '../../lib/content/site-content';
+import {
+  customerStoryDrafts,
+  customerVoiceDrafts,
+  getCustomerStoryPreviewClaimIds,
+  homepageCustomerProofLogoOrder,
+  resolveCustomerProofMode,
+  selectCustomerStoriesForMode,
+  type CustomerVoice,
+} from '../../lib/content/customer-stories';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
+
+const approvedProof = resolveApprovedClaims(claimRegistry, homepageProofClaimIds, 'home.proof');
+const approvedHeroCapabilityClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageHeroCapabilityClaimIds,
+  'home.hero',
+);
+const heroCapabilityById = new Map(approvedHeroCapabilityClaims.map((claim) => [claim.id, claim]));
+const agentStartingPointClaim = heroCapabilityById.get('home-agent-starting-point');
+if (!agentStartingPointClaim) {
+  throw new Error('The approved homepage agent starting-point claim is missing.');
+}
+const supportedStartingPathClaim = heroCapabilityById.get(draftHomeCopy.startingPathClaimId);
+if (!supportedStartingPathClaim) {
+  throw new Error('The approved homepage supported starting-path claim is missing.');
+}
+const approvedCertifications = resolveApprovedClaims(
+  claimRegistry,
+  homepageCertificationClaimIds,
+  'home.trust',
+);
+// One deployment fact, resolved the same way as everything else on this surface, so it cannot be
+// published without the record that approved it.
+const approvedDeployment = resolveApprovedClaims(
+  claimRegistry,
+  homepageDeploymentClaimIds,
+  'home.trust',
+);
+
+const approvedBusinessCase = resolveApprovedClaims(
+  claimRegistry,
+  homepageBusinessCaseClaimIds,
+  'home.business-case',
+);
+const approvedQuotes = resolveApprovedClaims(
+  claimRegistry,
+  homepageTestimonialClaimIds,
+  'home.testimonials',
+);
+const approvedCustomerProofVoiceClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageCustomerProofVoiceClaimIds,
+  'home.customer-proof',
+);
+const approvedCustomerLogoClaims = resolveApprovedClaims(
+  claimRegistry,
+  homepageCustomerLogoClaimIds,
+  'home.customer-logos',
+);
+const customerLogoByClaimId = new Map(customerLogoAssets.map((logo) => [logo.claimId, logo]));
+const approvedCustomerLogos = approvedCustomerLogoClaims.map((claim) => {
+  const logo = customerLogoByClaimId.get(claim.id);
+  if (!logo) throw new Error(`Approved customer logo asset "${claim.id}" is missing.`);
+  return logo;
+});
+const seo = createLocalizedSeo({ kind: 'static', key: 'home' }, locale);
+const contentMode = resolveCustomerProofMode();
+const customerStories = selectCustomerStoriesForMode(customerStoryDrafts, contentMode);
+for (const story of customerStories) {
+  resolveApprovedClaims(
+    claimRegistry,
+    getCustomerStoryPreviewClaimIds(story),
+    'home.customer-proof',
+  );
+}
+const customerVoiceDraftById = new Map(customerVoiceDrafts.map((voice) => [voice.id, voice]));
+const approvedCustomerVoices = approvedQuotes.map((quote): CustomerVoice => ({
+  id: quote.id,
+  excerpt: quote.statement,
+  attribution: quote.attribution,
+  approvalStatus: 'approved',
+}));
+const approvedLinkedCustomerVoices = approvedCustomerProofVoiceClaims.map(
+  (quote): CustomerVoice => {
+    const voice = customerVoiceDraftById.get(quote.id);
+    if (!voice?.logoClaimId) {
+      throw new Error(`Approved customer voice "${quote.id}" is missing its logo association.`);
+    }
+    return {
+      id: quote.id,
+      excerpt: quote.statement,
+      attribution: quote.attribution,
+      approvalStatus: 'approved',
+      logoClaimId: voice.logoClaimId,
+    };
+  },
+);
+const customerVoices = [...approvedCustomerVoices, ...approvedLinkedCustomerVoices];
+const customerLogoOrder = new Map<string, number>(
+  homepageCustomerProofLogoOrder.map((claimId, index) => [claimId, index]),
+);
+const homepageCustomerLogos = [...approvedCustomerLogos].sort(
+  (left, right) =>
+    (customerLogoOrder.get(left.claimId) ?? Number.MAX_SAFE_INTEGER) -
+    (customerLogoOrder.get(right.claimId) ?? Number.MAX_SAFE_INTEGER),
+);
+interface Props {
+  locale: Locale;
+}
+---
+
+<BaseLayout title={t(draftHomeCopy.title)} description={t(draftHomeCopy.description)} seo={seo}>
+  <section class="hero section-rule">
+    <div class="shell hero-layout">
+      <div class="hero-intro">
+        <div>
+          <h1>{t(draftHomeCopy.headline)}</h1>
+        </div>
+        <div class="hero-message">
+          <p class="hero-path-label">{t(draftHomeCopy.startingPathLabel)}</p>
+          <p class="hero-subhead">{t(supportedStartingPathClaim.statement)}</p>
+          <div class="hero-action" role="group" aria-label={t('Hero call to action')}>
+            <a class="button button-primary" href={withBase('/demo')}>{t('Book a demo')}</a>
+          </div>
+        </div>
+      </div>
+      <GovernedWorkspace locale={locale} buildStartingPoint={agentStartingPointClaim.statement} />
+    </div>
+  </section>
+
+  <CustomerLogoRail
+    locale={locale}
+    logos={homepageCustomerLogos}
+    audiences={audiences}
+    proof={approvedProof}
+    variant="proof"
+    stories={customerStories}
+    voices={customerVoices}
+  />
+
+  <section
+    class="business-case section-rule"
+    id="business-case"
+    aria-labelledby="business-case-title"
+  >
+    <div class="shell">
+      <header class="section-heading">
+        <p class="eyebrow">{t('Business case')}</p>
+        <h2 id="business-case-title">{t('What enterprises are seeing.')}</h2>
+      </header>
+      <BusinessCase locale={locale} results={approvedBusinessCase} assets={businessCaseAssets} />
+    </div>
+  </section>
+
+  <section
+    class="adoption-partnership section-rule"
+    id="why"
+    aria-labelledby="adoption-partnership-title"
+  >
+    <div class="shell">
+      <AdoptionPartnership locale={locale} />
+    </div>
+  </section>
+
+  <section class="operating-shift section-rule" id="shift" aria-labelledby="shift-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">{t('Before and after')}</p>
+          <h2 id="shift-title">{t('The same quarter, two ways.')}</h2>
+        </div>
+        <p>{t('The same team and the same work. Now the progress is visible.')}</p>
+      </header>
+      <div class="shift-compare" data-reveal>
+        <section class="shift-column shift-today" aria-labelledby="shift-today-title">
+          <h3 id="shift-today-title" class="product-label">{t('Today')}</h3>
+          <ul>
+            {operatingShift.today.map((line) => <li>{t(line)}</li>)}
+          </ul>
+        </section>
+        <section class="shift-column shift-zeno" aria-labelledby="shift-zeno-title">
+          <h3 id="shift-zeno-title" class="product-label">{t('With Zeno')}</h3>
+          <ul>
+            {operatingShift.withZeno.map((line) => <li>{t(line)}</li>)}
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="adoption-trust section-rule" id="trust" aria-labelledby="trust-title">
+    <div class="shell">
+      <header class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">{t('Security and control')}</p>
+          <h2 id="trust-title">{t('Scale without giving up control.')}</h2>
+        </div>
+        <p>
+          {
+            t(
+              'IT sees who has access, which models are allowed and where human signoff is required.',
+            )
+          }
+        </p>
+      </header>
+      {
+        approvedDeployment.map((claim) => (
+          <p class="trust-deployment">
+            {t(claim.statement)}
+            {claim.attribution && <span>{t(claim.attribution)}</span>}
+          </p>
+        ))
+      }
+      <TrustCertifications
+        locale={locale}
+        certifications={approvedCertifications}
+        assets={certificationAssets}
+        trustCenterUrl={trustCenterUrl}
+      />
+      <div class="trust-teaser-actions">
+        <a class="button button-secondary" href={withBase('/security')}>{t('Explore security')}</a>
+      </div>
+    </div>
+  </section>
+
+  <VisionStatement locale={locale} />
+
+  <section class="conversion" aria-labelledby="conversion-title">
+    <div class="shell conversion-grid">
+      <div>
+        <p class="eyebrow">{t('Start with the numbers')}</p>
+        <h2 id="conversion-title">{t('Make the case for one workflow.')}</h2>
+      </div>
+      <div>
+        <p>
+          {
+            t(
+              'Use your own numbers to estimate recovered time and yearly value. See a focused pilot. The business case needs no contact details.',
+            )
+          }
+        </p>
+        <div class="button-row">
+          <a class="button button-paper" href={withBase('/pricing')}>{t('Assess AI readiness')}</a>
+          <a class="button button-inverse" href={withBase('/demo')}>{t('Book a demo')}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

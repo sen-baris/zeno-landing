@@ -1,7 +1,13 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
 
 interface Props {
+  locale: Locale;
   statement: string;
   hostingStatement: string;
 }
@@ -17,18 +23,19 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
-        <span>Administration</span>
+        <span>{t('Administration')}</span>
       </div>
-      <span class="product-frame-status governance-workspace-status">Governed workspace</span>
+      <span class="product-frame-status governance-workspace-status">{t('Governed workspace')}</span
+      >
     </div>
 
     <div class="governance-console-body">
       <section class="governance-control-panel" aria-labelledby="governance-controls-title">
         <div class="governance-panel-heading">
-          <p class="product-label" id="governance-controls-title">Workspace controls</p>
-          <span>Across the platform</span>
+          <p class="product-label" id="governance-controls-title">{t('Workspace controls')}</p>
+          <span>{t('Across the platform')}</span>
         </div>
-        <ul class="governance-panels" aria-label="Workspace governance controls">
+        <ul class="governance-panels" aria-label={t('Workspace governance controls')}>
           <li>
             <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
               <rect x="3" y="8" width="24" height="4" rx="2"></rect>
@@ -37,10 +44,10 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
               <circle cx="33" cy="10" r="3.6"></circle>
             </svg>
             <div>
-              <h3>Knowledge access</h3>
-              <p>People and connected sources</p>
+              <h3>{t('Knowledge access')}</h3>
+              <p>{t('People and connected sources')}</p>
             </div>
-            <span class="governance-control-state">Managed</span>
+            <span class="governance-control-state">{t('Managed')}</span>
           </li>
           <li>
             <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
@@ -49,10 +56,10 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
               <circle class="governance-mark-open" cx="33" cy="20" r="5.6"></circle>
             </svg>
             <div>
-              <h3>Model choice</h3>
-              <p>Approved model options</p>
+              <h3>{t('Model choice')}</h3>
+              <p>{t('Approved model options')}</p>
             </div>
-            <span class="governance-control-state">Set</span>
+            <span class="governance-control-state">{t('Set')}</span>
           </li>
           <li>
             <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
@@ -63,10 +70,10 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
               <path class="governance-mark-line" d="m16.4 20.2 2.5 2.1 4.3-4.5"></path>
             </svg>
             <div>
-              <h3>Human checkpoints</h3>
-              <p>Review before execution</p>
+              <h3>{t('Human checkpoints')}</h3>
+              <p>{t('Review before execution')}</p>
             </div>
-            <span class="governance-control-state">Required</span>
+            <span class="governance-control-state">{t('Required')}</span>
           </li>
           <li>
             <svg class="governance-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
@@ -74,32 +81,32 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
               <path class="governance-mark-line" d="M4 32H36"></path>
             </svg>
             <div>
-              <h3>Adoption visibility</h3>
-              <p>Return use and idle seats</p>
+              <h3>{t('Adoption visibility')}</h3>
+              <p>{t('Return use and idle seats')}</p>
             </div>
-            <span class="governance-control-state">On</span>
+            <span class="governance-control-state">{t('On')}</span>
           </li>
         </ul>
       </section>
 
       <section class="governance-adoption-panel" aria-labelledby="governance-adoption-title">
         <div class="governance-panel-heading">
-          <p class="product-label" id="governance-adoption-title">Workspace analytics</p>
-          <span>Example usage data</span>
+          <p class="product-label" id="governance-adoption-title">{t('Workspace analytics')}</p>
+          <span>{t('Example usage data')}</span>
         </div>
 
         <div class="governance-hosting-strip">
-          <span class="product-label">Infrastructure</span>
-          <strong>{hostingStatement}</strong>
+          <span class="product-label">{t('Infrastructure')}</span>
+          <strong>{t(hostingStatement)}</strong>
         </div>
 
-        <ul class="governance-adoption-metrics" aria-label="Example adoption signals">
+        <ul class="governance-adoption-metrics" aria-label={t('Example adoption signals')}>
           {
             adoptionMetrics.map((metric) => (
               <li>
-                <span>{metric.label}</span>
-                <strong>{metric.value}</strong>
-                <small>{metric.delta}</small>
+                <span>{t(metric.label)}</span>
+                <strong>{t(metric.value)}</strong>
+                <small>{t(metric.delta)}</small>
               </li>
             ))
           }
@@ -107,8 +114,8 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
 
         <div class="governance-adoption-chart">
           <div class="governance-chart-heading">
-            <p>{illustrativeAdoptionScenario.series.label}</p>
-            <span>{illustrativeAdoptionScenario.series.period}</span>
+            <p>{t(illustrativeAdoptionScenario.series.label)}</p>
+            <span>{t(illustrativeAdoptionScenario.series.period)}</span>
           </div>
           <div class="governance-chart-plot" aria-hidden="true">
             {
@@ -117,21 +124,22 @@ const labelledWeeks = new Set([0, adoptionWeeks.length - 1]);
                   class="governance-chart-column"
                   style={`--column-height: ${Math.round((week / adoptionPeak) * 100)}%`}
                 >
-                  {labelledWeeks.has(index) && <span>{week}%</span>}
+                  {labelledWeeks.has(index) && <span>{t(week)}%</span>}
                   <i />
                 </div>
               ))
             }
           </div>
           <div class="governance-chart-axis" aria-hidden="true">
-            <span>Week 1</span>
-            <span>Week 12</span>
+            <span>{t('Week 1')}</span>
+            <span>{t('Week 12')}</span>
           </div>
         </div>
       </section>
     </div>
   </div>
   <figcaption id="governance-console-caption">
-    {statement}{' '}{hostingStatement} Example usage data is shown for interface context.
+    {t(statement)}{' '}{t(hostingStatement)}{' '}
+    {t('Example usage data is shown for interface context.')}
   </figcaption>
 </figure>

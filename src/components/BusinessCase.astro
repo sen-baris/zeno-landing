@@ -1,8 +1,14 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import type { BusinessCaseAsset } from '../lib/claims/business-case-assets';
 import type { ClaimRecord } from '../lib/claims/types';
 
 interface Props {
+  locale: Locale;
   results: readonly ClaimRecord[];
   assets: readonly BusinessCaseAsset[];
 }
@@ -41,13 +47,13 @@ const figures = results.map((claim) => {
             is hidden from assistive technology and the twin beside it carries the real figure, so a
             screen reader never encounters a number mid-count.
           */}
-          <span class="business-case-count" data-figure={asset.value} aria-hidden="true">
-            {asset.value}
+          <span class="business-case-count" data-figure={t(asset.value)} aria-hidden="true">
+            {t(asset.value)}
           </span>
-          <span class="visually-hidden">{asset.value}</span>
+          <span class="visually-hidden">{t(asset.value)}</span>
         </p>
-        <p class="business-case-label">{asset.label}</p>
-        <p class="business-case-qualifier">{claim.attribution}</p>
+        <p class="business-case-label">{t(asset.label)}</p>
+        <p class="business-case-qualifier">{t(claim.attribution)}</p>
       </li>
     ))
   }

@@ -1,4 +1,9 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import { adoptionPartnership } from '../lib/content/site-content';
 
 const curvePath =
@@ -11,6 +16,9 @@ const stagePositions = {
   return: { x: 538, y: 153.9 },
   habit: { x: 1000, y: 56.9 },
 } as const;
+interface Props {
+  locale: Locale;
+}
 ---
 
 {
@@ -24,14 +32,14 @@ const stagePositions = {
   <div class="adoption-partnership-scene">
     <header class="section-heading split-heading">
       <div>
-        <p class="eyebrow">{adoptionPartnership.eyebrow}</p>
-        <h2 id="adoption-partnership-title">{adoptionPartnership.title}</h2>
+        <p class="eyebrow">{t(adoptionPartnership.eyebrow)}</p>
+        <h2 id="adoption-partnership-title">{t(adoptionPartnership.title)}</h2>
       </div>
-      <p>{adoptionPartnership.intro}</p>
+      <p>{t(adoptionPartnership.intro)}</p>
     </header>
 
     <div class="adoption-chart">
-      <ol class="adoption-stages" aria-label="Platform adoption after launch">
+      <ol class="adoption-stages" aria-label={t('Platform adoption after launch')}>
         {
           adoptionPartnership.stages.map((stage) => {
             const position = stagePositions[stage.id];
@@ -40,7 +48,7 @@ const stagePositions = {
             return (
               <li data-adoption-stage={stage.id} data-stage-x={position.x} style={style}>
                 <span aria-hidden="true" />
-                <b>{stage.label}</b>
+                <b>{t(stage.label)}</b>
               </li>
             );
           })
@@ -72,8 +80,8 @@ const stagePositions = {
     </div>
 
     <div class="adoption-partner-band">
-      <p class="product-label">{adoptionPartnership.partnerLabel}</p>
-      <ol aria-label="Partnership actions after launch">
+      <p class="product-label">{t(adoptionPartnership.partnerLabel)}</p>
+      <ol aria-label={t('Partnership actions after launch')}>
         {
           adoptionPartnership.stages.map((stage) => (
             <li data-partner-action={stage.id}>
@@ -102,7 +110,7 @@ const stagePositions = {
                   )}
                 </svg>
               </span>
-              <b>{stage.action}</b>
+              <b>{t(stage.action)}</b>
             </li>
           ))
         }
@@ -112,6 +120,7 @@ const stagePositions = {
 </div>
 
 <script>
+  import { observeSceneFit } from '../lib/motion/scene-fit';
   const adoptionJourney = document.querySelector<HTMLElement>('.adoption-partnership-story');
 
   if (adoptionJourney) {
@@ -236,13 +245,37 @@ const stagePositions = {
     const sync = (): void => {
       const canEnhance =
         viewport.matches && !reducedMotion.matches && root.getAttribute('data-motion') === 'on';
-      if (canEnhance) start();
-      else stop();
+      if (canEnhance) {
+        start();
+        if (scene) {
+          const children = Array.from(scene.children) as HTMLElement[];
+          const contentHeight = children.reduce((height, child) => {
+            const style = getComputedStyle(child);
+            return (
+              height +
+              child.getBoundingClientRect().height +
+              parseFloat(style.marginTop) +
+              parseFloat(style.marginBottom)
+            );
+          }, 0);
+          if (contentHeight > window.innerHeight - 100) stop();
+        }
+      } else stop();
     };
 
     viewport.addEventListener('change', sync);
     reducedMotion.addEventListener('change', sync);
-    window.addEventListener('pagehide', stop, { once: true });
+    const stopObservingFit = observeSceneFit(sync);
+    window.addEventListener(
+      'pagehide',
+      () => {
+        stop();
+        stopObservingFit();
+        viewport.removeEventListener('change', sync);
+        reducedMotion.removeEventListener('change', sync);
+      },
+      { once: true },
+    );
     sync();
   }
 </script>

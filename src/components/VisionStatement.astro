@@ -1,23 +1,31 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 import { Image } from 'astro:assets';
 import founders from '../assets/team/founders.jpg';
 import { companyVision } from '../lib/content/site-content';
+interface Props {
+  locale: Locale;
+}
 ---
 
 <section class="vision section-rule" id="vision" aria-labelledby="vision-title">
   <div class="shell vision-grid">
     <header class="vision-heading">
-      <p class="eyebrow">{companyVision.eyebrow}</p>
-      <h2 id="vision-title">{companyVision.title}</h2>
+      <p class="eyebrow">{t(companyVision.eyebrow)}</p>
+      <h2 id="vision-title">{t(companyVision.title)}</h2>
     </header>
 
     <div class="vision-content">
       <div class="vision-statement">
-        {companyVision.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        {companyVision.paragraphs.map((paragraph) => <p>{t(paragraph)}</p>)}
       </div>
 
       <figure class="vision-founders" data-reveal>
-        <Image src={founders} alt="Zeno's two co-founders together in the office." />
+        <Image src={founders} alt={t("Zeno's two co-founders together in the office.")} />
       </figure>
     </div>
   </div>

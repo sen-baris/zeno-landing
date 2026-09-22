@@ -1,17 +1,21 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale, agentStartingPointCopy } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
 import Glyph from './Glyph.astro';
 import { illustrativeAdoptionScenario } from '../lib/content/illustrative-adoption';
-import { withBase } from '../lib/routing/base-path';
 
 interface Props {
+  locale: Locale;
   buildStartingPoint: string;
 }
 
 const { buildStartingPoint } = Astro.props;
-const buildEmphasis = 'prebuilt agent';
-const buildStartingPointParts = buildStartingPoint.split(buildEmphasis);
-if (buildStartingPointParts.length !== 2) {
-  throw new Error(`The homepage starting-point claim must include "${buildEmphasis}".`);
+const buildCopy = agentStartingPointCopy[locale];
+if (buildCopy.before + buildCopy.text + buildCopy.after !== t(buildStartingPoint)) {
+  throw new Error('The emphasized starting-point copy must match its approved claim.');
 }
 
 const connectorAssets = [
@@ -34,9 +38,8 @@ const storySteps = [
     number: '02',
     title: 'We build the agent with you',
     emphasis: {
-      before: buildStartingPointParts[0],
-      text: buildEmphasis,
-      after: `${buildStartingPointParts[1]} We connect your systems. Your team reviews and approves.`,
+      ...buildCopy,
+      after: `${buildCopy.after} ${t('We connect your systems. Your team reviews and approves.')}`,
     },
     accessibleDetail:
       'The Finance report agent begins from a prebuilt finance agent or a custom build. Zeno and the team connect Outlook, SharePoint and Salesforce. The agent prepares a draft for human review and approval. The workspace shows source permissions, approved models and EU hosting.',
@@ -83,12 +86,12 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
   aria-labelledby="hero-journey-caption"
 >
   <div class="hj-layout">
-    <ol class="hj-story" aria-label="From first workflow to adoption">
+    <ol class="hj-story" aria-label={t('From first workflow to adoption')}>
       {
         storySteps.map((step) => (
           <li data-story-step={step.id}>
-            <span class="item-number">{step.number}</span>
-            <p class="hj-story-title">{step.title}</p>
+            <span class="item-number">{t(step.number)}</span>
+            <p class="hj-story-title">{t(step.title)}</p>
             <p>
               {'emphasis' in step ? (
                 <>
@@ -97,10 +100,10 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                   {step.emphasis.after}
                 </>
               ) : (
-                step.body
+                t(step.body)
               )}
             </p>
-            <span class="visually-hidden">{step.accessibleDetail}</span>
+            <span class="visually-hidden">{t(step.accessibleDetail)}</span>
           </li>
         ))
       }
@@ -112,8 +115,8 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
           storySteps.map((step, index) => (
             <>
               <div class="hj-progress-node" data-progress-node={step.id}>
-                <span>{step.number}</span>
-                <b>{step.title}</b>
+                <span>{t(step.number)}</span>
+                <b>{t(step.title)}</b>
               </div>
               {index < storySteps.length - 1 && (
                 <span class="hj-progress-segment" data-progress-segment={index + 1}>
@@ -130,20 +133,20 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
           <section class="hj-panel" data-stage-panel="find" data-current>
             <header class="hj-panel-heading">
               <div>
-                <p class="product-label">01 / Find</p>
-                <p class="hj-panel-title">Choose the first workflow</p>
+                <p class="product-label">{t('01 / Find')}</p>
+                <p class="hj-panel-title">{t('Choose the first workflow')}</p>
               </div>
-              <span class="hj-status">First workflow selected</span>
+              <span class="hj-status">{t('First workflow selected')}</span>
             </header>
             <div class="hj-panel-body hj-find">
               <div class="hj-find-shortlist">
-                <p class="product-label">Workflow shortlist</p>
+                <p class="product-label">{t('Workflow shortlist')}</p>
                 <ul>
                   {
                     workflows.map((workflow) => (
                       <li data-selected={String(workflow.selected)}>
-                        <span>{workflow.selected ? '✓' : ''}</span>
-                        <b>{workflow.label}</b>
+                        <span>{t(workflow.selected ? '✓' : '')}</span>
+                        <b>{t(workflow.label)}</b>
                       </li>
                     ))
                   }
@@ -151,15 +154,15 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
               </div>
               <div class="hj-selection-summary">
                 <div>
-                  <p class="product-label">Selected workflow</p>
-                  <p class="hj-selection-title">Finance report</p>
+                  <p class="product-label">{t('Selected workflow')}</p>
+                  <p class="hj-selection-title">{t('Finance report')}</p>
                 </div>
                 <ul>
                   {
                     selectionReasons.map((reason) => (
                       <li>
                         <span>✓</span>
-                        {reason}
+                        {t(reason)}
                       </li>
                     ))
                   }
@@ -171,22 +174,22 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
           <section class="hj-panel" data-stage-panel="build">
             <header class="hj-panel-heading">
               <div>
-                <p class="product-label">02 / Build</p>
-                <p class="hj-panel-title">Finance report agent</p>
+                <p class="product-label">{t('02 / Build')}</p>
+                <p class="hj-panel-title">{t('Finance report agent')}</p>
               </div>
               <div class="hj-starting-point">
-                <span class="hj-status">Prebuilt agent</span>
-                <small>or</small>
-                <span>Custom built</span>
+                <span class="hj-status">{t('Prebuilt agent')}</span>
+                <small>{t('or')}</small>
+                <span>{t('Custom built')}</span>
               </div>
             </header>
             <div class="hj-panel-body hj-build">
               <div class="hj-build-document">
                 <div class="hj-build-document-head">
-                  <p class="product-label">Current task</p>
-                  <span>Draft ready</span>
+                  <p class="product-label">{t('Current task')}</p>
+                  <span>{t('Draft ready')}</span>
                 </div>
-                <p class="hj-task">Draft the monthly finance report.</p>
+                <p class="hj-task">{t('Draft the monthly finance report.')}</p>
                 <div class="hj-document-preview">
                   <span></span>
                   <span></span>
@@ -196,14 +199,14 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
               </div>
               <div class="hj-build-side">
                 <div class="hj-connected">
-                  <p class="product-label">Connected systems</p>
+                  <p class="product-label">{t('Connected systems')}</p>
                   <ul>
                     {
                       connectorAssets.map((connector) => (
                         <li>
                           <img
                             src={withBase(connector.src)}
-                            alt={connector.name}
+                            alt={t(connector.name)}
                             width="24"
                             height="24"
                             loading="eager"
@@ -215,8 +218,8 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                   </ul>
                 </div>
                 <p class="hj-approval">
-                  <span>Owner review</span>
-                  <b>Human approval required</b>
+                  <span>{t('Owner review')}</span>
+                  <b>{t('Human approval required')}</b>
                 </p>
               </div>
             </div>
@@ -225,17 +228,19 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
           <section class="hj-panel" data-stage-panel="adopt">
             <header class="hj-panel-heading">
               <div>
-                <p class="product-label">Finance report agent</p>
-                <p class="hj-panel-title">Adoption</p>
+                <p class="product-label">{t('Finance report agent')}</p>
+                <p class="hj-panel-title">{t('Adoption')}</p>
               </div>
-              <span class="hj-status hj-status-healthy">{illustrativeAdoptionScenario.health}</span>
+              <span class="hj-status hj-status-healthy"
+                >{t(illustrativeAdoptionScenario.health)}</span
+              >
             </header>
             <div class="hj-panel-body hj-adoption">
               <div class="hj-chart">
                 <div class="hj-chart-heading">
                   <div>
-                    <p class="product-label">Weekly activity</p>
-                    <span>Since launch</span>
+                    <p class="product-label">{t('Weekly activity')}</p>
+                    <span>{t('Since launch')}</span>
                   </div>
                 </div>
                 <div class="hj-chart-plot">
@@ -248,18 +253,18 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                   }
                 </div>
                 <div class="hj-chart-axis">
-                  <span>Launch</span>
-                  <span>Now</span>
+                  <span>{t('Launch')}</span>
+                  <span>{t('Now')}</span>
                 </div>
               </div>
               <ul class="hj-adoption-stats">
                 <li>
-                  <p class="product-label">Teams returning</p>
-                  <strong>Growing</strong>
+                  <p class="product-label">{t('Teams returning')}</p>
+                  <strong>{t('Growing')}</strong>
                 </li>
                 <li>
-                  <p class="product-label">Inactive seats</p>
-                  <strong>Falling</strong>
+                  <p class="product-label">{t('Inactive seats')}</p>
+                  <strong>{t('Falling')}</strong>
                 </li>
               </ul>
             </div>
@@ -268,7 +273,7 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
 
         <div class="hw-governance">
           <div class="hw-governance-title">
-            <p class="product-label">Governed workspace</p>
+            <p class="product-label">{t('Governed workspace')}</p>
           </div>
           <ul class="hw-controls">
             {
@@ -278,14 +283,14 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
                     <circle cx="8" cy="8" r="7" />
                     <path d="m4.8 8.2 2.2 2.2 4.2-4.6" />
                   </svg>
-                  {control}
+                  {t(control)}
                 </li>
               ))
             }
           </ul>
           <span class="hw-europe">
             <Glyph name="eu" class="hw-europe-stars" />
-            Built for Europe
+            {t('Built for Europe')}
           </span>
         </div>
       </div>
@@ -293,12 +298,16 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
   </div>
 
   <figcaption id="hero-journey-caption" class="visually-hidden">
-    The Finance report agent moves from workflow selection to a prebuilt or custom starting point.
-    Zeno and the team connect company systems, review the draft and improve adoption after launch.
+    {
+      t(
+        'The Finance report agent moves from workflow selection to a prebuilt or custom starting point. Zeno and the team connect company systems, review the draft and improve adoption after launch.',
+      )
+    }
   </figcaption>
 </figure>
 
 <script>
+  import { observeSceneFit, sceneContentFits } from '../lib/motion/scene-fit';
   const journey = document.querySelector<HTMLElement>('.hero-journey');
 
   if (journey) {
@@ -378,13 +387,26 @@ const controls = ['Source permissions', 'IT-approved models', 'Human approval'] 
     const sync = () => {
       const canEnhance =
         viewport.matches && !reducedMotion.matches && root.getAttribute('data-motion') === 'on';
-      if (canEnhance) start();
-      else stop();
+      if (canEnhance) {
+        start();
+        const content = Array.from(journey.querySelectorAll<HTMLElement>('.hj-story, .hj-visual'));
+        if (!sceneContentFits(content, window.innerHeight - 76, panels)) stop();
+      } else stop();
     };
 
     viewport.addEventListener('change', sync);
     reducedMotion.addEventListener('change', sync);
-    window.addEventListener('pagehide', stop, { once: true });
+    const stopObservingFit = observeSceneFit(sync);
+    window.addEventListener(
+      'pagehide',
+      () => {
+        stop();
+        stopObservingFit();
+        viewport.removeEventListener('change', sync);
+        reducedMotion.removeEventListener('change', sync);
+      },
+      { once: true },
+    );
     sync();
   }
 </script>

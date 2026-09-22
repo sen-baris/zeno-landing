@@ -18,6 +18,12 @@ Build the smallest reliable solution that preserves user trust, keeps the static
    - Timing: account for build time, hydration, navigation, submission, retries, and cleanup.
 4. Reuse established project patterns unless evidence justifies a new one.
 
+For page work, follow `docs/page-building-playbook.md`. Keep shared compositions under
+`src/components/pages/`; route wrappers select the locale and content reference, while the shared
+page boundary resolves approved claims and SEO. Use $enterprise-ai-localization whenever a shared
+page, visual, or copy change affects multiple languages. Use $enterprise-ai-seo for route, metadata,
+publication, or deployment-path changes. Do not fork a simplified translated template.
+
 ## Preserve architecture boundaries
 
 - Keep pages and presentational sections in Astro by default.
@@ -37,6 +43,9 @@ Build the smallest reliable solution that preserves user trust, keeps the static
 5. Inspect the rendered result at representative mobile and desktop sizes for visible changes.
 6. Use $enterprise-ai-claims-and-content for public claims and $enterprise-ai-component-intake before adopting external UI code.
 7. Use $enterprise-ai-feature-audit after the implementation and its tests pass.
+8. Save the audit under `docs/audits/` and update the maintainer guide or playbook when ownership,
+   behavior, or the repeatable workflow changes. Record unverified surfaces explicitly. Do not push
+   or deploy unless authorized; use the release audit for a major merge or launch.
 
 ## Apply engineering defaults
 

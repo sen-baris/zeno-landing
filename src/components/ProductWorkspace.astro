@@ -1,5 +1,11 @@
 ---
+import type { Locale } from '../lib/i18n/locales';
+import { createPageLocale } from '../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t } = createPageLocale(locale);
 interface Props {
+  locale: Locale;
   statement: string;
   caption: string;
 }
@@ -15,27 +21,27 @@ const { statement, caption } = Astro.props;
   <div class="product-frame">
     <div class="product-frame-bar">
       <div>
-        <span>Chat</span>
+        <span>{t('Chat')}</span>
       </div>
-      <span class="product-frame-status">Finance Agent</span>
+      <span class="product-frame-status">{t('Finance Agent')}</span>
     </div>
 
     <div class="chat-workspace-body">
       <aside class="chat-agent-summary" aria-labelledby="chat-agent-title">
         <div>
-          <p class="product-label">Selected agent</p>
-          <span class="chat-agent-mark" aria-hidden="true">F</span>
-          <h3 id="chat-agent-title">Finance Agent</h3>
-          <p>Monthly reporting</p>
+          <p class="product-label">{t('Selected agent')}</p>
+          <span class="chat-agent-mark" aria-hidden="true">{t('F')}</span>
+          <h3 id="chat-agent-title">{t('Finance Agent')}</h3>
+          <p>{t('Monthly reporting')}</p>
         </div>
         <dl>
           <div>
-            <dt>Knowledge</dt>
-            <dd>Finance team</dd>
+            <dt>{t('Knowledge')}</dt>
+            <dd>{t('Finance team')}</dd>
           </div>
           <div>
-            <dt>Context</dt>
-            <dd>3 connected sources</dd>
+            <dt>{t('Context')}</dt>
+            <dd>{t('3 connected sources')}</dd>
           </div>
         </dl>
       </aside>
@@ -43,52 +49,58 @@ const { statement, caption } = Astro.props;
       <section class="chat-thread" aria-labelledby="chat-thread-title">
         <div class="chat-thread-heading">
           <div>
-            <p class="product-label">Conversation</p>
-            <h3 id="chat-thread-title">Monthly finance review</h3>
+            <p class="product-label">{t('Conversation')}</p>
+            <h3 id="chat-thread-title">{t('Monthly finance review')}</h3>
           </div>
-          <span>Company context on</span>
+          <span>{t('Company context on')}</span>
         </div>
 
         <ol class="chat-message-list">
           <li data-speaker="person">
-            <span>You</span>
+            <span>{t('You')}</span>
             <p>
-              Prepare this month&apos;s finance review. Focus on the largest variances and the
-              questions for leadership review.
+              {
+                t(
+                  "Prepare this month's finance review. Focus on the largest variances and the questions for leadership review.",
+                )
+              }
             </p>
           </li>
           <li data-speaker="agent">
-            <span>Finance Agent</span>
+            <span>{t('Finance Agent')}</span>
             <p>
-              I prepared a first review from the selected company context. Three areas need your
-              attention.
+              {
+                t(
+                  'I prepared a first review from the selected company context. Three areas need your attention.',
+                )
+              }
             </p>
             <div class="chat-result-card">
               <div>
-                <span class="product-label">Draft</span>
-                <strong>Monthly finance review</strong>
+                <span class="product-label">{t('Draft')}</span>
+                <strong>{t('Monthly finance review')}</strong>
               </div>
               <ul>
-                <li>Revenue overview</li>
-                <li>Variance summary</li>
-                <li>Questions for review</li>
+                <li>{t('Revenue overview')}</li>
+                <li>{t('Variance summary')}</li>
+                <li>{t('Questions for review')}</li>
               </ul>
             </div>
           </li>
         </ol>
 
-        <div class="chat-context-strip" aria-label="Connected context">
-          <span>Connected context</span>
+        <div class="chat-context-strip" aria-label={t('Connected context')}>
+          <span>{t('Connected context')}</span>
           <ul>
-            <li>Finance knowledge</li>
-            <li>Reporting data</li>
-            <li>Team guidance</li>
+            <li>{t('Finance knowledge')}</li>
+            <li>{t('Reporting data')}</li>
+            <li>{t('Team guidance')}</li>
           </ul>
         </div>
       </section>
     </div>
   </div>
   <figcaption id="chat-workspace-caption" class="visually-hidden">
-    {statement}{' '}{caption}
+    {t(statement)}{' '}{t(caption)}
   </figcaption>
 </figure>

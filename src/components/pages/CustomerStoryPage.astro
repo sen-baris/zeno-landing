@@ -1,0 +1,143 @@
+---
+import type { Locale } from '../../lib/i18n/locales';
+import { createPageLocale } from '../../lib/i18n/page-copy';
+
+const { locale } = Astro.props;
+const { text: t, path: withBase } = createPageLocale(locale);
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { claimRegistry } from '../../lib/claims/registry';
+import { customerLogoAssets } from '../../lib/claims/customer-logo-assets';
+import { createPageClaimResolver } from '../../lib/i18n/de-claims';
+const resolveApprovedClaims = createPageClaimResolver(locale);
+import {
+  customerVoiceDrafts,
+  getCustomerStoryClaimIds,
+  type CustomerStoryDraft,
+} from '../../lib/content/customer-stories';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
+
+interface Props {
+  locale: Locale;
+  story: CustomerStoryDraft;
+}
+
+const { story } = Astro.props;
+const storySurface = `customers.${story.slug}`;
+const seo = createLocalizedSeo({ kind: 'customer', slug: story.slug }, locale);
+resolveApprovedClaims(claimRegistry, getCustomerStoryClaimIds(story), storySurface);
+const logo = customerLogoAssets.find((asset) => asset.claimId === story.logoClaimId);
+if (!logo) throw new Error(`Customer logo asset "${story.logoClaimId}" is missing.`);
+const voiceDraft = story.quoteId
+  ? customerVoiceDrafts.find((candidate) => candidate.id === story.quoteId)
+  : undefined;
+const voiceClaim = story.quoteId
+  ? resolveApprovedClaims(claimRegistry, [story.quoteId], storySurface)[0]
+  : undefined;
+const voice =
+  voiceDraft && voiceClaim
+    ? { ...voiceDraft, verbatimExcerpt: voiceClaim.statement, attribution: voiceClaim.attribution }
+    : undefined;
+---
+
+<BaseLayout
+  title={t(`${story.title} | Zeno`)}
+  description={t(story.summary)}
+  seo={seo}
+  pageClass="customer-story-page"
+>
+  <article class="customer-story">
+    <header class="customer-story-hero section-rule">
+      <div class="shell customer-story-hero-grid">
+        <div class="customer-story-identity">
+          <a class="customer-story-back" href={withBase('/#audience')}>{t('← Customer stories')}</a>
+          <div class="customer-story-logo-lockup">
+            <img src={withBase(logo.src)} alt={t(logo.name)} width="400" height="400" />
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">{t('Customer story')}</p>
+          <h1>{t(story.title)}</h1>
+          <p class="customer-story-summary">{t(story.summary)}</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="customer-story-results section-rule" aria-labelledby="results-title">
+      <div class="shell">
+        <p class="eyebrow" id="results-title">{t('Reported results')}</p>
+        <dl>
+          {
+            story.qualifiedResults.map((result) => (
+              <div>
+                <dt>{t(result.value)}</dt>
+                <dd>{t(result.label)}</dd>
+                <dd class="customer-story-qualifier">{t(result.qualifier)}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <section class="customer-story-article section-rule" aria-label={t('Customer story article')}>
+      <div class="shell customer-story-article-list">
+        {
+          story.sections.map((section) => (
+            <section
+              class="customer-story-article-section"
+              aria-labelledby={`${section.claimId}-title`}
+            >
+              <header>
+                <p class="product-label">{t(section.label)}</p>
+                <h2 id={`${section.claimId}-title`}>{t(section.heading)}</h2>
+              </header>
+              <div class="customer-story-article-copy">
+                {section.paragraphs.map((paragraph) => (
+                  <p>{t(paragraph)}</p>
+                ))}
+                {section.points && (
+                  <ul>
+                    {section.points.map((point) => (
+                      <li>{t(point)}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      voice && (
+        <section class="customer-story-quote section-rule" aria-label={t('Customer quotation')}>
+          <div class="shell">
+            <figure lang="en">
+              <blockquote>
+                <p>“{voice.verbatimExcerpt}”</p>
+              </blockquote>
+              <figcaption>{voice.attribution}</figcaption>
+            </figure>
+          </div>
+        </section>
+      )
+    }
+
+    <footer class="customer-story-footer">
+      <div class="shell customer-story-footer-grid customer-story-footer-grid-single">
+        <div>
+          <h2>{t('Put one workflow to work.')}</h2>
+          <p>
+            {
+              t(
+                'Bring a recurring process. We will show where company context, agent work and human review fit.',
+              )
+            }
+          </p>
+          <a class="button button-inverse" href={withBase('/demo')}>{t('Book a demo')}</a>
+        </div>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>
