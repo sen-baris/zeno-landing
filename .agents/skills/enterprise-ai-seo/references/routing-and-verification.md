@@ -31,7 +31,8 @@ and base. Use `createStandaloneSeo` for redirect/error pages with no alternate g
 5. Keep publication separate from deployment. German is published; the temporary Pages host is
    globally `noindex, nofollow`. Preview canonicals/alternates use the preview origin and base.
 6. Keep unpublished German legal paths out of generation and alternates. Their approved English
-   documents remain available through visibly English-labeled footer links.
+   documents remain available through footer links with `hreflang="en"`. Use the normal localized
+   link labels without parenthetical language suffixes.
 
 Do not add `changefreq`, priority, fabricated `lastmod`, duplicate annotation systems, automatic
 locale redirects, or arbitrary CMS canonical overrides. No public blog prefix or CMS vendor is

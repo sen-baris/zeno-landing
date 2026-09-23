@@ -118,7 +118,7 @@ test('German footer labels keep the shared compact type scale', async ({ page })
       .evaluateAll((headings) => headings.map((heading) => getComputedStyle(heading).fontSize));
   await page.goto('/');
   const englishSizes = await labelSizes();
-  expect(englishSizes).toHaveLength(3);
+  expect(englishSizes).toHaveLength(4);
   await page.goto('/de/');
   expect(await labelSizes()).toEqual(englishSizes);
 });

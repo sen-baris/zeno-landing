@@ -41,6 +41,7 @@ agent can discover the same workflow.
 | Product, customer, metric, security, legal, or factual metadata       | [Claims and content](../.agents/skills/enterprise-ai-claims-and-content/SKILL.md) |
 | Behavior, mapping, responsive, or regression evidence                 | [Testing](../.agents/skills/enterprise-ai-testing/SKILL.md)                       |
 | External code or dependency intake                                    | [Component intake](../.agents/skills/enterprise-ai-component-intake/SKILL.md)     |
+| Social banners and repository-owned marketing graphics                | [Marketing assets](../.agents/skills/enterprise-ai-marketing-assets/SKILL.md)     |
 | Every meaningful completed change                                     | [Feature audit](../.agents/skills/enterprise-ai-feature-audit/SKILL.md)           |
 | Major merge, launch, or deployment candidate                          | [Release audit](../.agents/skills/enterprise-ai-release-audit/SKILL.md)           |
 

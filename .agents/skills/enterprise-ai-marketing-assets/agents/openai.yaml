@@ -1,0 +1,4 @@
+interface:
+  display_name: "Zeno Marketing Assets"
+  short_description: "Create governed, reproducible Zeno marketing graphics"
+  default_prompt: "Use $enterprise-ai-marketing-assets to create and verify a placement-specific Zeno banner kit."

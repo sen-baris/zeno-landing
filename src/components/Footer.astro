@@ -1,5 +1,6 @@
 ---
-import { trustCenterUrl } from '../lib/claims/registry';
+import { claimRegistry, trustCenterUrl } from '../lib/claims/registry';
+import { approvedResources } from '../lib/content/resources';
 import type { Locale } from '../lib/i18n/locales';
 import { getLocalizedPath, type LocalizedRouteLink, type StaticRouteKey } from '../lib/i18n/routes';
 import { sharedUiCopy } from '../lib/i18n/ui';
@@ -12,6 +13,7 @@ interface Props {
 
 const { locale, switcherLinks } = Astro.props;
 const copy = sharedUiCopy[locale].footer;
+const resources = approvedResources(claimRegistry, 'footer.resources');
 const route = (key: StaticRouteKey, targetLocale: Locale = locale) => {
   const path = getLocalizedPath({ kind: 'static', key }, targetLocale);
   if (!path) throw new Error(`Footer route "${key}" is unavailable for "${targetLocale}".`);
@@ -48,16 +50,31 @@ const route = (key: StaticRouteKey, targetLocale: Locale = locale) => {
         </ul>
       </div>
       <div class="footer-nav-group">
+        <h2 class="footer-nav-label">{copy.resources}</h2>
+        <ul>
+          {
+            resources.map((resource) => (
+              <li>
+                <a href={resource.destination} target="_blank" rel="noopener noreferrer">
+                  {resource.labels[locale]}
+                  <span class="visually-hidden">{copy.trustCenterNewTab}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="footer-nav-group">
         <h2 class="footer-nav-label">{copy.legal}</h2>
         <ul>
           <li>
-            <a href={route('privacy', 'en')} hreflang="en">{copy.privacy}{copy.englishDocument}</a>
+            <a href={route('privacy', 'en')} hreflang="en">{copy.privacy}</a>
           </li>
           <li>
-            <a href={route('terms', 'en')} hreflang="en">{copy.terms}{copy.englishDocument}</a>
+            <a href={route('terms', 'en')} hreflang="en">{copy.terms}</a>
           </li>
           <li>
-            <a href={route('imprint', 'en')} hreflang="en">{copy.imprint}{copy.englishDocument}</a>
+            <a href={route('imprint', 'en')} hreflang="en">{copy.imprint}</a>
           </li>
         </ul>
       </div>

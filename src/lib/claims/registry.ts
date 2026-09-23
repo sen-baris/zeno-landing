@@ -1,5 +1,6 @@
 import type { ClaimRecord } from './types';
 import { customerProofClaims } from './customer-proof-claims';
+import { marketingClaims } from './marketing-claims';
 
 export const appLoginClaimId = 'navigation-app-sign-in';
 
@@ -7,6 +8,7 @@ export const appLoginClaimId = 'navigation-app-sign-in';
 // context and must never be inserted here by default. The customer-logo records below reflect
 // the workspace owner's direct instruction on 2026-08-27 to use the supplied SVG assets.
 export const claimRegistry: readonly ClaimRecord[] = [
+  ...marketingClaims,
   {
     id: 'customer-logo-frommer-legal',
     statement: 'Frommer Legal may appear in the Zeno customer logo rail.',

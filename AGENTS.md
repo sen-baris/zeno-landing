@@ -35,6 +35,7 @@ Use the following skills:
 - $enterprise-ai-claims-and-content for public product, customer, metric, ROI, security, privacy, compliance, certification, comparison, metadata, or structured-data statements.
 - $enterprise-ai-localization for locale work and changes to shared pages, public copy, visuals, forms, or interactions consumed by multiple languages. Preserve full page parity, exact translated claim approval, and language-specific QA.
 - $enterprise-ai-seo for routes, slugs, localized metadata, canonicals, hreflang, sitemap, publication status, deployment origin or base paths, and future build-time content adapters.
+- $enterprise-ai-marketing-assets for repository-owned social banners and marketing graphics, exact image copy, reproducible exports, and placement-specific crop review.
 - $enterprise-ai-feature-audit after every meaningful feature, behavior change, refactor, integration, or bug fix and before declaring it complete.
 - $enterprise-ai-release-audit before any production deployment, public launch, or release-candidate approval.
 

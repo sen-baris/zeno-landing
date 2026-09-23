@@ -32,7 +32,8 @@ from edited copy as a way to make validation pass.
 German uses short, natural, neutral sentences without formal `Sie/Ihr` or informal `du/dein`
 address. Keep brands and numbers intact. Keep approved quotations in their original language with
 `lang`, and legal documents verbatim. German legal routes stay absent until separately approved;
-their footer links identify the English documents.
+their footer links keep the English destinations and `hreflang="en"` without visible language
+suffixes. Do not add parenthetical language labels to resource or legal links.
 
 ## Prove parity before completion
 

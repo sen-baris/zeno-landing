@@ -1,0 +1,330 @@
+{
+  "browser": "151.0.7922.34",
+  "headline": "AI agents your teams actually use.",
+  "exports": [
+    {
+      "file": "zeno-linkedin-paper-editorial-profile.png",
+      "width": 1584,
+      "height": 396,
+      "bytes": 40577,
+      "sha256": "7b7be3d3db3d0885b604e67ae23ab6ce22fb6892c9071ca5590517d87239ef18",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "unloaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 16.43174386764105,
+          "left": 120,
+          "right": 244.765625,
+          "top": 58,
+          "bottom": 116
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 16.43174386764105,
+          "left": 410,
+          "right": 1470,
+          "top": 55,
+          "bottom": 277.46875
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 1065.453125,
+          "bottom": 181
+        },
+        {
+          "right": 1278.65625,
+          "bottom": 292.234375
+        }
+      ]
+    },
+    {
+      "file": "zeno-linkedin-paper-editorial-company.png",
+      "width": 4200,
+      "height": 700,
+      "bytes": 89550,
+      "sha256": "54d868ea90c41df6dff47ce4d6a859594b0e34ce7ac4eb4ca210cd7711c95a04",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "unloaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 16.43174386764105,
+          "left": 400,
+          "right": 649.53125,
+          "top": 126,
+          "bottom": 242
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 16.43174386764105,
+          "left": 1250,
+          "right": 3880,
+          "top": 108,
+          "bottom": 544.71875
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 2536.640625,
+          "bottom": 354
+        },
+        {
+          "right": 2955.125,
+          "bottom": 572.359375
+        }
+      ]
+    },
+    {
+      "file": "zeno-linkedin-dark-statement-profile.png",
+      "width": 1584,
+      "height": 396,
+      "bytes": 40559,
+      "sha256": "459556b22aef4229aa29a2c18efd060e735bae385b9f98ae35cd3414c31bd124",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "unloaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 18.00899491348785,
+          "left": 120,
+          "right": 244.765625,
+          "top": 58,
+          "bottom": 116
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 18.00899491348785,
+          "left": 410,
+          "right": 1470,
+          "top": 55,
+          "bottom": 277.46875
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 1065.453125,
+          "bottom": 181
+        },
+        {
+          "right": 1278.65625,
+          "bottom": 292.234375
+        }
+      ]
+    },
+    {
+      "file": "zeno-linkedin-dark-statement-company.png",
+      "width": 4200,
+      "height": 700,
+      "bytes": 89179,
+      "sha256": "a0460c4ddd47e305b73b3663e31d4469c0daa2bae9d07d416674807a0a239df1",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "unloaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 18.00899491348785,
+          "left": 400,
+          "right": 649.53125,
+          "top": 126,
+          "bottom": 242
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 18.00899491348785,
+          "left": 1250,
+          "right": 3880,
+          "top": 108,
+          "bottom": 544.71875
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 2536.640625,
+          "bottom": 354
+        },
+        {
+          "right": 2955.125,
+          "bottom": 572.359375
+        }
+      ]
+    },
+    {
+      "file": "zeno-linkedin-product-narrative-profile.png",
+      "width": 1584,
+      "height": 396,
+      "bytes": 47332,
+      "sha256": "bc69a91e05f8e9889ed669570e272da3ff45dfdd797692e66ce1a0f9e3a419e1",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "loaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 16.43174386764105,
+          "left": 120,
+          "right": 244.765625,
+          "top": 58,
+          "bottom": 116
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 16.43174386764105,
+          "left": 410,
+          "right": 1430,
+          "top": 32,
+          "bottom": 215.3125
+        },
+        {
+          "label": "Company context",
+          "contrast": 18.00899491348785,
+          "left": 415,
+          "right": 716.40625,
+          "top": 280,
+          "bottom": 350
+        },
+        {
+          "label": "Agent",
+          "contrast": 9.923983344436651,
+          "left": 885.09375,
+          "right": 1017.21875,
+          "top": 280,
+          "bottom": 350
+        },
+        {
+          "label": "Reviewed work",
+          "contrast": 18.00899491348785,
+          "left": 1185.90625,
+          "right": 1455,
+          "top": 280,
+          "bottom": 350
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 950.15625,
+          "bottom": 135
+        },
+        {
+          "right": 1125.828125,
+          "bottom": 226.65625
+        }
+      ]
+    },
+    {
+      "file": "zeno-linkedin-product-narrative-company.png",
+      "width": 4200,
+      "height": 700,
+      "bytes": 108393,
+      "sha256": "b271aafb567e037093c058aefe3c2f77d2ce08314ad8e675e6dcbfa5ad2f6dc6",
+      "headline": "AI agents your teams actually use.",
+      "fonts": [
+        {
+          "family": "IBM Plex Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "status": "loaded"
+        }
+      ],
+      "bounds": [
+        {
+          "label": "Zeno",
+          "contrast": 16.43174386764105,
+          "left": 400,
+          "right": 649.53125,
+          "top": 126,
+          "bottom": 242
+        },
+        {
+          "label": "AI agents your teams actually use.",
+          "contrast": 16.43174386764105,
+          "left": 1250,
+          "right": 3850,
+          "top": 76,
+          "bottom": 463.25
+        },
+        {
+          "label": "Company context",
+          "contrast": 18.00899491348785,
+          "left": 1260,
+          "right": 1966.5,
+          "top": 510,
+          "bottom": 642
+        },
+        {
+          "label": "Agent",
+          "contrast": 9.923983344436651,
+          "left": 2408.75,
+          "right": 2692.046875,
+          "top": 510,
+          "bottom": 642
+        },
+        {
+          "label": "Reviewed work",
+          "contrast": 18.00899491348785,
+          "left": 3134.296875,
+          "right": 3760,
+          "top": 510,
+          "bottom": 642
+        }
+      ],
+      "textBounds": [
+        {
+          "right": 2390.984375,
+          "bottom": 295
+        },
+        {
+          "right": 2762.09375,
+          "bottom": 488.625
+        }
+      ]
+    }
+  ]
+}

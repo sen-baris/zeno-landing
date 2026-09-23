@@ -54,7 +54,7 @@ def write_valid_repository(root: Path) -> None:
 
 class AgentSkillValidatorTests(unittest.TestCase):
     def test_localization_and_seo_are_required_registered_skills(self) -> None:
-        for name in ("enterprise-ai-localization", "enterprise-ai-seo"):
+        for name in ("enterprise-ai-localization", "enterprise-ai-seo", "enterprise-ai-marketing-assets"):
             with self.subTest(skill=name), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 write_valid_repository(root)

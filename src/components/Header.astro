@@ -2,6 +2,7 @@
 import { appLoginClaimId, claimRegistry } from '../lib/claims/registry';
 import { resolveApprovedClaims } from '../lib/claims/public-claims';
 import { solutions } from '../lib/content/solutions';
+import { approvedResources } from '../lib/content/resources';
 import type { Locale } from '../lib/i18n/locales';
 import { getLocalizedPath, type SolutionSlug, type StaticRouteKey } from '../lib/i18n/routes';
 import { sharedUiCopy, solutionNavigationLabels } from '../lib/i18n/ui';
@@ -13,6 +14,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = sharedUiCopy[locale].header;
+const resources = approvedResources(claimRegistry, 'navigation.resources');
 const route = (key: StaticRouteKey) => {
   const path = getLocalizedPath({ kind: 'static', key }, locale);
   if (!path) throw new Error(`Navigation route "${key}" is unavailable for "${locale}".`);
@@ -47,7 +49,7 @@ const appLoginUrl = appLoginClaim.public_url;
         the menu still opens and every link still works.
       */
       }
-      <details class="nav-menu">
+      <details class="nav-menu" name="primary-navigation" data-nav-menu="solutions">
         <summary><span>{copy.solutions}</span></summary>
         <div class="nav-menu-panel">
           <p class="product-label">{copy.byIndustry}</p>
@@ -68,6 +70,23 @@ const appLoginUrl = appLoginClaim.public_url;
         </div>
       </details>
       <a href={route('security')}>{copy.security}</a>
+      <details class="nav-menu" name="primary-navigation" data-nav-menu="resources">
+        <summary><span>{copy.resources}</span></summary>
+        <div class="nav-menu-panel">
+          <ul>
+            {
+              resources.map((resource) => (
+                <li>
+                  <a href={resource.destination} target="_blank" rel="noopener noreferrer">
+                    {resource.labels[locale]}
+                    <span class="visually-hidden">{copy.externalNewTab}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </details>
       <a class="nav-business-case-cta" href={route('pricing')}>
         <span>{copy.businessCase}</span>
         <span class="nav-action-arrow" aria-hidden="true">→</span>
@@ -92,6 +111,22 @@ const appLoginUrl = appLoginClaim.public_url;
           ))
         }
         <a href={route('security')}>{copy.security}</a>
+        <div class="mobile-resource-group">
+          <p class="mobile-resource-label">{copy.resources}</p>
+          {
+            resources.map((resource) => (
+              <a
+                class="mobile-menu-nested"
+                href={resource.destination}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {resource.labels[locale]}
+                <span class="visually-hidden">{copy.externalNewTab}</span>
+              </a>
+            ))
+          }
+        </div>
         <a class="mobile-nav-business-case" href={route('pricing')}>
           <span>{copy.businessCase}</span>
           <span class="nav-action-arrow" aria-hidden="true">→</span>
@@ -106,72 +141,108 @@ const appLoginUrl = appLoginClaim.public_url;
 </header>
 
 <script>
+  const lifetime = new AbortController();
+  const options = { signal: lifetime.signal };
   document.querySelectorAll<HTMLAnchorElement>('.mobile-menu a').forEach((link) => {
-    link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'));
+    link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'), options);
   });
 
-  // Opening is native. Closing again when attention moves elsewhere is not, so it is added here:
-  // Escape, a click outside, and focus leaving.
-  const menu = document.querySelector<HTMLDetailsElement>('.nav-menu');
-  if (menu) {
-    const close = () => menu.removeAttribute('open');
-    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close);
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape' || !menu.open) return;
-      close();
-      // Escape should leave the reader where they were, not at the top of the document.
-      menu.querySelector('summary')?.focus();
-    });
-
-    document.addEventListener('click', (event) => {
-      if (!menu.open || menu.contains(event.target as Node)) return;
-      close();
-    });
-    document.addEventListener('focusin', (event) => {
-      if (!menu.open || menu.contains(event.target as Node)) return;
-      close();
-    });
-
-    // On a device with a pointer that can hover, the menu follows the pointer. A touch screen
-    // reports no hover and keeps the native tap-to-open, which is the only thing that works there.
-    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const menus = [...document.querySelectorAll<HTMLDetailsElement>('.nav-menu')];
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const cleanup: (() => void)[] = [];
+  for (const menu of menus) {
     const panel = menu.querySelector('.nav-menu-panel');
     let closeTimer = 0;
-
-    menu.addEventListener('pointerenter', () => {
-      if (!canHover.matches) return;
+    let hoverOpened = false;
+    const close = () => {
       window.clearTimeout(closeTimer);
+      menu.open = false;
+      hoverOpened = false;
+    };
+    const open = () => {
+      for (const other of menus) if (other !== menu) other.open = false;
       menu.open = true;
-    });
-
-    menu.addEventListener('pointerleave', () => {
-      if (!canHover.matches) return;
-      // A short grace period covers a diagonal path off the trigger. Closing under a reader who is
-      // tabbing through the panel would throw their focus to the top of the document, so the panel
-      // stays open while it holds focus. Focus resting on the trigger does not count: that is where
-      // a click leaves it, and a pointer moving away should still close what it opened.
-      window.clearTimeout(closeTimer);
-      closeTimer = window.setTimeout(() => {
-        if (!panel?.contains(document.activeElement)) close();
-      }, 120);
-    });
-
-    // WebKit does not activate a summary with Enter, only with Space, so Safari readers cannot
-    // open this from the keyboard at all. Enter is handled here for every engine, and the default
-    // is prevented so the ones that do act on it are not toggling twice.
-    menu.querySelector('summary')?.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      menu.open = !menu.open;
-    });
-
-    menu.querySelector('summary')?.addEventListener('click', (event) => {
-      // Arriving at the trigger already opened it, so the native toggle would close it on the way
-      // in. Only a click on an open menu is suppressed: once it is closed, by Escape or otherwise,
-      // clicking has to open it again even though the pointer never left.
-      if (!canHover.matches || !menu.open) return;
-      event.preventDefault();
-    });
+    };
+    cleanup.push(close);
+    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close, options);
+    menu.addEventListener(
+      'toggle',
+      () => {
+        // Also enforces exclusivity in browsers without native named-details support.
+        if (menu.open) for (const other of menus) if (other !== menu) other.open = false;
+      },
+      options,
+    );
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key !== 'Escape' || !menu.open) return;
+        close();
+        menu.querySelector('summary')?.focus();
+      },
+      options,
+    );
+    for (const eventName of ['click', 'focusin'] as const) {
+      document.addEventListener(
+        eventName,
+        (event) => {
+          if (menu.open && !menu.contains(event.target as Node)) close();
+        },
+        options,
+      );
+    }
+    menu.addEventListener(
+      'pointerenter',
+      () => {
+        if (!canHover.matches) return;
+        window.clearTimeout(closeTimer);
+        if (!menu.open) {
+          open();
+          hoverOpened = true;
+        }
+      },
+      options,
+    );
+    menu.addEventListener(
+      'pointerleave',
+      () => {
+        if (!canHover.matches) return;
+        window.clearTimeout(closeTimer);
+        closeTimer = window.setTimeout(() => {
+          if (!panel?.contains(document.activeElement)) close();
+        }, 120);
+      },
+      options,
+    );
+    // Enter needs normalization in WebKit. Space retains native summary semantics.
+    menu.querySelector('summary')?.addEventListener(
+      'keydown',
+      (event) => {
+        hoverOpened = false;
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        if (menu.open) close();
+        else open();
+      },
+      options,
+    );
+    menu.querySelector('summary')?.addEventListener(
+      'click',
+      (event) => {
+        // The first pointer click must not undo hover opening. Later clicks toggle normally.
+        if (event.detail > 0 && hoverOpened && menu.open) event.preventDefault();
+        hoverOpened = false;
+      },
+      options,
+    );
   }
+  window.addEventListener(
+    'pagehide',
+    (event) => {
+      for (const close of cleanup) close();
+      // Keep listeners when restored from the browser's back/forward cache.
+      if (!event.persisted) lifetime.abort();
+    },
+    options,
+  );
 </script>

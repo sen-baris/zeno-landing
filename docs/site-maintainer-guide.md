@@ -1,6 +1,6 @@
 # Zeno website maintainer guide
 
-Last updated: 2026-09-22
+Last updated: 2026-09-23
 
 This is the main handover document for the Zeno marketing website. It explains what the site is
 trying to do, where each source of truth lives, how the interactive parts work, and which decisions
@@ -287,16 +287,33 @@ The desktop order is:
 1. Product
 2. Solutions
 3. Security
-4. Calculate business case →
-5. Sign in
-6. Book a demo
+4. Resources
+5. Calculate business case →
+6. Sign in
+7. Book a demo
 
 “Calculate business case” is plain text with slightly stronger weight and an arrow. It is not a
 colored pill and does not use an active-page underline. The Zeno wordmark is the route home, so
 “Why Zeno” does not belong in the header.
 
-The Solutions menu uses native `<details>` with a small enhancement for pointer and keyboard
-behavior. Preserve click, hover, Enter, Escape, outside-click, focus exit, and no-JavaScript use.
+Solutions and Resources use native named `<details>` with one shared enhancement for pointer and
+keyboard behavior. Only one desktop dropdown remains open. Preserve click, hover, Enter, Space,
+Escape, outside-click, focus exit, and no-JavaScript use. Mobile Resources is a labeled link group.
+The mobile menu scrolls within the viewport so added links never strand the demo action.
+
+Resources links come from `src/lib/content/resources.ts`, validated against exact approvals in
+`src/lib/claims/marketing-claims.ts`. The temporary TextCortex Help Center, YouTube, and LinkedIn
+destinations open safely in a new tab with localized accessible announcements. Footer groups are
+Explore, Company, Resources, and Legal, using four, two, and one columns across desktop, tablet,
+and mobile. Language switching remains in the footer metadata row only.
+
+### Marketing assets
+
+`marketing/linkedin/` contains the three-concept, six-banner English LinkedIn kit outside the
+website build. Its [README](../marketing/linkedin/README.md) documents the editable sources,
+`pnpm marketing:linkedin` export, exact placement dimensions, original font license, crop review,
+and replacement of resource destinations. Follow the repository marketing-assets skill before
+changing campaigns. Social-surface approval does not widen website claims or authorize uploads.
 
 ### Motion
 
@@ -527,8 +544,10 @@ German legal routes are reserved but not generated:
 - `/de/nutzungsbedingungen`
 - `/de/impressum`
 
-German pages link to the English legal documents with a visible English-language label until
-approved German documents exist.
+German pages link to the English legal documents until approved German documents exist. Keep
+`hreflang="en"` on those links, but use the normal localized labels without language suffixes.
+The same rule applies to resource links and the Security privacy-policy link: do not append
+parenthetical labels such as “(Englisch)”. The footer language switcher remains unchanged.
 
 ### SEO rules
 

@@ -141,7 +141,7 @@ test('desktop pricing navigation alignment', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/pricing');
   await expect(page.locator('.business-case-calculator')).toHaveAttribute('data-hydrated', 'true');
-  await page.locator('.nav-menu > summary').focus();
+  await page.locator('[data-nav-menu="solutions"] > summary').focus();
   await expect(
     page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', {
       name: 'Calculate business case',

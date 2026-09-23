@@ -14,6 +14,7 @@ EXPECTED_SKILLS = (
     "enterprise-ai-component-intake",
     "enterprise-ai-feature-audit",
     "enterprise-ai-localization",
+    "enterprise-ai-marketing-assets",
     "enterprise-ai-release-audit",
     "enterprise-ai-seo",
     "enterprise-ai-testing",

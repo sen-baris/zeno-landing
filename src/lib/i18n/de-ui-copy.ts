@@ -228,7 +228,7 @@ export const germanInterfaceCopy = {
   'Privacy framework': 'Datenschutzrahmen',
   'Review certification': 'Zertifizierung ansehen',
   'Review report': 'Bericht ansehen',
-  'Review privacy policy': 'Datenschutzerklärung lesen (Englisch)',
+  'Review privacy policy': 'Datenschutzerklärung lesen',
   'ISO 27001': 'ISO 27001',
   'SOC 2 Type I': 'SOC 2 Type I',
   'SOC 2 Type II': 'SOC 2 Type II',

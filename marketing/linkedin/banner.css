@@ -1,0 +1,168 @@
+:root {
+  --canvas: #f7f3ee;
+  --paper: #fffefc;
+  --ink: #171518;
+  --action: #6b2d4a;
+  --rule: #ded8d5;
+  --evidence: #9a621f;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.banner {
+  position: relative;
+  background: var(--canvas);
+  color: var(--ink);
+}
+.profile {
+  width: 1584px;
+  height: 396px;
+}
+.company {
+  width: 4200px;
+  height: 700px;
+}
+.wordmark,
+h1 {
+  position: absolute;
+  font-family: 'IBM Plex Serif';
+  font-weight: 400;
+}
+.wordmark {
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+h1 {
+  margin: 0;
+  line-height: 1.03;
+  letter-spacing: -0.048em;
+  text-wrap: balance;
+}
+.accent {
+  position: absolute;
+  background: var(--action);
+}
+.profile .wordmark {
+  left: 120px;
+  top: 58px;
+  font-size: 58px;
+}
+.profile h1 {
+  left: 410px;
+  top: 55px;
+  width: 1060px;
+  font-size: 108px;
+}
+.profile .accent {
+  left: 415px;
+  bottom: 50px;
+  width: 90px;
+  height: 3px;
+}
+.company .wordmark {
+  left: 400px;
+  top: 126px;
+  font-size: 116px;
+}
+.company h1 {
+  left: 1250px;
+  top: 108px;
+  width: 2630px;
+  font-size: 212px;
+}
+.company .accent {
+  left: 406px;
+  top: 300px;
+  width: 156px;
+  height: 5px;
+}
+
+.dark-statement {
+  background: var(--ink);
+  color: var(--paper);
+}
+.dark-statement .accent {
+  background: color-mix(in srgb, var(--evidence) 52%, var(--paper));
+  width: 2px;
+}
+.dark-statement.profile .accent {
+  left: 345px;
+  top: 55px;
+  height: 286px;
+}
+.dark-statement.company .accent {
+  left: 1050px;
+  top: 120px;
+  height: 460px;
+}
+.dark-statement h1 {
+  color: var(--paper);
+}
+
+.product-narrative.profile h1 {
+  top: 32px;
+  font-size: 89px;
+  width: 1020px;
+}
+.product-narrative.company h1 {
+  top: 76px;
+  font-size: 188px;
+  width: 2600px;
+}
+.product-narrative .accent {
+  display: none;
+}
+.motif {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
+}
+.profile .motif {
+  left: 415px;
+  top: 280px;
+  width: 1040px;
+  gap: 18px;
+  font-size: 32px;
+}
+.company .motif {
+  left: 1260px;
+  top: 510px;
+  width: 2500px;
+  gap: 30px;
+  font-size: 80px;
+  line-height: 1.2;
+}
+.motif span {
+  white-space: nowrap;
+}
+.motif .node {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  background: var(--paper);
+  padding: 13px 22px;
+}
+.company .motif .node {
+  padding: 16px 32px;
+  border-width: 2px;
+  border-radius: 8px;
+}
+.motif .agent {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--paper);
+}
+.motif svg {
+  flex: 1;
+  min-width: 30px;
+  height: 16px;
+  color: var(--action);
+}
+.company .motif svg {
+  height: 28px;
+}

@@ -1683,7 +1683,7 @@ test('the solutions menu opens without scripting and closes once armed', async (
   browser,
 }) => {
   await page.goto('/');
-  const menu = page.locator('.nav-menu');
+  const menu = page.locator('[data-nav-menu="solutions"]');
   await expect(menu).not.toHaveAttribute('open', '');
   await expect(menu.locator('a')).toHaveCount(solutions.length + 1);
 
@@ -1708,15 +1708,15 @@ test('the solutions menu opens without scripting and closes once armed', async (
   const context = await browser.newContext({ javaScriptEnabled: false });
   const plain = await context.newPage();
   await plain.goto('/');
-  await plain.locator('.nav-menu summary').click();
-  await expect(plain.locator('.nav-menu')).toHaveAttribute('open', '');
-  await expect(plain.locator('.nav-menu-panel a')).toHaveCount(solutions.length + 1);
+  await plain.locator('[data-nav-menu="solutions"] summary').click();
+  await expect(plain.locator('[data-nav-menu="solutions"]')).toHaveAttribute('open', '');
+  await expect(plain.locator('[data-nav-menu="solutions"] a')).toHaveCount(solutions.length + 1);
   await context.close();
 });
 
 test('the solutions menu follows the pointer and still answers the keyboard', async ({ page }) => {
   await page.goto('/');
-  const menu = page.locator('.nav-menu');
+  const menu = page.locator('[data-nav-menu="solutions"]');
   const summary = menu.locator('summary');
   const away = async () => {
     await page.mouse.move(1200, 600);
@@ -2266,11 +2266,14 @@ test('the trust section publishes approved certifications and a verifiable trust
     await expect(trust.getByRole('heading', { name: label, exact: true })).toBeVisible();
   }
   await expect(trust.getByText(/Held by Text Cortex AI/)).toBeVisible();
+  await expect(trust.locator('.certification-attribution')).toContainText('Zeno. The certificates');
 
   const trustCenter = trust.getByRole('link', { name: /Open the trust center/ });
   await expect(trustCenter).toHaveAttribute('href', 'https://trust.textcortex.com/home');
   await expect(trustCenter).toHaveAttribute('target', '_blank');
   await expect(trustCenter).toHaveAttribute('rel', /noopener/);
+  await page.goto('/de/');
+  await expect(page.locator('.certification-attribution')).toContainText('Zeno. Zertifikate');
 });
 
 test('product visuals use clear labels without repeating a Z badge', async ({ page }) => {

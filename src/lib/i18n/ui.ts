@@ -11,6 +11,8 @@ export interface SharedUiCopy {
     byIndustry: string;
     allIndustries: string;
     security: string;
+    resources: string;
+    externalNewTab: string;
     businessCase: string;
     signIn: string;
     bookDemo: string;
@@ -22,6 +24,7 @@ export interface SharedUiCopy {
     navigationLabel: string;
     explore: string;
     company: string;
+    resources: string;
     legal: string;
     product: string;
     solutions: string;
@@ -34,7 +37,6 @@ export interface SharedUiCopy {
     privacy: string;
     terms: string;
     imprint: string;
-    englishDocument: string;
     languageLabel: string;
   };
 }
@@ -51,6 +53,8 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       byIndustry: 'By industry',
       allIndustries: 'All industries',
       security: 'Security',
+      resources: 'Resources',
+      externalNewTab: ' (opens in a new tab)',
       businessCase: 'Calculate business case',
       signIn: 'Sign in',
       bookDemo: 'Book a demo',
@@ -62,6 +66,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       navigationLabel: 'Footer navigation',
       explore: 'Explore',
       company: 'Company',
+      resources: 'Resources',
       legal: 'Legal',
       product: 'Product',
       solutions: 'Solutions',
@@ -74,7 +79,6 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       privacy: 'Privacy policy',
       terms: 'Terms of service',
       imprint: 'Imprint',
-      englishDocument: '',
       languageLabel: 'Language',
     },
   },
@@ -89,6 +93,8 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       byIndustry: 'Nach Branche',
       allIndustries: 'Alle Branchen',
       security: 'Sicherheit',
+      resources: 'Ressourcen',
+      externalNewTab: ' (öffnet in einem neuen Tab)',
       businessCase: 'Business Case berechnen',
       signIn: 'Anmelden',
       bookDemo: 'Demo buchen',
@@ -101,6 +107,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       navigationLabel: 'Navigation in der Fußzeile',
       explore: 'Entdecken',
       company: 'Unternehmen',
+      resources: 'Ressourcen',
       legal: 'Rechtliches',
       product: 'Produkt',
       solutions: 'Lösungen',
@@ -113,7 +120,6 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       privacy: 'Datenschutz',
       terms: 'Nutzungsbedingungen',
       imprint: 'Impressum',
-      englishDocument: ' (Englisch)',
       languageLabel: 'Sprache',
     },
   },

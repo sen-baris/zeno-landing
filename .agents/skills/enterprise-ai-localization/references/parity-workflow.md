@@ -63,7 +63,7 @@ the entire site was audited.
 | Fallbacks | Reduced motion, short viewports, 200% text size, no JavaScript, complete static scenes |
 | Interactive UI | Header, customer preview hover/focus/pin/Escape, native FAQs, calculator progression, demo validation/failure/retry/success |
 | Privacy | No calculator network/storage/URL writes; no locale detection, persistence, or tracking |
-| Links | German internal destinations, footer-only counterpart links, English-labeled legal destinations |
+| Links | German internal destinations, footer-only counterpart links, English legal destinations with `hreflang="en"` and no visible language suffixes |
 
 Run the smallest relevant tests first:
 

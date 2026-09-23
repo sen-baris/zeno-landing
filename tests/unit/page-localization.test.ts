@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { claimRegistry } from '../../src/lib/claims/registry';
+import { sharedUiCopy } from '../../src/lib/i18n/ui';
+import { germanPageCopy } from '../../src/lib/i18n/page-copy';
+import { resourceLinks } from '../../src/lib/content/resources';
 import {
   germanLocalizedClaims,
   createPageClaimResolver,
@@ -12,6 +15,20 @@ import {
 } from '../../src/lib/i18n/page-copy';
 
 describe('shared localized page copy', () => {
+  it('uses clean German labels without parenthetical language badges', () => {
+    expect(sharedUiCopy.de.footer.privacy).toBe('Datenschutz');
+    expect(sharedUiCopy.de.footer.terms).toBe('Nutzungsbedingungen');
+    expect(sharedUiCopy.de.footer.imprint).toBe('Impressum');
+    expect(translatePageText('de', 'Review privacy policy')).toBe('Datenschutzerklärung lesen');
+    expect(
+      JSON.stringify([
+        sharedUiCopy.de,
+        germanPageCopy,
+        resourceLinks.map((link) => link.labels.de),
+      ]),
+    ).not.toMatch(/\(\s*(?:English|Englisch|Deutsch|German)\s*\)/i);
+  });
+
   it('keeps English intact, translates metadata and preserves structured emphasis', () => {
     expect(translatePageText('en', 'An unchanged sentence.')).toBe('An unchanged sentence.');
     expect(translatePageText('de', '  Product\n | Zeno')).toBe('Produkt | Zeno');

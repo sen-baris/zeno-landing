@@ -369,8 +369,8 @@ h2 {
   display: grid;
   min-height: 76px;
   align-items: center;
-  grid-template-columns: minmax(110px, 0.7fr) 1.8fr auto;
-  gap: 28px;
+  grid-template-columns: minmax(max-content, 0.7fr) minmax(0, 1.8fr) auto;
+  gap: clamp(16px, 2vw, 28px);
 }
 
 .wordmark {
@@ -387,7 +387,13 @@ h2 {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 2.3vw, 40px);
+  gap: clamp(14px, 1.65vw, 28px);
+}
+
+/* Enlarged text can use extra rows instead of colliding with adjacent header actions. */
+.desktop-nav {
+  flex-wrap: wrap;
+  row-gap: 0;
 }
 
 /* The dropdown trigger is a summary, not an anchor, so it has to be named here or it renders a
@@ -405,6 +411,7 @@ h2 {
 .desktop-nav > .nav-menu > summary {
   min-height: 44px;
   align-items: center;
+  white-space: nowrap;
 }
 
 .desktop-nav > a {
@@ -418,7 +425,8 @@ h2 {
 }
 
 .header-actions {
-  gap: 20px;
+  gap: clamp(10px, 1.4vw, 20px);
+  white-space: nowrap;
 }
 
 .desktop-nav .nav-business-case-cta {
@@ -431,7 +439,7 @@ h2 {
   line-height: 1;
 }
 
-/* Solutions dropdown
+/* Shared Solutions and Resources dropdowns
    A details element, so it opens on click and on Enter, closes on Escape, and announces itself as
    expandable without a line of JavaScript. Everything here is presentation on top of that. */
 .nav-menu {
@@ -3105,8 +3113,8 @@ h2 {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: minmax(240px, 0.8fr) minmax(520px, 1.4fr);
-  gap: 72px clamp(72px, 8vw, 144px);
+  grid-template-columns: minmax(200px, 0.65fr) minmax(0, 1.7fr);
+  gap: 64px clamp(40px, 5vw, 80px);
 }
 
 .wordmark-light {
@@ -3121,8 +3129,8 @@ h2 {
 
 .footer-navigation {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(36px, 4.5vw, 72px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(22px, 2.4vw, 40px);
 }
 
 .footer-nav-label {
@@ -4763,6 +4771,15 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     --shell: min(100% - 40px, 1040px);
   }
 
+  .footer-grid {
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.2fr);
+  }
+
+  .footer-navigation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 36px;
+  }
+
   .desktop-nav {
     display: none;
   }
@@ -4788,6 +4805,9 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
     border-radius: 5px;
     background: var(--paper);
     box-shadow: 0 18px 40px rgb(20 23 19 / 15%);
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .mobile-menu nav a {
@@ -4811,6 +4831,20 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   .mobile-menu-nested {
     padding-left: 26px;
     color: var(--muted);
+  }
+
+  .mobile-resource-group {
+    display: grid;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .mobile-resource-label {
+    padding: 13px 13px 4px;
+    font-weight: 560;
+  }
+
+  .mobile-resource-group a {
+    padding-left: 26px;
   }
 
   .header-grid {
@@ -4942,7 +4976,7 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   }
 
   .footer-navigation {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .footer-meta {

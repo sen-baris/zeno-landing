@@ -76,15 +76,17 @@ test('published language switcher lives in the footer and preserves the current 
     'page',
   );
   await expect(page.getByText(/Deutsch \/ Vorschau/i)).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Datenschutz', exact: true })).toHaveAttribute(
+    'href',
+    '/privacy-policy',
+  );
   await expect(
-    page.getByRole('link', { name: 'Datenschutz (Englisch)', exact: true }),
-  ).toHaveAttribute('href', '/privacy-policy');
-  await expect(
-    page.getByRole('link', { name: 'Nutzungsbedingungen (Englisch)', exact: true }),
+    page.getByRole('link', { name: 'Nutzungsbedingungen', exact: true }),
   ).toHaveAttribute('href', '/terms-of-service');
-  await expect(
-    page.getByRole('link', { name: 'Impressum (Englisch)', exact: true }),
-  ).toHaveAttribute('href', '/imprint');
+  await expect(page.getByRole('link', { name: 'Impressum', exact: true })).toHaveAttribute(
+    'href',
+    '/imprint',
+  );
   expect(
     await page.evaluate(() => ({
       local: window.localStorage.length,
@@ -144,6 +146,32 @@ test('held German legal routes do not exist or advertise an alternate', async ({
   await expect(page.getByRole('navigation', { name: 'Language' })).toHaveCount(0);
 });
 
+test('German resource and legal links omit language badges without changing destinations', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(new URL('/de/sicherheit', test.info().project.use.baseURL).toString());
+  await expect(page.locator('body')).not.toContainText(/\(\s*(English|Englisch)\s*\)/i);
+  const privacy = page.getByRole('link', { name: 'Datenschutzerklärung lesen', exact: true });
+  await expect(privacy).toHaveAttribute('href', '/privacy-policy');
+  const footer = page.getByRole('contentinfo');
+  for (const [label, destination] of [
+    ['Datenschutz', '/privacy-policy'],
+    ['Nutzungsbedingungen', '/terms-of-service'],
+    ['Impressum', '/imprint'],
+  ] as const) {
+    const link = footer.getByRole('link', { name: label, exact: true });
+    await expect(link).toHaveAttribute('href', destination);
+    await expect(link).toHaveAttribute('hreflang', 'en');
+  }
+  await expect(footer.getByRole('link', { name: 'Hilfe-Center' })).toHaveAttribute(
+    'href',
+    'https://help.textcortex.com/hc/en-us',
+  );
+  await context.close();
+});
+
 test('sitemap includes published German routes and never duplicates hreflang in XML', async ({
   page,
 }) => {
@@ -181,6 +209,7 @@ test('all published German routes render directly', async ({ page }) => {
     const response = await page.goto(path);
     expect(response?.ok(), path).toBe(true);
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+    await expect(page.locator('body')).not.toContainText(/\(\s*(English|Englisch)\s*\)/i);
   }
 });
 
