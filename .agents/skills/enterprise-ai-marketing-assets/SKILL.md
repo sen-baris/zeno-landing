@@ -16,6 +16,9 @@ description: Create and maintain Zeno social banners and other repository-owned 
   of exports, and preserve exact approved spelling, punctuation, and qualifiers.
 - Creating an asset does not authorize uploading it, changing a social account, pushing Git, or
   releasing the site. Stop at the requested deliverable unless separately authorized.
+- The current LinkedIn kit is local-only at the owner's request. Keep `marketing/linkedin/`
+  ignored and untracked. A general website push does not override that boundary; publishing this
+  kit requires an explicit new instruction. Never delete the local kit when removing tracked copies.
 
 ## Build and export
 
@@ -30,8 +33,9 @@ description: Create and maintain Zeno social banners and other repository-owned 
 5. Produce a comparison sheet and labeled desktop/mobile crop simulations. Simulations are
    review aids, not a guarantee of every platform layout.
 
-The LinkedIn implementation lives in `marketing/linkedin/`. Its README owns the current commands,
-manifest, output locations, and crop assumptions. Regenerate from source instead of editing PNGs.
+When available locally, the LinkedIn implementation lives in `marketing/linkedin/`. Its README owns
+the current commands, manifest, output locations, and crop assumptions. It is absent from fresh
+clones, so repository builds and tests must not import it. Regenerate from source instead of editing PNGs.
 
 ## Review and handoff
 

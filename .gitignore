@@ -13,3 +13,6 @@ dist/
 node_modules/
 playwright-report/
 test-results/
+
+# Owner's local-only LinkedIn source files, banners, and review sheets.
+/marketing/linkedin/

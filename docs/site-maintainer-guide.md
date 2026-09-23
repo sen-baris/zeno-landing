@@ -309,11 +309,14 @@ and mobile. Language switching remains in the footer metadata row only.
 
 ### Marketing assets
 
-`marketing/linkedin/` contains the three-concept, six-banner English LinkedIn kit outside the
-website build. Its [README](../marketing/linkedin/README.md) documents the editable sources,
-`pnpm marketing:linkedin` export, exact placement dimensions, original font license, crop review,
-and replacement of resource destinations. Follow the repository marketing-assets skill before
-changing campaigns. Social-surface approval does not widen website claims or authorize uploads.
+The three-concept, six-banner English LinkedIn kit is local-only under `marketing/linkedin/`,
+ignored by Git and absent from fresh clones. Do not stage it during website pushes. Publishing
+the kit requires an explicit new instruction from the owner. When those local files are available,
+their README documents the editable sources, `pnpm exec tsx marketing/linkedin/export.ts` command,
+placement dimensions, font license, and crop review. Website builds and tests must not depend on
+the kit. Its existing copy approvals remain internal records, not permission to publish the files.
+Follow the repository marketing-assets skill before changing campaigns. Social-surface approval
+does not widen website claims or authorize uploads.
 
 ### Motion
 

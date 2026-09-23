@@ -2,14 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { claimRegistry } from '../../src/lib/claims/registry';
 import { resolveApprovedClaims } from '../../src/lib/claims/public-claims';
 import { approvedResources, resourceLinks } from '../../src/lib/content/resources';
-import {
-  bannerClaimIds,
-  bannerHeadline,
-  banners,
-  concepts,
-  narrativeLabels,
-  placements,
-} from '../../marketing/linkedin/manifest';
 
 const now = new Date('2026-09-23');
 
@@ -51,22 +43,9 @@ describe('approved navigation resources', () => {
   });
 });
 
-describe('LinkedIn placements and approved copy', () => {
-  it('defines three paired compositions with unique filenames and requested dimensions', () => {
-    expect(concepts).toHaveLength(3);
-    expect(banners).toHaveLength(6);
-    expect(new Set(banners.map((banner) => banner.filename)).size).toBe(6);
-    expect(placements).toEqual({
-      profile: { width: 1584, height: 396, maxBytes: 8_000_000 },
-      company: { width: 4200, height: 700, maxBytes: 3_000_000 },
-    });
-    for (const concept of concepts)
-      expect(
-        banners.filter((banner) => banner.id === concept.id).map((banner) => banner.placement),
-      ).toEqual(['profile', 'company']);
-  });
-
+describe('retained local-campaign approval boundaries', () => {
   it('limits exact campaign approval to the two LinkedIn placements', () => {
+    const bannerClaimIds = ['linkedin-banner-headline', 'linkedin-banner-narrative'];
     for (const placement of ['profile', 'company']) {
       const claims = resolveApprovedClaims(
         claimRegistry,
@@ -75,8 +54,8 @@ describe('LinkedIn placements and approved copy', () => {
         now,
       );
       expect(claims.map((claim) => claim.statement)).toEqual([
-        bannerHeadline,
-        narrativeLabels.join(' → '),
+        'AI agents your teams actually use.',
+        'Company context → Agent → Reviewed work',
       ]);
       for (const claim of claims) {
         expect(claim.allowed_surfaces).toEqual([
