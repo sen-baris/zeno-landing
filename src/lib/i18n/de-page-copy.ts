@@ -69,8 +69,9 @@ export const germanEditorialCopy = {
     'KI, Innovation, IT, Daten, Operations, Sicherheit',
   'For enterprise leaders turning AI into everyday work.':
     'Für Verantwortliche, die KI in den Arbeitsalltag bringen.',
-  '~92 hours saved per person each year.': '~92 Stunden Zeitersparnis pro Person und Jahr.',
-  'hours saved per person each year': 'Stunden Zeitersparnis pro Person und Jahr',
+  '~92 hrs saved per person each year.': '~92 Std. Zeitersparnis pro Person und Jahr.',
+  '~92 hrs': '~92 Std.',
+  'saved per person each year': 'Zeitersparnis pro Person und Jahr',
   'Annualized team estimate': 'Hochrechnung auf Teambasis',
   '2,000+': '2.000+',
   '2,000+ agents created.': '2.000+ erstellte KI-Agenten.',

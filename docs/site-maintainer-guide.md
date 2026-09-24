@@ -260,8 +260,10 @@ data, and social cards count as public surfaces too.
 
 The homepage business-case figures use separate records for distinct kinds of proof. The first
 figure, approximately 92 annual hours per person, is an annualized illustration: 20 weekly team
-hours divided by 10 people, multiplied by 46 working weeks. Keep the short qualifier "Annualized
-team estimate" (German: "Hochrechnung auf Teambasis") visible; the calculation stays internal. It is not
+hours divided by 10 people, multiplied by 46 working weeks. Show the unit with the large figure:
+`~92 hrs` in English and `~92 Std.` in German. Put the per-person annual savings label below it.
+Keep the short qualifier "Annualized team estimate" (German: "Hochrechnung auf Teambasis") visible;
+the calculation stays internal. It is not
 a measured individual average across all customers and does not alter customer-story results or
 calculator assumptions. The second figure counts 2,000+ agents **created**, not active agents or
 completed tasks, across hundreds of enterprises.

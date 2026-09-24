@@ -32,7 +32,7 @@ describe('homepage business case figures', () => {
 
   it('keeps the exact approved figures', () => {
     expect(businessCaseAssets.map((asset) => asset.value)).toEqual([
-      '~92',
+      '~92 hrs',
       '2,000+',
       '+65%',
       '~€7–8M',
@@ -41,11 +41,11 @@ describe('homepage business case figures', () => {
 
   it('annualizes the team total using ten people, without claiming a measured individual average', () => {
     const savings = claims.find((claim) => claim.id === 'metric-annualized-time-per-person');
-    expect(savings?.statement).toBe('~92 hours saved per person each year.');
+    expect(savings?.statement).toBe('~92 hrs saved per person each year.');
     expect(savings?.attribution).toBe('Annualized team estimate');
     expect(savings?.evidence).toContain('20 / 10 * 46 = 92');
     expect(savings?.attribution).not.toMatch(/150|measured/i);
-    expect((20 / 10) * 46).toBe(Number(businessCaseAssets[0]?.value.slice(1)));
+    expect((20 / 10) * 46).toBe(Number.parseFloat(businessCaseAssets[0]!.value.slice(1)));
     expect(savings?.notes).toContain('Individual savings can differ');
     expect(savings?.notes).toContain('before the production release');
     expect(savings?.approved_on).toBe('2026-09-24');
@@ -100,7 +100,7 @@ describe('homepage business case figures', () => {
           translatePageText('de', label),
         ]),
     ).toEqual([
-      ['~92', 'Stunden Zeitersparnis pro Person und Jahr'],
+      ['~92 Std.', 'Zeitersparnis pro Person und Jahr'],
       ['2.000+', 'erstellte KI-Agenten'],
     ]);
     expect(

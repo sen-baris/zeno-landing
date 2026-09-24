@@ -19,6 +19,10 @@ describe('localized figure count-up', () => {
 
   it('preserves ranges, units and approximation markers without changing other figures', () => {
     expect(createFigureCounter('~92', 'en')(0.5)).toBe('~46');
+    expect(createFigureCounter('~92 hrs', 'en')(0.5)).toBe('~46 hrs');
+    expect(createFigureCounter('~92 Std.', 'de')(0.5)).toBe('~46 Std.');
+    expect(createFigureCounter('~92 hrs', 'en')(1)).toBe('~92 hrs');
+    expect(createFigureCounter('~92 Std.', 'de')(1)).toBe('~92 Std.');
     expect(createFigureCounter('+65%', 'en')(0.5)).toBe('+33%');
     expect(createFigureCounter('~€7–8M', 'en')(0.5)).toBe('~€4–4M');
     expect(createFigureCounter('~€7–8 Mio.', 'de')(0.5)).toBe('~€4–4 Mio.');

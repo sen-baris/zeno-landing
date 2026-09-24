@@ -1101,13 +1101,13 @@
     "id": "de-metric-annualized-time-per-person",
     "locale": "de",
     "sourceClaimId": "metric-annualized-time-per-person",
-    "sourceStatement": "~92 hours saved per person each year.",
-    "statement": "~92 Stunden Zeitersparnis pro Person und Jahr.",
+    "sourceStatement": "~92 hrs saved per person each year.",
+    "statement": "~92 Std. Zeitersparnis pro Person und Jahr.",
     "approvalStatus": "approved",
     "allowedSurfaces": ["home.business-case"],
     "approvedBy": "Baris, homepage figures direction",
     "approvedAt": "2026-09-24",
-    "evidence": "Exact German wording approved in the Clearer Homepage Business-Case Figures plan on 2026-09-24. The owner's subsequent concise-copy direction on the same date replaces the visible method with 'Hochrechnung auf Teambasis', corresponding to 'Annualized team estimate'. The internal basis remains 20 team hours per week / 10 people * 46 working weeks, not an observed individual average."
+    "evidence": "Exact German wording approved in the Clearer Homepage Business-Case Figures plan on 2026-09-24. The owner's subsequent concise-copy direction on the same date replaces the visible method with 'Hochrechnung auf Teambasis', corresponding to 'Annualized team estimate'. The same-day unit-visibility direction places '~92 Std.' in the primary figure with 'Zeitersparnis pro Person und Jahr' below. The internal basis remains 20 team hours per week / 10 people * 46 working weeks, not an observed individual average."
   },
   {
     "id": "de-metric-agents-created",

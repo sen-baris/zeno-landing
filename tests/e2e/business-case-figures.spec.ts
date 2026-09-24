@@ -4,15 +4,15 @@ const locales = [
   {
     locale: 'en',
     path: '/',
-    figures: ['~92', '2,000+', '+65%', '~€7–8M'],
-    labels: ['hours saved per person each year', 'agents created'],
+    figures: ['~92 hrs', '2,000+', '+65%', '~€7–8M'],
+    labels: ['saved per person each year', 'agents created'],
     qualifiers: ['Annualized team estimate', 'across hundreds of enterprises'],
   },
   {
     locale: 'de',
     path: '/de/',
-    figures: ['~92', '2.000+', '+65%', '~€7–8 Mio.'],
-    labels: ['Stunden Zeitersparnis pro Person und Jahr', 'erstellte KI-Agenten'],
+    figures: ['~92 Std.', '2.000+', '+65%', '~€7–8 Mio.'],
+    labels: ['Zeitersparnis pro Person und Jahr', 'erstellte KI-Agenten'],
     qualifiers: ['Hochrechnung auf Teambasis', 'in Hunderten Unternehmen'],
   },
 ] as const;
@@ -157,6 +157,15 @@ for (const copy of locales) {
               };
             });
           expect(line.height).toBeLessThanOrEqual(line.lineHeight + 1);
+          const figureLines = await section
+            .locator('.business-case-count')
+            .first()
+            .evaluate((element) => {
+              const text = document.createRange();
+              text.selectNodeContents(element);
+              return text.getClientRects().length;
+            });
+          expect(figureLines).toBe(1);
         }
         if (scale === 200) {
           await section.locator('.business-case-figures').screenshot({

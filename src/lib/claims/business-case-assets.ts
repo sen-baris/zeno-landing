@@ -9,8 +9,8 @@ export interface BusinessCaseAsset {
 export const businessCaseAssets: readonly BusinessCaseAsset[] = [
   {
     claimId: 'metric-annualized-time-per-person',
-    value: '~92',
-    label: 'hours saved per person each year',
+    value: '~92 hrs',
+    label: 'saved per person each year',
   },
   {
     claimId: 'metric-agents-created',

@@ -967,10 +967,10 @@ export const claimRegistry: readonly ClaimRecord[] = [
   },
   {
     id: 'metric-annualized-time-per-person',
-    statement: '~92 hours saved per person each year.',
+    statement: '~92 hrs saved per person each year.',
     category: 'metric',
     evidence:
-      'Owner-supplied team saving and accepted Clearer Homepage Business-Case Figures plan dated 2026-09-24. The illustration allocates approximately 20 hours saved per week across ten people and annualizes over 46 working weeks: 20 / 10 * 46 = 92 hours. It is separate from the previous measured percentage claim.',
+      'Owner-supplied team saving and accepted Clearer Homepage Business-Case Figures plan dated 2026-09-24. The illustration allocates approximately 20 hours saved per week across ten people and annualizes over 46 working weeks: 20 / 10 * 46 = 92 hours. It is separate from the previous measured percentage claim. The same-day unit-visibility direction approves "~92 hrs" as the primary figure with "saved per person each year" below; only the presentation changes, not the estimate.',
     verified_on: '2026-09-24',
     approval_status: 'approved',
     approved_by: 'Baris, homepage figures direction',
