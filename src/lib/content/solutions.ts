@@ -19,7 +19,15 @@ export interface SolutionAgent {
 export interface SolutionQuestion {
   question: string;
   answer: string;
+  showSecurityReference?: boolean;
 }
+
+/** A document reference, not a provider-wide retention or compliance guarantee. */
+export const solutionSecurityReference = {
+  description: 'Details on Zero Data Retention (ZDR) and model-training policies:',
+  label: 'Security and Trust Center →',
+  href: '/security',
+} as const;
 
 export type SolutionJourneyStepId = 'context' | 'agent' | 'review';
 
@@ -226,6 +234,7 @@ export const solutions: readonly Solution[] = [
       },
       {
         question: 'Our customer drawings are under NDA. Where do they go?',
+        showSecurityReference: true,
         answer:
           'IT sets access to connected drawings and approves the models used in the workspace. EU hosting is available for the model layer.',
       },
@@ -369,6 +378,7 @@ export const solutions: readonly Solution[] = [
     questions: [
       {
         question: 'How do you keep one client’s material out of another’s deck?',
+        showSecurityReference: true,
         answer:
           'Set access per engagement. The agent reads only material available to the person using it. Client files are not pooled.',
       },
@@ -527,6 +537,7 @@ export const solutions: readonly Solution[] = [
       },
       {
         question: 'Where does our material sit?',
+        showSecurityReference: true,
         answer:
           'IT chooses approved models with EU hosting. Connected deal material remains subject to its access rules. Certification details are in the trust centre.',
       },
@@ -681,6 +692,7 @@ export const solutions: readonly Solution[] = [
       },
       {
         question: 'Which models does it run on?',
+        showSecurityReference: true,
         answer:
           'IT selects approved models with EU hosting. Model choice remains separate from the agent workflow.',
       },
@@ -811,6 +823,7 @@ export const solutions: readonly Solution[] = [
     questions: [
       {
         question: 'How is firm material controlled?',
+        showSecurityReference: true,
         answer:
           'IT controls connected access and selects approved models with EU hosting. The agent reads only material available within the matter.',
       },

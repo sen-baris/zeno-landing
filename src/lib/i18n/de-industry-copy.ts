@@ -1,4 +1,7 @@
 export const germanIndustryCopy = {
+  'Details on Zero Data Retention (ZDR) and model-training policies:':
+    'Details zu Zero Data Retention (ZDR) und Richtlinien zum Modelltraining:',
+  'Security and Trust Center →': 'Sicherheit und Trust Center →',
   '4': '4',
   '7': '7',
   Manufacturing: 'Fertigung',
@@ -76,7 +79,7 @@ export const germanIndustryCopy = {
     'Die IT steuert den Zugriff und genehmigt die Modelle im Workspace. EU-Hosting ist für die Modellschicht verfügbar.',
   'Can it sign off a quality document?': 'Kann der Agent ein Qualitätsdokument freigeben?',
   'No. Every 8D and CAPA goes to a named engineer for review. The workspace records the signoff.':
-    'Nein. 8D- und CAPA-Berichte gehen zur Prüfung an einen benannten Ingenieur.',
+    'Nein. Jeder 8D- und CAPA-Bericht geht zur Prüfung an einen benannten Ingenieur. Der Workspace dokumentiert die Freigabe.',
   'How long before one plant is using it?': 'Wie beginnt die Einführung?',
   'Begin with one document type at one plant. Expand after the engineering team validates the first result.':
     'Ein Dokumenttyp in einem Werk bildet den Anfang. Nach der fachlichen Prüfung folgt die Erweiterung.',
@@ -140,18 +143,18 @@ export const germanIndustryCopy = {
     'Ein benannter Berater verantwortet jedes Kundenergebnis.',
   'What partners ask first.': 'Was Partner und IT zuerst fragen.',
   'How do you keep one client’s material out of another’s deck?':
-    'Bleiben Kundenprojekte voneinander getrennt?',
+    'Wie bleiben die Unterlagen verschiedener Kunden getrennt?',
   'Set access per engagement. The agent reads only material available to the person using it. Client files are not pooled.':
-    'Ja. Zugriff wird pro Workspace, Wissensquelle und Mandat gesteuert.',
-  'Will it invent a benchmark?': 'Woher kommen die Referenzen im Entwurf?',
+    'Zugriff wird pro Mandat festgelegt. Der Agent liest nur Unterlagen, auf die die nutzende Person zugreifen darf. Kundendateien werden nicht zusammengeführt.',
+  'Will it invent a benchmark?': 'Erfindet der Agent Vergleichszahlen?',
   'It uses your firm’s studies and cites the source of each figure. If a number is missing, it marks the gap.':
-    'Aus den verbundenen und für diesen Zweck freigegebenen Unterlagen.',
-  'What does it connect to?': 'Wer prüft das Ergebnis?',
+    'Er nutzt die Studien der Beratung und belegt jede Zahl mit ihrer Quelle. Fehlt eine Zahl, kennzeichnet er die Lücke.',
+  'What does it connect to?': 'Welche Systeme lassen sich verbinden?',
   'Connect the systems your engagement uses, such as SharePoint and Outlook. IT governs access in the workspace.':
-    'Das verantwortliche Projektteam prüft Quellen, Annahmen und Aussagen.',
-  'Do partners have to change how they work?': 'Wie starten wir?',
+    'Die Systeme des Mandats verbinden, etwa SharePoint und Outlook. Die IT steuert den Zugriff im Workspace.',
+  'Do partners have to change how they work?': 'Müssen Partner ihre Arbeitsweise ändern?',
   'No. The agent prepares a draft for partner review in the team’s existing document workflow.':
-    'Ein wiederkehrendes Angebot oder ein Kundenbericht bildet den Anfang.',
+    'Nein. Der Agent bereitet einen Entwurf zur Prüfung durch den Partner vor. Der bestehende Dokumentenprozess bleibt erhalten.',
   'Start with the proposal your team writes every week.':
     'Mit dem Angebot beginnen, das das Team regelmäßig neu aufbaut.',
   'M&A advisory': 'M&A',
@@ -210,18 +213,19 @@ export const germanIndustryCopy = {
   'Who read what, and when, remains on the record for the file.':
     'Berater verantworten Longlist und Ansprache.',
   'What deal teams ask first.': 'Was Deal-Teams zuerst fragen.',
-  'Can it answer a buyer directly?': 'Ersetzt der Agent die Marktbeurteilung?',
+  'Can it answer a buyer directly?': 'Kann der Agent einem Käufer direkt antworten?',
   'It drafts a cited answer for deal-team review. A person releases the final response.':
-    'Nein. Er beschleunigt Recherche und Struktur. Die Beurteilung bleibt beim Team.',
-  'What happens to the data room when the deal closes?': 'Kann er internes Wissen nutzen?',
+    'Er entwirft eine Antwort mit Quellen zur Prüfung durch das Deal-Team. Die endgültige Antwort wird von einer Person freigegeben.',
+  'What happens to the data room when the deal closes?':
+    'Was passiert mit dem Datenraum nach Abschluss des Deals?',
   'The deal team controls access to its data room. Close agent access when the mandate closes.':
-    'Ja, wenn die entsprechenden Quellen verbunden und freigegeben sind.',
-  'Where does our material sit?': 'Sind Longlists nachvollziehbar?',
+    'Das Deal-Team steuert den Zugriff auf den Datenraum. Den Agentenzugriff bei Abschluss des Mandats schließen.',
+  'Where does our material sit?': 'Wo werden die Deal-Unterlagen verarbeitet?',
   'IT chooses approved models with EU hosting. Connected deal material remains subject to its access rules. Certification details are in the trust centre.':
-    'Kandidaten werden mit Quellen, Kriterien und offenen Fragen zurückgegeben.',
-  'Is this only useful on large processes?': 'Wie starten wir?',
+    'Die IT wählt freigegebene Modelle mit EU-Hosting. Für verbundene Deal-Unterlagen gelten weiterhin die Zugriffsregeln. Details zu Zertifizierungen stehen im Trust Center.',
+  'Is this only useful on large processes?': 'Lohnt sich das nur für große Transaktionen?',
   'Start with one document type. The adviser reviews the first draft before the team expands the workflow.':
-    'Eine klare Suchthese und eine wiederkehrende Rechercheaufgabe bilden den Anfang.',
+    'Mit einem Dokumenttyp beginnen. Der Berater prüft den ersten Entwurf, bevor das Team den Workflow erweitert.',
   'Start with the buyer questions on your next live process.':
     'Mit der Suche beginnen, die das Deal-Team gerade von Hand aufbaut.',
   'Private equity': 'Private Equity',
@@ -284,19 +288,20 @@ export const germanIndustryCopy = {
   'Access, model choice, and sign-off remain visible together.':
     'Das Investment Committee entscheidet.',
   'What investment teams ask first.': 'Was Investment-Teams zuerst fragen.',
-  'How is MNPI kept where it belongs?': 'Kann der Agent ein Investment empfehlen?',
+  'How is MNPI kept where it belongs?':
+    'Wie werden wesentliche nicht öffentliche Informationen geschützt?',
   'Set access per deal and fund. The agent reads only material available to the person using it.':
-    'Er bereitet Informationen vor. Die Investmententscheidung bleibt beim Team.',
-  'Can it write the IC memo on its own?': 'Wie werden offene Fragen behandelt?',
+    'Zugriff wird pro Deal und Fonds festgelegt. Der Agent liest nur Unterlagen, auf die die nutzende Person zugreifen darf.',
+  'Can it write the IC memo on its own?': 'Kann der Agent das IC-Memo eigenständig schreiben?',
   'It drafts from diligence and marks gaps. The deal partner owns the recommendation and signoff.':
-    'Offene Fragen bleiben im Memo sichtbar und mit den relevanten Quellen verbunden.',
+    'Er erstellt einen Entwurf aus der Due Diligence und markiert Lücken. Empfehlung und Freigabe liegen beim verantwortlichen Partner.',
   'What about portfolio companies on different systems?':
-    'Kann bestehendes Fonds-Wissen einfließen?',
+    'Was gilt für Portfoliounternehmen mit unterschiedlichen Systemen?',
   'Build the pack from submitted reports. Flag missing information instead of filling it in.':
-    'Ja, wenn es verbunden und für das Team freigegeben ist.',
-  'Which models does it run on?': 'Wie starten wir?',
+    'Die Unterlagen aus den eingereichten Berichten zusammenstellen. Fehlende Informationen kennzeichnen, statt sie zu ergänzen.',
+  'Which models does it run on?': 'Welche Modelle stehen zur Verfügung?',
   'IT selects approved models with EU hosting. Model choice remains separate from the agent workflow.':
-    'Ein wiederkehrendes Memo oder ein Teil der Due Diligence bildet den Anfang.',
+    'Die IT wählt freigegebene Modelle mit EU-Hosting. Die Modellwahl bleibt vom Agenten-Workflow getrennt.',
   'Start with the quarterly pack nobody enjoys assembling.':
     'Mit dem Memo beginnen, das das Team als Nächstes vorbereitet.',
   Legal: 'Recht',
@@ -357,18 +362,19 @@ export const germanIndustryCopy = {
   'Privileged material remains in the region where the firm holds it.':
     'Ein Jurist prüft jeden Entwurf vor der Nutzung.',
   'What partners and risk ask first.': 'Was Kanzleien und Rechtsabteilungen zuerst fragen.',
-  'How is firm material controlled?': 'Erteilt der Agent Rechtsberatung?',
+  'How is firm material controlled?': 'Wie wird der Zugriff auf Kanzleiunterlagen gesteuert?',
   'IT controls connected access and selects approved models with EU hosting. The agent reads only material available within the matter.':
-    'Nein. Er bereitet eine Prüfung vor. Ein Jurist bewertet und genehmigt das Ergebnis.',
-  'Can it replace a lawyer’s review?': 'Arbeitet er mit unserem Playbook?',
+    'Die IT steuert den Zugriff und wählt freigegebene Modelle mit EU-Hosting. Der Agent liest nur die im Mandat verfügbaren Unterlagen.',
+  'Can it replace a lawyer’s review?': 'Ersetzt der Agent die juristische Prüfung?',
   'No. It marks playbook departures and cites each clause. The lawyer decides and signs.':
-    'Ja, wenn das Playbook verbunden und für diesen Workspace freigegeben ist.',
-  'How does it respect an information barrier?': 'Bleiben Mandate getrennt?',
+    'Nein. Er markiert Abweichungen vom Playbook und belegt sie mit den jeweiligen Klauseln. Der Jurist entscheidet und gibt frei.',
+  'How does it respect an information barrier?': 'Wie werden Informationsbarrieren eingehalten?',
   'Set access per matter. The agent cannot read across a barrier that blocks its user.':
-    'Zugriffe werden pro Workspace und Wissensquelle gesteuert.',
-  'We already have a legal AI tool. Why this?': 'Wie starten wir?',
+    'Zugriff wird pro Mandat festgelegt. Der Agent kann keine Unterlagen lesen, die für die nutzende Person gesperrt sind.',
+  'We already have a legal AI tool. Why this?':
+    'Was ergänzt Zeno zu einem bestehenden Legal-AI-Tool?',
   'The same governed workspace also supports work beyond legal. IT can manage access, model choice and usage in one place.':
-    'Ein Vertragstyp und ein klares Playbook bilden den Anfang.',
+    'Der kontrollierte Workspace unterstützt auch Aufgaben außerhalb der Rechtsabteilung. Die IT verwaltet Zugriff, Modellwahl und Nutzung an einem Ort.',
   'Start with the contract type that comes through most often.':
     'Mit dem Vertrag beginnen, den das Team am häufigsten prüft.',
   'How atares saves time on research and target discovery.':

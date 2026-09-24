@@ -5994,6 +5994,17 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   font-size: 0.92rem;
 }
 
+.solution-security-reference {
+  display: block;
+  margin-top: 12px;
+}
+
+.solution-security-reference a {
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 /* The four product screens
    One shell, four bodies. Everything reuses .product-frame and .product-frame-bar so a use-case
    screen cannot drift away from the product visuals on the homepage and /product.

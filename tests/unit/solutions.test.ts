@@ -2,11 +2,45 @@ import { describe, expect, it } from 'vitest';
 import { claimRegistry } from '../../src/lib/claims/registry';
 import { resolveApprovedClaims } from '../../src/lib/claims/public-claims';
 import { customerStoryDrafts, customerVoiceDrafts } from '../../src/lib/content/customer-stories';
-import { solutions } from '../../src/lib/content/solutions';
+import { solutions, solutionSecurityReference } from '../../src/lib/content/solutions';
+import { createPageLocale } from '../../src/lib/i18n/page-copy';
 
 const now = new Date('2026-09-10T12:00:00Z');
 
 describe('solution page narrative', () => {
+  it('points one security answer per industry to the localized security page', () => {
+    const germanSecurityQuestions = [
+      'Wie werden Zeichnungen unter NDA behandelt?',
+      'Wie bleiben die Unterlagen verschiedener Kunden getrennt?',
+      'Wo werden die Deal-Unterlagen verarbeitet?',
+      'Welche Modelle stehen zur Verfügung?',
+      'Wie wird der Zugriff auf Kanzleiunterlagen gesteuert?',
+    ];
+    for (const solution of solutions) {
+      const securityAnswers = solution.questions.filter((entry) => entry.showSecurityReference);
+      expect(securityAnswers).toHaveLength(1);
+      expect(securityAnswers[0]?.answer).toMatch(/access|approved models/i);
+      const german = createPageLocale('de');
+      expect(german.text(securityAnswers[0]?.question)).toBe(
+        germanSecurityQuestions[solutions.indexOf(solution)],
+      );
+      expect(german.text(securityAnswers[0]?.answer)).toMatch(/Zugriff|Modelle/);
+    }
+    expect(solutionSecurityReference.href).toBe('/security');
+    expect(solutionSecurityReference.description).toContain('Zero Data Retention (ZDR)');
+    expect(solutionSecurityReference.description).toContain('model-training policies');
+    expect(solutionSecurityReference.description).not.toMatch(/all providers|compliant|guarantee/i);
+    for (const locale of ['en', 'de'] as const) {
+      const page = createPageLocale(locale);
+      expect(page.path(solutionSecurityReference.href)).toBe(
+        locale === 'de' ? '/de/sicherheit' : '/security',
+      );
+      expect(page.text(solutionSecurityReference.description)).toContain(
+        'Zero Data Retention (ZDR)',
+      );
+      expect(page.text(solutionSecurityReference.label)).toContain('Trust Center');
+    }
+  });
   it('uses one ordered product story and one unique customer proof mapping per industry', () => {
     expect(solutions).toHaveLength(5);
     expect(solutions.map((solution) => solution.journey.map((step) => step.id))).toEqual(

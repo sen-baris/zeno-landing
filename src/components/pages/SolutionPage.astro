@@ -13,7 +13,7 @@ import { claimRegistry } from '../../lib/claims/registry';
 import { createPageClaimResolver } from '../../lib/i18n/de-claims';
 const resolveApprovedClaims = createPageClaimResolver(locale);
 import { customerStoryDrafts, customerVoiceDrafts } from '../../lib/content/customer-stories';
-import { solutions } from '../../lib/content/solutions';
+import { solutions, solutionSecurityReference } from '../../lib/content/solutions';
 import { createLocalizedSeo } from '../../lib/i18n/seo';
 import type { SolutionSlug } from '../../lib/i18n/routes';
 
@@ -194,7 +194,17 @@ interface Props {
           solution.questions.map((entry) => (
             <div data-reveal>
               <dt>{t(entry.question)}</dt>
-              <dd>{t(entry.answer)}</dd>
+              <dd>
+                {t(entry.answer)}
+                {entry.showSecurityReference && (
+                  <span class="solution-security-reference">
+                    {t(solutionSecurityReference.description)}{' '}
+                    <a href={withBase(solutionSecurityReference.href)}>
+                      {t(solutionSecurityReference.label)}
+                    </a>
+                  </span>
+                )}
+              </dd>
             </div>
           ))
         }
