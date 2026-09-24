@@ -26,6 +26,8 @@
 </script>
 
 <script>
+  import { createFigureCounter } from '../lib/motion/figure-counter';
+
   const root = document.documentElement;
   const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
 
@@ -64,11 +66,10 @@
       if (element.dataset.figure) element.textContent = element.dataset.figure;
     }
 
-    // Split on digit runs so everything that is not a number — a tilde, a euro sign, an en dash, a
-    // percent, an M, the word "of" — survives untouched and only the quantities move.
+    // Group separators belong to their whole quantity, while ranges and units stay untouched.
     function countTo(element: HTMLElement, target: string): void {
-      const parts = target.split(/(\d+)/);
-      if (!parts.some((part) => /^\d+$/.test(part))) return;
+      if (!/\d/.test(target)) return;
+      const renderProgress = createFigureCounter(target, root.lang === 'de' ? 'de' : 'en');
 
       const pending = running.get(element);
       if (pending !== undefined) cancelAnimationFrame(pending);
@@ -78,9 +79,7 @@
         const progress = Math.min((now - started) / COUNT_MS, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
         if (progress < 1) {
-          element.textContent = parts
-            .map((part) => (/^\d+$/.test(part) ? String(Math.round(Number(part) * eased)) : part))
-            .join('');
+          element.textContent = renderProgress(eased);
           running.set(element, requestAnimationFrame(frame));
         } else {
           // Restore the approved string verbatim rather than reassembling it from the parts.

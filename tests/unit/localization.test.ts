@@ -264,16 +264,18 @@ describe('German claim publication gate', () => {
     expect(new Set(germanLocalizedClaims.map((claim) => claim.id)).size).toBe(
       germanLocalizedClaims.length,
     );
-    expect(
-      germanLocalizedClaims.every(
-        (claim) =>
-          claim.sourceClaimId.length > 0 &&
-          claim.allowedSurfaces.length > 0 &&
-          claim.evidence.includes('2026-09-22') &&
-          claim.approvedBy === 'Baris, German parity direction' &&
-          claim.approvedAt === '2026-09-22',
-      ),
-    ).toBe(true);
+    const revisedFigureIds = ['metric-annualized-time-per-person', 'metric-agents-created'];
+    for (const claim of germanLocalizedClaims) {
+      const revised = revisedFigureIds.includes(claim.sourceClaimId);
+      const approvedAt = revised ? '2026-09-24' : '2026-09-22';
+      expect(claim.sourceClaimId.length).toBeGreaterThan(0);
+      expect(claim.allowedSurfaces.length).toBeGreaterThan(0);
+      expect(claim.evidence).toContain(approvedAt);
+      expect(claim.approvedBy).toBe(
+        revised ? 'Baris, homepage figures direction' : 'Baris, German parity direction',
+      );
+      expect(claim.approvedAt).toBe(approvedAt);
+    }
     expect(assertGermanClaimsApprovedForPublication).not.toThrow();
   });
 

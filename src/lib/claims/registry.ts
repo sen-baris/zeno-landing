@@ -940,14 +940,14 @@ export const claimRegistry: readonly ClaimRecord[] = [
     evidence:
       'Figures supplied by the workspace owner on 2026-08-27 as measured results from enterprise consultancy accounts. The account list, measurement method, observation window, and sample are held outside this repository.',
     verified_on: '2026-08-27',
-    approval_status: 'approved',
+    approval_status: 'superseded',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
     allowed_surfaces: ['home.business-case'],
     attribution: 'across enterprise consultancy accounts',
     reverify_on: '2027-02-27',
     notes:
-      'The range and the "after a year" period are material qualifiers and must not be narrowed to a single figure or a shorter period. Per-account source data, measurement method, and customer permission to publish must be attached before the production release.',
+      'Superseded on 2026-09-24 by the separately defined metric-annualized-time-per-person, not a restatement of this measured range. Historical approval retained. The range and the "after a year" period are material qualifiers and must not be narrowed to a single figure or a shorter period. Per-account source data, measurement method, and customer permission to publish must be attached before the production release.',
   },
   {
     id: 'metric-monthly-interactions',
@@ -956,14 +956,46 @@ export const claimRegistry: readonly ClaimRecord[] = [
     evidence:
       'Figure supplied by the workspace owner on 2026-08-27 as an observed average across full enterprise rollouts. The underlying usage export and the population it covers are held outside this repository.',
     verified_on: '2026-08-27',
-    approval_status: 'approved',
+    approval_status: 'superseded',
     approved_by: 'Baris — working-session direction',
     approved_on: '2026-08-27',
     allowed_surfaces: ['home.business-case'],
     attribution: 'on full enterprise rollouts',
     reverify_on: '2027-02-27',
     notes:
-      'The approximation marker and the "full enterprise rollouts" population are material qualifiers. Do not present as an exact figure or extend to pilots or partial rollouts. The usage export and its date range must be attached before the production release.',
+      'Superseded on 2026-09-24 by the separately defined metric-agents-created, not a conversion of interactions into agents. Historical approval retained. The approximation marker and the "full enterprise rollouts" population are material qualifiers. Do not present as an exact figure or extend to pilots or partial rollouts. The usage export and its date range must be attached before the production release.',
+  },
+  {
+    id: 'metric-annualized-time-per-person',
+    statement: '~92 hours saved per person each year.',
+    category: 'metric',
+    evidence:
+      'Owner-supplied team saving and accepted Clearer Homepage Business-Case Figures plan dated 2026-09-24. The illustration allocates approximately 20 hours saved per week across ten people and annualizes over 46 working weeks: 20 / 10 * 46 = 92 hours. It is separate from the previous measured percentage claim.',
+    verified_on: '2026-09-24',
+    approval_status: 'approved',
+    approved_by: 'Baris, homepage figures direction',
+    approved_on: '2026-09-24',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'Annualized team estimate',
+    reverify_on: '2027-03-24',
+    notes:
+      'The owner requested a concise qualifier without public methodology on 2026-09-24. Keep the approximation marker and the qualifier "Annualized team estimate"; its approved German equivalent is "Hochrechnung auf Teambasis". This replaces the longer visible methodology, whose calculation remains in evidence. This is an even allocation of a team total, not a measured individual average or a claim across every 10–15-person team. Individual savings can differ. No measurement across 150 enterprises has been substantiated. Do not imply cash savings or guarantees, or alter customer-story results or calculator defaults. The underlying team observations, measurement period, method, and applicable customer permission must be reviewed before the production release.',
+  },
+  {
+    id: 'metric-agents-created',
+    statement: '2,000+ agents created.',
+    category: 'metric',
+    evidence:
+      'Owner-supplied figure and accepted Clearer Homepage Business-Case Figures plan dated 2026-09-24. The owner explicitly confirmed that the count means agents created, across hundreds of enterprises.',
+    verified_on: '2026-09-24',
+    approval_status: 'approved',
+    approved_by: 'Baris, homepage figures direction',
+    approved_on: '2026-09-24',
+    allowed_surfaces: ['home.business-case'],
+    attribution: 'across hundreds of enterprises',
+    reverify_on: '2027-03-24',
+    notes:
+      'Counts agents created, not active agents, running automations, interactions, or completed tasks. Preserve the plus marker and enterprise population. Do not infer a usage frequency or performance result. The underlying creation-count export, enterprise population definition, and reporting date must be reviewed before the production release.',
   },
   {
     id: 'metric-weekly-active-usage',
@@ -1034,8 +1066,8 @@ export const homepageCustomerProofVoiceClaimIds: readonly string[] = [
 ];
 
 export const homepageBusinessCaseClaimIds: readonly string[] = [
-  'metric-efficiency-time-savings',
-  'metric-monthly-interactions',
+  'metric-annualized-time-per-person',
+  'metric-agents-created',
   'metric-weekly-active-usage',
   'metric-projected-annual-savings',
 ];

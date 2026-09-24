@@ -1,6 +1,6 @@
 # Zeno website maintainer guide
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 This is the main handover document for the Zeno marketing website. It explains what the site is
 trying to do, where each source of truth lives, how the interactive parts work, and which decisions
@@ -257,6 +257,23 @@ used on an unapproved surface.
 Customer names, logos, quotes, case-study facts, metrics, certifications, security statements, and
 ROI language require explicit surface-specific approval. Metadata, image text, captions, structured
 data, and social cards count as public surfaces too.
+
+The homepage business-case figures use separate records for distinct kinds of proof. The first
+figure, approximately 92 annual hours per person, is an annualized illustration: 20 weekly team
+hours divided by 10 people, multiplied by 46 working weeks. Keep the short qualifier "Annualized
+team estimate" (German: "Hochrechnung auf Teambasis") visible; the calculation stays internal. It is not
+a measured individual average across all customers and does not alter customer-story results or
+calculator assumptions. The second figure counts 2,000+ agents **created**, not active agents or
+completed tasks, across hundreds of enterprises.
+
+The former efficiency percentage and monthly-interaction records are superseded, not redefined.
+Their German approval history lives in `src/lib/i18n/de-superseded-claims.json`, separate from the
+active publication snapshot. New exact English/German approvals are limited to `home.business-case`.
+Underlying measurement and population evidence remains required before production release.
+Grouped counters use `src/lib/motion/figure-counter.ts`; preserve localized separators, approved
+final strings, static screen-reader values, and no-JavaScript/reduced-motion fallbacks.
+The four-card layout uses text-relative container queries so enlarged text gets wider rows. Check
+actual qualifier wrapping at 200 percent text size, not just page-level overflow.
 
 ## Design system and interaction principles
 
@@ -639,6 +656,11 @@ reuse the synthetic preview server:
 ```sh
 E2E_PORT=4322 pnpm test:e2e
 ```
+
+Run builds before, not concurrently with, the browser suite. Development and production builds
+share Vite's dependency cache; a concurrent build can replace the React development runtime and
+cause misleading hydration failures. After a build, use the fresh development server started by
+Playwright with `--force`.
 
 The suite covers:
 

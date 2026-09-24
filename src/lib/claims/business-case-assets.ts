@@ -8,14 +8,14 @@ export interface BusinessCaseAsset {
 
 export const businessCaseAssets: readonly BusinessCaseAsset[] = [
   {
-    claimId: 'metric-efficiency-time-savings',
-    value: '3–10%',
-    label: 'efficiency / time savings after a year',
+    claimId: 'metric-annualized-time-per-person',
+    value: '~92',
+    label: 'hours saved per person each year',
   },
   {
-    claimId: 'metric-monthly-interactions',
-    value: '~200',
-    label: 'monthly interactions per user',
+    claimId: 'metric-agents-created',
+    value: '2,000+',
+    label: 'agents created',
   },
   {
     claimId: 'metric-weekly-active-usage',

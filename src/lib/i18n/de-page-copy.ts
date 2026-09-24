@@ -69,13 +69,13 @@ export const germanEditorialCopy = {
     'KI, Innovation, IT, Daten, Operations, Sicherheit',
   'For enterprise leaders turning AI into everyday work.':
     'Für Verantwortliche, die KI in den Arbeitsalltag bringen.',
-  '3–10% efficiency / time savings after a year.':
-    '3–10% Effizienzgewinn / Zeitersparnis nach einem Jahr.',
-  'efficiency / time savings after a year': 'Effizienzgewinn / Zeitersparnis nach einem Jahr',
-  'across enterprise consultancy accounts': 'über Enterprise-Beratungskunden hinweg',
-  '~200 monthly interactions per user.': '~200 monatliche Interaktionen pro Person.',
-  'monthly interactions per user': 'monatliche Interaktionen pro Person',
-  'on full enterprise rollouts': 'bei vollständigen Enterprise-Einführungen',
+  '~92 hours saved per person each year.': '~92 Stunden Zeitersparnis pro Person und Jahr.',
+  'hours saved per person each year': 'Stunden Zeitersparnis pro Person und Jahr',
+  'Annualized team estimate': 'Hochrechnung auf Teambasis',
+  '2,000+': '2.000+',
+  '2,000+ agents created.': '2.000+ erstellte KI-Agenten.',
+  'agents created': 'erstellte KI-Agenten',
+  'across hundreds of enterprises': 'in Hunderten Unternehmen',
   '+65% weekly active usage.': '+65% wöchentlich aktive Nutzung.',
   'weekly active usage': 'wöchentlich aktive Nutzung',
   'usage growing after launch, not fading':

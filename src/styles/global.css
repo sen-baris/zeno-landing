@@ -4056,6 +4056,10 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   background: var(--canvas);
 }
 
+.business-case .shell {
+  container: business-figures / inline-size;
+}
+
 .business-case-figures {
   display: grid;
   margin: 0;
@@ -5273,6 +5277,35 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   }
 
   .business-case-figures > li:not(:last-child) {
+    border-bottom: 1px solid var(--rule);
+  }
+}
+
+/* Reflow with the reader's text size, not only the pixel width of the viewport. */
+@container business-figures (max-width: 60rem) {
+  .business-case-figures[data-figure-count='4'] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .business-case-figures[data-figure-count='4'] > li:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .business-case-figures[data-figure-count='4'] > li:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--rule);
+  }
+}
+
+@container business-figures (max-width: 30rem) {
+  .business-case-figures[data-figure-count='4'] {
+    grid-template-columns: 1fr;
+  }
+
+  .business-case-figures[data-figure-count='4'] > li {
+    border-right: 0;
+  }
+
+  .business-case-figures[data-figure-count='4'] > li:not(:last-child) {
     border-bottom: 1px solid var(--rule);
   }
 }

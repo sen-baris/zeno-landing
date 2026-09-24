@@ -33,15 +33,17 @@ export const agentStartingPointCopy = {
 export function translatePageText(locale: Locale, value: string | number | undefined): string {
   if (value === undefined) throw new Error('Required page copy is missing.');
   const source = String(value);
-  if (locale === 'en' || !/[A-Za-z]/.test(source)) return source;
+  if (locale === 'en') return source;
   const normalized = source.replace(/\s+/g, ' ').trim();
   if (normalized.endsWith(' | Zeno'))
     return `${translatePageText(locale, normalized.slice(0, -7))} | Zeno`;
   const translated = Object.hasOwn(germanPageCopy, normalized)
     ? germanPageCopy[normalized]
     : undefined;
-  if (translated === undefined) throw new Error(`Missing German page copy: ${normalized}`);
-  return translated;
+  if (translated !== undefined) return translated;
+  // Explicit approved number formatting takes precedence over unchanged numeric-only copy.
+  if (!/[A-Za-z]/.test(source)) return source;
+  throw new Error(`Missing German page copy: ${normalized}`);
 }
 
 export function localizedPagePath(locale: Locale, source: string): string {

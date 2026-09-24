@@ -651,8 +651,8 @@ test('the business case publishes each figure with the qualifier it depends on',
   );
 
   const expected = [
-    ['3–10%', 'efficiency / time savings after a year', 'across enterprise consultancy accounts'],
-    ['~200', 'monthly interactions per user', 'on full enterprise rollouts'],
+    ['~92', 'hours saved per person each year', 'Annualized team estimate'],
+    ['2,000+', 'agents created', 'across hundreds of enterprises'],
     ['+65%', 'weekly active usage', 'usage growing after launch, not fading'],
     ['~€7–8M', 'projected annual savings', 'internal enterprise savings model, ~2,200 users'],
   ];
@@ -669,7 +669,7 @@ test('the business case publishes each figure with the qualifier it depends on',
   }
 });
 
-const APPROVED_FIGURES = ['3–10%', '~200', '+65%', '~€7–8M'];
+const APPROVED_FIGURES = ['~92', '2,000+', '+65%', '~€7–8M'];
 
 test('the vision presents one professional, photography-led statement at every size', async ({
   page,

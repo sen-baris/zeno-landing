@@ -1,0 +1,30 @@
+[
+  {
+    "id": "de-metric-efficiency-time-savings",
+    "locale": "de",
+    "sourceClaimId": "metric-efficiency-time-savings",
+    "sourceStatement": "3–10% efficiency / time savings after a year.",
+    "statement": "3–10% Effizienzgewinn / Zeitersparnis nach einem Jahr.",
+    "approvalStatus": "superseded",
+    "allowedSurfaces": ["home.business-case"],
+    "approvedBy": "Baris, German parity direction",
+    "approvedAt": "2026-09-22",
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22.",
+    "supersededAt": "2026-09-24",
+    "replacementId": "de-metric-annualized-time-per-person"
+  },
+  {
+    "id": "de-metric-monthly-interactions",
+    "locale": "de",
+    "sourceClaimId": "metric-monthly-interactions",
+    "sourceStatement": "~200 monthly interactions per user.",
+    "statement": "~200 monatliche Interaktionen pro Person.",
+    "approvalStatus": "superseded",
+    "allowedSurfaces": ["home.business-case"],
+    "approvedBy": "Baris, German parity direction",
+    "approvedAt": "2026-09-22",
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22.",
+    "supersededAt": "2026-09-24",
+    "replacementId": "de-metric-agents-created"
+  }
+]

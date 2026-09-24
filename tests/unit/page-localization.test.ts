@@ -34,6 +34,8 @@ describe('shared localized page copy', () => {
     expect(translatePageText('de', '  Product\n | Zeno')).toBe('Produkt | Zeno');
     expect(translatePageText('de', 71)).toBe('71');
     expect(translatePageText('de', '20%')).toBe('20%');
+    expect(translatePageText('de', '2,000+')).toBe('2.000+');
+    expect(translatePageText('en', '2,000+')).toBe('2,000+');
     for (const locale of ['en', 'de'] as const) {
       const emphasis = agentStartingPointCopy[locale];
       expect(emphasis.before + emphasis.text + emphasis.after).toBe(
