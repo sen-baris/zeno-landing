@@ -265,14 +265,25 @@ describe('German claim publication gate', () => {
       germanLocalizedClaims.length,
     );
     const revisedFigureIds = ['metric-annualized-time-per-person', 'metric-agents-created'];
+    const industryLabelIds = [
+      'customer-industry-atares',
+      'customer-industry-b2venture',
+      'customer-industry-mahle',
+      'customer-industry-kbc',
+    ];
     for (const claim of germanLocalizedClaims) {
       const revised = revisedFigureIds.includes(claim.sourceClaimId);
-      const approvedAt = revised ? '2026-09-24' : '2026-09-22';
+      const industryLabel = industryLabelIds.includes(claim.sourceClaimId);
+      const approvedAt = industryLabel ? '2026-09-25' : revised ? '2026-09-24' : '2026-09-22';
       expect(claim.sourceClaimId.length).toBeGreaterThan(0);
       expect(claim.allowedSurfaces.length).toBeGreaterThan(0);
       expect(claim.evidence).toContain(approvedAt);
       expect(claim.approvedBy).toBe(
-        revised ? 'Baris, homepage figures direction' : 'Baris, German parity direction',
+        industryLabel
+          ? 'Baris, customer index industry-label direction'
+          : revised
+            ? 'Baris, homepage figures direction'
+            : 'Baris, German parity direction',
       );
       expect(claim.approvedAt).toBe(approvedAt);
     }

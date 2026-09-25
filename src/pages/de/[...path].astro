@@ -7,6 +7,7 @@ import SecurityPage from '../../components/pages/SecurityPage.astro';
 import SolutionsPage from '../../components/pages/SolutionsPage.astro';
 import SolutionPage from '../../components/pages/SolutionPage.astro';
 import CustomerStoryPage from '../../components/pages/CustomerStoryPage.astro';
+import CustomerIndexPage from '../../components/pages/CustomerIndexPage.astro';
 import { getAllLocalizedRouteEntries, type RouteReference } from '../../lib/i18n/routes';
 import { solutionBySlug } from '../../lib/content/solutions';
 import {
@@ -36,6 +37,7 @@ const staticPages = {
   demo: DemoPage,
   security: SecurityPage,
   solutions: SolutionsPage,
+  customers: CustomerIndexPage,
 };
 const StaticPage =
   reference.kind === 'static' && reference.key in staticPages

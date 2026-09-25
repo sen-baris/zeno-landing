@@ -1,5 +1,53 @@
 [
   {
+    "id": "de-customer-industry-atares",
+    "locale": "de",
+    "sourceClaimId": "customer-industry-atares",
+    "sourceStatement": "M&A",
+    "statement": "M&A",
+    "approvalStatus": "approved",
+    "allowedSurfaces": ["customers.index"],
+    "approvedBy": "Baris, customer index industry-label direction",
+    "approvedAt": "2026-09-25",
+    "evidence": "Existing atares customer evidence and the industry-label direction dated 2026-09-25. Index label only."
+  },
+  {
+    "id": "de-customer-industry-b2venture",
+    "locale": "de",
+    "sourceClaimId": "customer-industry-b2venture",
+    "sourceStatement": "Venture capital",
+    "statement": "Venture Capital",
+    "approvalStatus": "approved",
+    "allowedSurfaces": ["customers.index"],
+    "approvedBy": "Baris, customer index industry-label direction",
+    "approvedAt": "2026-09-25",
+    "evidence": "Existing b2venture customer evidence and the industry-label direction dated 2026-09-25. Preserve its venture-capital classification."
+  },
+  {
+    "id": "de-customer-industry-mahle",
+    "locale": "de",
+    "sourceClaimId": "customer-industry-mahle",
+    "sourceStatement": "Manufacturing",
+    "statement": "Fertigung",
+    "approvalStatus": "approved",
+    "allowedSurfaces": ["customers.index"],
+    "approvedBy": "Baris, customer index industry-label direction",
+    "approvedAt": "2026-09-25",
+    "evidence": "Existing MAHLE customer evidence and the industry-label direction dated 2026-09-25. Index label only."
+  },
+  {
+    "id": "de-customer-industry-kbc",
+    "locale": "de",
+    "sourceClaimId": "customer-industry-kbc",
+    "sourceStatement": "Management consulting",
+    "statement": "Unternehmensberatung",
+    "approvalStatus": "approved",
+    "allowedSurfaces": ["customers.index"],
+    "approvedBy": "Baris, customer index industry-label direction",
+    "approvedAt": "2026-09-25",
+    "evidence": "Existing KBC customer evidence and the industry-label direction dated 2026-09-25. Index label only."
+  },
+  {
     "id": "de-customer-logo-frommer-legal",
     "locale": "de",
     "sourceClaimId": "customer-logo-frommer-legal",
@@ -162,10 +210,15 @@
     "sourceStatement": "How atares saves time on research and target discovery. atares uses connected knowledge and task-specific agents for research. Advisers own the final work.",
     "statement": "Wie atares Zeit bei Recherche und Target-Suche spart. atares nutzt verbundenes Wissen und spezialisierte Agenten für Recherche. Berater verantworten das endgültige Ergebnis.",
     "approvalStatus": "approved",
-    "allowedSurfaces": ["home.customer-proof", "customers.atares", "solutions.m-and-a"],
+    "allowedSurfaces": [
+      "home.customer-proof",
+      "customers.atares",
+      "solutions.m-and-a",
+      "customers.index"
+    ],
     "approvedBy": "Baris, German parity direction",
     "approvedAt": "2026-09-22",
-    "evidence": "Source claim registry and German parity direction dated 2026-09-22."
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22. Existing exact title and summary also approved for customers.index by Baris in the case-study navigation direction dated 2026-09-25; no wording change."
   },
   {
     "id": "de-customer-result-atares-weekly-time",
@@ -210,10 +263,15 @@
     "sourceStatement": "How b2venture made AI part of the investment workflow. b2venture uses focused agents for research and investment work. The team tracks regular use.",
     "statement": "Wie b2venture KI in den Investment-Workflow gebracht hat. b2venture nutzt fokussierte Agenten für Recherche und Investment-Arbeit. Das Team verfolgt die regelmäßige Nutzung.",
     "approvalStatus": "approved",
-    "allowedSurfaces": ["home.customer-proof", "customers.b2venture", "solutions.private-equity"],
+    "allowedSurfaces": [
+      "home.customer-proof",
+      "customers.b2venture",
+      "solutions.private-equity",
+      "customers.index"
+    ],
     "approvedBy": "Baris, German parity direction",
     "approvedAt": "2026-09-22",
-    "evidence": "Source claim registry and German parity direction dated 2026-09-22."
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22. Existing exact title and summary also approved for customers.index by Baris in the case-study navigation direction dated 2026-09-25; no wording change."
   },
   {
     "id": "de-customer-result-b2venture-activation",
@@ -258,10 +316,15 @@
     "sourceStatement": "How MAHLE made technical knowledge easier to find. MAHLE introduced a knowledge assistant that helps teams reach technical information across existing company sources.",
     "statement": "Wie MAHLE technisches Wissen leichter auffindbar gemacht hat. MAHLE verbindet technische Quellen mit MARVIN, damit Teams Informationen finden, vergleichen und zusammenfassen können.",
     "approvalStatus": "approved",
-    "allowedSurfaces": ["home.customer-proof", "customers.mahle", "solutions.manufacturing"],
+    "allowedSurfaces": [
+      "home.customer-proof",
+      "customers.mahle",
+      "solutions.manufacturing",
+      "customers.index"
+    ],
     "approvedBy": "Baris, German parity direction",
     "approvedAt": "2026-09-22",
-    "evidence": "Source claim registry and German parity direction dated 2026-09-22."
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22. Existing exact title and summary also approved for customers.index by Baris in the case-study navigation direction dated 2026-09-25; no wording change."
   },
   {
     "id": "de-customer-result-mahle-activation",
@@ -294,10 +357,15 @@
     "sourceStatement": "How KBC made company knowledge easier to use. KBC gave employees a faster way to find internal expertise and bring relevant knowledge into proposal work.",
     "statement": "Wie KBC Unternehmenswissen leichter nutzbar gemacht hat. KBC bündelt Wissen für Suche, Angebotserstellung und Onboarding in einem gemeinsamen Arbeitsbereich.",
     "approvalStatus": "approved",
-    "allowedSurfaces": ["home.customer-proof", "customers.kbc", "solutions.management-consulting"],
+    "allowedSurfaces": [
+      "home.customer-proof",
+      "customers.kbc",
+      "solutions.management-consulting",
+      "customers.index"
+    ],
     "approvedBy": "Baris, German parity direction",
     "approvedAt": "2026-09-22",
-    "evidence": "Source claim registry and German parity direction dated 2026-09-22."
+    "evidence": "Source claim registry and German parity direction dated 2026-09-22. Existing exact title and summary also approved for customers.index by Baris in the case-study navigation direction dated 2026-09-25; no wording change."
   },
   {
     "id": "de-customer-result-kbc-search-time",

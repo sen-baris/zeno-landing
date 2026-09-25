@@ -4,10 +4,12 @@ import { gzipSync } from 'node:zlib';
 const routes = [
   { route: '/', html: 'dist/index.html', budget: 75 * 1024 },
   { route: '/product', html: 'dist/product/index.html', budget: 75 * 1024 },
+  { route: '/customers', html: 'dist/customers/index.html', budget: 75 * 1024 },
   { route: '/pricing', html: 'dist/pricing/index.html', budget: 150 * 1024 },
   { route: '/demo', html: 'dist/demo/index.html', budget: 150 * 1024 },
   { route: '/de/', html: 'dist/de/index.html', budget: 75 * 1024 },
   { route: '/de/produkt', html: 'dist/de/produkt/index.html', budget: 75 * 1024 },
+  { route: '/de/kunden', html: 'dist/de/kunden/index.html', budget: 75 * 1024 },
   { route: '/de/business-case', html: 'dist/de/business-case/index.html', budget: 150 * 1024 },
   { route: '/de/demo', html: 'dist/de/demo/index.html', budget: 150 * 1024 },
 ];

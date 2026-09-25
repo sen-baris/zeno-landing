@@ -34,6 +34,7 @@ export interface CustomerStoryDraft {
   company: string;
   logoClaimId: string;
   narrativeClaimId: string;
+  industryClaimId: string;
   approvalStatus: CustomerProofApprovalStatus;
   sourceBrand: 'TextCortex';
   sourceUrl: string;
@@ -128,6 +129,7 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     company: 'atares',
     logoClaimId: 'customer-logo-atares',
     narrativeClaimId: 'customer-story-atares-narrative',
+    industryClaimId: 'customer-industry-atares',
     approvalStatus: 'approved',
     sourceBrand: 'TextCortex',
     sourceUrl:
@@ -216,6 +218,7 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     company: 'b2venture',
     logoClaimId: 'customer-logo-b2venture',
     narrativeClaimId: 'customer-story-b2venture-narrative',
+    industryClaimId: 'customer-industry-b2venture',
     approvalStatus: 'approved',
     sourceBrand: 'TextCortex',
     sourceUrl:
@@ -303,6 +306,7 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     company: 'MAHLE',
     logoClaimId: 'customer-logo-mahle',
     narrativeClaimId: 'customer-story-mahle-narrative',
+    industryClaimId: 'customer-industry-mahle',
     approvalStatus: 'approved',
     sourceBrand: 'TextCortex',
     sourceUrl: 'https://textcortex.com/case-studies/ai-driven-knowledge-management-at-mahle',
@@ -384,6 +388,7 @@ export const customerStoryDrafts: readonly CustomerStoryDraft[] = [
     company: 'KBC',
     logoClaimId: 'customer-logo-kbc',
     narrativeClaimId: 'customer-story-kbc-narrative',
+    industryClaimId: 'customer-industry-kbc',
     approvalStatus: 'approved',
     sourceBrand: 'TextCortex',
     sourceUrl: 'https://textcortex.com/case-studies/knowledge-collaboration-with-ai',

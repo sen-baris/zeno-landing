@@ -9,6 +9,7 @@ const pairs = [
   ['/demo', '/de/demo'],
   ['/security', '/de/sicherheit'],
   ['/solutions', '/de/loesungen'],
+  ['/customers', '/de/kunden'],
   ['/solutions/manufacturing', '/de/loesungen/fertigung'],
   ['/solutions/management-consulting', '/de/loesungen/unternehmensberatung'],
   ['/solutions/m-and-a', '/de/loesungen/ma'],

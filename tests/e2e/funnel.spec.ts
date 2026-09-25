@@ -2072,7 +2072,7 @@ test('customer stories publish qualified evidence without internal review copy',
     await page.goto(`/customers/${story.slug}`);
     await expect(
       page.getByRole('link', { name: '← Customer stories', exact: true }),
-    ).toHaveAttribute('href', '/#audience');
+    ).toHaveAttribute('href', '/customers');
     await expect(page.getByText('Customer proof', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(story.title);
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);

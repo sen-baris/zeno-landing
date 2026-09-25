@@ -15,6 +15,7 @@ export const staticRouteDefinitions = {
   security: { en: '/security', de: '/de/sicherheit' },
   demo: { en: '/demo', de: '/de/demo' },
   solutions: { en: '/solutions', de: '/de/loesungen' },
+  customers: { en: '/customers', de: '/de/kunden' },
   privacy: { en: '/privacy-policy' },
   terms: { en: '/terms-of-service' },
   imprint: { en: '/imprint' },

@@ -6339,6 +6339,77 @@ html[data-motion='on'] .adoption-gap[data-revealed] .gap-col-label {
   font-size: 0.8rem;
 }
 
+.customer-index {
+  padding-block: clamp(40px, 6vw, 80px);
+}
+
+.customer-index-intro {
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+.customer-index-intro h1,
+html:lang(de) .customer-index-intro h1 {
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+}
+
+html:lang(de) .customer-index-intro h1 {
+  /* Keep the approved compound intact except at its explicit soft-hyphen boundary. */
+  hyphens: manual;
+}
+
+.customer-index-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr));
+  gap: 0 clamp(24px, 4vw, 56px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.customer-index-list li {
+  display: flex;
+  border-top: 1px solid var(--rule);
+}
+
+.customer-index-list a {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  padding-block: 32px;
+  text-decoration: none;
+}
+
+.customer-index-list h2,
+html:lang(de) .customer-index-list h2 {
+  font-size: clamp(1.6rem, 2.5vw, 2rem);
+}
+
+.customer-index-list p {
+  margin: 0;
+}
+
+.customer-index-summary {
+  color: var(--muted);
+}
+
+.customer-index-link {
+  margin-top: auto;
+  color: var(--action);
+  font-weight: 600;
+}
+
+.customer-index-close {
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+}
+
+.customer-index-list a:hover .customer-index-link {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .solution-index-list {
   display: grid;
   margin: 0;

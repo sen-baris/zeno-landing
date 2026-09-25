@@ -1,5 +1,11 @@
 /** Complete German editorial and capability copy for the shared page families. */
 export const germanEditorialCopy = {
+  'M&A': 'M&A',
+  'Venture capital': 'Venture Capital',
+  'Explore our customer case studies.': 'Fallstudien unserer Kunden entdecken.',
+  'Case studies': 'Fallstudien',
+  'Customer stories.': 'Kunden\u00adstories.',
+  'Read case study': 'Fallstudie lesen',
   'Which rules apply?': 'Welche Regeln gelten?',
   'Each position cites the playbook rule behind it.':
     'Jede Position verweist auf die zugehörige Playbook-Regel.',

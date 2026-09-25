@@ -9,7 +9,7 @@ export interface SharedUiCopy {
     product: string;
     solutions: string;
     byIndustry: string;
-    allIndustries: string;
+    allCaseStudies: string;
     security: string;
     resources: string;
     externalNewTab: string;
@@ -51,7 +51,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       product: 'Product',
       solutions: 'Solutions',
       byIndustry: 'By industry',
-      allIndustries: 'All industries',
+      allCaseStudies: 'All case studies',
       security: 'Security',
       resources: 'Resources',
       externalNewTab: ' (opens in a new tab)',
@@ -91,7 +91,7 @@ export const sharedUiCopy: Record<Locale, SharedUiCopy> = {
       product: 'Produkt',
       solutions: 'Lösungen',
       byIndustry: 'Nach Branche',
-      allIndustries: 'Alle Branchen',
+      allCaseStudies: 'Alle Fallstudien',
       security: 'Sicherheit',
       resources: 'Ressourcen',
       externalNewTab: ' (öffnet in einem neuen Tab)',

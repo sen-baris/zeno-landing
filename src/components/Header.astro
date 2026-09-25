@@ -64,7 +64,7 @@ const appLoginUrl = appLoginClaim.public_url;
               ))
             }
             <li class="nav-menu-all">
-              <a href={route('solutions')}>{copy.allIndustries}</a>
+              <a href={route('customers')}>{copy.allCaseStudies}</a>
             </li>
           </ul>
         </div>
@@ -110,6 +110,7 @@ const appLoginUrl = appLoginClaim.public_url;
             </a>
           ))
         }
+        <a class="mobile-menu-nested" href={route('customers')}>{copy.allCaseStudies}</a>
         <a href={route('security')}>{copy.security}</a>
         <div class="mobile-resource-group">
           <p class="mobile-resource-label">{copy.resources}</p>

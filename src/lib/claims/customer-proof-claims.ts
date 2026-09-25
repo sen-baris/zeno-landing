@@ -53,6 +53,51 @@ const approvedArticleSection = (
 
 export const customerProofClaims: readonly ClaimRecord[] = [
   approvedStory({
+    id: 'customer-industry-atares',
+    statement: 'M&A',
+    category: 'customer',
+    evidence: storyEvidence.atares,
+    verified_on: '2026-09-25',
+    approved_on: '2026-09-25',
+    approved_by: 'Baris, customer index industry-label direction',
+    allowed_surfaces: ['customers.index'],
+    notes: 'Industry label for the atares directory card only. No customer result changes.',
+  }),
+  approvedStory({
+    id: 'customer-industry-b2venture',
+    statement: 'Venture capital',
+    category: 'customer',
+    evidence: storyEvidence.b2venture,
+    verified_on: '2026-09-25',
+    approved_on: '2026-09-25',
+    approved_by: 'Baris, customer index industry-label direction',
+    allowed_surfaces: ['customers.index'],
+    notes:
+      'Industry label for the b2venture directory card only. Do not classify it as private equity.',
+  }),
+  approvedStory({
+    id: 'customer-industry-mahle',
+    statement: 'Manufacturing',
+    category: 'customer',
+    evidence: storyEvidence.mahle,
+    verified_on: '2026-09-25',
+    approved_on: '2026-09-25',
+    approved_by: 'Baris, customer index industry-label direction',
+    allowed_surfaces: ['customers.index'],
+    notes: 'Industry label for the MAHLE directory card only. No customer result changes.',
+  }),
+  approvedStory({
+    id: 'customer-industry-kbc',
+    statement: 'Management consulting',
+    category: 'customer',
+    evidence: storyEvidence.kbc,
+    verified_on: '2026-09-25',
+    approved_on: '2026-09-25',
+    approved_by: 'Baris, customer index industry-label direction',
+    allowed_surfaces: ['customers.index'],
+    notes: 'Industry label for the KBC directory card only. No customer result changes.',
+  }),
+  approvedStory({
     id: 'customer-voice-global-energy-enterprise',
     statement:
       'What we only get with TextCortex is education, customization, agents built for our process, and hence adoption.',
@@ -103,7 +148,14 @@ export const customerProofClaims: readonly ClaimRecord[] = [
     verified_on: '2026-09-15',
     approved_on: '2026-09-15',
     approved_by: 'Baris, sitewide copy direction',
-    allowed_surfaces: ['home.customer-proof', 'customers.atares', 'solutions.m-and-a'],
+    allowed_surfaces: [
+      'home.customer-proof',
+      'customers.atares',
+      'solutions.m-and-a',
+      'customers.index',
+    ],
+    notes:
+      'Existing title and summary approved for the customer-story index by Baris on 2026-09-25. No result, quotation, or logo surface is extended.',
   }),
   approvedStory({
     id: 'customer-result-atares-weekly-time',
@@ -136,7 +188,14 @@ export const customerProofClaims: readonly ClaimRecord[] = [
     verified_on: '2026-09-15',
     approved_on: '2026-09-15',
     approved_by: 'Baris, sitewide copy direction',
-    allowed_surfaces: ['home.customer-proof', 'customers.b2venture', 'solutions.private-equity'],
+    allowed_surfaces: [
+      'home.customer-proof',
+      'customers.b2venture',
+      'solutions.private-equity',
+      'customers.index',
+    ],
+    notes:
+      'Existing title and summary approved for the customer-story index by Baris on 2026-09-25. No result, quotation, or logo surface is extended.',
   }),
   approvedStory({
     id: 'customer-result-b2venture-activation',
@@ -166,7 +225,14 @@ export const customerProofClaims: readonly ClaimRecord[] = [
       'How MAHLE made technical knowledge easier to find. MAHLE introduced a knowledge assistant that helps teams reach technical information across existing company sources.',
     category: 'customer',
     evidence: storyEvidence.mahle,
-    allowed_surfaces: ['home.customer-proof', 'customers.mahle', 'solutions.manufacturing'],
+    allowed_surfaces: [
+      'home.customer-proof',
+      'customers.mahle',
+      'solutions.manufacturing',
+      'customers.index',
+    ],
+    notes:
+      'Existing title and summary approved for the customer-story index by Baris on 2026-09-25. No result, quotation, or logo surface is extended.',
   }),
   approvedStory({
     id: 'customer-result-mahle-activation',
@@ -188,7 +254,14 @@ export const customerProofClaims: readonly ClaimRecord[] = [
       'How KBC made company knowledge easier to use. KBC gave employees a faster way to find internal expertise and bring relevant knowledge into proposal work.',
     category: 'customer',
     evidence: storyEvidence.kbc,
-    allowed_surfaces: ['home.customer-proof', 'customers.kbc', 'solutions.management-consulting'],
+    allowed_surfaces: [
+      'home.customer-proof',
+      'customers.kbc',
+      'solutions.management-consulting',
+      'customers.index',
+    ],
+    notes:
+      'Existing title and summary approved for the customer-story index by Baris on 2026-09-25. No result, quotation, or logo surface is extended.',
   }),
   approvedStory({
     id: 'customer-result-kbc-search-time',

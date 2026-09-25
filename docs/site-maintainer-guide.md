@@ -1,6 +1,6 @@
 # Zeno website maintainer guide
 
-Last updated: 2026-09-24
+Last updated: 2026-09-25
 
 This is the main handover document for the Zeno marketing website. It explains what the site is
 trying to do, where each source of truth lives, how the interactive parts work, and which decisions
@@ -320,6 +320,12 @@ keyboard behavior. Only one desktop dropdown remains open. Preserve click, hover
 Escape, outside-click, focus exit, and no-JavaScript use. Mobile Resources is a labeled link group.
 The mobile menu scrolls within the viewport so added links never strand the demo action.
 
+The last Solutions dropdown link is **All case studies** (German: **Alle Fallstudien**).
+It opens the shared customer-story index at `/customers` or `/de/kunden`. Mobile puts the same
+link immediately after the industry links. The Solutions overview remains at `/solutions` and
+in the footer. Article back links return to the localized customer-story index, not the homepage
+logo grid.
+
 Resources links come from `src/lib/content/resources.ts`, validated against exact approvals in
 `src/lib/claims/marketing-claims.ts`. The temporary TextCortex Help Center, YouTube, and LinkedIn
 destinations open safely in a new tab with localized accessible announcements. Footer groups are
@@ -458,6 +464,14 @@ The homepage uses a compact logo grid. Story previews open only from the Case st
 from the entire logo area. Desktop previews attach to the selected logo. Mobile previews expand in
 the reading flow. The native `<details>` disclosure remains usable without JavaScript.
 
+The shared `CustomerIndexPage.astro` lists the four approved article titles and summaries without
+new figures, quotes, or logos. Only their narrative claims extend to `customers.index`, with the
+existing German wording retained. Both index routes derive metadata, alternates, language links,
+and sitemap entries from the route registry. No new client interaction is introduced.
+Directory cards label the industry above each title: M&A, Venture capital, Manufacturing, and
+Management consulting. `industryClaimId` resolves a separate index-only claim and its approved
+German counterpart. In particular, b2venture stays classified as venture capital, not private equity.
+
 Current customer-story routes:
 
 - `/customers/atares`
@@ -531,7 +545,7 @@ English is the unprefixed default locale. German uses `/de/` and localized slugs
 | English | Published | Self-canonical and indexable unless the whole deployment is preview. |
 | German  | Published | Self-canonical and indexable unless the whole deployment is preview. |
 
-All 15 German nonlegal routes use the same page compositions as English in
+All 16 German nonlegal routes use the same page compositions as English in
 `src/components/pages/`. Route files select the locale, content reference, and SEO. They must not
 introduce shortened language-specific templates. Every section, visual, caption, interaction,
 and conversion destination needs a counterpart. The former shorter-page policy is retired.

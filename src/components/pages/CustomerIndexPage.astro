@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { claimRegistry } from '../../lib/claims/registry';
+import {
+  customerStoryDrafts,
+  resolveCustomerProofMode,
+  selectCustomerStoriesForMode,
+} from '../../lib/content/customer-stories';
+import { createPageClaimResolver } from '../../lib/i18n/de-claims';
+import type { Locale } from '../../lib/i18n/locales';
+import { createPageLocale } from '../../lib/i18n/page-copy';
+import { createLocalizedSeo } from '../../lib/i18n/seo';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const { text: t, path } = createPageLocale(locale);
+const resolve = createPageClaimResolver(locale);
+const stories = selectCustomerStoriesForMode(customerStoryDrafts, resolveCustomerProofMode()).map(
+  (story) => {
+    const [claim, industry] = resolve(
+      claimRegistry,
+      [story.narrativeClaimId, story.industryClaimId],
+      'customers.index',
+    );
+    if (claim?.statement !== `${story.title} ${story.summary}`)
+      throw new Error(`Customer index narrative differs from the approved claim: ${story.slug}`);
+    return { ...story, industry: industry!.statement };
+  },
+);
+const seo = createLocalizedSeo({ kind: 'static', key: 'customers' }, locale);
+---
+
+<BaseLayout
+  title={t('Customer stories | Zeno')}
+  description={t('Explore our customer case studies.')}
+  seo={seo}
+>
+  <section class="customer-index" aria-labelledby="customer-index-title">
+    <div class="shell narrow-shell">
+      <header class="customer-index-intro">
+        <p class="eyebrow">{t('Case studies')}</p>
+        <h1 id="customer-index-title">{t('Customer stories.')}</h1>
+      </header>
+      <ul class="customer-index-list">
+        {
+          stories.map((story) => (
+            <li>
+              <a href={path(`/customers/${story.slug}`)}>
+                <p class="product-label">{t(story.industry)}</p>
+                <h2>{t(story.title)}</h2>
+                <p class="customer-index-summary">{t(story.summary)}</p>
+                <span class="customer-index-link">
+                  {t('Read case study')} <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+  <section class="customer-story-footer" aria-labelledby="customer-index-cta-title">
+    <div class="shell narrow-shell customer-index-close">
+      <h2 id="customer-index-cta-title">{t('Put one workflow to work.')}</h2>
+      <a class="button button-inverse" href={path('/demo')}>{t('Book a demo')}</a>
+    </div>
+  </section>
+</BaseLayout>
